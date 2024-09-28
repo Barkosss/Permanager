@@ -1,9 +1,6 @@
-package Permanager;
+package constructors;
 
-public class Member {
-
-    // Id пользователя (Telegram ID или Disocrd ID)
-    public long id;
+public class Permissions {
 
     // Имеет ли возможность кикать
     public boolean canKick;
@@ -34,4 +31,8 @@ public class Member {
 
     // Имеет ли возможность выдавать временную роль
     public boolean canTempRole;
-};
+
+    public Permissions() {
+        // ...
+    }
+}
