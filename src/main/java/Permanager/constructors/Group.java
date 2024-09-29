@@ -10,6 +10,9 @@ public class Group {
     // Список разрешений
     public Permissions permissions;
 
+    // Список ограничений
+    public Restrictions restrictions;
+
     // Иерархия приоритета
     public long priority;
 

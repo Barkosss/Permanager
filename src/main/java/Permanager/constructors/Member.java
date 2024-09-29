@@ -8,6 +8,9 @@ public class Member {
     // Список разрешений
     public Permissions permissions;
 
+    // Список ограничений
+    public Restrictions restrictions;
+
     // Приоритет пользователя (Совпадает с приоритетностью группы, иначе она -1)
     public int priority;
 
