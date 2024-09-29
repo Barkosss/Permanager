@@ -33,7 +33,7 @@ public class Task {
     public int priority;
 
     // Статус задачи (Например, "Идея", "В процессе", "Выполнено", "На рассмотрении")
-    public String status;
+    public Status status;
 
     // Список тэгов задачи
     public ArrayList<String> tags;
@@ -48,29 +48,100 @@ public class Task {
         this.isCompleted = false;
     }
 
-    /*
-    public void help() {
-        // ...
+
+    public long getId() {
+        return id;
     }
 
-    public void create() {
-        // ...
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public void edit() {
-        // ...
+    public String getTitle() {
+        return title;
     }
 
-    public void remove() {
-        // ...
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void list() {
-        // ...
+    public String getDescription() {
+        return description;
     }
 
-    public void clear() {
-        // ...
+    public void setDescription(String description) {
+        this.description = description;
     }
-    */
-};
+
+    public Date getTimeStart() {
+        return timeStart;
+    }
+
+    public void setTimeStart(Date timeStart) {
+        this.timeStart = timeStart;
+    }
+
+    public Date getTimeEnd() {
+        return timeEnd;
+    }
+
+    public void setTimeEnd(Date timeEnd) {
+        this.timeEnd = timeEnd;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public boolean isRemind() {
+        return isRemind;
+    }
+
+    public void setRemind(boolean remind) {
+        isRemind = remind;
+    }
+
+    public ArrayList<Member> getProperty() {
+        return property;
+    }
+
+    public void setProperty(ArrayList<Member> property) {
+        this.property = property;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
+    }
+}
