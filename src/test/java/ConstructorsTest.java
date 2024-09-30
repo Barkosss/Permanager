@@ -1,6 +1,6 @@
+import constructors.Group;
 import constructors.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions.*;
 
 public class ConstructorsTest {
 
