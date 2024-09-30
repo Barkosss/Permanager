@@ -1,4 +1,4 @@
-package constructors;
+package common.constructors;
 
 public class Permissions {
 

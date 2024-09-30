@@ -1,4 +1,4 @@
-package constructors;
+package common.constructors;
 
 import java.util.ArrayList;
 
@@ -17,6 +17,17 @@ public class Server {
         this.id = id;
         this.members = members;
         this.defaultPermissions = defaultPermissions;
+    }
+
+
+    // Получение ID сервера
+    public long getId() {
+        return id;
+    }
+
+    // Установить ID сервера
+    public void setId(long id) {
+        this.id = id;
     }
 
     // Получение список администраторов

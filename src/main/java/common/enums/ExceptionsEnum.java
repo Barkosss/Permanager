@@ -1,4 +1,4 @@
-package enums;
+package common.enums;
 
 public class ExceptionsEnum {
     public enum Codes {
