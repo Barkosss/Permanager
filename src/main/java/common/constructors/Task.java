@@ -1,4 +1,4 @@
-package constructors;
+package common.constructors;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +32,7 @@ public class Task {
     // Приоритет задачи
     public int priority;
 
-    // Статус задачи (Например, "Идея", "В процессе", "Выполнено", "На рассмотрении")
+    // Статус задачи
     public Status status;
 
     // Список тэгов задачи
@@ -47,7 +47,6 @@ public class Task {
         this.description = description;
         this.isCompleted = false;
     }
-
 
     public long getId() {
         return id;

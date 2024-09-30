@@ -1,6 +1,6 @@
-package exceptions;
+package common.exceptions;
 
-import enums.ExceptionsEnum;
+import common.enums.ExceptionsEnum;
 
 public class WrongArgumentsException extends BaseException {
 
