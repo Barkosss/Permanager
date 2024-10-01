@@ -2,8 +2,7 @@ package common;
 
 public class Main {
     public static void main(String[] args) {
-        CommandHandler command = new CommandHandler();
-        command.main();
-        command.getCommand();
+        CommandHandler.commandDeploy();
+        CommandHandler.getCommand();
     }
 }

@@ -1,6 +1,5 @@
 package common;
 
-import common.commands.*;
 import common.iostream.Output;
 import common.iostream.OutputTerminal;
 import common.iostream.Input;
@@ -16,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class CommandHandler {
@@ -24,7 +24,7 @@ public class CommandHandler {
 
     static {
         try {
-            commandObject = (JSONObject)new JSONParser().parse(new FileReader("/media/barkos/Data/Project/Permanager/src/main/java/common/commands/commandsList.json"));
+            commandObject = (JSONObject)new JSONParser().parse(new FileReader("./src/main/java/common/commands/commandsList.json"));
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
@@ -33,67 +33,79 @@ public class CommandHandler {
     public static Input inputTerminal = new InputTerminal();
     public static Output outputTerminal = new OutputTerminal();
 
-    public void main() {
-        // Наполнение хэша командами
-        // TODO: Читать название файлов и получать название команды из commandsList.json, чтобы использовать это как ключ
+    public static void commandDeploy() {
 
-        String className;
-        for(File file : Objects.requireNonNull(new File("/media/barkos/Data/Project/Permanager/src/main/java/common/commands/").listFiles())) {
-            if (file.isDirectory() || !file.getName().endsWith(".java")) continue;
-            className = Arrays.stream(Arrays.stream(file.getPath().split("/")).toList().getLast().split("\\.")).toList().getFirst();
-            try {
-                methodHashMap.put((String)commandObject.get(className), Class.forName("common.commands." + className).getMethod("main"));
-            } catch (NoSuchMethodException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+        String className, packageClass, commandName;
+        for(File file : Objects.requireNonNull(new File("./src/main/java/common/commands/").listFiles())) {
+            // Если файл не с расширением .java
+            if (!file.getName().endsWith(".java")) continue;
+
+            // Если директория - вызываем рекурсию для прохода по директории
+            if (file.isDirectory()) {
+                listJavaFiles(file);
             }
-        }
 
-        for(File file : Objects.requireNonNull(new File("/media/barkos/Data/Project/Permanager/src/main/java/common/commands/info").listFiles())) {
-            if (file.isDirectory() || !file.getName().endsWith(".java")) continue;
-            className = Arrays.stream(Arrays.stream(file.getPath().split("/")).toList().getLast().split("\\.")).toList().getFirst();
-            try {
-                methodHashMap.put((String)commandObject.get(className), Class.forName("common.commands.info." + className).getMethod("main"));
-            } catch (NoSuchMethodException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            // Список файлов
+            List<String> folders = Arrays.stream(file.getPath().split("/")).toList();
+            // Получаем название класса
+            className = Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
+            // Название команды по классу
+            commandName = (String)commandObject.get(className);
+
+            // Если команды нет в JSON файле - не добавляем в хэшмап
+            if (commandName.isEmpty()) {
+                continue;
             }
-        }
 
-        for(File file : Objects.requireNonNull(new File("/media/barkos/Data/Project/Permanager/src/main/java/common/commands/moderation").listFiles())) {
-            if (file.isDirectory() || !file.getName().endsWith(".java")) continue;
-            className = Arrays.stream(Arrays.stream(file.getPath().split("/")).toList().getLast().split("\\.")).toList().getFirst();
+            // В каком пакете находится команда + класс команды
+            packageClass = folders.get(folders.size() - 2) + "." + Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
             try {
-                methodHashMap.put((String)commandObject.get(className), Class.forName("common.commands.moderation." + className).getMethod("main"));
+                // Добавляем класс в хэшмап, ключ - название команды
+                methodHashMap.put(commandName, Class.forName("common." + packageClass).getMethod(commandName));
             } catch (NoSuchMethodException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    /*
     private static void listJavaFiles(File folder) {
         File[] files = folder.listFiles();
 
-        String className;
-        for (File file : files) {
-            if (file.isFile() && file.getName().endsWith(".java")) {
-                // Получаем класс .java
-                className = Arrays.stream(Arrays.stream(file.getPath().split("/")).toList().getLast().split("\\.")).toList().getFirst();
-                try {
-                    System.out.println(Class.forName("common.commands." + className).getName());
-                    methodHashMap.put((String)commandObject.get(className), Class.forName(className).getMethod("main"));
-                } catch (NoSuchMethodException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            } else if (file.isDirectory()) {
-                System.out.println("Directory: " + file);
+        String className, packageClass, commandName;
+        for(File file : Objects.requireNonNull(files)) {
+            // Если файл не с расширением .java
+            if (!file.getName().endsWith(".java")) continue;
+
+            // Если директория - вызываем рекурсию для прохода по директории
+            if (file.isDirectory()) {
                 listJavaFiles(file);
+            }
+
+            // Список файлов
+            List<String> folders = Arrays.stream(file.getPath().split("/")).toList();
+            // Получаем название класса
+            className = Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
+            // Название команды по классу
+            commandName = (String)commandObject.get(className);
+
+            // Если команды нет в JSON файле - не добавляем в хэшмап
+            if (commandName.isEmpty()) {
+                continue;
+            }
+
+            // В каком пакете находится команда + класс команды
+            packageClass = folders.get(folders.size() - 2) + "." + Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
+            try {
+                // Добавляем класс в хэшмап, ключ - название команды
+                methodHashMap.put(commandName, Class.forName("common." + packageClass).getMethod(commandName));
+            } catch (NoSuchMethodException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
-    */
 
     // Запуск команды
-    public void getCommand() {
+    public static void getCommand() {
 
         while(true) {
             outputTerminal.output("Enter command: ", true);
