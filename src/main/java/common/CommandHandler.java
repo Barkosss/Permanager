@@ -35,7 +35,7 @@ public class CommandHandler {
 
     public static void commandDeploy() {
 
-        String className, packageClass;
+        String className, packageClass, commandName;
         for(File file : Objects.requireNonNull(new File("./src/main/java/common/commands/").listFiles())) {
             if (!file.getName().endsWith(".java")) continue;
 
@@ -47,7 +47,8 @@ public class CommandHandler {
             className = Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
             packageClass = folders.get(folders.size() - 2) + "." + Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
             try {
-                methodHashMap.put((String)commandObject.get(className), Class.forName("common." + packageClass).getMethod("main"));
+                commandName = (String)commandObject.get(className);
+                methodHashMap.put(commandName, Class.forName("common." + packageClass).getMethod(commandName));
             } catch (NoSuchMethodException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
