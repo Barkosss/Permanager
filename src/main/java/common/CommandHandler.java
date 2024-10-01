@@ -37,17 +37,30 @@ public class CommandHandler {
 
         String className, packageClass, commandName;
         for(File file : Objects.requireNonNull(new File("./src/main/java/common/commands/").listFiles())) {
+            // Если файл не с расширением .java
             if (!file.getName().endsWith(".java")) continue;
 
+            // Если директория - вызываем рекурсию для прохода по директории
             if (file.isDirectory()) {
                 listJavaFiles(file);
             }
 
+            // Список файлов
             List<String> folders = Arrays.stream(file.getPath().split("/")).toList();
+            // Получаем название класса
             className = Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
+            // Название команды по классу
+            commandName = (String)commandObject.get(className);
+
+            // Если команды нет в JSON файле - не добавляем в хэшмап
+            if (commandName.isEmpty()) {
+                continue;
+            }
+
+            // В каком пакете находится команда + класс команды
             packageClass = folders.get(folders.size() - 2) + "." + Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
             try {
-                commandName = (String)commandObject.get(className);
+                // Добавляем класс в хэшмап, ключ - название команды
                 methodHashMap.put(commandName, Class.forName("common." + packageClass).getMethod(commandName));
             } catch (NoSuchMethodException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
@@ -58,19 +71,33 @@ public class CommandHandler {
     private static void listJavaFiles(File folder) {
         File[] files = folder.listFiles();
 
-        String className, packageClass;
+        String className, packageClass, commandName;
         for(File file : Objects.requireNonNull(files)) {
+            // Если файл не с расширением .java
             if (!file.getName().endsWith(".java")) continue;
 
+            // Если директория - вызываем рекурсию для прохода по директории
             if (file.isDirectory()) {
                 listJavaFiles(file);
             }
 
+            // Список файлов
             List<String> folders = Arrays.stream(file.getPath().split("/")).toList();
+            // Получаем название класса
             className = Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
+            // Название команды по классу
+            commandName = (String)commandObject.get(className);
+
+            // Если команды нет в JSON файле - не добавляем в хэшмап
+            if (commandName.isEmpty()) {
+                continue;
+            }
+
+            // В каком пакете находится команда + класс команды
             packageClass = folders.get(folders.size() - 2) + "." + Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
             try {
-                methodHashMap.put((String)commandObject.get(className), Class.forName("common." + packageClass).getMethod("main"));
+                // Добавляем класс в хэшмап, ключ - название команды
+                methodHashMap.put(commandName, Class.forName("common." + packageClass).getMethod(commandName));
             } catch (NoSuchMethodException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
