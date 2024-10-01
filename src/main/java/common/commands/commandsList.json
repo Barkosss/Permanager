@@ -1,0 +1,110 @@
+{
+    "InfoCommand": "info",
+    "UserInfoCommand": "userinfo",
+    "BanCommand": "ban",
+    "UnBanCommand": "unban",
+    "ClearCommand": "clear",
+    "ConfigCommand": "config",
+    "KickCommand": "kick",
+    "MuteCommand": "mute",
+    "UnMuteCommand": "unmute",
+    "WarnCommand": "warn",
+    "RemoveWarnCommand": "removewarn",
+    "ResetWarnsCommand": "resetwarns",
+    "WarnsCommand": "warns",
+    "EventCommand": "event",
+    "HelpCommand": "help",
+    "ReminderCommand": "reminder",
+    "TaskCommand": "task",
+    "info": {
+        "info": {
+            "file": "InfoCommand",
+            "name": "info",
+            "description": "Посмотреть информацию о боте"
+        },
+        "userinfo": {
+            "file": "UserInfoCommand",
+            "name": "userinfo",
+            "description": "Посмотреть информацию о пользователе"
+        }
+    },
+    "moderation": {
+        "config": {
+            "file": "ConfigCommand",
+            "name": "config",
+            "description": ""
+        },
+        "ban": {
+            "file": "BanCommand",
+            "name": "ban",
+            "description": ""
+        },
+        "unban": {
+            "file": "UnBanCommand",
+            "name": "unban",
+            "description": ""
+        },
+        "kick": {
+            "file": "KickCommand",
+            "name": "kick",
+            "description": ""
+        },
+        "mute": {
+            "file": "MuteCommand",
+            "name": "mute",
+            "description": ""
+        },
+        "unmute": {
+            "file": "UnMuteCommand",
+            "name": "unmute",
+            "description": ""
+        },
+        "clear": {
+            "file": "ClearCommand",
+            "name": "clear",
+            "description": ""
+        },
+        "warn": {
+            "file": "WarnCommand",
+            "name": "warn",
+            "description": ""
+        },
+        "removewarn": {
+            "file": "RemoveWarnCommand",
+            "name": "removewarn",
+            "description": ""
+        },
+        "resetwarns": {
+            "file": "ResetWarnsCommand",
+            "name": "resetwarns",
+            "description": ""
+        },
+        "warns": {
+            "file": "WarnsCommand",
+            "name": "warns",
+            "description": ""
+        }
+    },
+    "public": {
+        "event": {
+            "file": "EventCommand",
+            "name": "event",
+            "description": ""
+        },
+        "help": {
+            "file": "HelpCommand",
+            "name": "help",
+            "description": ""
+        },
+        "reminder": {
+            "file": "ReminderCommand",
+            "name": "reminder",
+            "description": ""
+        },
+        "task": {
+            "file": "TaskCommand",
+            "name": "task",
+            "description": ""
+        }
+    }
+}
