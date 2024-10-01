@@ -24,7 +24,7 @@ public class CommandHandler {
 
     static {
         try {
-            commandObject = (JSONObject)new JSONParser().parse(new FileReader("/media/barkos/Data/Project/Permanager/src/main/java/common/commands/commandsList.json"));
+            commandObject = (JSONObject)new JSONParser().parse(new FileReader("./src/main/java/common/commands/commandsList.json"));
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
@@ -33,7 +33,7 @@ public class CommandHandler {
     public static Input inputTerminal = new InputTerminal();
     public static Output outputTerminal = new OutputTerminal();
 
-    public void main() {
+    public static void commandDeploy() {
 
         String className, packageClass;
         for(File file : Objects.requireNonNull(new File("./src/main/java/common/commands/").listFiles())) {
@@ -58,7 +58,7 @@ public class CommandHandler {
         File[] files = folder.listFiles();
 
         String className, packageClass;
-        for(File file : files) {
+        for(File file : Objects.requireNonNull(files)) {
             if (!file.getName().endsWith(".java")) continue;
 
             if (file.isDirectory()) {
@@ -77,7 +77,7 @@ public class CommandHandler {
     }
 
     // Запуск команды
-    public void getCommand() {
+    public static void getCommand() {
 
         while(true) {
             outputTerminal.output("Enter command: ", true);
