@@ -1,5 +1,5 @@
-import constructors.Group;
-import constructors.*;
+import common.constructors.Group;
+import common.constructors.*;
 import org.junit.jupiter.api.Test;
 
 public class ConstructorsTest {
