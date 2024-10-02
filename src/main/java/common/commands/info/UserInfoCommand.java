@@ -2,7 +2,7 @@ package common.commands.info;
 
 public class UserInfoCommand {
 
-    public static void main() {
+    public static void userinfo() {
 
     }
 }

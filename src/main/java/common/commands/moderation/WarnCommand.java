@@ -2,7 +2,7 @@ package common.commands.moderation;
 
 public class WarnCommand {
 
-    public static void main() {
+    public static void warn() {
 
     }
 }
