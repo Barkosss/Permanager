@@ -2,7 +2,7 @@ package common.commands.moderation;
 
 public class ClearCommand {
 
-    public static void main() {
+    public static void clear() {
 
     }
 }

@@ -16,7 +16,7 @@
     "HelpCommand": "help",
     "ReminderCommand": "reminder",
     "TaskCommand": "task",
-    "info": {
+    "commandInfo": {
         "info": {
             "file": "InfoCommand",
             "name": "info",
@@ -26,85 +26,81 @@
             "file": "UserInfoCommand",
             "name": "userinfo",
             "description": "Посмотреть информацию о пользователе"
-        }
-    },
-    "moderation": {
+        },
         "config": {
             "file": "ConfigCommand",
             "name": "config",
-            "description": ""
+            "description": "Настройка конфигурации"
         },
         "ban": {
             "file": "BanCommand",
             "name": "ban",
-            "description": ""
+            "description": "Забанить пользователя"
         },
         "unban": {
             "file": "UnBanCommand",
             "name": "unban",
-            "description": ""
+            "description": "Разбинать пользователя"
         },
         "kick": {
             "file": "KickCommand",
             "name": "kick",
-            "description": ""
+            "description": "Выгнать пользователя"
         },
         "mute": {
             "file": "MuteCommand",
             "name": "mute",
-            "description": ""
+            "description": "Замьютить пользователя"
         },
         "unmute": {
             "file": "UnMuteCommand",
             "name": "unmute",
-            "description": ""
+            "description": "Размьютить пользователя"
         },
         "clear": {
             "file": "ClearCommand",
             "name": "clear",
-            "description": ""
+            "description": "Очистит последние сообщения"
         },
         "warn": {
             "file": "WarnCommand",
             "name": "warn",
-            "description": ""
+            "description": "Выдать предупреждение пользователю"
         },
         "removewarn": {
             "file": "RemoveWarnCommand",
             "name": "removewarn",
-            "description": ""
+            "description": "Снять предупреждение пользователю"
         },
         "resetwarns": {
             "file": "ResetWarnsCommand",
             "name": "resetwarns",
-            "description": ""
+            "description": "Очистить предупреждения"
         },
         "warns": {
             "file": "WarnsCommand",
             "name": "warns",
-            "description": ""
-        }
-    },
-    "public": {
+            "description": "Посмотреть список предупреждений"
+        },
         "event": {
             "file": "EventCommand",
             "name": "event",
-            "description": ""
+            "description": "Управление мероприятиями"
         },
         "help": {
             "file": "HelpCommand",
             "name": "help",
-            "description": ""
+            "description": "Справка по всем командам"
         },
         "reminder": {
             "file": "ReminderCommand",
             "name": "reminder",
-            "description": ""
+            "description": "Управление напоминаниями"
         },
         "task": {
             "file": "TaskCommand",
             "name": "task",
-            "description": ""
+            "description": "Управление задачами"
         }
     }
 }
