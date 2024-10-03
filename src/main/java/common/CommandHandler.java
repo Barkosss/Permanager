@@ -15,16 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-
-
-/* Вопросы:
-1. Статик у commandHandler
-2. Интерфейс у команд
-3. Статик у команд
-4. Зачем делать Override в InputTerminal
-5. Что имелось в виду под enum BaseException
-*/
-
 public class CommandHandler {
     public Map<String, Method> methodHashMap = new HashMap<>();
     public JSONObject commandObject;
