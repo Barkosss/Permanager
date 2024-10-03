@@ -2,7 +2,7 @@ package common.iostream;
 
 
 public interface Output {
-    <Type> void output(Type outString, boolean inline);
+    void output(Object outString, boolean inline);
 
     /* Под вопросом. Оставил на всякий случай
     void outString(String outString, boolean inline);

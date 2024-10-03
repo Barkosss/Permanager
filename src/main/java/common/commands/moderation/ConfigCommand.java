@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
-public class ConfigCommand {
+import common.commands.BaseCommand;
 
-    public static void config() {
+public class ConfigCommand implements BaseCommand {
+
+    public void main(String[] args) {
 
     }
 }

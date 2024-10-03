@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
-public class MuteCommand {
+import common.commands.BaseCommand;
 
-    public static void mute() {
+public class MuteCommand implements BaseCommand  {
+
+    public void main(String[] args) {
 
     }
 }

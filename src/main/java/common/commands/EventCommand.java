@@ -1,8 +1,8 @@
 package common.commands;
 
-public class EventCommand {
+public class EventCommand implements BaseCommand {
 
-    public static void event() {
+    public void main(String[] args) {
 
     }
 }

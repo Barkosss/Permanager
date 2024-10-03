@@ -1,6 +1,6 @@
 package common.constructors;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Group {
 
@@ -17,7 +17,7 @@ public class Group {
     public long priority;
 
     // Список пользователей, которым назначили группу (Для синхронизации)
-    public ArrayList<Member> members;
+    public List<Member> members;
 
     // Конструктор группы
     public Group(String name, long priority, Permissions permissions) {
@@ -57,12 +57,12 @@ public class Group {
     }
 
     // Получить список пользователей
-    public ArrayList<Member> getMembers() {
+    public List<Member> getMembers() {
         return members;
     }
 
     // Назначить список пользователей
-    public void setMembers(ArrayList<Member> members) {
+    public void setMembers(List<Member> members) {
         this.members = members;
     }
 }

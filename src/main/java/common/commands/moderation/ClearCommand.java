@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
-public class ClearCommand {
+import common.commands.BaseCommand;
 
-    public static void clear() {
+public class ClearCommand implements BaseCommand {
+
+    public void main(String[] args) {
 
     }
 }

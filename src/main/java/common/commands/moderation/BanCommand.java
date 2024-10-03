@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
-public class BanCommand {
+import common.commands.BaseCommand;
 
-    public static void main() {
+public class BanCommand implements BaseCommand {
+
+    public void main(String[] args) {
 
     }
 }

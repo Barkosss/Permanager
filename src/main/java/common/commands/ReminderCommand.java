@@ -1,12 +1,12 @@
 package common.commands;
 
-public class ReminderCommand {
+public class ReminderCommand implements BaseCommand {
 
-    public static void reminder() {
+    public void main(String[] args) {
 
     }
 
-    public static void create() {
+    public void create() {
 
     }
 }

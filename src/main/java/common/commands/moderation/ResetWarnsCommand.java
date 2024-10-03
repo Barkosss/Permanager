@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
-public class ResetWarnsCommand {
+import common.commands.BaseCommand;
 
-    public static void resetwarns() {
+public class ResetWarnsCommand implements BaseCommand {
+
+    public void main(String[] args) {
 
     }
 }
