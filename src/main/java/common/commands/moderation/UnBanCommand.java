@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
-public class UnBanCommand {
+import common.commands.BaseCommand;
 
-    public static void unban() {
+public class UnBanCommand implements BaseCommand {
+
+    public void main(String[] args) {
 
     }
 }

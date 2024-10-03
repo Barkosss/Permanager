@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
-public class KickCommand {
+import common.commands.BaseCommand;
 
-    public static void kick() {
+public class KickCommand implements BaseCommand {
+
+    public void main(String[] args) {
 
     }
 }

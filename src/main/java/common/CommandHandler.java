@@ -13,33 +13,44 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+
+
+/* Вопросы:
+1. Статик у commandHandler
+2. Интерфейс у команд
+3. Статик у команд
+4. Зачем делать Override в InputTerminal
+5. Что имелось в виду под enum BaseException
+*/
 
 public class CommandHandler {
-    public static HashMap<String, Method> methodHashMap = new HashMap<>();
-    public static JSONObject commandObject;
+    public Map<String, Method> methodHashMap = new HashMap<>();
+    public JSONObject commandObject;
 
-    static {
+    {
         try {
-            commandObject = ((JSONObject)new JSONParser().parse(new FileReader("./src/main/java/common/commands/commandsList.json")));
+            commandObject = ((JSONObject)new JSONParser().parse(new FileReader("./src/main/resources/commandsList.json/")));
         } catch (IOException | ParseException err) {
             throw new RuntimeException(err);
         }
-    }
+    };
 
-    public static Input inputTerminal = new InputTerminal();
-    public static Output outputTerminal = new OutputTerminal();
+    public Input inputTerminal = new InputTerminal();
+    public Output outputTerminal = new OutputTerminal();
 
 
     // Запуск команды
-    public static void getCommand() {
+    public void getCommand() {
 
         while(true) {
             outputTerminal.output("Enter command: ", true);
-            String commandName = inputTerminal.getString().toLowerCase();
+            String[] args = inputTerminal.getString().split(" ");
+            String commandName = args[0];
+
+            // Убираем первый элемент - название команды
+            args = Arrays.stream(args).skip(1).toArray(String[]::new);
 
             // Если команда - выключить бота
             if (commandName.equals("exit")) {
@@ -51,7 +62,7 @@ public class CommandHandler {
 
                 // Запустить класс, в котором будет работать команда
                 try {
-                    methodHashMap.get(commandName).invoke(null);
+                    methodHashMap.get(commandName).invoke(args);
                 } catch(InvocationTargetException | IllegalAccessException err) {
                     System.out.println("[ERROR] Something error: " + err);
                 }
@@ -64,10 +75,11 @@ public class CommandHandler {
     }
 
 
-    public static void commandDeploy() {
+    // Загрузка классы команд в хэшмап
+    public void commandLoader() {
 
         String className, packageClass, commandName;
-        for(File file : Objects.requireNonNull(new File("./src/main/java/common/commands/").listFiles())) {
+        for(File file : Objects.requireNonNull(new File("./src/main/resources/commandsList.json/").listFiles())) {
             // Если файл не с расширением .java
             if (!file.getName().endsWith(".java")) continue;
 
@@ -92,6 +104,7 @@ public class CommandHandler {
             packageClass = folders.get(folders.size() - 2) + "." + Arrays.stream(folders.getLast().split("\\.")).toList().getFirst();
             try {
                 // Добавляем класс в хэшмап, ключ - название команды
+                System.out.println("Command: " + commandName);
                 methodHashMap.put(commandName, Class.forName("common." + packageClass).getMethod(commandName));
             } catch (NoSuchMethodException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
@@ -99,7 +112,8 @@ public class CommandHandler {
         }
     }
 
-    private static void listJavaFiles(File folder) {
+    // Рекурсивно проходимся по подпапкам
+    private void listJavaFiles(File folder) {
         File[] files = folder.listFiles();
 
         String className, packageClass, commandName;

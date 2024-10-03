@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
-public class WarnCommand {
+import common.commands.BaseCommand;
 
-    public static void warn() {
+public class WarnCommand implements BaseCommand {
+
+    public void main(String[] args) {
 
     }
 }

@@ -1,8 +1,10 @@
 package common.commands.info;
 
-public class InfoCommand {
+import common.commands.BaseCommand;
 
-    public static void info() {
+public class InfoCommand implements BaseCommand {
+
+    public void main(String[] args) {
 
     }
 }

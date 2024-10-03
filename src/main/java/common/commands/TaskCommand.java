@@ -1,8 +1,8 @@
 package common.commands;
 
-public class TaskCommand {
+public class TaskCommand implements BaseCommand {
 
-    public static void task() {
+    public void main(String[] args) {
 
     }
 }

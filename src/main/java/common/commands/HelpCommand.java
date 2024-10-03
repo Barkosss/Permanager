@@ -4,17 +4,18 @@ import common.iostream.Output;
 import common.iostream.OutputTerminal;
 
 import java.io.FileReader;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+public class HelpCommand implements BaseCommand {
+    public Output output = new OutputTerminal();
 
-public class HelpCommand {
-
-    public static void help() {
-        Output output = new OutputTerminal();
+    public void main(String[] args) {
+        System.out.println(args);
         JSONParser parser = new JSONParser();
         try {
-            JSONObject root = (JSONObject) parser.parse(new FileReader("./src/main/java/common/commands/commandsList.json"));
+            JSONObject root = (JSONObject) parser.parse(new FileReader("./src/main/java/common/commands/commandsInfo.json"));
             JSONObject commandInfo = (JSONObject)root.get("commandInfo");
 
             output.output("--------- HELP ---------", false);

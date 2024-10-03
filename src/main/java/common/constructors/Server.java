@@ -1,6 +1,6 @@
 package common.constructors;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Server {
 
@@ -8,12 +8,12 @@ public class Server {
     public long id;
 
     // Список модераторов/администраторов сервера (Общее название - администраторы)
-    public ArrayList<Member> members = new ArrayList<>();
+    public List<Member> members;
 
     // Стандартные права доступа
     public Permissions defaultPermissions;
 
-    public Server(long id, ArrayList<Member> members, Permissions defaultPermissions) {
+    public Server(long id, List<Member> members, Permissions defaultPermissions) {
         this.id = id;
         this.members = members;
         this.defaultPermissions = defaultPermissions;
@@ -31,12 +31,12 @@ public class Server {
     }
 
     // Получение список администраторов
-    public ArrayList<Member> getMembers() {
+    public List<Member> getMembers() {
         return members;
     }
 
     // Установить список администраторов
-    public void setMembers(ArrayList<Member> members) {
+    public void setMembers(List<Member> members) {
         this.members = members;
     }
 

@@ -1,7 +1,8 @@
 package common.constructors;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 public class Task {
 
@@ -15,7 +16,7 @@ public class Task {
     public String description;
 
     // Плановое время начала задачи
-    public Date timeStart;
+    public LocalDate timeStart;
 
     // Плановое время завершения задачи
     public Date timeEnd;
@@ -24,10 +25,10 @@ public class Task {
     public Date createdAt;
 
     // Состояние, напомнить ли о задаче в плановое время начала
-    public boolean isRemind;
+    public boolean isNeedRemind;
 
     // Список ответственны за задачу
-    public ArrayList<Member> property;
+    public List<Member> property;
 
     // Приоритет задачи
     public int priority;
@@ -36,7 +37,7 @@ public class Task {
     public Status status;
 
     // Список тэгов задачи
-    public ArrayList<String> tags;
+    public List<String> tags;
 
     // Состояние, выполнена ли задача
     public boolean isCompleted;
@@ -72,11 +73,11 @@ public class Task {
         this.description = description;
     }
 
-    public Date getTimeStart() {
+    public LocalDate getTimeStart() {
         return timeStart;
     }
 
-    public void setTimeStart(Date timeStart) {
+    public void setTimeStart(LocalDate timeStart) {
         this.timeStart = timeStart;
     }
 
@@ -96,19 +97,19 @@ public class Task {
         this.createdAt = createdAt;
     }
 
-    public boolean isRemind() {
-        return isRemind;
+    public boolean isNeedRemind() {
+        return isNeedRemind;
     }
 
     public void setRemind(boolean remind) {
-        isRemind = remind;
+        isNeedRemind = remind;
     }
 
-    public ArrayList<Member> getProperty() {
+    public List<Member> getProperty() {
         return property;
     }
 
-    public void setProperty(ArrayList<Member> property) {
+    public void setProperty(List<Member> property) {
         this.property = property;
     }
 
@@ -128,11 +129,11 @@ public class Task {
         this.status = status;
     }
 
-    public ArrayList<String> getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(ArrayList<String> tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

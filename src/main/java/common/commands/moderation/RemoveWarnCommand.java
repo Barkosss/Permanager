@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
-public class RemoveWarnCommand {
+import common.commands.BaseCommand;
 
-    public static void removewarn() {
+public class RemoveWarnCommand implements BaseCommand {
+
+    public void main(String[] args) {
 
     }
 }
