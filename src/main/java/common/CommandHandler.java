@@ -4,15 +4,18 @@ import common.iostream.Input;
 import common.iostream.InputTerminal;
 import common.iostream.Output;
 import common.iostream.OutputTerminal;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.reflections.ReflectionUtils;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Set;
 import java.util.*;
 
 public class CommandHandler {
@@ -64,9 +67,33 @@ public class CommandHandler {
         }
     }
 
+    public void commandLoader() {
+        try {
+            Reflections reflections = new Reflections("common.commands");
+            Set<Class<? extends BaseClass>> subclasses = reflections.getSubTypesOf(BaseClass.class);
+            for (Class<? extends BaseClass> subclass : subclasses) {
+                System.out.println(subclass.getName());
+            }
+            /*
+            Reflections reflections = new Reflections("common.commands");
+
+            // Итерируем по списку классов
+            for (Class<?> clazz : classes) {
+                System.out.println("Класс: " + clazz.getName());
+
+                // Проверяем, является ли класс публичным и не абстрактным
+                if (Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())) {
+                    System.out.println("  - Публичный и не абстрактный класс");
+                }
+            }*/
+        } catch (Exception err) {
+            System.out.println("[ERROR] Error: " + err);
+        }
+    }
+
 
     // Загрузка классы команд в хэшмап
-    public void commandLoader() {
+    public void commandLoaderRecurs() {
 
         String className, packageClass, commandName;
         for(File file : Objects.requireNonNull(new File("./src/main/resources/commandsList.json/").listFiles())) {
