@@ -1,6 +1,8 @@
 package common.utils;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;
 
@@ -16,7 +18,7 @@ public class Validate {
     }
 
     // Валидация даты
-    public Date isValidDate(String date) {
+    public LocalDate isValidDate(String input) {
 
         String[] patterns = {
                 "H:mm dd.MM.yyyy",
@@ -27,8 +29,10 @@ public class Validate {
 
         for(String pattern : patterns) {
             try {
-                Optional<Date> localDateValue = Optional.of(new SimpleDateFormat(pattern).parse(date));
-                return localDateValue.get();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+                LocalDate date = LocalDate.parse(input, formatter);
+                System.out.println("LocalDate: " + date);
+                return date;
             } catch(Exception err) {
                 continue;
             }
