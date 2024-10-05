@@ -11,11 +11,10 @@ import org.json.simple.parser.JSONParser;
 public class HelpCommand implements BaseCommand {
     public Output output = new OutputTerminal();
 
-    public void main(String[] args) {
-        System.out.println(args);
+    public void run() {
         JSONParser parser = new JSONParser();
         try {
-            JSONObject root = (JSONObject) parser.parse(new FileReader("./src/main/java/common/commands/commandsInfo.json"));
+            JSONObject root = (JSONObject) parser.parse(new FileReader("./src/main/resources/commandsInfo.json"));
             JSONObject commandInfo = (JSONObject)root.get("commandInfo");
 
             output.output("--------- HELP ---------", false);

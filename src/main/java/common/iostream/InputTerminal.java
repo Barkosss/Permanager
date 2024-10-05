@@ -2,7 +2,7 @@ package common.iostream;
 
 import common.utils.Validate;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 // Чтение входных данных с терминала
@@ -34,13 +34,13 @@ public class InputTerminal implements Input {
         }
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         String strDate;
 
         while(true) {
             strDate = read();
 
-            Date dateValue = validate.isValidDate(strDate);
+            LocalDate dateValue = validate.isValidDate(strDate);
             if (dateValue.equals(null)) {
                 return dateValue;
             } else {

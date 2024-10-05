@@ -1,9 +1,9 @@
 package common.iostream;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public interface Input {
     int getInt();
     String getString();
-    Date getDate();
+    LocalDate getDate();
 }
