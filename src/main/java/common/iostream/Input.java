@@ -25,7 +25,7 @@ public interface Input {
      * @param separator Разделитель аргументовы
      * @return List
      */
-    List<String> getStrings(String separator);
+    List<String> getString(String separator);
 
     /**
      * Считать строку, парснуть в дату LocalDate и её вернуть

@@ -68,16 +68,14 @@ public class CommandHandler {
             Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
 
             ArrayList<String> arrayPath;
-            String className, commandName, packageClass;
+            String className, commandName;
             for (Class<? extends BaseCommand> subclass : subclasses) {
+
                 // Массив из путей
                 arrayPath = new ArrayList<>(Arrays.asList(subclass.getName().split("\\.")));
 
                 // Название класса
                 className = arrayPath.getLast();
-
-                // Название пакета
-                //packageClass = String.join(".", arrayPath.subList(arrayPath.indexOf("common"), arrayPath.indexOf(className)));
 
                 // Название команды по классу
                 commandName = (String)commandObject.get(className);

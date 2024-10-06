@@ -20,7 +20,8 @@ public class InputTerminal implements Input {
         return read();
     }
 
-    public List<String> getStrings(String separator) {
+    @Override
+    public List<String> getString(String separator) {
         return List.of(read().split(separator));
     }
 
