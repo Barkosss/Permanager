@@ -2,6 +2,8 @@ package common.commands.moderation;
 
 import common.commands.BaseCommand;
 
+import java.util.List;
+
 public class WarnCommand implements BaseCommand {
 
     public String getCommandName() {
@@ -12,7 +14,7 @@ public class WarnCommand implements BaseCommand {
         return "Выдать предупреждение пользователю";
     }
 
-    public void run() {
+    public void run(List<String> args) {
 
     }
 }

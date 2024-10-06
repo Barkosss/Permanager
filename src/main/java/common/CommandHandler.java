@@ -23,7 +23,9 @@ public class CommandHandler {
 
         while(true) {
             outputTerminal.output("Enter command: ", true);
-            String commandName = inputTerminal.getString().toLowerCase();
+            List<String> args = inputTerminal.getString(" ");
+            String commandName = args.getFirst().toLowerCase();
+            args = args.subList(1, args.size());
 
             // Если команда - выключить бота
             if (commandName.equals("exit")) {
@@ -35,7 +37,7 @@ public class CommandHandler {
 
                 // Запустить класс, в котором будет работать команда
                 try {
-                    classHashMap.get(commandName).run();
+                    classHashMap.get(commandName).run(args);
                 } catch(Exception err) {
                     System.out.println("[ERROR] Something error: " + err);
                 }

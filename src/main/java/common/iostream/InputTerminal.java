@@ -11,20 +11,24 @@ public class InputTerminal implements Input {
     public Scanner input = new Scanner(System.in);
     public Validate validate = new Validate();
 
+    // Считать строку из терминала
     private String read() {
         return input.nextLine();
     }
 
+    // Считать строку с терминала и вернуть её
     @Override
     public String getString() {
         return read();
     }
 
+    // Считать строку с терминала, сплитнуть по разделителю и вернуть массив аргументов
     @Override
     public List<String> getString(String separator) {
         return List.of(read().split(separator));
     }
 
+    // Считать строку с терминала, парснуть её в число и вывести, если получилось число, иначе вывести ошибку
     public int getInt() {
         String strInteger;
 
@@ -40,6 +44,7 @@ public class InputTerminal implements Input {
         }
     }
 
+    // Считать строку с терминала, парснуть её в дату и вывести, если получилось дату, иначе вывести ошибку
     public LocalDate getDate() {
         String strDate;
 

@@ -1,5 +1,7 @@
 package common.commands;
 
+import java.util.List;
+
 public class EventCommand implements BaseCommand {
 
     public String getCommandName() {
@@ -10,7 +12,7 @@ public class EventCommand implements BaseCommand {
         return "Управление мероприятиями";
     }
 
-    public void run() {
-        System.out.println("Class Event");
+    public void run(List<String> args) {
+
     }
 }

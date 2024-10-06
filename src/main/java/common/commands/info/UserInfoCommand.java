@@ -2,6 +2,8 @@ package common.commands.info;
 
 import common.commands.BaseCommand;
 
+import java.util.List;
+
 public class UserInfoCommand implements BaseCommand {
 
     public String getCommandName() {
@@ -12,7 +14,7 @@ public class UserInfoCommand implements BaseCommand {
         return "Посмотреть информацию о пользователе";
     }
 
-    public void run() {
+    public void run(List<String> args) {
 
     }
 }

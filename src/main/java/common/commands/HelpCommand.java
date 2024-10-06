@@ -4,6 +4,7 @@ import common.iostream.Output;
 import common.iostream.OutputTerminal;
 import org.reflections.Reflections;
 
+import java.util.List;
 import java.util.Set;
 
 public class HelpCommand implements BaseCommand {
@@ -17,7 +18,7 @@ public class HelpCommand implements BaseCommand {
         return "Справка по всем командам";
     }
 
-    public void run() {
+    public void run(List<String> args) {
         try {
             Reflections reflections = new Reflections("common.commands");
             Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);

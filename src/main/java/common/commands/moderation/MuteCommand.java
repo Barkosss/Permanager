@@ -2,6 +2,8 @@ package common.commands.moderation;
 
 import common.commands.BaseCommand;
 
+import java.util.List;
+
 public class MuteCommand implements BaseCommand  {
 
     public String getCommandName() {
@@ -12,7 +14,7 @@ public class MuteCommand implements BaseCommand  {
         return "Замьютить пользователя";
     }
 
-    public void run() {
+    public void run(List<String> args) {
 
     }
 }

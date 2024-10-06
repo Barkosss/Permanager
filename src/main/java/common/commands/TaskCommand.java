@@ -1,6 +1,8 @@
 package common.commands;
 
 
+import java.util.List;
+
 public class TaskCommand implements BaseCommand {
 
     public String getCommandName() {
@@ -11,7 +13,7 @@ public class TaskCommand implements BaseCommand {
         return "Управление задачами";
     }
 
-    public void run() {
+    public void run(List<String> args) {
 
     }
 }
