@@ -1,5 +1,9 @@
 package common.enums;
 
+
+/**
+ * Перечисление кодов ошибок
+ */
 public class Exceptions {
     public enum Codes {
         WRONG_ANSWER(301),

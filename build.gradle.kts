@@ -10,12 +10,12 @@ repositories {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    implementation("org.reflections:reflections:0.10.2")
-    implementation("net.dv8tion:JDA:5.1.0")
-    implementation("com.googlecode.json-simple:json-simple:1.1.1")
-    implementation("org.slf4j:slf4j-nop:2.0.7")
+    testImplementation(platform("org.junit:junit-bom:5.10.0")) // Тесты
+    testImplementation("org.junit.jupiter:junit-jupiter") // Тесты
+    implementation("org.reflections:reflections:0.10.2") // Reflections (Для получения классов с пакетов)
+    implementation("net.dv8tion:JDA:5.1.0") // Библиотека для работы с Discord
+    implementation("com.googlecode.json-simple:json-simple:1.1.1") // Работа с JSON файлами
+    implementation("org.slf4j:slf4j-nop:2.0.7") // Логирование (Зависимость Reflections)
 }
 
 tasks.test {

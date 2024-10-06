@@ -1,24 +1,33 @@
 package common.utils;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Optional;
 
+
+/**
+ *
+ */
 public class Validate {
 
-    // Optional от Int
-
-    // Валидация числа
+    /**
+     * Валидация числа и конвертация строки в число
+     * @param strInteger Строка с числом
+     * @return Integer
+     */
     public Integer isValidInteger(String strInteger) {
 
         Optional<Integer> intValue = Optional.of(Integer.parseInt(strInteger));
         return intValue.orElse((null));
     }
 
-    // Валидация даты
-    public LocalDate isValidDate(String input) {
+
+    /**
+     * Валидация даты и конвертация строки в дату
+     * @param strLocalDate Строка с датой
+     * @return LocalDate
+     */
+    public LocalDate isValidDate(String strLocalDate) {
 
         String[] patterns = {
                 "H:mm dd.MM.yyyy",
@@ -30,7 +39,7 @@ public class Validate {
         for(String pattern : patterns) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-                LocalDate date = LocalDate.parse(input, formatter);
+                LocalDate date = LocalDate.parse(strLocalDate, formatter);
                 System.out.println("LocalDate: " + date);
                 return date;
             } catch(Exception err) {

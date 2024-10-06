@@ -3,6 +3,7 @@ package common.iostream;
 import common.utils.Validate;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 // Чтение входных данных с терминала
@@ -17,6 +18,10 @@ public class InputTerminal implements Input {
     @Override
     public String getString() {
         return read();
+    }
+
+    public List<String> getStrings(String separator) {
+        return List.of(read().split(separator));
     }
 
     public int getInt() {

@@ -13,9 +13,13 @@ import org.reflections.Reflections;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Set;
 import java.util.*;
 
+/**
+ * Класс для обработки команд
+ * Метод "commandLoader" загружает команды в хэшмап, для дальнейшего использования.
+ * В хэшмапе хранится ключ: название команды, значение: класс команды
+ */
 public class CommandHandler {
     public Map<String, Class<? extends BaseCommand>> classHashMap = new HashMap<>();
     public JSONObject commandObject;
@@ -33,13 +37,18 @@ public class CommandHandler {
 
 
     // Запуск команды
+    /**
+     * Метод для запуска команд.
+     * Пользователь вводит команду, если команда найдена в хэшмапе - команда выполняется, иначе - ошибка
+     */
     public void getCommand() {
 
         while(true) {
             outputTerminal.output("Enter command: ", true);
-            String commandName = inputTerminal.getString().toLowerCase();
+            List<String> args = inputTerminal.getStrings(" ");
+            String commandName = args.removeFirst();
 
-            // Если команда - выключить бота
+            // Если команда "exit" - выключить бота
             if (commandName.equals("exit")) {
                 System.out.println("Program is stop");
                 break;
@@ -51,17 +60,20 @@ public class CommandHandler {
                 try {
                     classHashMap.get(commandName).getConstructor().newInstance().run();
                 } catch(Exception err) {
-                    System.out.println("[ERROR] Something error: " + err);
+                    System.out.println("[ERROR] " + err);
                 }
 
             } else {
                 // Ошибка: Команда не найдена.
-                outputTerminal.output("Error: Command \"" + commandName + "\" is not found. ", true);
+                outputTerminal.output("[ERROR] Command \"" + commandName + "\" is not found. ", true);
             }
         }
     }
 
-    // Загрузчик команд
+    /**
+     * Загрузчик команд. С помощью Reflections мы получаем все классы из пакета common.commands.
+     * В хэшмапе хранится ключ: название команды, значение: класс команды
+     */
     public void commandLoader() {
         try {
             Reflections reflections = new Reflections("common.commands");
@@ -75,9 +87,6 @@ public class CommandHandler {
 
                 // Название класса
                 className = arrayPath.getLast();
-
-                // Название пакета
-                //packageClass = String.join(".", arrayPath.subList(arrayPath.indexOf("common"), arrayPath.indexOf(className)));
 
                 // Название команды по классу
                 commandName = (String)commandObject.get(className);
