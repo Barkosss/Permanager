@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.*;
 
 public class CommandHandler {
-    public Map<String, Class<? extends BaseCommand>> classHashMap = new HashMap<>();
+    public Map<String, BaseCommand> classHashMap = new HashMap<>();
     public JSONObject commandObject;
 
     {
@@ -49,7 +49,7 @@ public class CommandHandler {
 
                 // Запустить класс, в котором будет работать команда
                 try {
-                    classHashMap.get(commandName).getConstructor().newInstance().run();
+                    classHashMap.get(commandName).run();
                 } catch(Exception err) {
                     System.out.println("[ERROR] Something error: " + err);
                 }
@@ -83,7 +83,7 @@ public class CommandHandler {
                 commandName = (String)commandObject.get(className);
 
                 // Добавляем класс в хэшмап, ключ - название команды
-                classHashMap.put(commandName, subclass);
+                classHashMap.put(commandName, subclass.getConstructor().newInstance());
             }
 
         } catch (Exception err) {
