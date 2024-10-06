@@ -22,7 +22,7 @@ public interface Input {
 
     /**
      * Считать строку и вернуть список аргументов
-     * @param separator Разделитель аргументовы
+     * @param separator Разделитель аргументов
      * @return List
      */
     List<String> getString(String separator);
