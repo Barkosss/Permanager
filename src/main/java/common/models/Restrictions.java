@@ -30,7 +30,7 @@ public class Restrictions {
     public Limit canClear;
 
     // Ограничение на использование команды выдавать временную роль
-    public Limit canTempRole;
+    public Limit canGiveTempRole;
 
 
     // ...
@@ -124,12 +124,12 @@ public class Restrictions {
     }
 
     // ...
-    public Limit getCanTempRole() {
-        return canTempRole;
+    public Limit getcanGiveTempRole() {
+        return canGiveTempRole;
     }
 
     // ...
-    public void setCanTempRole(Limit canTempRole) {
-        this.canTempRole = canTempRole;
+    public void setcanGiveTempRole(Limit canGiveTempRole) {
+        this.canGiveTempRole = canGiveTempRole;
     }
 }

@@ -30,7 +30,7 @@ public class Permissions {
     public boolean canClear;
 
     // Имеет ли возможность выдавать временную роль
-    public boolean canTempRole;
+    public boolean canGiveTempRole;
 
     public Permissions() {
         this.canKick = false;
@@ -42,10 +42,10 @@ public class Permissions {
         this.canRemWarn = false;
         this.canResetWarn = false;
         this.canClear = false;
-        this.canTempRole = false;
+        this.canGiveTempRole = false;
     }
 
-    public Permissions(boolean canKick, boolean canBan, boolean canUnban, boolean canMute, boolean canUnMute, boolean canWarn, boolean canRemWarn, boolean canResetWarn, boolean canClear, boolean canTempRole) {
+    public Permissions(boolean canKick, boolean canBan, boolean canUnban, boolean canMute, boolean canUnMute, boolean canWarn, boolean canRemWarn, boolean canResetWarn, boolean canClear, boolean canGiveTempRole) {
         this.canKick = canKick;
         this.canBan = canBan;
         this.canUnban = canUnban;
@@ -55,7 +55,7 @@ public class Permissions {
         this.canRemWarn = canRemWarn;
         this.canResetWarn = canResetWarn;
         this.canClear = canClear;
-        this.canTempRole = canTempRole;
+        this.canGiveTempRole = canGiveTempRole;
     }
 
     // ...
@@ -149,12 +149,12 @@ public class Permissions {
     }
 
     // ...
-    public boolean getCanTempRole() {
-        return canTempRole;
+    public boolean getcanGiveTempRole() {
+        return canGiveTempRole;
     }
 
     // ...
-    public void setCanTempRole(boolean canTempRole) {
-        this.canTempRole = canTempRole;
+    public void setcanGiveTempRole(boolean canGiveTempRole) {
+        this.canGiveTempRole = canGiveTempRole;
     }
 }
