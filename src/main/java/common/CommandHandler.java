@@ -6,27 +6,13 @@ import common.iostream.InputTerminal;
 import common.iostream.Output;
 import common.iostream.OutputTerminal;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.reflections.Reflections;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Set;
 import java.util.*;
 
 public class CommandHandler {
     public Map<String, BaseCommand> classHashMap = new HashMap<>();
-    public JSONObject commandObject;
-
-    {
-        try {
-            commandObject = ((JSONObject)new JSONParser().parse(new FileReader("./src/main/resources/commandsList.json/")));
-        } catch (IOException | ParseException err) {
-            throw new RuntimeException(err);
-        }
-    };
 
     public Input inputTerminal = new InputTerminal();
     public Output outputTerminal = new OutputTerminal();
@@ -67,21 +53,12 @@ public class CommandHandler {
             Reflections reflections = new Reflections("common.commands");
             Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
 
-            ArrayList<String> arrayPath;
-            String className, commandName;
+            BaseCommand instanceClass;
             for (Class<? extends BaseCommand> subclass : subclasses) {
+                instanceClass = subclass.getConstructor().newInstance();
 
-                // Массив из путей
-                arrayPath = new ArrayList<>(Arrays.asList(subclass.getName().split("\\.")));
-
-                // Название класса
-                className = arrayPath.getLast();
-
-                // Название команды по классу
-                commandName = (String)commandObject.get(className);
-
-                // Добавляем класс в хэшмап, ключ - название команды
-                classHashMap.put(commandName, subclass.getConstructor().newInstance());
+                // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
+                classHashMap.put(instanceClass.getCommandName(), instanceClass);
             }
 
         } catch (Exception err) {
