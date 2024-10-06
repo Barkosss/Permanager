@@ -1,4 +1,4 @@
-package common.constructors;
+package common.models;
 
 public class Status {
 
@@ -6,10 +6,10 @@ public class Status {
     public String name;
 
     // Приоритет статуса
-    public int priority;
+    public Priority priority;
 
     // Конструктор статуса
-    public Status(String name, int priority) {
+    public Status(String name, Priority priority) {
         this.name = name;
         this.priority = priority;
     }
@@ -25,12 +25,12 @@ public class Status {
     }
 
     // Получить приоритет статуса
-    public int getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 
     // Назначить приоритет статусу
-    public void setPriority(int priority) {
+    public void setPriority(Priority priority) {
         this.priority = priority;
     }
 }

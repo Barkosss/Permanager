@@ -1,4 +1,4 @@
-package common.constructors;
+package common.models;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -27,11 +27,11 @@ public class Task {
     // Состояние, напомнить ли о задаче в плановое время начала
     public boolean isNeedRemind;
 
-    // Список ответственны за задачу
-    public List<Member> property;
+    // Список ответственных за задачу
+    public List<Member> responsible;
 
     // Приоритет задачи
-    public int priority;
+    public Priority priority;
 
     // Статус задачи
     public Status status;
@@ -105,19 +105,19 @@ public class Task {
         isNeedRemind = remind;
     }
 
-    public List<Member> getProperty() {
-        return property;
+    public List<Member> getResponsible() {
+        return responsible;
     }
 
-    public void setProperty(List<Member> property) {
-        this.property = property;
+    public void setResponsible(List<Member> responsible) {
+        this.responsible = responsible;
     }
 
-    public int getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(Priority priority) {
         this.priority = priority;
     }
 
