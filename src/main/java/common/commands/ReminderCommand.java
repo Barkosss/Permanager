@@ -38,4 +38,8 @@ public class ReminderCommand implements BaseCommand {
     public void create() {
         System.out.println("Reminder command create");
     }
+
+    public void edit() {
+        System.out.println("Reminder command edit");
+    }
 }

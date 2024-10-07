@@ -1,4 +1,4 @@
-package common.commands.handler;
+package common.handler;
 
 import common.commands.BaseCommand;
 import common.iostream.Input;
@@ -11,7 +11,7 @@ import org.reflections.Reflections;
 import java.util.Set;
 import java.util.*;
 
-public class CommandHandlerTerminal implements CommandHandler {
+public class CommandHandlerTerminal extends AbstractCommandHandler {
     public Map<String, BaseCommand> classHashMap = new HashMap<>();
 
     public Input inputTerminal = new InputTerminal();

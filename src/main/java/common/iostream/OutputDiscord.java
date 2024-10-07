@@ -1,6 +1,6 @@
 package common.iostream;
 
-public class OutputDiscord implements Output {
+public class OutputDiscord {
     /**
      * Вывести значение
      * @param outString Object

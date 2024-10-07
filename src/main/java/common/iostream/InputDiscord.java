@@ -6,7 +6,7 @@ import java.util.List;
 
 // ЗАГЛУШКИ
 
-public class InputDiscord implements Input {
+public class InputDiscord {
 
     /**
      * Считать число и её вернуть
