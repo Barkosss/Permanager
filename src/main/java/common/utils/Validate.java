@@ -1,24 +1,36 @@
 package common.utils;
 
-import java.text.SimpleDateFormat;
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Optional;
 
+
+/**
+ * Валидация: Проверка строки на необходимое значение
+ */
 public class Validate {
 
-    // Optional от Int
-
-    // Валидация числа
-    public Integer isValidInteger(String strInteger) {
-
-        Optional<Integer> intValue = Optional.of(Integer.parseInt(strInteger));
-        return intValue.orElse((null));
+    /**
+     * Валидация числа и конвертация строки в число
+     * @param strInteger Строка с числом
+     * @return Integer
+     */
+    public Optional<Integer> isValidInteger(String strInteger) {
+        try {
+            return Optional.of(Integer.parseInt(strInteger));
+        } catch(Exception err) {
+            return Optional.empty();
+        }
     }
 
-    // Валидация даты
-    public LocalDate isValidDate(String input) {
+
+    /**
+     * Валидация даты и конвертация строки в дату
+     * @param strLocalDate Строка с датой
+     * @return LocalDate
+     */
+    public Optional<LocalDate> isValidDate(String strLocalDate) {
 
         String[] patterns = {
                 "H:mm dd.MM.yyyy",
@@ -27,16 +39,15 @@ public class Validate {
                 "H:mm:ss dd.MM.yy"
         };
 
+        // Проходимся по каждому форматы дат
         for(String pattern : patterns) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-                LocalDate date = LocalDate.parse(input, formatter);
-                System.out.println("LocalDate: " + date);
-                return date;
+                return Optional.of(LocalDate.parse(strLocalDate, formatter));
             } catch(Exception err) {
                 continue;
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

@@ -6,27 +6,13 @@ import common.iostream.InputTerminal;
 import common.iostream.Output;
 import common.iostream.OutputTerminal;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.reflections.Reflections;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Set;
 import java.util.*;
 
 public class CommandHandler {
-    public Map<String, Class<? extends BaseCommand>> classHashMap = new HashMap<>();
-    public JSONObject commandObject;
-
-    {
-        try {
-            commandObject = ((JSONObject)new JSONParser().parse(new FileReader("./src/main/resources/commandsList.json/")));
-        } catch (IOException | ParseException err) {
-            throw new RuntimeException(err);
-        }
-    };
+    public Map<String, BaseCommand> classHashMap = new HashMap<>();
 
     public Input inputTerminal = new InputTerminal();
     public Output outputTerminal = new OutputTerminal();
@@ -37,7 +23,9 @@ public class CommandHandler {
 
         while(true) {
             outputTerminal.output("Enter command: ", true);
-            String commandName = inputTerminal.getString().toLowerCase();
+            List<String> args = inputTerminal.getString(" ");
+            String commandName = args.getFirst().toLowerCase();
+            args = args.subList(1, args.size());
 
             // Если команда - выключить бота
             if (commandName.equals("exit")) {
@@ -49,7 +37,7 @@ public class CommandHandler {
 
                 // Запустить класс, в котором будет работать команда
                 try {
-                    classHashMap.get(commandName).getConstructor().newInstance().run();
+                    classHashMap.get(commandName).run(args);
                 } catch(Exception err) {
                     System.out.println("[ERROR] Something error: " + err);
                 }
@@ -67,23 +55,12 @@ public class CommandHandler {
             Reflections reflections = new Reflections("common.commands");
             Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
 
-            ArrayList<String> arrayPath;
-            String className, commandName, packageClass;
+            BaseCommand instanceClass;
             for (Class<? extends BaseCommand> subclass : subclasses) {
-                // Массив из путей
-                arrayPath = new ArrayList<>(Arrays.asList(subclass.getName().split("\\.")));
+                instanceClass = subclass.getConstructor().newInstance();
 
-                // Название класса
-                className = arrayPath.getLast();
-
-                // Название пакета
-                //packageClass = String.join(".", arrayPath.subList(arrayPath.indexOf("common"), arrayPath.indexOf(className)));
-
-                // Название команды по классу
-                commandName = (String)commandObject.get(className);
-
-                // Добавляем класс в хэшмап, ключ - название команды
-                classHashMap.put(commandName, subclass);
+                // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
+                classHashMap.put(instanceClass.getCommandName(), instanceClass);
             }
 
         } catch (Exception err) {

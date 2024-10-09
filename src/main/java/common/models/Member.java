@@ -1,5 +1,8 @@
-package common.constructors;
+package common.models;
 
+/**
+ *
+ */
 public class Member {
 
     // Id пользователя (Telegram ID или Discord ID)

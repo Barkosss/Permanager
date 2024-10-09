@@ -4,6 +4,7 @@ import common.enums.Exceptions;
 
 public class MemberNotFoundException extends BaseException {
 
+    // Исключение: Пользователь не найден
     public MemberNotFoundException() {
         super("Unknown member", Exceptions.Codes.MEMBER_NOT_FOUND.getValue());
     }

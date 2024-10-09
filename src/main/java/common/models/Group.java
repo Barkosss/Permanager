@@ -1,4 +1,4 @@
-package common.constructors;
+package common.models;
 
 import java.util.List;
 

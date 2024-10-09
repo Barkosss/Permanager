@@ -1,4 +1,4 @@
-package common.constructors;
+package common.models;
 
 public class Limit {
 
