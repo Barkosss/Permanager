@@ -6,14 +6,17 @@ import java.util.List;
 
 public class ReminderCommand implements BaseCommand {
 
+    // Получить короткое название команды
     public String getCommandName() {
         return "reminder";
     }
 
+    // Получить описание команды
     public String getCommandDescription() {
         return "Управление напоминаниями";
     }
 
+    // Вызвать основной метод команды
     public void run(List<String> args) {
         try {
             // Получаем объект Method, представляющий метод с указанным именем
@@ -31,10 +34,12 @@ public class ReminderCommand implements BaseCommand {
         }
     }
 
+    // Метод для вывода справочника команды
     public void help() {
         System.out.println("Reminder command help");
     }
 
+    // Метод для создания напоминания
     public void create() {
         System.out.println("Reminder command create");
     }

@@ -4,6 +4,7 @@ import common.utils.Validate;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 // Чтение входных данных с терминала
@@ -35,9 +36,9 @@ public class InputTerminal implements Input {
         while(true) {
             strInteger = read();
 
-            int intValue = validate.isValidInteger(strInteger);
-            if (intValue != Integer.parseInt(null)) {
-                return intValue;
+            Optional<Integer> intValue = validate.isValidInteger(strInteger);
+            if (intValue.isPresent()) {
+                return intValue.get();
             } else {
                 System.out.print("Error. Invalid value. Try again: ");
             }
@@ -51,9 +52,9 @@ public class InputTerminal implements Input {
         while(true) {
             strDate = read();
 
-            LocalDate dateValue = validate.isValidDate(strDate);
-            if (dateValue.equals(null)) {
-                return dateValue;
+            Optional<LocalDate> dateValue = validate.isValidDate(strDate);
+            if (dateValue.isPresent()) {
+                return dateValue.get();
             } else {
                 System.out.print("Error. Invalid value. Try again: ");
             }

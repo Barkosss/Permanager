@@ -58,103 +58,103 @@ public class Permissions {
         this.canGiveTempRole = canGiveTempRole;
     }
 
-    // ...
+    // Получить, имеет ли пользователь доступ к kick
     public boolean getCanKick() {
         return canKick;
     }
 
-    // ...
+    // Установить значение, имеет ли пользователь доступ к kick
     public void setCanKick(boolean canKick) {
         this.canKick = canKick;
     }
 
-    // ...
+    // Получить, имеет ли пользователь доступ к ban
     public boolean getCanBan() {
         return canBan;
     }
 
-    // ...
+    // Установить значение, имеет ли пользователь доступ к ban
     public void setCanBan(boolean canBan) {
         this.canBan = canBan;
     }
 
-    // ...
+    // Получить, имеет ли пользователь доступ к unban
     public boolean getCanUnban() {
         return canUnban;
     }
 
-    // ...
+    // Установить значение, имеет ли пользователь доступ к unban
     public void setCanUnban(boolean canUnban) {
         this.canUnban = canUnban;
     }
 
-    // ...
+    // Получить, имеет ли пользователь доступ к mute
     public boolean getCanMute() {
         return canKick;
     }
 
-    // ...
+    // Установить значение, имеет ли пользователь доступ к mute
     public void setCanMute(boolean CanMute) {
         this.canMute = CanMute;
     }
 
-    // ...
+    // Получить, имеет ли пользователь доступ к unmute
     public boolean getCanUnMute() {
         return canUnMute;
     }
 
-    // ...
+    // Установить значение, имеет ли пользователь доступ к unmute
     public void setCanUnMute(boolean canUnMute) {
         this.canUnMute = canUnMute;
     }
 
-    // ...
+    // Получить, имеет ли пользователь доступ к warn
     public boolean getCanWarn() {
         return canWarn;
     }
 
-    // ...
+    // Установить значение, имеет ли пользователь доступ к warn
     public void setCanWarn(boolean canWarn) {
         this.canWarn = canWarn;
     }
 
-    // ...
+    // Получить, имеет ли пользователь доступ к remwarn
     public boolean getCanRemWarn() {
         return canRemWarn;
     }
 
-    // ...
+    // Установить значение, имеет ли пользователь доступ к remwarn
     public void setCanRemWarn(boolean canRemWarn) {
         this.canRemWarn = canRemWarn;
     }
 
-    // ...
+    // Получить, имеет ли пользователь доступ к resetwarn
     public boolean getCanResetWarn() {
         return canResetWarn;
     }
 
-    // ...
+    // Установить значение, имеет ли пользователь доступ к resetwarn
     public void setCanResetWarn(boolean canResetWarn) {
         this.canResetWarn = canResetWarn;
     }
 
-    // ...
+    // Получить, имеет ли пользователь доступ к clear
     public boolean getCanClear() {
         return canClear;
     }
 
-    // ...
+    // Установить значение, имеет ли пользователь доступ к clear
     public void setCanClear(boolean canClear) {
         this.canClear = canClear;
     }
 
-    // ...
-    public boolean getcanGiveTempRole() {
+    // Получить, имеет ли пользователь доступ к temprole
+    public boolean getCanGiveTempRole() {
         return canGiveTempRole;
     }
 
-    // ...
-    public void setcanGiveTempRole(boolean canGiveTempRole) {
+    // Установить значение, имеет ли пользователь доступ к temprole
+    public void setCanGiveTempRole(boolean canGiveTempRole) {
         this.canGiveTempRole = canGiveTempRole;
     }
 }

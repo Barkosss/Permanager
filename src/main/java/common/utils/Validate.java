@@ -6,7 +6,7 @@ import java.util.Optional;
 
 
 /**
- *
+ * Валидация: Проверка строки на необходимое значение
  */
 public class Validate {
 
@@ -15,10 +15,8 @@ public class Validate {
      * @param strInteger Строка с числом
      * @return Integer
      */
-    public Integer isValidInteger(String strInteger) {
-
-        Optional<Integer> intValue = Optional.of(Integer.parseInt(strInteger));
-        return intValue.orElse((null));
+    public Optional<Integer> isValidInteger(String strInteger) {
+        return Optional.of(Integer.parseInt(strInteger));
     }
 
 
@@ -27,7 +25,7 @@ public class Validate {
      * @param strLocalDate Строка с датой
      * @return LocalDate
      */
-    public LocalDate isValidDate(String strLocalDate) {
+    public Optional<LocalDate> isValidDate(String strLocalDate) {
 
         String[] patterns = {
                 "H:mm dd.MM.yyyy",
@@ -36,12 +34,11 @@ public class Validate {
                 "H:mm:ss dd.MM.yy"
         };
 
+        // Проходимся по каждому форматы дат
         for(String pattern : patterns) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-                LocalDate date = LocalDate.parse(strLocalDate, formatter);
-                System.out.println("LocalDate: " + date);
-                return date;
+                return Optional.of(LocalDate.parse(strLocalDate, formatter));
             } catch(Exception err) {
                 continue;
             }
