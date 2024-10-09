@@ -1,5 +1,6 @@
 package common.utils;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -16,7 +17,11 @@ public class Validate {
      * @return Integer
      */
     public Optional<Integer> isValidInteger(String strInteger) {
-        return Optional.of(Integer.parseInt(strInteger));
+        try {
+            return Optional.of(Integer.parseInt(strInteger));
+        } catch(Exception err) {
+            return Optional.empty();
+        }
     }
 
 
@@ -43,6 +48,6 @@ public class Validate {
                 continue;
             }
         }
-        return null;
+        return Optional.empty();
     }
 }
