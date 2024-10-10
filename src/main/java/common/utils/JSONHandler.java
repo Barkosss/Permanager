@@ -26,7 +26,7 @@ public class JSONHandler {
     }
 
     // Метод для чтения значения по ключу
-    String read(String pathJSON, String keys) {
+    Object read(String pathJSON, String keys) {
         try {
             commandObject = (JSONObject)new JSONParser().parse(new FileReader(pathJSON));
         } catch (IOException | ParseException err) {
