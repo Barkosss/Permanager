@@ -1,11 +1,11 @@
 package common.exceptions;
 
-import common.enums.Exceptions;
+import common.enums.ExceptionsCodes;
 
 public class MemberNotFoundException extends BaseException {
 
     // Исключение: Пользователь не найден
     public MemberNotFoundException() {
-        super("Unknown member", Exceptions.Codes.MEMBER_NOT_FOUND.getValue());
+        super("Unknown member", ExceptionsCodes.MEMBER_NOT_FOUND);
     }
 }
