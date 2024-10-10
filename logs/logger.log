@@ -1,0 +1,5 @@
+INFO  - 2024-10-10 10:55:05.423; common.Main; This is an info message
+INFO  - 2024-10-10 10:55:05.530; org.reflections.Reflections; Reflections took 80 ms to scan 1 urls, producing 1 keys and 17 values
+INFO  - 2024-10-10 10:55:27.765; common.Main; This is an info message
+INFO  - 2024-10-10 10:55:27.915; org.reflections.Reflections; Reflections took 116 ms to scan 1 urls, producing 1 keys and 17 values
+INFO  - 2024-10-10 10:57:37.478; org.reflections.Reflections; Reflections took 82 ms to scan 1 urls, producing 1 keys and 17 values
