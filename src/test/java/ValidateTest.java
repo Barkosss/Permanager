@@ -1,5 +1,7 @@
 import common.utils.Validate;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -20,6 +22,7 @@ public class ValidateTest {
     }
 
     @Test
+    @DisplayName("Negative, because there are other characters in the string than numbers")
     public void testIsValidIntegerNegative() {
         Optional<Integer> parseInt = validate.isValidInteger("14s");
 
@@ -57,7 +60,8 @@ public class ValidateTest {
     }
 
     @Test
-    public void fourthыTestIsValidDateNegative() {
+    @DisplayName("Negative because there is no format: H:mm:ss d.MM.yy")
+    public void fourthTestIsValidDateNegative() {
         String stringDate = "14:10:21 1.12.21";
 
         Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
@@ -66,6 +70,7 @@ public class ValidateTest {
     }
 
     @Test
+    @DisplayName("Negative because the time in the clock exceeds 24 hours")
     public void fifthTestIsValidDateNegative() {
         String stringDate = "25:12 12.06.2023";
 
@@ -75,6 +80,7 @@ public class ValidateTest {
     }
 
     @Test
+    @DisplayName("Negative because there is no format: H:mm dd/MM/yyyy")
     public void sixthTestIsValidDateNegative() {
         String stringDate = "21:12 12/06/2023";
 
@@ -84,6 +90,7 @@ public class ValidateTest {
     }
 
     @Test
+    @DisplayName("Negative because there is no format: H:mm:ss dd/MM/yyyy")
     public void seventhTestIsValidDateNegative() {
         String stringDate = "21:12.15 12/06/2023";
 
