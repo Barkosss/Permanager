@@ -16,6 +16,7 @@ dependencies {
     implementation("net.dv8tion:JDA:5.1.0") // Библиотека для работы с Discord
     implementation("com.googlecode.json-simple:json-simple:1.1.1") // Работа с JSON файлами
     implementation("org.slf4j:slf4j-nop:2.0.7") // Логирование (Зависимость Reflections)
+    implementation("org.springframework.boot:spring-boot-starter-data-redis") // Кэширование
     //implementation("org.springframework.boot:spring-boot-starter-data-cassandra") // База данных
 }
 

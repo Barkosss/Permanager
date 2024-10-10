@@ -1,7 +1,6 @@
 import common.utils.Validate;
 import org.junit.jupiter.api.Test;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -13,7 +12,7 @@ public class ValidateTest {
     public Validate validate = new Validate();
 
     @Test
-    public void firstTestIsValidInteger() {
+    public void testIsValidIntegerPositive() {
         Optional<Integer> parseInt = validate.isValidInteger("33");
 
         assertTrue(parseInt.isPresent());
@@ -21,14 +20,14 @@ public class ValidateTest {
     }
 
     @Test
-    public void secondTestIsValidInteger() {
+    public void testIsValidIntegerNegative() {
         Optional<Integer> parseInt = validate.isValidInteger("14s");
 
-        assertTrue(parseInt.isEmpty());
+        assertFalse(parseInt.isPresent());
     }
 
     @Test
-    public void firstTestIsValidDate() throws ParseException {
+    public void firstTestIsValidDatePositive() {
         String stringDate = "23:22 10.09.2022";
 
         LocalDate correctDate = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("H:mm dd.MM.yyyy"));
@@ -39,7 +38,7 @@ public class ValidateTest {
     }
 
     @Test
-    public void secondTestIsValidDate() throws ParseException {
+    public void secondTestIsValidDatePositive() {
         String stringDate = "09:54:20 3.10.2024";
 
         Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
@@ -48,7 +47,7 @@ public class ValidateTest {
     }
 
     @Test
-    public void thirdTestIsValidDate() {
+    public void thirdTestIsValidDatePositive() {
         String stringDate = "20:14 03.10.20";
         LocalDate correctDate = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("H:mm dd.MM.yy"));
         Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
@@ -58,7 +57,7 @@ public class ValidateTest {
     }
 
     @Test
-    public void fourthTestIsValidDate() throws ParseException {
+    public void fourthыTestIsValidDateNegative() {
         String stringDate = "14:10:21 1.12.21";
 
         Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
@@ -67,7 +66,7 @@ public class ValidateTest {
     }
 
     @Test
-    public void fifthTestIsValidDate() throws ParseException {
+    public void fifthTestIsValidDateNegative() {
         String stringDate = "25:12 12.06.2023";
 
         Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
@@ -76,7 +75,7 @@ public class ValidateTest {
     }
 
     @Test
-    public void sixthTestIsValidDate() throws ParseException {
+    public void sixthTestIsValidDateNegative() {
         String stringDate = "21:12 12/06/2023";
 
         Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
@@ -85,7 +84,7 @@ public class ValidateTest {
     }
 
     @Test
-    public void seventhTestIsValidDate() throws ParseException {
+    public void seventhTestIsValidDateNegative() {
         String stringDate = "21:12.15 12/06/2023";
 
         Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
