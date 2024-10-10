@@ -1,7 +1,6 @@
 package common.models;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 public class Task {
@@ -19,10 +18,10 @@ public class Task {
     public LocalDate timeStart;
 
     // Плановое время завершения задачи
-    public Date timeEnd;
+    public LocalDate timeEnd;
 
     // Время создания задачи
-    public Date createdAt;
+    public LocalDate createdAt;
 
     // Состояние, напомнить ли о задаче в плановое время начала
     public boolean isNeedRemind;
@@ -90,22 +89,22 @@ public class Task {
     }
 
     // Получить время окончания задачи
-    public Date getTimeEnd() {
+    public LocalDate getTimeEnd() {
         return timeEnd;
     }
 
     // Назначить время окончания задачи
-    public void setTimeEnd(Date timeEnd) {
+    public void setTimeEnd(LocalDate timeEnd) {
         this.timeEnd = timeEnd;
     }
 
     // Получить дату создания
-    public Date getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
     // Назначить дату создания
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
     }
 

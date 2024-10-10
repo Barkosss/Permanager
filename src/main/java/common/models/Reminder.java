@@ -1,6 +1,6 @@
 package common.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Reminder {
 
@@ -14,13 +14,13 @@ public class Reminder {
     public String content;
 
     // Дата создание напоминания
-    public Date createdAt;
+    public LocalDate createdAt;
 
     // Дата, когда надо отправить напоминание
-    public Date sendAt;
+    public LocalDate sendAt;
 
     // Конструктор напоминания
-    public Reminder(String content, Date createdAt, Date sendAt) {
+    public Reminder(String content, LocalDate createdAt, LocalDate sendAt) {
         this.content = content;
         this.createdAt = createdAt;
         this.sendAt = sendAt;
@@ -48,22 +48,22 @@ public class Reminder {
     }
 
     // Получить время создания
-    public Date getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
     // Установить время создания
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
     }
 
     // Получить дату отправки
-    public Date getSendAt() {
+    public LocalDate getSendAt() {
         return sendAt;
     }
 
     // Назначить дату отправкин
-    public void setSendAt(Date sendAt) {
+    public void setSendAt(LocalDate sendAt) {
         this.sendAt = sendAt;
     }
 }
