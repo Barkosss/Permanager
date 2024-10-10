@@ -8,23 +8,23 @@ public enum ExceptionsCodes {
     /**
      * Неправильный аргумент
      */
-    WRONG_ANSWER(301),
+    WRONG_ANSWER(401),
     /**
-     * Группа не найдена
+     * Группа по его названию не найдена
      */
-    GROUP_NOT_FOUND(302),
+    GROUP_NOT_FOUND(402),
     /**
-     * Пользователь не найден
+     * Пользователь по его ID не найден
      */
-    MEMBER_NOT_FOUND(303),
+    MEMBER_NOT_FOUND(403),
+    /**
+     * Задача по его ID не найдена
+     */
+    TASK_NOT_FOUND(404),
     /**
      * Разрешение не найдено
      */
-    PERMISSIONS_NOT_FOUND(304),
-    /**
-     * Задача не найдена
-     */
-    TASK_NOT_FOUND(305);
+    PERMISSIONS_NOT_FOUND(501);
 
 
     private final int code;
