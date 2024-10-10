@@ -1,5 +1,7 @@
 plugins {
     id("java")
+    id("org.springframework.boot") version "3.2.1"
+    id("io.spring.dependency-management") version "1.1.4"
 }
 
 group = "Permanager"
@@ -7,6 +9,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven("https://plugins.gradle.org/m2/")
 }
 
 dependencies {
@@ -17,7 +20,7 @@ dependencies {
     implementation("com.googlecode.json-simple:json-simple:1.1.1") // Работа с JSON файлами
     implementation("org.slf4j:slf4j-nop:2.0.7") // Логирование (Зависимость Reflections)
     implementation("org.springframework.boot:spring-boot-starter-data-redis") // Кэширование
-    //implementation("org.springframework.boot:spring-boot-starter-data-cassandra") // База данных
+    implementation("org.springframework.boot:spring-boot-starter-data-cassandra") // База данных
 }
 
 tasks.test {
