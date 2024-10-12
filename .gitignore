@@ -4,4 +4,4 @@ build
 *.jar
 gradlew
 gradlew.bat
-/media/barkos/Data/Project/Permanager/src/main/resources/config.json
+/src/main/resources/config.json
