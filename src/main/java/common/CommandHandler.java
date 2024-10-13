@@ -5,21 +5,51 @@ import common.iostream.Input;
 import common.iostream.InputTerminal;
 import common.iostream.Output;
 import common.iostream.OutputTerminal;
+import common.utils.JSONHandler;
 
 import org.reflections.Reflections;
+
+import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendMessage;
 
 import java.util.Set;
 import java.util.*;
 
 public class CommandHandler {
-    public Map<String, BaseCommand> classHashMap = new HashMap<>();
+    private static final JSONHandler jsonHandler = new JSONHandler();
 
-    public Input inputTerminal = new InputTerminal();
-    public Output outputTerminal = new OutputTerminal();
-
+    public Map<String, BaseCommand> BaseCommandClasses = new HashMap<>();
 
     // Запуск команды
     public void getCommand() {
+        Input inputTerminal = new InputTerminal();
+        Output outputTerminal = new OutputTerminal();
+
+        TelegramBot bot = new TelegramBot(jsonHandler.read("./src/main/resources/config.json", "tokenTelegram").toString());
+
+        // Register for updates
+        bot.setUpdatesListener(interactions -> {
+            Update interaction = interactions.getFirst();
+            long chatId = interaction.message().chat().id();
+            if (interaction.message().text().startsWith("/")) {
+                bot.execute(new SendMessage(chatId, "Is command"));
+
+                //String commandName = update.message().text().substring(1, update.message().text().indexOf(" "));
+                //List<String> args = List.of(update.message().text().substring(update.message().text().indexOf(" ")).split(" "));
+                //BaseCommandClasses.get(commandName).run(args);
+            } else {
+                bot.execute(new SendMessage(chatId, "Is not command"));
+                //BaseCommandClasses.get("help").run(null);
+            }
+
+            // return id of last processed update or confirm them all
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+
+            // Create Exception Handler
+            }, err -> System.out.println("[ERROR] Telegram command handler: " + err)
+        );
 
         while(true) {
             outputTerminal.output("Enter command: ", true);
@@ -33,11 +63,11 @@ public class CommandHandler {
                 break;
             }
 
-            if (classHashMap.containsKey(commandName)) {
+            if (BaseCommandClasses.containsKey(commandName)) {
 
                 // Запустить класс, в котором будет работать команда
                 try {
-                    classHashMap.get(commandName).run(args);
+                    BaseCommandClasses.get(commandName).run(args);
                 } catch(Exception err) {
                     System.out.println("[ERROR] Something error: " + err);
                 }
@@ -60,7 +90,7 @@ public class CommandHandler {
                 instanceClass = subclass.getConstructor().newInstance();
 
                 // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
-                classHashMap.put(instanceClass.getCommandName(), instanceClass);
+                BaseCommandClasses.put(instanceClass.getCommandName(), instanceClass);
             }
 
         } catch (Exception err) {
