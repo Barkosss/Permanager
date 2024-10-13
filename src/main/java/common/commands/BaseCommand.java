@@ -14,6 +14,7 @@ public interface BaseCommand {
      * Запустить команду
      */
     void run(List<String> args);
+    //void run(Interaction interaction, Client client);
 
     /**
      * Получить короткое название команды
