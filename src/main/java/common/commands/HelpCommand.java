@@ -35,7 +35,7 @@ public class HelpCommand implements BaseCommand {
                 BaseCommand command = subclass.getConstructor().newInstance();
                 output.output(command.getCommandName() + ":\n|---\t" + command.getCommandDescription(), false);
             }
-
+            
             output.output("--------- HELP ---------", false);
         } catch (Exception err) {
             System.out.println("[ERROR] Error: " + err);

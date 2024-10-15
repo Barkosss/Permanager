@@ -1,6 +1,5 @@
 package common.utils;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -8,7 +7,7 @@ import java.util.Optional;
 
 /**
  * Валидация: Проверка строки на необходимое значение
- */
+*/
 public class Validate {
 
     /**
@@ -45,7 +44,7 @@ public class Validate {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
                 return Optional.of(LocalDate.parse(strLocalDate, formatter));
             } catch(Exception err) {
-                continue;
+                break;
             }
         }
         return Optional.empty();
