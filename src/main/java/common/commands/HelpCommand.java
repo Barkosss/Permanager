@@ -2,6 +2,7 @@ package common.commands;
 
 import common.iostream.Output;
 import common.iostream.OutputTerminal;
+import common.models.Interaction;
 import org.reflections.Reflections;
 
 import java.util.List;
@@ -28,15 +29,15 @@ public class HelpCommand implements BaseCommand {
             Reflections reflections = new Reflections("common.commands");
             Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
 
-            output.output("--------- HELP ---------", false);
+            output.output(new Interaction("--------- HELP ---------"), false);
 
             // Вывести короткое название и описание команды
             for (Class<? extends BaseCommand> subclass : subclasses) {
                 BaseCommand command = subclass.getConstructor().newInstance();
-                output.output(command.getCommandName() + ":\n|---\t" + command.getCommandDescription(), false);
+                output.output(new Interaction(command.getCommandName() + ":\n|---\t" + command.getCommandDescription()), false);
             }
             
-            output.output("--------- HELP ---------", false);
+            output.output(new Interaction("--------- HELP ---------"), false);
         } catch (Exception err) {
             System.out.println("[ERROR] Error: " + err);
         }
