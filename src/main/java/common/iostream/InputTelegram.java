@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InputTelegram /*implements Input*/ {
-    /*
+    /* Будет перерабатываться
     public Output outputTelegram = new OutputTelegram();
     public Validate validate = new Validate();
 
