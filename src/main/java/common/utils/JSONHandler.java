@@ -20,8 +20,4 @@ public class JSONHandler {
             return new Object();
         }
     }
-
-    public void write(String pathJNSON, String keys) {
-
-    }
 }

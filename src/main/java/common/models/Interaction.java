@@ -2,41 +2,68 @@ package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
 
+import java.util.List;
+
 public class Interaction {
 
-    public static TelegramBot TELEGRAM_BOT;
+    public final TelegramBot TELEGRAM_BOT;
 
+    public String platform;
 
     long userID;
 
     String message;
 
+    boolean inline;
+
+    List<String> arguments;
+
     public Interaction(TelegramBot telegramBot) {
         TELEGRAM_BOT = telegramBot;
     }
 
-    public Interaction(String message) {
-        this.message = message;
+    public String getPlatform() {
+        return platform;
     }
 
-    public Interaction(long userID, String message) {
-        this.message = message;
-        this.userID = userID;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    public Interaction setPlatform(String platform) {
+        this.platform = platform;
+        return this;
     }
 
     public long getUserID() {
         return userID;
     }
 
-    public void setUserID(long userID) {
+    public Interaction setUserID(long userID) {
         this.userID = userID;
+        return this;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Interaction setMessage(String message) {
+        this.message = message;
+        return this;
+    }
+
+    public boolean getInline() {
+        return inline;
+    }
+
+    public Interaction setInline(boolean inline) {
+        this.inline = inline;
+        return this;
+    }
+
+    public List<String> getArguments() {
+        return arguments;
+    }
+
+    public Interaction setArguments(List<String> arguments) {
+        this.arguments = arguments;
+        return this;
     }
 }

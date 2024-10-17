@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-
 // Чтение входных данных с терминала
 public class InputTerminal implements Input {
     public Scanner input = new Scanner(System.in);

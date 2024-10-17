@@ -1,5 +1,7 @@
 package common.commands;
 
+import common.models.Interaction;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -17,10 +19,11 @@ public class ReminderCommand implements BaseCommand {
     }
 
     // Вызвать основной метод команды
-    public void run(List<String> args) {
+    public void run(Interaction interaction) {
         try {
+            List<String> arguments = interaction.getArguments();
             // Получаем объект Method, представляющий метод с указанным именем
-            String methodName = (args.isEmpty()) ? ("help") : (args.getFirst());
+            String methodName = (arguments.isEmpty()) ? ("help") : (arguments.getFirst());
             Method method = ReminderCommand.class.getMethod(methodName);
 
             // Создаём экземпляр класса ReminderCommand

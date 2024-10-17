@@ -47,7 +47,7 @@ public class InputTelegram /*implements Input*/ {
                 Interaction.TELEGRAM_BOT.removeGetUpdatesListener();
                 return intValue.get();
             } else {
-                outputTelegram.output(new Interaction("Error. Invalid value. Try again: "),false);
+                outputTelegram.output(new Interaction("Error. Invalid value. Try again: "));
             }
         }
     }
@@ -64,7 +64,7 @@ public class InputTelegram /*implements Input*/ {
                 Interaction.TELEGRAM_BOT.removeGetUpdatesListener();
                 return dateValue.get();
             } else {
-                outputTelegram.output(new Interaction("Error. Invalid value. Try again: "), false);
+                outputTelegram.output(new Interaction("Error. Invalid value. Try again: "));
             }
         }
     }
