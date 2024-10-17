@@ -1,5 +1,6 @@
 package common.iostream;
 
+import common.models.Interaction;
 import common.utils.Validate;
 
 import java.time.LocalDate;
@@ -19,18 +20,18 @@ public class InputTerminal implements Input {
 
     // Считать строку с терминала и вернуть её
     @Override
-    public String getString() {
+    public String getString(Interaction interaction) {
         return read();
     }
 
     // Считать строку с терминала, сплитнуть по разделителю и вернуть массив аргументов
     @Override
-    public List<String> getString(String separator) {
+    public List<String> getString(Interaction interaction, String separator) {
         return List.of(read().split(separator));
     }
 
     // Считать строку с терминала, парснуть её в число и вывести, если получилось число, иначе вывести ошибку
-    public int getInt() {
+    public int getInt(Interaction interaction) {
         String strInteger;
 
         while(true) {
@@ -46,7 +47,7 @@ public class InputTerminal implements Input {
     }
 
     // Считать строку с терминала, парснуть её в дату и вывести, если получилось дату, иначе вывести ошибку
-    public LocalDate getDate() {
+    public LocalDate getDate(Interaction interaction) {
         String strDate;
 
         while(true) {
