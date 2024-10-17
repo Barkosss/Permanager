@@ -1,5 +1,7 @@
 package common.iostream;
 
+import common.models.Interaction;
+
 import java.time.LocalDate;
 import java.util.List;
 

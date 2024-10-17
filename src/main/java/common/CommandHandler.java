@@ -1,80 +1,107 @@
 package common;
 
+import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.Update;
 import common.commands.BaseCommand;
-import common.iostream.Input;
-import common.iostream.InputTerminal;
-import common.iostream.Output;
-import common.iostream.OutputTerminal;
-import common.utils.JSONHandler;
+import common.iostream.*;
+import common.models.Interaction;
 
 import org.reflections.Reflections;
-
-import com.pengrad.telegrambot.UpdatesListener;
-import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 
 import java.util.Set;
 import java.util.*;
 
 public class CommandHandler {
-    private static final JSONHandler jsonHandler = new JSONHandler();
-
     public Map<String, BaseCommand> BaseCommandClasses = new HashMap<>();
 
-    // Запуск команды
-    public void getCommand() {
-        Input inputTerminal = new InputTerminal();
-        Output outputTerminal = new OutputTerminal();
-
-        TelegramBot bot = new TelegramBot(jsonHandler.read("./src/main/resources/config.json", "tokenTelegram").toString());
+    private void getCommandTelegram(Interaction interaction) {
+        Output output = new OutputHandler();
 
         // Register for updates
-        bot.setUpdatesListener(interactions -> {
-            Update interaction = interactions.getFirst();
-            long chatId = interaction.message().chat().id();
-            if (interaction.message().text().startsWith("/")) {
-                bot.execute(new SendMessage(chatId, "Is command"));
+        interaction.TELEGRAM_BOT.setUpdatesListener(updates -> {
+            Update update = updates.getFirst();
 
-                //String commandName = update.message().text().substring(1, update.message().text().indexOf(" "));
-                //List<String> args = List.of(update.message().text().substring(update.message().text().indexOf(" ")).split(" "));
-                //BaseCommandClasses.get(commandName).run(args);
-            } else {
-                bot.execute(new SendMessage(chatId, "Is not command"));
-                //BaseCommandClasses.get("help").run(null);
+            if (update.message() == null) {
+                return UpdatesListener.CONFIRMED_UPDATES_ALL;
             }
 
-            // return id of last processed update or confirm them all
-            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+            String message = update.message().text();
+            long chatId = update.message().chat().id();
+            List<String> args = List.of(message.split(" "));
+            interaction.setUserID(chatId).setMessage(message).setPlatform("telegram");
 
-            // Create Exception Handler
-            }, err -> System.out.println("[ERROR] Telegram command handler: " + err)
-        );
-
-        while(true) {
-            outputTerminal.output("Enter command: ", true);
-            List<String> args = inputTerminal.getString(" ");
             String commandName = args.getFirst().toLowerCase();
             args = args.subList(1, args.size());
+            interaction.setArguments(args);
+
+            // Проверка, что это команда
+            if (commandName.startsWith("/") && message.charAt(1) != ' ') {
+                commandName = commandName.substring(1);
+                if (BaseCommandClasses.containsKey(commandName)) {
+
+                    // Запустить класс, в котором будет работать команда
+                    try {
+                        //outputTelegram.output(new Interaction(chatId, "Complete: Command \"" + commandName + "\" is found. Arguments: " + args));
+                        BaseCommandClasses.get(commandName).run(interaction);
+
+                    } catch(Exception err) {
+                        System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);
+                    }
+
+                } else {
+                    // Ошибка: Команда не найдена.
+                    output.output(interaction.setUserID(chatId).setMessage("Error: Command \"" + commandName + "\" is not found."));
+                }
+
+            } else {
+                // Ошибка: Не команда
+                output.output(interaction.setMessage("Error: \"" + commandName + "\" is not command."));
+            }
+
+            // Вернут идентификатор последнего обработанного обновления или подтверждение их
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+
+            // Создать обработчик исключений
+        }, err -> System.out.println("[ERROR] Telegram updates listener: " + err));
+    }
+
+    // Запуск команды
+    public void getCommand(Interaction interaction) {
+        getCommandTelegram(interaction);
+        // Вызываем метод для чтения сообщений из телеграмма
+
+        Input inputTerminal = new InputTerminal();
+        Output output = new OutputHandler();
+
+        while(true) {
+            output.output(interaction.setMessage("Enter command: ").setPlatform("terminal").setInline(true));
+            String message = inputTerminal.getString();
+            List<String> args = List.of(message.split(" "));
+            interaction.setMessage(message).setPlatform("terminal");
+
+            String commandName = args.getFirst().toLowerCase();
+            args = args.subList(1, args.size());
+            interaction.setArguments(args);
 
             // Если команда - выключить бота
             if (commandName.equals("exit")) {
                 System.out.println("Program is stop");
-                break;
+                System.exit(0);
             }
 
             if (BaseCommandClasses.containsKey(commandName)) {
 
                 // Запустить класс, в котором будет работать команда
                 try {
-                    BaseCommandClasses.get(commandName).run(args);
+                    BaseCommandClasses.get(commandName).run(interaction);
+
                 } catch(Exception err) {
-                    System.out.println("[ERROR] Something error: " + err);
+                    System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);
                 }
 
             } else {
                 // Ошибка: Команда не найдена.
-                outputTerminal.output("Error: Command \"" + commandName + "\" is not found. ", true);
+                output.output(interaction.setMessage("Error: Command \"" + commandName + "\" is not found. ").setInline(true));
             }
         }
     }
