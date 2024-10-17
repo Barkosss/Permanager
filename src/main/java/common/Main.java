@@ -6,7 +6,7 @@ import common.models.Interaction;
 import common.utils.JSONHandler;
 
 public class Main {
-    // ntcn
+
     public static void main(String[] args) {
         JSONHandler jsonHandler = new JSONHandler();
         TelegramBot bot = null;
