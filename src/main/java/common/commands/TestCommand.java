@@ -1,11 +1,14 @@
 package common.commands;
 
+import common.iostream.Input;
+import common.iostream.InputHandler;
 import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 
 public class TestCommand implements BaseCommand {
-    public Output outputHandler = new OutputHandler();
+    public Input input = new InputHandler();
+    public Output output = new OutputHandler();
 
     @Override
     public String getCommandName() {
@@ -19,6 +22,6 @@ public class TestCommand implements BaseCommand {
 
     @Override
     public void run(Interaction interaction) {
-        outputHandler.output(interaction.setMessage("Arguments: " + interaction.getArguments().toString()).setInline(false));
+        output.output(interaction.setMessage(String.join(" ", interaction.getArguments())));
     }
 }

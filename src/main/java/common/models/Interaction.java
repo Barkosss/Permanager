@@ -3,6 +3,7 @@ package common.models;
 import com.pengrad.telegrambot.TelegramBot;
 
 import java.util.List;
+import java.util.Map;
 
 public class Interaction {
 
@@ -17,6 +18,8 @@ public class Interaction {
     boolean inline;
 
     List<String> arguments;
+
+    Map<String, Object> commandStatus;
 
     public Interaction(TelegramBot telegramBot) {
         TELEGRAM_BOT = telegramBot;
@@ -64,6 +67,15 @@ public class Interaction {
 
     public Interaction setArguments(List<String> arguments) {
         this.arguments = arguments;
+        return this;
+    }
+
+    public Map<String, Object> getCommandStatus() {
+        return commandStatus;
+    }
+
+    public Interaction setCommandStatus(Map<String, Object> commandStatus) {
+        this.commandStatus = commandStatus;
         return this;
     }
 }

@@ -12,10 +12,11 @@ import java.util.Set;
 import java.util.*;
 
 public class CommandHandler {
+    Input input = new InputHandler();
+    Output output = new OutputHandler();
     public Map<String, BaseCommand> BaseCommandClasses = new HashMap<>();
 
     private void getCommandTelegram(Interaction interaction) {
-        Output output = new OutputHandler();
 
         // Register for updates
         interaction.TELEGRAM_BOT.setUpdatesListener(updates -> {
@@ -28,11 +29,9 @@ public class CommandHandler {
             String message = update.message().text();
             long chatId = update.message().chat().id();
             List<String> args = List.of(message.split(" "));
-            interaction.setUserID(chatId).setMessage(message).setPlatform("telegram");
-
             String commandName = args.getFirst().toLowerCase();
             args = args.subList(1, args.size());
-            interaction.setArguments(args);
+            interaction.setUserID(chatId).setMessage(message).setPlatform("telegram").setArguments(args);
 
             // Проверка, что это команда
             if (commandName.startsWith("/") && message.charAt(1) != ' ') {
@@ -70,12 +69,9 @@ public class CommandHandler {
         getCommandTelegram(interaction);
         // Вызываем метод для чтения сообщений из телеграмма
 
-        Input inputTerminal = new InputTerminal();
-        Output output = new OutputHandler();
-
         while(true) {
             output.output(interaction.setMessage("Enter command: ").setPlatform("terminal").setInline(true));
-            String message = inputTerminal.getString();
+            String message = input.getString(interaction);
             List<String> args = List.of(message.split(" "));
             interaction.setMessage(message).setPlatform("terminal");
 
