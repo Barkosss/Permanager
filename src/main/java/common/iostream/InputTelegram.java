@@ -3,23 +3,17 @@ package common.iostream;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 
-import common.commands.BaseCommand;
 import common.models.Interaction;
 import common.utils.Validate;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InputTelegram implements Input {
     public Output outputTelegram = new OutputHandler();
     public Validate validate = new Validate();
-
-    public InputTelegram(Map<String, BaseCommand> baseCommandClasses) {
-    }
-
 
     // Считать строку сообщения из телеграмма
     public String read(Interaction interaction) {

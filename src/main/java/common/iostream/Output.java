@@ -7,5 +7,5 @@ import common.models.Interaction;
  */
 public interface Output {
 
-    public void output(Interaction interaction);
+    void output(Interaction interaction);
 }

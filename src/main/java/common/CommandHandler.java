@@ -38,18 +38,17 @@ public class CommandHandler {
                 commandName = commandName.substring(1);
                 if (baseCommandClasses.containsKey(commandName)) {
                     if (interaction.getCommandStatus() == null) {
-                        interaction.setCommandStatus(new HashMap<String, Map<String, String>>());
+                        interaction.setCommandStatus(new HashMap<>());
                     }
 
                     if (!interaction.getCommandStatus().containsKey(commandName)) {
                         Map<String, Map<String, String>> map = interaction.getCommandStatus();
-                        map.put(commandName, new HashMap<String, String>());
+                        map.put(commandName, new HashMap<>());
                         interaction.setCommandStatus(map);
                     }
 
                     // Запустить класс, в котором будет работать команда
                     try {
-                        //outputTelegram.output(new Interaction(chatId, "Complete: Command \"" + commandName + "\" is found. Arguments: " + args));
                         baseCommandClasses.get(commandName).run(interaction);
 
                     } catch(Exception err) {
