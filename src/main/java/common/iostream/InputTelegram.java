@@ -3,11 +3,13 @@ package common.iostream;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 
+import common.commands.BaseCommand;
 import common.models.Interaction;
 import common.utils.Validate;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -15,9 +17,12 @@ public class InputTelegram implements Input {
     public Output outputTelegram = new OutputHandler();
     public Validate validate = new Validate();
 
+    public InputTelegram(Map<String, BaseCommand> baseCommandClasses) {
+    }
+
 
     // Считать строку сообщения из телеграмма
-    private String read(Interaction interaction) {
+    public String read(Interaction interaction) {
         AtomicReference<String> input = new AtomicReference<>();
 
         // Register for updates
@@ -41,7 +46,7 @@ public class InputTelegram implements Input {
 
     @Override
     public String getString(Interaction interaction) {
-        String message = "";
+        String message = read(interaction);
         interaction.TELEGRAM_BOT.removeGetUpdatesListener();
         return message;
     }

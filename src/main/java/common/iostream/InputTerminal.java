@@ -14,20 +14,20 @@ public class InputTerminal implements Input {
     public Validate validate = new Validate();
 
     // Считать строку из терминала
-    private String read() {
+    public String read(Interaction interaction) {
         return input.nextLine();
     }
 
     // Считать строку с терминала и вернуть её
     @Override
     public String getString(Interaction interaction) {
-        return read();
+        return read(interaction);
     }
 
     // Считать строку с терминала, сплитнуть по разделителю и вернуть массив аргументов
     @Override
     public List<String> getString(Interaction interaction, String separator) {
-        return List.of(read().split(separator));
+        return List.of(read(interaction).split(separator));
     }
 
     // Считать строку с терминала, парснуть её в число и вывести, если получилось число, иначе вывести ошибку
@@ -35,7 +35,7 @@ public class InputTerminal implements Input {
         String strInteger;
 
         while(true) {
-            strInteger = read();
+            strInteger = read(interaction);
 
             Optional<Integer> intValue = validate.isValidInteger(strInteger);
             if (intValue.isPresent()) {
@@ -51,7 +51,7 @@ public class InputTerminal implements Input {
         String strDate;
 
         while(true) {
-            strDate = read();
+            strDate = read(interaction);
 
             Optional<LocalDate> dateValue = validate.isValidDate(strDate);
             if (dateValue.isPresent()) {
