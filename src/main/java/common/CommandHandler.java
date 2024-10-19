@@ -12,36 +12,45 @@ import java.util.Set;
 import java.util.*;
 
 public class CommandHandler {
+    public Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
     Input input = new InputHandler();
     Output output = new OutputHandler();
-    public Map<String, BaseCommand> BaseCommandClasses = new HashMap<>();
 
-    private void getCommandTelegram(Interaction interaction) {
+    public void getCommandTelegram(Interaction interaction) {
 
         // Register for updates
         interaction.TELEGRAM_BOT.setUpdatesListener(updates -> {
             Update update = updates.getFirst();
 
-            if (update.message() == null) {
+            if (update.message() == null || update.message().text() == null) {
                 return UpdatesListener.CONFIRMED_UPDATES_ALL;
             }
 
             String message = update.message().text();
-            long chatId = update.message().chat().id();
-            List<String> args = List.of(message.split(" "));
-            String commandName = args.getFirst().toLowerCase();
-            args = args.subList(1, args.size());
-            interaction.setUserID(chatId).setMessage(message).setPlatform("telegram").setArguments(args);
 
             // Проверка, что это команда
-            if (commandName.startsWith("/") && message.charAt(1) != ' ') {
+            if (message.startsWith("/") && message.charAt(1) != ' ') {
+                long chatId = update.message().chat().id();
+                List<String> args = List.of(message.split(" "));
+                String commandName = args.getFirst().toLowerCase();
+                args = args.subList(1, args.size());
+                interaction.setUserID(chatId).setMessage(message).setPlatform("telegram").setArguments(args);
                 commandName = commandName.substring(1);
-                if (BaseCommandClasses.containsKey(commandName)) {
+                if (baseCommandClasses.containsKey(commandName)) {
+                    if (interaction.getCommandStatus() == null) {
+                        interaction.setCommandStatus(new HashMap<String, Map<String, String>>());
+                    }
+
+                    if (!interaction.getCommandStatus().containsKey(commandName)) {
+                        Map<String, Map<String, String>> map = interaction.getCommandStatus();
+                        map.put(commandName, new HashMap<String, String>());
+                        interaction.setCommandStatus(map);
+                    }
 
                     // Запустить класс, в котором будет работать команда
                     try {
                         //outputTelegram.output(new Interaction(chatId, "Complete: Command \"" + commandName + "\" is found. Arguments: " + args));
-                        BaseCommandClasses.get(commandName).run(interaction);
+                        baseCommandClasses.get(commandName).run(interaction);
 
                     } catch(Exception err) {
                         System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);
@@ -53,8 +62,13 @@ public class CommandHandler {
                 }
 
             } else {
-                // Ошибка: Не команда
-                output.output(interaction.setMessage("Error: \"" + commandName + "\" is not command."));
+                if (interaction.getCommandStatusKey() != null) {
+                    Map<String, Map<String, String>> map = interaction.getCommandStatus();
+                    map.get(interaction.getCommandStatusName()).put(interaction.getCommandStatusKey(), message);
+                    interaction.setCommandStatus(map);
+
+                    baseCommandClasses.get(interaction.getCommandStatusName()).run(interaction);
+                }
             }
 
             // Вернут идентификатор последнего обработанного обновления или подтверждение их
@@ -85,11 +99,11 @@ public class CommandHandler {
                 System.exit(0);
             }
 
-            if (BaseCommandClasses.containsKey(commandName)) {
+            if (baseCommandClasses.containsKey(commandName)) {
 
                 // Запустить класс, в котором будет работать команда
                 try {
-                    BaseCommandClasses.get(commandName).run(interaction);
+                    baseCommandClasses.get(commandName).run(interaction);
 
                 } catch(Exception err) {
                     System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);
@@ -113,7 +127,7 @@ public class CommandHandler {
                 instanceClass = subclass.getConstructor().newInstance();
 
                 // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
-                BaseCommandClasses.put(instanceClass.getCommandName(), instanceClass);
+                baseCommandClasses.put(instanceClass.getCommandName(), instanceClass);
             }
 
         } catch (Exception err) {

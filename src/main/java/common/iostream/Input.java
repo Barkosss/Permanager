@@ -10,6 +10,8 @@ import java.util.List;
  */
 public interface Input {
 
+    String read(Interaction interaction);
+
     /**
      * Считать строку и её вернуть
      * @return String

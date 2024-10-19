@@ -3,60 +3,33 @@ package common.iostream;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 
+import common.commands.BaseCommand;
 import common.models.Interaction;
 import common.utils.Validate;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReference;
+
 
 public class InputHandler implements Input {
+    public Map<String, BaseCommand> baseCommandClasses;
     public Scanner scanner = new Scanner(System.in);
     public Output output = new OutputHandler();
     public Validate validate = new Validate();
 
-    private String read(Interaction interaction) {
-        AtomicReference<String> input = new AtomicReference<>();
+    public InputHandler() {}
 
-        input.set(scanner.nextLine());
-
-        /*
-        switch(interaction.getPlatform()) {
-            case "terminal": {
-
-                break;
-            }
-
-            case "telegram": {}
-            default: {
-                // Register for updates
-                interaction.TELEGRAM_BOT.setUpdatesListener(updates -> {
-                    Update update = updates.getFirst();
-
-                    if (update.message() == null) {
-                        return UpdatesListener.CONFIRMED_UPDATES_ALL;
-                    }
-
-                    input.set(update.message().text());
-
-                    // Вернут идентификатор последнего обработанного обновления или подтверждение их
-                    return UpdatesListener.CONFIRMED_UPDATES_ALL;
-
-                    // Создать обработчик исключений
-                }, err -> System.out.println("[ERROR] Telegram updates listener: " + err));
-                break;
-            }
-        }*/
-
-        return input.get();
+    public String read(Interaction interaction) {
+        return scanner.nextLine();
     }
 
     @Override
     public String getString(Interaction interaction) {
         String message = read(interaction);
-        //interaction.TELEGRAM_BOT.removeGetUpdatesListener();
+        interaction.TELEGRAM_BOT.removeGetUpdatesListener();
         return message;
     }
 
