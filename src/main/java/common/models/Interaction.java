@@ -1,9 +1,6 @@
 package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.UpdatesListener;
-import com.pengrad.telegrambot.model.Update;
-import common.CommandHandler;
 
 import java.util.HashMap;
 import java.util.List;
@@ -104,7 +101,7 @@ public class Interaction {
         return this;
     }
 
-    public Interaction setCommandStatus(String commandName, String key) {
+    public Interaction getValue(String commandName, String key) {
         this.commandStatusName = commandName;
         this.commandStatusKey = key;
         return this;
@@ -114,8 +111,13 @@ public class Interaction {
         return commandStatus;
     }
 
-    public Interaction setCommandStatus(Map<String, Map<String, String>> commandStatus) {
+    public Interaction setValue(Map<String, Map<String, String>> commandStatus) {
         this.commandStatus = commandStatus;
         return this;
+    }
+
+    public void clearCommandStatus(String commandName) {
+        commandStatusKey = commandStatusName = null;
+        commandStatus.get(commandName).clear();
     }
 }
