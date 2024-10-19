@@ -38,13 +38,13 @@ public class CommandHandler {
                 commandName = commandName.substring(1);
                 if (baseCommandClasses.containsKey(commandName)) {
                     if (interaction.getCommandStatus() == null) {
-                        interaction.setCommandStatus(new HashMap<>());
+                        interaction.setValue(new HashMap<>());
                     }
 
                     if (!interaction.getCommandStatus().containsKey(commandName)) {
                         Map<String, Map<String, String>> map = interaction.getCommandStatus();
                         map.put(commandName, new HashMap<>());
-                        interaction.setCommandStatus(map);
+                        interaction.setValue(map);
                     }
 
                     // Запустить класс, в котором будет работать команда
@@ -61,10 +61,11 @@ public class CommandHandler {
                 }
 
             } else {
+                // Если не команда
                 if (interaction.getCommandStatusKey() != null) {
                     Map<String, Map<String, String>> map = interaction.getCommandStatus();
                     map.get(interaction.getCommandStatusName()).put(interaction.getCommandStatusKey(), message);
-                    interaction.setCommandStatus(map);
+                    interaction.setValue(map);
 
                     baseCommandClasses.get(interaction.getCommandStatusName()).run(interaction);
                 }
@@ -83,7 +84,9 @@ public class CommandHandler {
         // Вызываем метод для чтения сообщений из телеграмма
 
         while(true) {
-            output.output(interaction.setMessage("Enter command: ").setPlatform("terminal").setInline(true));
+            if (interaction.getCommandStatusKey() == null) {
+                output.output(interaction.setMessage("Enter command: ").setPlatform("terminal").setInline(true));
+            }
             String message = input.getString(interaction);
             List<String> args = List.of(message.split(" "));
             interaction.setMessage(message).setPlatform("terminal");
@@ -99,18 +102,33 @@ public class CommandHandler {
             }
 
             if (baseCommandClasses.containsKey(commandName)) {
+                if (interaction.getCommandStatus() == null) {
+                    interaction.setValue(new HashMap<>());
+                }
+
+                if (!interaction.getCommandStatus().containsKey(commandName)) {
+                    Map<String, Map<String, String>> map = interaction.getCommandStatus();
+                    map.put(commandName, new HashMap<>());
+                    interaction.setValue(map);
+                }
 
                 // Запустить класс, в котором будет работать команда
                 try {
-                    baseCommandClasses.get(commandName).run(interaction);
+                    baseCommandClasses.get(commandName).run(interaction.setPlatform("terminal"));
 
                 } catch(Exception err) {
                     System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);
                 }
 
             } else {
-                // Ошибка: Команда не найдена.
-                output.output(interaction.setMessage("Error: Command \"" + commandName + "\" is not found. ").setInline(true));
+                // Если не команда
+                if (interaction.getCommandStatusKey() != null) {
+                    Map<String, Map<String, String>> map = interaction.getCommandStatus();
+                    map.get(interaction.getCommandStatusName()).put(interaction.getCommandStatusKey(), message);
+                    interaction.setValue(map);
+
+                    baseCommandClasses.get(interaction.getCommandStatusName()).run(interaction);
+                }
             }
         }
     }
