@@ -1,11 +1,16 @@
 package common.models;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+
 /**
  *
  */
+@RedisHash("members")
 public class Member {
 
     // Id пользователя (Telegram ID или Discord ID)
+    @Id
     public long id;
 
     // Список разрешений

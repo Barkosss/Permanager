@@ -20,6 +20,7 @@ dependencies {
     implementation("org.slf4j:slf4j-nop:2.0.7") // Логирование (Зависимость Reflection)
     implementation("org.springframework.boot:spring-boot-starter-data-redis") // Кэширование
     implementation("org.springframework.boot:spring-boot-starter-data-cassandra") // База данных
+    implementation("org.springframework.boot:spring-boot-starter-web") // Для API запросов
     implementation("com.googlecode.json-simple:json-simple:1.1.1") // Взаимодействие с JSON файлами
     implementation("com.github.pengrad:java-telegram-bot-api:7.9.1") // Интеграция с Telegram
 }
