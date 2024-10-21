@@ -8,29 +8,32 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
-// Чтение входных данных с терминала
-public class InputTerminal implements Input {
-    public Scanner input = new Scanner(System.in);
+
+public class InputHandler implements Input {
+    public Scanner scanner = new Scanner(System.in);
+    public Output output = new OutputHandler();
     public Validate validate = new Validate();
 
-    // Считать строку из терминала
+    public InputHandler() {}
+
     public String read(Interaction interaction) {
-        return input.nextLine();
+        return scanner.nextLine();
     }
 
-    // Считать строку с терминала и вернуть её
     @Override
     public String getString(Interaction interaction) {
-        return read(interaction);
+        String message = read(interaction);
+        interaction.TELEGRAM_BOT.removeGetUpdatesListener();
+        return message;
     }
 
-    // Считать строку с терминала, сплитнуть по разделителю и вернуть массив аргументов
     @Override
     public List<String> getString(Interaction interaction, String separator) {
-        return List.of(read(interaction).split(separator));
+        String message = read(interaction);
+        return List.of(message.split(separator));
     }
 
-    // Считать строку с терминала, парснуть её в число и вывести, если получилось число, иначе вывести ошибку
+    @Override
     public int getInt(Interaction interaction) {
         String strInteger;
 
@@ -41,23 +44,23 @@ public class InputTerminal implements Input {
             if (intValue.isPresent()) {
                 return intValue.get();
             } else {
-                System.out.print("Error. Invalid value. Try again: ");
+                output.output(interaction.setMessage("Error. Invalid value. Try again: "));
             }
         }
     }
 
-    // Считать строку с терминала, парснуть её в дату и вывести, если получилось дату, иначе вывести ошибку
+    @Override
     public LocalDate getDate(Interaction interaction) {
         String strDate;
 
-        while(true) {
+        while (true) {
             strDate = read(interaction);
 
             Optional<LocalDate> dateValue = validate.isValidDate(strDate);
             if (dateValue.isPresent()) {
                 return dateValue.get();
             } else {
-                System.out.print("Error. Invalid value. Try again: ");
+                output.output(interaction.setMessage("Error. Invalid value. Try again: "));
             }
         }
     }

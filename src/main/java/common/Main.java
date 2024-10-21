@@ -8,6 +8,7 @@ import common.utils.JSONHandler;
 public class Main {
 
     public static void main(String[] args) {
+
         JSONHandler jsonHandler = new JSONHandler();
         TelegramBot bot = null;
         try {

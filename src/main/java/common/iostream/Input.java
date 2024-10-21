@@ -10,28 +10,30 @@ import java.util.List;
  */
 public interface Input {
 
-    /**
-     * Считать число и её вернуть
-     * @return Integer
-     */
-    int getInt();
+    String read(Interaction interaction);
 
     /**
      * Считать строку и её вернуть
      * @return String
      */
-    String getString();
+    String getString(Interaction interaction);
 
     /**
      * Считать строку и вернуть список аргументов
      * @param separator Разделитель аргументовы
      * @return List
      */
-    List<String> getString(String separator);
+    List<String> getString(Interaction interaction, String separator);
+
+    /**
+     * Считать число и её вернуть
+     * @return Integer
+     */
+    int getInt(Interaction interaction);
 
     /**
      * Считать строку, парснуть в дату LocalDate и её вернуть
      * @return LocalDate
      */
-    LocalDate getDate();
+    LocalDate getDate(Interaction interaction);
 }
