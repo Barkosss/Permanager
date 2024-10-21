@@ -21,25 +21,25 @@ public class TestCommand implements BaseCommand {
 
     @Override
     public void run(Interaction interaction) {
-        Map<String, Map<String, String>> commandStatus = interaction.getCommandStatus();
+        Map<String, Map<String, String>> expectedInput = interaction.getExpectedInput();
 
-        if (!commandStatus.get(getCommandName()).containsKey("firstMessage")) {
-            interaction.getValue(getCommandName(), "firstMessage");
+        if (!expectedInput.get(getCommandName()).containsKey("firstMessage")) {
+            interaction.getValueInt(getCommandName(), "firstMessage");
             output.output(interaction.setMessage("Enter first message: ").setInline(true));
             return;
         }
 
-        if (!commandStatus.get(getCommandName()).containsKey("secondMessage")) {
+        if (!expectedInput.get(getCommandName()).containsKey("secondMessage")) {
             interaction.getValue(getCommandName(), "secondMessage");
             output.output(interaction.setMessage("Enter second message: ").setInline(true));
             return;
         }
 
-        String firstMessage = commandStatus.get(getCommandName()).get("firstMessage");
-        String secondMessage = commandStatus.get(getCommandName()).get("secondMessage");
+        String firstMessage = expectedInput.get(getCommandName()).get("firstMessage");
+        String secondMessage = expectedInput.get(getCommandName()).get("secondMessage");
 
         output.output(interaction.setMessage("First message: " + firstMessage).setInline(false));
         output.output(interaction.setMessage("Second message: " + secondMessage).setInline(false));
-        interaction.clearCommandStatus(getCommandName());
+        interaction.clearExpectedInput(getCommandName());
     }
 }
