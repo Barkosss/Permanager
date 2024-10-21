@@ -16,12 +16,15 @@ public class Main {
 
         } catch(Exception err) {
             System.out.println("[ERROR] Telegram authorization: " + err);
-            System.exit(404);
+            System.exit(511);
         }
-        Interaction interaction = new Interaction(bot); // Сохраняем токен бота
+        // Сохраняем токен бота
+        Interaction interaction = new Interaction(bot);
 
         CommandHandler commandHandler = new CommandHandler();
-        commandHandler.commandLoader(); // Загружаем все команды
-        commandHandler.getCommand(interaction); // Вызываем команды из терминала
+        // Загружаем все команды
+        commandHandler.commandLoader();
+        // Вызываем команды из терминала
+        commandHandler.getCommand(interaction);
     }
 }

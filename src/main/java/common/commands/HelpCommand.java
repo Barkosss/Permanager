@@ -38,6 +38,7 @@ public class HelpCommand implements BaseCommand {
             helpOutput.append("--------- HELP ---------\n");
 
             output.output(interaction.setMessage(helpOutput.toString()).setInline(false));
+
         } catch (Exception err) {
             System.out.println("[ERROR] Error: " + err);
         }
