@@ -2,6 +2,7 @@ package common;
 
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+
 import common.commands.BaseCommand;
 import common.iostream.*;
 import common.models.Interaction;
@@ -32,17 +33,17 @@ public class CommandHandler {
             if (message.startsWith("/") && message.charAt(1) != ' ') {
                 long chatId = update.message().chat().id();
                 List<String> args = List.of(message.split(" "));
-                String commandName = args.getFirst().toLowerCase();
-                args = args.subList(1, args.size());
-                interaction.setUserID(chatId).setMessage(message).setPlatform("telegram").setArguments(args);
-                commandName = commandName.substring(1);
+                String commandName = args.getFirst().toLowerCase().substring(1);
+
+                interaction.setUserID(chatId).setMessage(message).setPlatform("telegram").setArguments(args.subList(1, args.size()));
+
                 if (baseCommandClasses.containsKey(commandName)) {
-                    if (interaction.getCommandStatus() == null) {
+                    if (interaction.getExpectedInput() == null) {
                         interaction.setValue(new HashMap<>());
                     }
 
-                    if (!interaction.getCommandStatus().containsKey(commandName)) {
-                        Map<String, Map<String, String>> map = interaction.getCommandStatus();
+                    if (!interaction.getExpectedInput().containsKey(commandName)) {
+                        Map<String, Map<String, String>> map = interaction.getExpectedInput();
                         map.put(commandName, new HashMap<>());
                         interaction.setValue(map);
                     }
@@ -62,12 +63,12 @@ public class CommandHandler {
 
             } else {
                 // Если не команда
-                if (interaction.getCommandStatusKey() != null) {
-                    Map<String, Map<String, String>> map = interaction.getCommandStatus();
-                    map.get(interaction.getCommandStatusName()).put(interaction.getCommandStatusKey(), message);
+                if (interaction.getInputKey() != null) {
+                    Map<String, Map<String, String>> map = interaction.getExpectedInput();
+                    map.get(interaction.getInputCommandName()).put(interaction.getInputKey(), message);
                     interaction.setValue(map);
 
-                    baseCommandClasses.get(interaction.getCommandStatusName()).run(interaction);
+                    baseCommandClasses.get(interaction.getInputCommandName()).run(interaction);
                 }
             }
 
@@ -84,16 +85,16 @@ public class CommandHandler {
         // Вызываем метод для чтения сообщений из телеграмма
 
         while(true) {
-            if (interaction.getCommandStatusKey() == null) {
+            if (interaction.getInputKey() == null) {
                 output.output(interaction.setMessage("Enter command: ").setPlatform("terminal").setInline(true));
             }
-            String message = input.getString(interaction);
-            List<String> args = List.of(message.split(" "));
-            interaction.setMessage(message).setPlatform("terminal");
 
+            String message = input.getString(interaction).trim();
+
+            List<String> args = List.of(message.split(" "));
             String commandName = args.getFirst().toLowerCase();
-            args = args.subList(1, args.size());
-            interaction.setArguments(args);
+
+            interaction.setMessage(message).setPlatform("terminal").setArguments(args.subList(1, args.size()));
 
             // Если команда - выключить бота
             if (commandName.equals("exit")) {
@@ -102,12 +103,12 @@ public class CommandHandler {
             }
 
             if (baseCommandClasses.containsKey(commandName)) {
-                if (interaction.getCommandStatus() == null) {
+                if (interaction.getExpectedInput() == null) {
                     interaction.setValue(new HashMap<>());
                 }
 
-                if (!interaction.getCommandStatus().containsKey(commandName)) {
-                    Map<String, Map<String, String>> map = interaction.getCommandStatus();
+                if (!interaction.getExpectedInput().containsKey(commandName)) {
+                    Map<String, Map<String, String>> map = interaction.getExpectedInput();
                     map.put(commandName, new HashMap<>());
                     interaction.setValue(map);
                 }
@@ -122,12 +123,12 @@ public class CommandHandler {
 
             } else {
                 // Если не команда
-                if (interaction.getCommandStatusKey() != null) {
-                    Map<String, Map<String, String>> map = interaction.getCommandStatus();
-                    map.get(interaction.getCommandStatusName()).put(interaction.getCommandStatusKey(), message);
+                if (interaction.getInputKey() != null) {
+                    Map<String, Map<String, String>> map = interaction.getExpectedInput();
+                    map.get(interaction.getInputCommandName()).put(interaction.getInputKey(), message);
                     interaction.setValue(map);
 
-                    baseCommandClasses.get(interaction.getCommandStatusName()).run(interaction);
+                    baseCommandClasses.get(interaction.getInputCommandName()).run(interaction);
                 }
             }
         }
