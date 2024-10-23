@@ -25,7 +25,7 @@ public class CommandHandler {
         interaction.TELEGRAM_BOT.setUpdatesListener(updates -> {
 
             // Пробегаемся по массиву изменений
-            for (Update update : updates) {
+            for(Update update : updates) {
 
                 // Если время отправки сообщения раньше, чем запуск бота (Отправлено во время офлайн)
                 if (update.message().date() <= interaction.TIMESTAMP_BOT_START) {
@@ -90,10 +90,10 @@ public class CommandHandler {
                 }
             }
 
-            // Вернут идентификатор последнего обработанного обновления или подтверждение их
-            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+                // Вернут идентификатор последнего обработанного обновления или подтверждение их
+                return UpdatesListener.CONFIRMED_UPDATES_ALL;
 
-            // Создать обработчик исключений
+                // Создать обработчик исключений
         }, err -> System.out.println("[ERROR] Telegram updates listener: " + err));
     }
 
@@ -102,7 +102,7 @@ public class CommandHandler {
         // Вызываем метод для чтения сообщений из телеграмма
         getCommandTelegram(interaction);
 
-        while (true) {
+        while(true) {
             // Проверка, ожидаем ли что-то от пользователя
             if (interaction.getInputKey() == null) {
                 output.output(interaction.setMessage("Enter command: ").setPlatform("terminal").setInline(true));
@@ -140,7 +140,7 @@ public class CommandHandler {
                 try {
                     baseCommandClasses.get(commandName).run(interaction.setPlatform("terminal"));
 
-                } catch (Exception err) {
+                } catch(Exception err) {
                     System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);
                 }
 
