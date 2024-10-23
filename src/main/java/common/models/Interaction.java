@@ -84,23 +84,6 @@ public class Interaction {
         return this;
     }
 
-    // Получить класс, для отправки
-    public SendMessage getSendMessage() {
-        return sendMessage;
-    }
-
-    // Установить класс отправки сообщения
-    public Interaction setSendMessage(SendMessage sendMessage) {
-        this.sendMessage = sendMessage;
-        return this;
-    }
-
-    // ...
-    public Interaction addKeyboard(Component component) {
-        this.sendMessage = sendMessage.replyMarkup(null);
-        return this;
-    }
-
     public boolean getInline() {
         return inline;
     }
