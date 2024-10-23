@@ -27,6 +27,11 @@ public class CommandHandler {
             // Пробегаемся по массиву изменений
             for(Update update : updates) {
 
+                // Если время отправки сообщения раньше, чем запуск бота (Отправлено во время офлайн)
+                if (update.message().date() <= interaction.TIMESTAMP_BOT_START) {
+                    return UpdatesListener.CONFIRMED_UPDATES_ALL;
+                }
+
                 // Проверяем, не пустое ли сообщение
                 if (update.message() == null || update.message().text() == null) {
                     return UpdatesListener.CONFIRMED_UPDATES_ALL;
