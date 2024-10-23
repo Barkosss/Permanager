@@ -1,6 +1,7 @@
 package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.request.SendMessage;
 
 import common.utils.Validate;
 
@@ -14,19 +15,24 @@ public class Interaction {
     enum Type {
         INT,
         STRING,
-        DATE
+        DATE,
     }
 
     public final TelegramBot TELEGRAM_BOT;
 
+    public final long TIMESTAMP_BOT_START;
+
     // Платформа: Terminal, Telegram, Discord
-    public String platform;
+    String platform;
 
     // Для Telegram - Chat ID, для Discord - User ID
     long userID;
 
     // Полное сообщение
     String message;
+
+    // Класс отправки сообщения
+    SendMessage sendMessage;
 
     // Выводить в одну строку или нет
     boolean inline;
@@ -46,8 +52,9 @@ public class Interaction {
     // Map значений, которые указываются пользователем
     Map<String, Map<String, String>> expectedInput;
 
-    public Interaction(TelegramBot telegramBot) {
+    public Interaction(TelegramBot telegramBot, long timestampBotStart) {
         TELEGRAM_BOT = telegramBot;
+        TIMESTAMP_BOT_START = timestampBotStart;
     }
 
     public String getPlatform() {
