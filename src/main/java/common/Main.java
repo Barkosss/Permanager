@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 
 import java.sql.Timestamp;
 
+import common.exceptions.CommandNotFoundException;
 import common.models.Interaction;
 import common.utils.JSONHandler;
 

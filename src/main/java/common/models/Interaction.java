@@ -57,6 +57,13 @@ public class Interaction {
         TIMESTAMP_BOT_START = timestampBotStart;
     }
 
+    public Interaction setUpdate(Update update) {
+        this.userID = update.chatId;
+        this.message = update.message;
+        this.arguments = update.arguments;
+        return this;
+    }
+
     public String getPlatform() {
         return (platform != null) ? (platform) : ("");
     }

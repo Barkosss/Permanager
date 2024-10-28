@@ -9,12 +9,10 @@ import java.util.Optional;
 import java.util.Scanner;
 
 
-public class InputHandler implements Input {
+public class InputConsole implements Input {
     public Scanner scanner = new Scanner(System.in);
     public Output output = new OutputHandler();
     public Validate validate = new Validate();
-
-    public InputHandler() {}
 
     public String read(Interaction interaction) {
         return scanner.nextLine();
