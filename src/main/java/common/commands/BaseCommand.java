@@ -1,6 +1,6 @@
 package common.commands;
 
-import common.models.Interaction;
+import common.models.InteractionTelegram;
 
 /**
  * Интерфейс команд
@@ -13,7 +13,7 @@ public interface BaseCommand {
     /**
      * Запустить команду
      */
-    void run(Interaction interaction);
+    void run(InteractionTelegram interaction);
     //void run(Interaction interaction, Client client);
 
     /**

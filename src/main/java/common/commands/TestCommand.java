@@ -1,12 +1,8 @@
 package common.commands;
 
-import com.pengrad.telegrambot.model.request.Keyboard;
-import com.pengrad.telegrambot.model.request.KeyboardButton;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
-import com.pengrad.telegrambot.request.SendMessage;
 import common.iostream.Output;
 import common.iostream.OutputHandler;
-import common.models.Interaction;
+import common.models.InteractionTelegram;
 
 import java.util.Map;
 
@@ -24,7 +20,7 @@ public class TestCommand implements BaseCommand {
     }
 
     @Override
-    public void run(Interaction interaction) {
+    public void run(InteractionTelegram interaction) {
         Map<String, Map<String, String>> expectedInput = interaction.getExpectedInput();
 
         if (!expectedInput.get(getCommandName()).containsKey("firstMessage")) {

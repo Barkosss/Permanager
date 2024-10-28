@@ -2,11 +2,11 @@ package common.iostream;
 
 import com.pengrad.telegrambot.request.SendMessage;
 
-import common.models.Interaction;
+import common.models.InteractionTelegram;
 
 public class OutputHandler implements Output {
 
-    public void output(Interaction interaction) {
+    public void output(InteractionTelegram interaction) {
         switch(interaction.getPlatform()) {
             case "terminal": {
                 boolean inline = interaction.getInline();

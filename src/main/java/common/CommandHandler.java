@@ -2,7 +2,8 @@ package common;
 
 import common.commands.BaseCommand;
 import common.iostream.*;
-import common.models.Interaction;
+import common.models.InteractionConsole;
+import common.models.InteractionTelegram;
 import common.models.Update;
 
 import org.reflections.Reflections;
@@ -11,18 +12,19 @@ import java.util.Set;
 import java.util.*;
 
 public class CommandHandler {
+
     // Хэшмап классов команд
     public Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
     Output output = new OutputHandler();
 
     // Запуск команд в телеграмме
-    public void getCommandTelegram(Interaction interaction) {
+    public void getCommandTelegram(InteractionTelegram interactionTelegram) {
         InputTelegram input = new InputTelegram();
-        List<Update> updates = input.getUpdates(interaction);
+        List<Update> updates = input.getUpdates(interactionTelegram);
 
         for(Update update : updates) {
             // Если время отправки сообщения раньше, чем запуск бота (Отправлено во время офлайн)
-            if (update.getCreatedAt() <= interaction.TIMESTAMP_BOT_START) {
+            if (update.getCreatedAt() <= interactionTelegram.TIMESTAMP_BOT_START) {
                 continue;
             }
 
@@ -40,26 +42,26 @@ public class CommandHandler {
                 List<String> args = List.of(message.split(" "));
                 String commandName = args.getFirst().toLowerCase().substring(1);
 
-                interaction.setUpdate(update).setPlatform("telegram").setArguments(args.subList(1, args.size()));
+                interactionTelegram.setUpdate(update).setPlatform("telegram").setArguments(args.subList(1, args.size()));
 
                 // Если введённая команда имеется в хэшмап
                 if (baseCommandClasses.containsKey(commandName)) {
                     // Если хэшмапа не инициализирована
-                    if (interaction.getExpectedInput() == null) {
+                    if (interactionTelegram.getExpectedInput() == null) {
                         // Инициализируем
-                        interaction.setValue(new HashMap<>());
+                        interactionTelegram.setValue(new HashMap<>());
                     }
 
                     // Если в хэшмапе не нашли ключ со значением "название команды"
-                    if (!interaction.getExpectedInput().containsKey(commandName)) {
-                        Map<String, Map<String, String>> map = interaction.getExpectedInput();
+                    if (!interactionTelegram.getExpectedInput().containsKey(commandName)) {
+                        Map<String, Map<String, String>> map = interactionTelegram.getExpectedInput();
                         map.put(commandName, new HashMap<>());
-                        interaction.setValue(map);
+                        interactionTelegram.setValue(map);
                     }
 
                     // Запустить класс, в котором будет работать команда
                     try {
-                        baseCommandClasses.get(commandName).run(interaction);
+                        baseCommandClasses.get(commandName).run(interactionTelegram);
 
                     } catch (Exception err) {
                         System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);
@@ -67,38 +69,39 @@ public class CommandHandler {
 
                 } else {
                     // Ошибка: Команда не найдена.
-                    //throw new CommandNotFoundException();
-                    //output.output(interaction.setUserID(chatId).setMessage("Error: Command \"" + commandName + "\" is not found."));
+                    output.output(interactionTelegram.setUserID(chatId).setMessage("Error: Command \"" + commandName + "\" is not found."));
                 }
 
                 // Если не команда
             } else {
 
                 // Проверка, ожидаем ли мы что-то от пользователя
-                if (interaction.getInputKey() != null) {
-                    Map<String, Map<String, String>> map = interaction.getExpectedInput();
-                    map.get(interaction.getInputCommandName()).put(interaction.getInputKey(), message);
-                    interaction.setValue(map);
+                if (interactionTelegram.getInputKey() != null) {
+                    Map<String, Map<String, String>> map = interactionTelegram.getExpectedInput();
+                    map.get(interactionTelegram.getInputCommandName()).put(interactionTelegram.getInputKey(), message);
+                    interactionTelegram.setValue(map);
 
-                    baseCommandClasses.get(interaction.getInputCommandName()).run(interaction);
+                    baseCommandClasses.get(interactionTelegram.getInputCommandName()).run(interactionTelegram);
                 }
             }
         }
     }
 
     // Запуск команды
-    public void getCommand(Interaction interaction) {
+    public void getCommand(InteractionTelegram interactionTelegram) {
         Input input = new InputConsole();
         // Вызываем метод для чтения сообщений из телеграмма
-        getCommandTelegram(interaction);
+        getCommandTelegram(interactionTelegram);
+
+        InteractionConsole interactionConsole = new InteractionConsole();
 
         while(true) {
             // Проверка, ожидаем ли что-то от пользователя
-            if (interaction.getInputKey() == null) {
-                output.output(interaction.setMessage("Enter command: ").setPlatform("terminal").setInline(true));
+            if (interactionConsole.getInputKey() == null) {
+                output.output(interactionConsole.setMessage("Enter command: ").setPlatform("terminal").setInline(true));
             }
 
-            String message = input.getString(interaction).trim();
+            String message = input.getString().trim();
 
             List<String> args = List.of(message.split(" "));
             String commandName = args.getFirst().toLowerCase();
@@ -106,29 +109,28 @@ public class CommandHandler {
             // Если команда - выключить бота
             if (commandName.equals("exit")) {
                 System.out.println("Program is stop");
-                interaction.TELEGRAM_BOT.removeGetUpdatesListener();
                 System.exit(0);
             }
 
-            interaction.setMessage(message).setPlatform("terminal").setArguments(args.subList(1, args.size()));
+            interactionConsole.setMessage(message).setPlatform("terminal").setArguments(args.subList(1, args.size()));
 
             // Если название команды есть в хэшмапе
             if (baseCommandClasses.containsKey(commandName)) {
                 // Проверяем, пустой ли хэшмап (для ожидаемых значений)
-                if (interaction.getExpectedInput() == null) {
-                    interaction.setValue(new HashMap<>());
+                if (interactionConsole.getExpectedInput() == null) {
+                    interactionConsole.setValue(new HashMap<>());
                 }
 
                 // Проверка, имеется ли в хэшмапе ключ "название команды"
-                if (!interaction.getExpectedInput().containsKey(commandName)) {
-                    Map<String, Map<String, String>> map = interaction.getExpectedInput();
+                if (!interactionConsole.getExpectedInput().containsKey(commandName)) {
+                    Map<String, Map<String, String>> map = interactionConsole.getExpectedInput();
                     map.put(commandName, new HashMap<>());
-                    interaction.setValue(map);
+                    interactionConsole.setValue(map);
                 }
 
                 // Запустить класс, в котором будет работать команда
                 try {
-                    baseCommandClasses.get(commandName).run(interaction.setPlatform("terminal"));
+                    baseCommandClasses.get(commandName).run(interactionConsole.setPlatform("terminal"));
 
                 } catch(Exception err) {
                     System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);
@@ -138,12 +140,12 @@ public class CommandHandler {
             } else {
 
                 // Проверка, ожидаем ли ответ от пользователя
-                if (interaction.getInputKey() != null) {
-                    Map<String, Map<String, String>> map = interaction.getExpectedInput();
-                    map.get(interaction.getInputCommandName()).put(interaction.getInputKey(), message);
-                    interaction.setValue(map);
+                if (interactionConsole.getInputKey() != null) {
+                    Map<String, Map<String, String>> map = interactionConsole.getExpectedInput();
+                    map.get(interactionConsole.getInputCommandName()).put(interactionConsole.getInputKey(), message);
+                    interactionConsole.setValue(map);
 
-                    baseCommandClasses.get(interaction.getInputCommandName()).run(interaction);
+                    baseCommandClasses.get(interactionConsole.getInputCommandName()).run(interactionConsole);
                 }
             }
         }

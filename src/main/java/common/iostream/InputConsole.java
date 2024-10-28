@@ -1,6 +1,7 @@
 package common.iostream;
 
-import common.models.Interaction;
+import common.models.AbstractInteraction;
+import common.models.InteractionTelegram;
 import common.utils.Validate;
 
 import java.time.LocalDate;
@@ -14,25 +15,23 @@ public class InputConsole implements Input {
     public Output output = new OutputHandler();
     public Validate validate = new Validate();
 
-    public String read(Interaction interaction) {
+    public String read() {
         return scanner.nextLine();
     }
 
     @Override
-    public String getString(Interaction interaction) {
-        String message = read(interaction);
-        interaction.TELEGRAM_BOT.removeGetUpdatesListener();
-        return message;
+    public String getString() {
+        return read();
     }
 
     @Override
-    public List<String> getString(Interaction interaction, String separator) {
+    public List<String> getString(InteractionTelegram interaction, String separator) {
         String message = read(interaction);
         return List.of(message.split(separator));
     }
 
     @Override
-    public int getInt(Interaction interaction) {
+    public int getInt(InteractionTelegram interaction) {
         String strInteger;
 
         while(true) {
@@ -48,7 +47,7 @@ public class InputConsole implements Input {
     }
 
     @Override
-    public LocalDate getDate(Interaction interaction) {
+    public LocalDate getDate(InteractionTelegram interaction) {
         String strDate;
 
         while (true) {

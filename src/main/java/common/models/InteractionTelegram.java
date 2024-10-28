@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class Interaction {
+public class InteractionTelegram {
 
     enum Type {
         INT,
@@ -52,12 +52,12 @@ public class Interaction {
     // Map значений, которые указываются пользователем
     Map<String, Map<String, String>> expectedInput;
 
-    public Interaction(TelegramBot telegramBot, long timestampBotStart) {
+    public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
         TELEGRAM_BOT = telegramBot;
         TIMESTAMP_BOT_START = timestampBotStart;
     }
 
-    public Interaction setUpdate(Update update) {
+    public InteractionTelegram setUpdate(Update update) {
         this.userID = update.chatId;
         this.message = update.message;
         this.arguments = update.arguments;
@@ -68,7 +68,7 @@ public class Interaction {
         return (platform != null) ? (platform) : ("");
     }
 
-    public Interaction setPlatform(String platform) {
+    public InteractionTelegram setPlatform(String platform) {
         this.platform = platform;
         return this;
     }
@@ -77,7 +77,7 @@ public class Interaction {
         return userID;
     }
 
-    public Interaction setUserID(long userID) {
+    public InteractionTelegram setUserID(long userID) {
         this.userID = userID;
         return this;
     }
@@ -86,7 +86,7 @@ public class Interaction {
         return message;
     }
 
-    public Interaction setMessage(String message) {
+    public InteractionTelegram setMessage(String message) {
         this.message = message;
         return this;
     }
@@ -95,7 +95,7 @@ public class Interaction {
         return inline;
     }
 
-    public Interaction setInline(boolean inline) {
+    public InteractionTelegram setInline(boolean inline) {
         this.inline = inline;
         return this;
     }
@@ -136,7 +136,7 @@ public class Interaction {
         this.userInputType = Type.INT;
     }
 
-    public Interaction getValueDate(String commandName, String key) {
+    public InteractionTelegram getValueDate(String commandName, String key) {
         setInputCommandName(commandName);
         setInputKey(key);
         this.userInputType = Type.DATE;

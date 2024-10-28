@@ -1,6 +1,6 @@
 package common.commands;
 
-import common.models.Interaction;
+import common.models.InteractionTelegram;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,7 +19,7 @@ public class ReminderCommand implements BaseCommand {
     }
 
     // Вызвать основной метод команды
-    public void run(Interaction interaction) {
+    public void run(InteractionTelegram interaction) {
         try {
             List<String> arguments = interaction.getArguments();
             // Получаем объект Method, представляющий метод с указанным именем

@@ -1,11 +1,11 @@
 package common.iostream;
 
-import common.models.Interaction;
+import common.models.InteractionTelegram;
 
 /**
  * Интерфейс для вывода
  */
 public interface Output {
 
-    void output(Interaction interaction);
+    void output(InteractionTelegram interaction);
 }
