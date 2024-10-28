@@ -2,7 +2,7 @@ package common.commands;
 
 import common.iostream.Output;
 import common.iostream.OutputHandler;
-import common.models.InteractionTelegram;
+import common.models.Interaction;
 
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class TestCommand implements BaseCommand {
     }
 
     @Override
-    public void run(InteractionTelegram interaction) {
+    public void run(Interaction interaction) {
         Map<String, Map<String, String>> expectedInput = interaction.getExpectedInput();
 
         if (!expectedInput.get(getCommandName()).containsKey("firstMessage")) {

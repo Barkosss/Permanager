@@ -3,6 +3,7 @@ package common.iostream;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 
+import common.models.Interaction;
 import common.models.InteractionTelegram;
 
 import java.time.LocalDate;
@@ -11,11 +12,11 @@ import java.util.List;
 
 public class InputTelegram implements Input {
 
-    public List<common.models.Update> read(InteractionTelegram interaction) {
+    public List<common.models.Update> read(Interaction interaction) {
         List<common.models.Update> smallUpdates = new ArrayList<>();
 
         // Обработка всех изменений
-        interaction.TELEGRAM_BOT.setUpdatesListener(updates -> {
+        ((InteractionTelegram)interaction).TELEGRAM_BOT.setUpdatesListener(updates -> {
             common.models.Update smallUpdate = new common.models.Update();
 
             for(Update update : updates) {
@@ -31,7 +32,7 @@ public class InputTelegram implements Input {
         return smallUpdates;
     }
 
-    public List<common.models.Update> getUpdates(InteractionTelegram interaction) {
+    public List<common.models.Update> getUpdates(Interaction interaction) {
         return read(interaction);
     }
 
@@ -41,17 +42,17 @@ public class InputTelegram implements Input {
     }
 
     @Override
-    public List<String> getString(InteractionTelegram interaction, String separator) {
+    public List<String> getString(Interaction interaction, String separator) {
         return List.of();
     }
 
     @Override
-    public int getInt(InteractionTelegram interaction) {
+    public int getInt(Interaction interaction) {
         return 0;
     }
 
     @Override
-    public LocalDate getDate(InteractionTelegram interaction) {
+    public LocalDate getDate(Interaction interaction) {
         return null;
     }
 }

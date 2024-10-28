@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class InteractionTelegram {
+public class InteractionTelegram implements Interaction {
 
     enum Type {
         INT,
@@ -23,7 +23,7 @@ public class InteractionTelegram {
     public final long TIMESTAMP_BOT_START;
 
     // Платформа: Terminal, Telegram, Discord
-    String platform;
+    Platform platform;
 
     // Для Telegram - Chat ID, для Discord - User ID
     long userID;
@@ -64,11 +64,11 @@ public class InteractionTelegram {
         return this;
     }
 
-    public String getPlatform() {
-        return (platform != null) ? (platform) : ("");
+    public Platform getPlatform() {
+        return platform;
     }
 
-    public InteractionTelegram setPlatform(String platform) {
+    public Interaction setPlatform(Platform platform) {
         this.platform = platform;
         return this;
     }
@@ -86,7 +86,7 @@ public class InteractionTelegram {
         return message;
     }
 
-    public InteractionTelegram setMessage(String message) {
+    public Interaction setMessage(String message) {
         this.message = message;
         return this;
     }
@@ -95,7 +95,7 @@ public class InteractionTelegram {
         return inline;
     }
 
-    public InteractionTelegram setInline(boolean inline) {
+    public Interaction setInline(boolean inline) {
         this.inline = inline;
         return this;
     }
@@ -104,24 +104,27 @@ public class InteractionTelegram {
         return arguments;
     }
 
-    public void setArguments(List<String> arguments) {
+    public Interaction setArguments(List<String> arguments) {
         this.arguments = arguments;
+        return this;
     }
 
     public String getInputCommandName() {
         return inputCommandName;
     }
 
-    public void setInputCommandName(String inputCommandName) {
+    public Interaction setInputCommandName(String inputCommandName) {
         this.inputCommandName = inputCommandName;
+        return this;
     }
 
     public String getInputKey() {
         return inputKey;
     }
 
-    public void setInputKey(String inputKey) {
+    public Interaction setInputKey(String inputKey) {
         this.inputKey = inputKey;
+        return this;
     }
 
     public void getValue(String commandName, String key) {
@@ -147,8 +150,9 @@ public class InteractionTelegram {
         return expectedInput;
     }
 
-    public void setValue(Map<String, Map<String, String>> expectedInput) {
+    public Interaction setValue(Map<String, Map<String, String>> expectedInput) {
         this.expectedInput = expectedInput;
+        return this;
     }
 
     public void clearExpectedInput(String commandName) {

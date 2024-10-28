@@ -1,7 +1,6 @@
 package common.iostream;
 
-import common.models.AbstractInteraction;
-import common.models.InteractionTelegram;
+import common.models.Interaction;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,20 +18,20 @@ public interface Input {
 
     /**
      * Считать строку и вернуть список аргументов
-     * @param separator Разделитель аргументовы
+     * @param separator Разделитель аргументов
      * @return List
      */
-    List<String> getString(InteractionTelegram interaction, String separator);
+    List<String> getString(Interaction interaction, String separator);
 
     /**
      * Считать число и её вернуть
      * @return Integer
      */
-    int getInt(InteractionTelegram interaction);
+    int getInt(Interaction interaction);
 
     /**
      * Считать строку, парснуть в дату LocalDate и её вернуть
      * @return LocalDate
      */
-    LocalDate getDate(InteractionTelegram interaction);
+    LocalDate getDate(Interaction interaction);
 }

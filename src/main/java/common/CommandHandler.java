@@ -42,7 +42,7 @@ public class CommandHandler {
                 List<String> args = List.of(message.split(" "));
                 String commandName = args.getFirst().toLowerCase().substring(1);
 
-                interactionTelegram.setUpdate(update).setPlatform("telegram").setArguments(args.subList(1, args.size()));
+                interactionTelegram.setUpdate(update).setArguments(args.subList(1, args.size()));
 
                 // Если введённая команда имеется в хэшмап
                 if (baseCommandClasses.containsKey(commandName)) {
@@ -98,7 +98,7 @@ public class CommandHandler {
         while(true) {
             // Проверка, ожидаем ли что-то от пользователя
             if (interactionConsole.getInputKey() == null) {
-                output.output(interactionConsole.setMessage("Enter command: ").setPlatform("terminal").setInline(true));
+                output.output(interactionConsole.setMessage("Enter command: ").setInline(true));
             }
 
             String message = input.getString().trim();
@@ -112,7 +112,7 @@ public class CommandHandler {
                 System.exit(0);
             }
 
-            interactionConsole.setMessage(message).setPlatform("terminal").setArguments(args.subList(1, args.size()));
+            interactionConsole.setMessage(message).setArguments(args.subList(1, args.size()));
 
             // Если название команды есть в хэшмапе
             if (baseCommandClasses.containsKey(commandName)) {
@@ -130,7 +130,7 @@ public class CommandHandler {
 
                 // Запустить класс, в котором будет работать команда
                 try {
-                    baseCommandClasses.get(commandName).run(interactionConsole.setPlatform("terminal"));
+                    baseCommandClasses.get(commandName).run(interactionConsole);
 
                 } catch(Exception err) {
                     System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);

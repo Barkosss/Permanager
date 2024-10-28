@@ -2,7 +2,7 @@ package common.commands;
 
 import common.iostream.Output;
 import common.iostream.OutputHandler;
-import common.models.InteractionTelegram;
+import common.models.Interaction;
 import org.reflections.Reflections;
 
 import java.util.Set;
@@ -21,7 +21,7 @@ public class HelpCommand implements BaseCommand {
     }
 
     // Вызвать основной методы команды
-    public void run(InteractionTelegram interaction) {
+    public void run(Interaction interaction) {
         try {
 
             // Получаем в Set все классы, которые имеют интерфейс BaseCommand и находятся в common.commands
