@@ -17,6 +17,7 @@ public class Update {
         this.chatId = update.message().chat().id();
         this.message = update.message().text();
         this.arguments = List.of(update.message().text().split(" "));
+        this.createdAt = System.currentTimeMillis() / 1000;
         return this;
     }
 

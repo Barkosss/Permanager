@@ -15,7 +15,7 @@ public class InteractionConsole implements Interaction {
     List<String> arguments;
 
     // Какой тип ожидается от пользователя
-    InteractionTelegram.Type userInputType;
+    Type userInputType;
 
     // Название команды
     String inputCommandName;
@@ -28,6 +28,10 @@ public class InteractionConsole implements Interaction {
 
     // Выводить в одну строку или нет
     boolean inline;
+
+    public InteractionConsole() {
+        this.platform = Platform.CONSOLE;
+    }
 
     public Platform getPlatform() {
         return platform;

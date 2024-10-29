@@ -2,6 +2,7 @@ package common;
 
 import common.commands.BaseCommand;
 import common.iostream.*;
+import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
 import common.models.Update;
@@ -15,14 +16,16 @@ public class CommandHandler {
 
     // Хэшмап классов команд
     public Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
+
     Output output = new OutputHandler();
 
     // Запуск команд в телеграмме
-    public void getCommandTelegram(InteractionTelegram interactionTelegram) {
-        InputTelegram input = new InputTelegram();
-        List<Update> updates = input.getUpdates(interactionTelegram);
+    public void getCommandTelegram(Interaction interaction, List<Update> updates) {
+        InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction.setPlatform(Interaction.Platform.TELEGRAM));
 
+        System.out.println(updates.toString());
         for(Update update : updates) {
+
             // Если время отправки сообщения раньше, чем запуск бота (Отправлено во время офлайн)
             if (update.getCreatedAt() <= interactionTelegram.TIMESTAMP_BOT_START) {
                 continue;
@@ -91,7 +94,7 @@ public class CommandHandler {
     public void getCommand(InteractionTelegram interactionTelegram) {
         Input input = new InputConsole();
         // Вызываем метод для чтения сообщений из телеграмма
-        getCommandTelegram(interactionTelegram);
+        new InputTelegram().read(interactionTelegram);
 
         InteractionConsole interactionConsole = new InteractionConsole();
 

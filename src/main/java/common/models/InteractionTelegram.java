@@ -2,6 +2,10 @@ package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
 
+import common.utils.Validate;
+
+import java.time.LocalDate;
+import java.util.Optional;
 import java.util.List;
 import java.util.Map;
 
@@ -147,7 +151,6 @@ public class InteractionTelegram implements Interaction {
         expectedInput.get(commandName).clear();
     }
 
-    /* Оставлю на всякий случай
     // Метод для поиска числа в аргументах
     public Optional<Integer> getInt() {
         Validate validate = new Validate();
@@ -173,5 +176,4 @@ public class InteractionTelegram implements Interaction {
         }
         return Optional.empty();
     }
-    */
 }
