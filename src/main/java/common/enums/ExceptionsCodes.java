@@ -22,6 +22,10 @@ public enum ExceptionsCodes {
      */
     TASK_NOT_FOUND(404),
     /**
+     * Команда не найдена
+     */
+    COMMAND_NOT_FOUND(405),
+    /**
      * Разрешение не найдено
      */
     PERMISSIONS_NOT_FOUND(501);

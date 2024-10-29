@@ -10,8 +10,6 @@ import java.util.List;
  */
 public interface Input {
 
-    String read(Interaction interaction);
-
     /**
      * Считать строку и её вернуть
      * @return String
@@ -20,7 +18,7 @@ public interface Input {
 
     /**
      * Считать строку и вернуть список аргументов
-     * @param separator Разделитель аргументовы
+     * @param separator Разделитель аргументов
      * @return List
      */
     List<String> getString(Interaction interaction, String separator);
