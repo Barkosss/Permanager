@@ -66,8 +66,7 @@ public class InteractionConsole implements Interaction {
     }
 
     public String getInputCommandName() {
-        // ...
-        return "";
+        return inputCommandName;
     }
 
     public Interaction setInputCommandName(String inputCommandName) {
@@ -76,7 +75,6 @@ public class InteractionConsole implements Interaction {
     }
 
     public String getInputKey() {
-        // ...
         return inputKey;
     }
 
@@ -92,22 +90,25 @@ public class InteractionConsole implements Interaction {
     }
 
     public Interaction setValue(Map<String, Map<String, String>> expectedInput) {
-        // ...
+        this.expectedInput = expectedInput;
         return this;
     }
 
     public void getValueInt(String commandName, String key) {
-        // ...
+        setInputCommandName(commandName);
+        setInputKey(key);
+        this.userInputType = InteractionTelegram.Type.INT;
     }
 
     public Interaction getValueDate(String commandName, String key) {
-        // ...
+        setInputCommandName(commandName);
+        setInputKey(key);
+        this.userInputType = InteractionTelegram.Type.DATE;
         return null;
     }
 
     public Map<String, Map<String, String>> getExpectedInput() {
-        // ...
-        return Map.of();
+        return expectedInput;
     }
 
     public void clearExpectedInput(String commandName) {

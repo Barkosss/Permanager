@@ -14,7 +14,7 @@ public interface Input {
      * Считать строку и её вернуть
      * @return String
      */
-    String getString();
+    String getString(Interaction interaction);
 
     /**
      * Считать строку и вернуть список аргументов

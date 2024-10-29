@@ -5,12 +5,16 @@ import com.pengrad.telegrambot.model.Update;
 
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.utils.Validate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class InputTelegram implements Input {
+    public Output output = new OutputHandler();
+    public Validate validate = new Validate();
 
     public List<common.models.Update> read(Interaction interaction) {
         List<common.models.Update> smallUpdates = new ArrayList<>();
@@ -37,22 +41,59 @@ public class InputTelegram implements Input {
     }
 
     @Override
-    public String getString() {
-        return "";
+    public String getString(Interaction interaction) {
+        return read(interaction).getFirst().getMessage();
     }
 
     @Override
     public List<String> getString(Interaction interaction, String separator) {
-        return List.of();
+        List<String> messages = new ArrayList<>();
+        List<common.models.Update> updates = read(interaction);
+
+        for(common.models.Update update : updates) {
+            messages.add(update.getMessage());
+        }
+
+        return messages;
     }
 
     @Override
     public int getInt(Interaction interaction) {
-        return 0;
+        String strInteger;
+
+        while(true) {
+            List<common.models.Update> updates = read(interaction);
+
+            for(common.models.Update update : updates) {
+                strInteger = update.getMessage();
+
+                Optional<Integer> intValue = validate.isValidInteger(strInteger);
+                if (intValue.isPresent()) {
+                    return intValue.get();
+                } else {
+                    output.output(interaction.setMessage("Error. Invalid value. Try again"));
+                }
+            }
+        }
     }
 
     @Override
     public LocalDate getDate(Interaction interaction) {
-        return null;
+        String strDate;
+
+        while (true) {
+            List<common.models.Update> updates = read(interaction);
+
+            for(common.models.Update update : updates) {
+                strDate = update.getMessage();
+
+                Optional<LocalDate> dateValue = validate.isValidDate(strDate);
+                if (dateValue.isPresent()) {
+                    return dateValue.get();
+                } else {
+                    output.output(interaction.setMessage("Error. Invalid value. Try again"));
+                }
+            }
+        }
     }
 }

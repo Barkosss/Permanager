@@ -9,7 +9,13 @@ public interface Interaction {
         CONSOLE,
         TELEGRAM,
         DISCORD
-    };
+    }
+
+    enum Type {
+        INT,
+        STRING,
+        DATE,
+    }
 
     Platform getPlatform();
 

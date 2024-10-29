@@ -1,22 +1,11 @@
 package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.request.SendMessage;
 
-import common.utils.Validate;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class InteractionTelegram implements Interaction {
-
-    enum Type {
-        INT,
-        STRING,
-        DATE,
-    }
 
     public final TelegramBot TELEGRAM_BOT;
 
@@ -30,9 +19,6 @@ public class InteractionTelegram implements Interaction {
 
     // Полное сообщение
     String message;
-
-    // Класс отправки сообщения
-    SendMessage sendMessage;
 
     // Выводить в одну строку или нет
     boolean inline;
@@ -161,6 +147,7 @@ public class InteractionTelegram implements Interaction {
         expectedInput.get(commandName).clear();
     }
 
+    /* Оставлю на всякий случай
     // Метод для поиска числа в аргументах
     public Optional<Integer> getInt() {
         Validate validate = new Validate();
@@ -186,4 +173,5 @@ public class InteractionTelegram implements Interaction {
         }
         return Optional.empty();
     }
+    */
 }

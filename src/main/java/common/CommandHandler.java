@@ -101,7 +101,7 @@ public class CommandHandler {
                 output.output(interactionConsole.setMessage("Enter command: ").setInline(true));
             }
 
-            String message = input.getString().trim();
+            String message = input.getString(interactionConsole).trim();
 
             List<String> args = List.of(message.split(" "));
             String commandName = args.getFirst().toLowerCase();

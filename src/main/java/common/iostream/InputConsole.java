@@ -19,7 +19,7 @@ public class InputConsole implements Input {
     }
 
     @Override
-    public String getString() {
+    public String getString(Interaction interaction) {
         return read();
     }
 
