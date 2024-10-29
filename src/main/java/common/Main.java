@@ -27,6 +27,6 @@ public class Main {
         // Загружаем все команды
         commandHandler.commandLoader();
         // Вызываем команды из терминала
-        commandHandler.getCommand(interactionTelegram);
+        commandHandler.getCommand(interactionTelegram, commandHandler);
     }
 }

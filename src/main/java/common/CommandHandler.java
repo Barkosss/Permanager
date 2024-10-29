@@ -16,14 +16,12 @@ public class CommandHandler {
 
     // Хэшмап классов команд
     public Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
-
     Output output = new OutputHandler();
 
     // Запуск команд в телеграмме
     public void getCommandTelegram(Interaction interaction, List<Update> updates) {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction.setPlatform(Interaction.Platform.TELEGRAM));
 
-        System.out.println(updates.toString());
         for(Update update : updates) {
 
             // Если время отправки сообщения раньше, чем запуск бота (Отправлено во время офлайн)
@@ -91,10 +89,10 @@ public class CommandHandler {
     }
 
     // Запуск команды
-    public void getCommand(InteractionTelegram interactionTelegram) {
+    public void getCommand(InteractionTelegram interactionTelegram, CommandHandler commandHandler) {
         Input input = new InputConsole();
         // Вызываем метод для чтения сообщений из телеграмма
-        new InputTelegram().read(interactionTelegram);
+        new InputTelegram().read(interactionTelegram, commandHandler);
 
         InteractionConsole interactionConsole = new InteractionConsole();
 
@@ -168,7 +166,7 @@ public class CommandHandler {
                 instanceClass = subclass.getConstructor().newInstance();
 
                 // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
-                baseCommandClasses.put(instanceClass.getCommandName(), instanceClass);
+                baseCommandClasses.put(instanceClass.getCommandName().toLowerCase(), instanceClass);
             }
 
         } catch (Exception err) {
