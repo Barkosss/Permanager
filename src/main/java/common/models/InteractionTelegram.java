@@ -117,7 +117,7 @@ public class InteractionTelegram implements Interaction {
         if (sendMessage == null) {
             try {
                 sendMessage = new SendMessage(userID, message).replyMarkup(replyKeyboard);
-            } catch(Exception err) { // Если не получилось создать объект SendMessage -> Нет userID или некорректный inlineKeyboard
+            } catch(Exception err) { // Если не получилось создать объект SendMessage -> Нет userID или некорректный replyKeyboard
                 System.out.println("[ERROR] Interaction Telegram set reply keyboard: " + err);
             }
         } else {
