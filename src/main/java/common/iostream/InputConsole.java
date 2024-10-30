@@ -9,28 +9,23 @@ import java.util.Optional;
 import java.util.Scanner;
 
 
-public class InputHandler implements Input {
+public class InputConsole implements Input {
     public Scanner scanner = new Scanner(System.in);
     public Output output = new OutputHandler();
     public Validate validate = new Validate();
 
-    public InputHandler() {}
-
-    public String read(Interaction interaction) {
+    public String read() {
         return scanner.nextLine();
     }
 
     @Override
     public String getString(Interaction interaction) {
-        String message = read(interaction);
-        interaction.TELEGRAM_BOT.removeGetUpdatesListener();
-        return message;
+        return read();
     }
 
     @Override
     public List<String> getString(Interaction interaction, String separator) {
-        String message = read(interaction);
-        return List.of(message.split(separator));
+        return List.of(read().split(separator));
     }
 
     @Override
@@ -38,7 +33,7 @@ public class InputHandler implements Input {
         String strInteger;
 
         while(true) {
-            strInteger = read(interaction);
+            strInteger = read();
 
             Optional<Integer> intValue = validate.isValidInteger(strInteger);
             if (intValue.isPresent()) {
@@ -54,7 +49,7 @@ public class InputHandler implements Input {
         String strDate;
 
         while (true) {
-            strDate = read(interaction);
+            strDate = read();
 
             Optional<LocalDate> dateValue = validate.isValidDate(strDate);
             if (dateValue.isPresent()) {

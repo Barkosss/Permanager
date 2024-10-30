@@ -1,16 +1,14 @@
 package common.models;
 
-import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.request.SendMessage;
-
-import common.utils.Validate;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-public class Interaction {
+public interface Interaction {
+
+    enum Platform {
+        CONSOLE,
+        TELEGRAM
+    }
 
     enum Type {
         INT,
@@ -18,161 +16,39 @@ public class Interaction {
         DATE,
     }
 
-    public final TelegramBot TELEGRAM_BOT;
+    Platform getPlatform();
 
-    public final long TIMESTAMP_BOT_START;
+    Interaction setPlatform(Platform platform);
 
-    // Платформа: Terminal, Telegram, Discord
-    String platform;
+    Interaction setMessage(String message);
 
-    // Для Telegram - Chat ID, для Discord - User ID
-    long userID;
+    String getMessage();
 
-    // Полное сообщение
-    String message;
+    boolean getInline();
 
-    // Класс отправки сообщения
-    SendMessage sendMessage;
+    Interaction setInline(boolean inline);
 
-    // Выводить в одну строку или нет
-    boolean inline;
+    Interaction setArguments(List<String> arguments);
 
-    // Массив аргументов в сообщении (разделитель - пробел)
-    List<String> arguments;
+    List<String> getArguments();
 
-    // Какой тип ожидается от пользователя
-    Type userInputType;
+    String getInputCommandName();
 
-    // Название команды
-    String inputCommandName;
+    Interaction setInputCommandName(String inputCommandName);
 
-    // Какое значение требуется (ключ Map)
-    String inputKey;
+    String getInputKey();
 
-    // Map значений, которые указываются пользователем
-    Map<String, Map<String, String>> expectedInput;
+    Interaction setInputKey(String inputKey);
 
-    public Interaction(TelegramBot telegramBot, long timestampBotStart) {
-        TELEGRAM_BOT = telegramBot;
-        TIMESTAMP_BOT_START = timestampBotStart;
-    }
+    void getValue(String commandName, String key);
 
-    public String getPlatform() {
-        return (platform != null) ? (platform) : ("");
-    }
+    void getValueInt(String commandName, String key);
 
-    public Interaction setPlatform(String platform) {
-        this.platform = platform;
-        return this;
-    }
+    Interaction getValueDate(String commandName, String key);
 
-    public long getUserID() {
-        return userID;
-    }
+    Map<String, Map<String, String>> getExpectedInput();
 
-    public Interaction setUserID(long userID) {
-        this.userID = userID;
-        return this;
-    }
+    Interaction setValue(Map<String, Map<String, String>> expectedInput);
 
-    public String getMessage() {
-        return message;
-    }
-
-    public Interaction setMessage(String message) {
-        this.message = message;
-        return this;
-    }
-
-    public boolean getInline() {
-        return inline;
-    }
-
-    public Interaction setInline(boolean inline) {
-        this.inline = inline;
-        return this;
-    }
-
-    public List<String> getArguments() {
-        return arguments;
-    }
-
-    public void setArguments(List<String> arguments) {
-        this.arguments = arguments;
-    }
-
-    public String getInputCommandName() {
-        return inputCommandName;
-    }
-
-    public void setInputCommandName(String inputCommandName) {
-        this.inputCommandName = inputCommandName;
-    }
-
-    public String getInputKey() {
-        return inputKey;
-    }
-
-    public void setInputKey(String inputKey) {
-        this.inputKey = inputKey;
-    }
-
-    public void getValue(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Type.STRING;
-    }
-
-    public void getValueInt(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Type.INT;
-    }
-
-    public Interaction getValueDate(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Type.DATE;
-        return this;
-    }
-
-    public Map<String, Map<String, String>> getExpectedInput() {
-        return expectedInput;
-    }
-
-    public void setValue(Map<String, Map<String, String>> expectedInput) {
-        this.expectedInput = expectedInput;
-    }
-
-    public void clearExpectedInput(String commandName) {
-        inputKey = inputCommandName = null;
-        userInputType = null;
-        expectedInput.get(commandName).clear();
-    }
-
-    // Метод для поиска числа в аргументах
-    public Optional<Integer> getInt() {
-        Validate validate = new Validate();
-        Optional<Integer> value;
-        for(String argument : arguments) {
-            value = validate.isValidInteger(argument);
-            if (value.isPresent()) {
-                return value;
-            }
-        }
-        return Optional.empty();
-    }
-
-    // Метод для поиска даты в аргументах
-    public Optional<LocalDate> getDate() {
-        Validate validate = new Validate();
-        Optional<LocalDate> value;
-        for(String argument : arguments) {
-            value = validate.isValidDate(argument);
-            if (value.isPresent()) {
-                return value;
-            }
-        }
-        return Optional.empty();
-    }
+    void clearExpectedInput(String commandName);
 }

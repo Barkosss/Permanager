@@ -4,13 +4,12 @@ import com.pengrad.telegrambot.TelegramBot;
 
 import java.sql.Timestamp;
 
-import common.models.Interaction;
+import common.models.InteractionTelegram;
 import common.utils.JSONHandler;
 
 public class Main {
 
     public static void main(String[] args) {
-
         JSONHandler jsonHandler = new JSONHandler();
         TelegramBot bot = null;
         try {
@@ -21,12 +20,12 @@ public class Main {
             System.exit(511);
         }
         // Сохраняем токен бота
-        Interaction interaction = new Interaction(bot, new Timestamp(System.currentTimeMillis() / 1000).getTime());
+        InteractionTelegram interactionTelegram = new InteractionTelegram(bot, new Timestamp(System.currentTimeMillis() / 1000).getTime());
 
         CommandHandler commandHandler = new CommandHandler();
         // Загружаем все команды
         commandHandler.commandLoader();
         // Вызываем команды из терминала
-        commandHandler.getCommand(interaction);
+        commandHandler.getCommand(interactionTelegram, commandHandler);
     }
 }

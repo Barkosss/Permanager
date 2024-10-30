@@ -1,9 +1,5 @@
 package common.commands;
 
-import com.pengrad.telegrambot.model.request.Keyboard;
-import com.pengrad.telegrambot.model.request.KeyboardButton;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
-import com.pengrad.telegrambot.request.SendMessage;
 import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
