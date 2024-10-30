@@ -23,10 +23,16 @@ public class OutputHandler implements Output {
 
             case TELEGRAM: {
                 InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
-                long chatId = interactionTelegram.getUserID();
-                String message = interactionTelegram.getMessage();
+                SendMessage sendMessage = interactionTelegram.getSendMessage();
 
-                interactionTelegram.TELEGRAM_BOT.execute(new SendMessage(chatId, message));
+                if (sendMessage == null) {
+                    long chatId = interactionTelegram.getUserID();
+                    String message = interactionTelegram.getMessage();
+                    sendMessage = interactionTelegram.setSendMessage(new SendMessage(chatId, message)).getSendMessage();
+                }
+
+                interactionTelegram.TELEGRAM_BOT.execute(sendMessage);
+                interactionTelegram.setSendMessage(null);
                 break;
             }
         }

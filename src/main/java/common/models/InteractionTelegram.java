@@ -1,7 +1,11 @@
 package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import com.pengrad.telegrambot.request.SendMessage;
 
+import common.exceptions.MemberNotFoundException;
 import common.utils.Validate;
 
 import java.time.LocalDate;
@@ -23,6 +27,9 @@ public class InteractionTelegram implements Interaction {
 
     // Полное сообщение
     String message;
+
+    // Объект сообщения (Для Telegram)
+    SendMessage sendMessage;
 
     // Выводить в одну строку или нет
     boolean inline;
@@ -78,6 +85,45 @@ public class InteractionTelegram implements Interaction {
 
     public Interaction setMessage(String message) {
         this.message = message;
+        return this;
+    }
+
+    public SendMessage getSendMessage() {
+        return sendMessage;
+    }
+
+    public InteractionTelegram setSendMessage(SendMessage sendMessage) {
+        this.sendMessage = sendMessage;
+        return this;
+    }
+
+    public InteractionTelegram setInlineKeyboard(InlineKeyboardMarkup inlineKeyboard) {
+
+        if (sendMessage == null) {
+            try {
+                sendMessage = new SendMessage(userID, message).replyMarkup(inlineKeyboard);
+            } catch(Exception err) { // Если не получилось создать объект SendMessage -> Нет userID или некорректный inlineKeyboard
+                System.out.println("[ERROR] Interaction Telegram set inline keyboard: " + err);
+            }
+        } else {
+            sendMessage.replyMarkup(inlineKeyboard);
+        }
+
+        return this;
+    }
+
+    public InteractionTelegram setReplyKeyboard(ReplyKeyboardMarkup replyKeyboard) {
+
+        if (sendMessage == null) {
+            try {
+                sendMessage = new SendMessage(userID, message).replyMarkup(replyKeyboard);
+            } catch(Exception err) { // Если не получилось создать объект SendMessage -> Нет userID или некорректный inlineKeyboard
+                System.out.println("[ERROR] Interaction Telegram set reply keyboard: " + err);
+            }
+        } else {
+            sendMessage.replyMarkup(replyKeyboard);
+        }
+
         return this;
     }
 
