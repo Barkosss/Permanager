@@ -1,5 +1,9 @@
 package common.models;
 
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import com.pengrad.telegrambot.request.SendMessage;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +27,14 @@ public interface Interaction {
     Interaction setMessage(String message);
 
     String getMessage();
+
+    default Interaction setInlineKeyboard(InlineKeyboardMarkup inlineKeyboard) {
+        return null;
+    }
+
+    default Interaction setReplyKeyboard(ReplyKeyboardMarkup replyKeyboard) {
+        return null;
+    }
 
     boolean getInline();
 
