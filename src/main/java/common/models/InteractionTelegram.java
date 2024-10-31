@@ -3,6 +3,7 @@ package common.models;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
 
 import common.exceptions.MemberNotFoundException;
@@ -124,6 +125,11 @@ public class InteractionTelegram implements Interaction {
             sendMessage.replyMarkup(replyKeyboard);
         }
 
+        return this;
+    }
+
+    public InteractionTelegram replyKeyboardRemove() {
+        sendMessage.replyMarkup(new ReplyKeyboardRemove());
         return this;
     }
 

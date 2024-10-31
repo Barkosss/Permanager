@@ -39,7 +39,7 @@ public class TestCommand implements BaseCommand {
         String firstMessage = expectedInput.get(getCommandName()).get("firstMessage");
         String secondMessage = expectedInput.get(getCommandName()).get("secondMessage");
 
-        // Кнопки доступные всем - Прикреплены к сообщениюн
+        // Кнопки доступные всем - Прикреплены к сообщению
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
                 new InlineKeyboardButton("url").url("www.google.com"),
                 new InlineKeyboardButton("callback_data").callbackData("callback_data"),
@@ -52,7 +52,10 @@ public class TestCommand implements BaseCommand {
                 new KeyboardButton("location").requestLocation(true));
 
         output.output(interaction.setMessage("First message: " + firstMessage).setReplyKeyboard(replyKeyboard).setInline(false));
-        output.output(interaction.setMessage("Second message: " + secondMessage).setInlineKeyboard(inlineKeyboard).setInline(false));
+        interaction.sleep(3000);
+        output.output(interaction.setMessage("Second message: " + secondMessage).setInlineKeyboard(inlineKeyboard).replyKeyboardRemove().setInline(false));
+        interaction.sleep(10000);
+        output.output(interaction.setMessage("You wait 10 seconds"));
         interaction.clearExpectedInput(getCommandName());
     }
 }
