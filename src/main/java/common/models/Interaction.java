@@ -2,8 +2,10 @@ package common.models;
 
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +38,10 @@ public interface Interaction {
         return null;
     }
 
+    default Interaction replyKeyboardRemove() {
+        return null;
+    }
+
     boolean getInline();
 
     Interaction setInline(boolean inline);
@@ -63,4 +69,12 @@ public interface Interaction {
     Interaction setValue(Map<String, Map<String, String>> expectedInput);
 
     void clearExpectedInput(String commandName);
+
+    default void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch(InterruptedException err) {
+            System.out.println("[ERROR] Timeout thread: " + err);
+        }
+    }
 }
