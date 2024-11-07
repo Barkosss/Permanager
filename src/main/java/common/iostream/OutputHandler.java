@@ -14,14 +14,17 @@ public class OutputHandler implements Output {
                 InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
                 SendMessage sendMessage = interactionTelegram.getSendMessage();
 
+                // Если отсутствует объект отправки сообщения
                 if (sendMessage == null) {
                     long chatId = interactionTelegram.getUserID();
                     String message = interactionTelegram.getMessage();
                     sendMessage = interactionTelegram.setSendMessage(new SendMessage(chatId, message)).getSendMessage();
                 }
 
+                // Отправляем сообщение пользователю в Telegram
                 interactionTelegram.TELEGRAM_BOT.execute(sendMessage);
-                ((InteractionTelegram) interaction).setSendMessage(null);
+                // Очищаем объект отправки сообщения
+                interactionTelegram.setSendMessage(null);
                 break;
             }
 
