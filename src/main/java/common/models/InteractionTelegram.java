@@ -44,9 +44,9 @@ public class InteractionTelegram implements Interaction {
     }
 
     public InteractionTelegram setUpdate(Content update) {
-        this.userID = update.chatId;
-        this.message = update.message;
-        this.arguments = update.arguments;
+        this.userID = update.chatId();
+        this.message = update.message();
+        this.arguments = update.arguments();
         return this;
     }
 

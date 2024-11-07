@@ -34,7 +34,6 @@ public class OutputHandler implements Output {
                 System.out.println(interactionTelegram.getMessage() + ":" + sendMessage.getParameters().toString());
 
                 interactionTelegram.TELEGRAM_BOT.execute(sendMessage);
-                interactionTelegram.setSendMessage(null);
                 break;
             }
         }

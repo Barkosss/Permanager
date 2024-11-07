@@ -1,6 +1,5 @@
 package common.commands;
 
-import com.pengrad.telegrambot.model.request.*;
 import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -22,16 +21,16 @@ public class TestCommand implements BaseCommand {
 
     @Override
     public void run(Interaction interaction) {
-        Map<String, Map<String, String>> expectedInput = interaction.getExpectedInput();
+        Map<String, Map<String, String>> expectedInput = interaction.getUserInputExpectation().getExpectedInput();
 
         if (!expectedInput.get(getCommandName()).containsKey("firstMessage")) {
-            interaction.getValueInt(getCommandName(), "firstMessage");
+            interaction.getUserInputExpectation().getValueInt(getCommandName(), "firstMessage");
             output.output(interaction.setMessage("Enter first message: ").setInline(true));
             return;
         }
 
         if (!expectedInput.get(getCommandName()).containsKey("secondMessage")) {
-            interaction.getValue(getCommandName(), "secondMessage");
+            interaction.getUserInputExpectation().getValue(getCommandName(), "secondMessage");
             output.output(interaction.setMessage("Enter second message: ").setInline(true));
             return;
         }
@@ -41,6 +40,6 @@ public class TestCommand implements BaseCommand {
 
         output.output(interaction.setMessage("First message: " + firstMessage));
         output.output(interaction.setMessage("Second message: " + secondMessage));
-        interaction.clearExpectedInput(getCommandName());
+        interaction.getUserInputExpectation().clearExpectedInput(getCommandName());
     }
 }
