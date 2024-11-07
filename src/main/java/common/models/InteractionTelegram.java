@@ -1,12 +1,8 @@
 package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
 
-import common.exceptions.MemberNotFoundException;
 import common.utils.Validate;
 
 import java.time.LocalDate;
@@ -38,24 +34,16 @@ public class InteractionTelegram implements Interaction {
     // Массив аргументов в сообщении (разделитель - пробел)
     List<String> arguments;
 
-    // Какой тип ожидается от пользователя
-    Type userInputType;
+    // ...
+    InputExpectation inputExpectation;
 
-    // Название команды
-    String inputCommandName;
-
-    // Какое значение требуется (ключ Map)
-    String inputKey;
-
-    // Map значений, которые указываются пользователем
-    Map<String, Map<String, String>> expectedInput;
 
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
         TELEGRAM_BOT = telegramBot;
         TIMESTAMP_BOT_START = timestampBotStart;
     }
 
-    public InteractionTelegram setUpdate(Update update) {
+    public InteractionTelegram setUpdate(Content update) {
         this.userID = update.chatId;
         this.message = update.message;
         this.arguments = update.arguments;
@@ -98,41 +86,6 @@ public class InteractionTelegram implements Interaction {
         return this;
     }
 
-    public InteractionTelegram setInlineKeyboard(InlineKeyboardMarkup inlineKeyboard) {
-
-        if (sendMessage == null) {
-            try {
-                sendMessage = new SendMessage(userID, message).replyMarkup(inlineKeyboard);
-            } catch(Exception err) { // Если не получилось создать объект SendMessage -> Нет userID или некорректный inlineKeyboard
-                System.out.println("[ERROR] Interaction Telegram set inline keyboard: " + err);
-            }
-        } else {
-            sendMessage.replyMarkup(inlineKeyboard);
-        }
-
-        return this;
-    }
-
-    public InteractionTelegram setReplyKeyboard(ReplyKeyboardMarkup replyKeyboard) {
-
-        if (sendMessage == null) {
-            try {
-                sendMessage = new SendMessage(userID, message).replyMarkup(replyKeyboard);
-            } catch(Exception err) { // Если не получилось создать объект SendMessage -> Нет userID или некорректный replyKeyboard
-                System.out.println("[ERROR] Interaction Telegram set reply keyboard: " + err);
-            }
-        } else {
-            sendMessage.replyMarkup(replyKeyboard);
-        }
-
-        return this;
-    }
-
-    public InteractionTelegram replyKeyboardRemove() {
-        sendMessage.replyMarkup(new ReplyKeyboardRemove());
-        return this;
-    }
-
     public boolean getInline() {
         return inline;
     }
@@ -151,56 +104,8 @@ public class InteractionTelegram implements Interaction {
         return this;
     }
 
-    public String getInputCommandName() {
-        return inputCommandName;
-    }
-
-    public Interaction setInputCommandName(String inputCommandName) {
-        this.inputCommandName = inputCommandName;
-        return this;
-    }
-
-    public String getInputKey() {
-        return inputKey;
-    }
-
-    public Interaction setInputKey(String inputKey) {
-        this.inputKey = inputKey;
-        return this;
-    }
-
-    public void getValue(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Type.STRING;
-    }
-
-    public void getValueInt(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Type.INT;
-    }
-
-    public InteractionTelegram getValueDate(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Type.DATE;
-        return this;
-    }
-
-    public Map<String, Map<String, String>> getExpectedInput() {
-        return expectedInput;
-    }
-
-    public Interaction setValue(Map<String, Map<String, String>> expectedInput) {
-        this.expectedInput = expectedInput;
-        return this;
-    }
-
-    public void clearExpectedInput(String commandName) {
-        inputKey = inputCommandName = null;
-        userInputType = null;
-        expectedInput.get(commandName).clear();
+    public InputExpectation getUserInputExpectation() {
+        return inputExpectation;
     }
 
     // Метод для поиска числа в аргументах

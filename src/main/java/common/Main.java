@@ -23,9 +23,7 @@ public class Main {
         InteractionTelegram interactionTelegram = new InteractionTelegram(bot, new Timestamp(System.currentTimeMillis() / 1000).getTime());
 
         CommandHandler commandHandler = new CommandHandler();
-        // Загружаем все команды
-        commandHandler.commandLoader();
-        // Вызываем команды из терминала
-        commandHandler.getCommand(interactionTelegram, commandHandler);
+        // Запуск взаимодействия
+        commandHandler.config(interactionTelegram, commandHandler);
     }
 }
