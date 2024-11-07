@@ -1,11 +1,14 @@
 package common.iostream;
 
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.Update;
 
 import common.CommandHandler;
+import common.models.Content;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InputTelegram {
@@ -14,9 +17,19 @@ public class InputTelegram {
 
         // Обработка всех изменений
         ((InteractionTelegram)interaction).TELEGRAM_BOT.setUpdatesListener(updates -> {
-            common.models.Update smallUpdate = new common.models.Update();
+            List<Content> contents = new ArrayList<>();
 
-            commandHandler.getCommandTelegram(interaction, List.of(smallUpdate.create(updates.getLast())));
+            ((InteractionTelegram)interaction).setUserID(updates.getLast().message().chat().id());
+
+            for(Update update : updates) {
+                contents.add(new Content(
+                        update.message().text(), // Сообщение пользователя
+                        update.message().date(), // Время отправки, пользователем, сообщения
+                        List.of(update.message().text().split(" ")) // Аргументы сообщения
+                ));
+            }
+
+            commandHandler.launchCommand(interaction, contents);
 
             // Вернут идентификатор последнего обработанного обновления или подтверждение их
             return UpdatesListener.CONFIRMED_UPDATES_ALL;

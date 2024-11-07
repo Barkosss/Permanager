@@ -21,11 +21,9 @@ public class Main {
         }
         // Сохраняем токен бота
         InteractionTelegram interactionTelegram = new InteractionTelegram(bot, new Timestamp(System.currentTimeMillis() / 1000).getTime());
-
+        // Загрузка команд
         CommandHandler commandHandler = new CommandHandler();
-        // Загружаем все команды
-        commandHandler.commandLoader();
-        // Вызываем команды из терминала
-        commandHandler.getCommand(interactionTelegram, commandHandler);
+        // Настройка взаимодействий и запуск программы
+        commandHandler.choosePlatform(interactionTelegram);
     }
 }
