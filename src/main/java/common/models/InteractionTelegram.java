@@ -148,6 +148,7 @@ public class InteractionTelegram implements Interaction {
                 + "\narguments=" + arguments
                 + "\nUserInputExpectation=" + inputExpectation
                 + "})";
+
         return debugMessage;
     }
 }

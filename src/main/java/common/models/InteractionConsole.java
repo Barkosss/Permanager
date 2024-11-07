@@ -72,6 +72,7 @@ public class InteractionConsole implements Interaction {
                 + "\nArguments=" + arguments
                 + "\nUserInputExpectation=" + userInputExpectation
                 + "})";
+
         return debugMessage;
     }
 }
