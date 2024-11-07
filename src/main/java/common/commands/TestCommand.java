@@ -21,10 +21,10 @@ public class TestCommand implements BaseCommand {
 
     @Override
     public void run(Interaction interaction) {
-        Map<String, Map<String, String>> expectedInput = interaction.getUserInputExpectation().getExpectedInput();
+        Map<String, Map<String, String>> expectedInput = interaction.getUserInputExpectation().getExpectedInputs();
 
         if (!expectedInput.get(getCommandName()).containsKey("firstMessage")) {
-            interaction.getUserInputExpectation().getValueInt(getCommandName(), "firstMessage");
+            interaction.getUserInputExpectation().getValue(getCommandName(), "firstMessage");
             output.output(interaction.setMessage("Enter first message: ").setInline(true));
             return;
         }

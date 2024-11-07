@@ -7,64 +7,51 @@ public class InputExpectation {
     // Какой тип ожидается от пользователя
     Interaction.UserInputType userInputType;
 
-    // Название команды
-    String inputCommandName;
+    // Название команды, ожидающая ввод
+    String expectedCommandName;
 
     // Какое значение требуется (ключ Map)
-    String inputKey;
+    String expectedInputKey;
 
     // Map значений, которые указываются пользователем
-    Map<String, Map<String, String>> expectedInput;
+    Map<String, Map<String, String>> expectedInputs;
 
-    public String getInputCommandName() {
-        return inputCommandName;
+    public String getExpectedCommandName() {
+        return expectedCommandName;
     }
 
-    public InputExpectation setInputCommandName(String inputCommandName) {
-        this.inputCommandName = inputCommandName;
+    public InputExpectation setExpectedCommandName(String expectedCommandName) {
+        this.expectedCommandName = expectedCommandName;
         return this;
     }
 
-    public String getInputKey() {
-        return inputKey;
+    public String getExpectedInputKey() {
+        return expectedInputKey;
     }
 
-    public InputExpectation setInputKey(String inputKey) {
-        this.inputKey = inputKey;
+    public InputExpectation setExpectedInputKey(String expectedInputKey) {
+        this.expectedInputKey = expectedInputKey;
         return this;
     }
 
     public void getValue(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
+        setExpectedCommandName(commandName);
+        setExpectedInputKey(key);
         this.userInputType = Interaction.UserInputType.STRING;
     }
 
-    public void getValueInt(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Interaction.UserInputType.INT;
-    }
-
-    public InputExpectation getValueDate(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Interaction.UserInputType.DATE;
-        return this;
-    }
-
-    public Map<String, Map<String, String>> getExpectedInput() {
-        return expectedInput;
+    public Map<String, Map<String, String>> getExpectedInputs() {
+        return expectedInputs;
     }
 
     public InputExpectation setValue(Map<String, Map<String, String>> expectedInput) {
-        this.expectedInput = expectedInput;
+        this.expectedInputs = expectedInput;
         return this;
     }
 
     public void clearExpectedInput(String commandName) {
-        inputKey = inputCommandName = null;
+        expectedInputKey = expectedCommandName = null;
         userInputType = null;
-        expectedInput.get(commandName).clear();
+        expectedInputs.get(commandName).clear();
     }
 }

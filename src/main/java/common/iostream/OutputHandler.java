@@ -23,6 +23,7 @@ public class OutputHandler implements Output {
 
                 // Отправляем сообщение пользователю в Telegram
                 interactionTelegram.TELEGRAM_BOT.execute(sendMessage);
+
                 // Очищаем объект отправки сообщения
                 interactionTelegram.setSendMessage(null);
                 break;

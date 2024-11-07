@@ -19,10 +19,6 @@ public class InteractionConsole implements Interaction {
     // Объект с информацией об ожидаемых данных
     InputExpectation userInputExpectation;
 
-    public InteractionConsole() {
-        this.platform = Platform.CONSOLE;
-    }
-
     public Platform getPlatform() {
         return platform;
     }
@@ -65,14 +61,13 @@ public class InteractionConsole implements Interaction {
 
     @Override
     public String toString() {
-        String debugMessage = "InteractionConsole({"
+
+        return "InteractionConsole({"
                 + "Platform=" + platform
                 + "\nMessage=" + message
                 + "\nInline=" + inline
                 + "\nArguments=" + arguments
                 + "\nUserInputExpectation=" + userInputExpectation
                 + "})";
-
-        return debugMessage;
     }
 }

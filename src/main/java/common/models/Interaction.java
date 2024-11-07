@@ -7,7 +7,6 @@ public interface Interaction {
     enum Platform {
         CONSOLE,
         TELEGRAM,
-        DISCORD,
         ALL
     }
 

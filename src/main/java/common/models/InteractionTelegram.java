@@ -3,12 +3,7 @@ package common.models;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 
-import common.utils.Validate;
-
-import java.time.LocalDate;
-import java.util.Optional;
 import java.util.List;
-import java.util.Map;
 
 public class InteractionTelegram implements Interaction {
 
@@ -41,12 +36,6 @@ public class InteractionTelegram implements Interaction {
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
         TELEGRAM_BOT = telegramBot;
         TIMESTAMP_BOT_START = timestampBotStart;
-    }
-
-    public InteractionTelegram setUpdate(Content update) {
-        this.message = update.message();
-        this.arguments = update.arguments();
-        return this;
     }
 
     public Platform getPlatform() {
@@ -110,35 +99,10 @@ public class InteractionTelegram implements Interaction {
         return inputExpectation;
     }
 
-    // Метод для поиска числа в аргументах
-    public Optional<Integer> getInt() {
-        Validate validate = new Validate();
-        Optional<Integer> value;
-        for(String argument : arguments) {
-            value = validate.isValidInteger(argument);
-            if (value.isPresent()) {
-                return value;
-            }
-        }
-        return Optional.empty();
-    }
-
-    // Метод для поиска даты в аргументах
-    public Optional<LocalDate> getDate() {
-        Validate validate = new Validate();
-        Optional<LocalDate> value;
-        for(String argument : arguments) {
-            value = validate.isValidDate(argument);
-            if (value.isPresent()) {
-                return value;
-            }
-        }
-        return Optional.empty();
-    }
-
     @Override
     public String toString() {
-        String debugMessage = "InteractionConsole({"
+
+        return "InteractionConsole({"
                 +  "Token=" + TELEGRAM_BOT
                 + "\nTIMESTAMP_BOT_START=" + TIMESTAMP_BOT_START
                 + "\nPlatform=" + platform
@@ -148,7 +112,5 @@ public class InteractionTelegram implements Interaction {
                 + "\narguments=" + arguments
                 + "\nUserInputExpectation=" + inputExpectation
                 + "})";
-
-        return debugMessage;
     }
 }

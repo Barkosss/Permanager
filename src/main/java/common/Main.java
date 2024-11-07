@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.TelegramBot;
 
 import java.sql.Timestamp;
 
-import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.utils.JSONHandler;
 
@@ -20,11 +19,11 @@ public class Main {
             System.out.println("[ERROR] Telegram authorization: " + err);
             System.exit(511);
         }
-        // Saving bot's token
+        // Сохраняем токен бота
         InteractionTelegram interactionTelegram = new InteractionTelegram(bot, new Timestamp(System.currentTimeMillis() / 1000).getTime());
-        // Loader commands
+        // Загрузка команд
         CommandHandler commandHandler = new CommandHandler();
-        // Configuration of interactions and program launch
+        // Настройка взаимодействий и запуск программы
         commandHandler.choosePlatform(interactionTelegram);
     }
 }
