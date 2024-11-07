@@ -38,8 +38,8 @@ public class TestCommand implements BaseCommand {
         String firstMessage = expectedInput.get(getCommandName()).get("firstMessage");
         String secondMessage = expectedInput.get(getCommandName()).get("secondMessage");
 
-        output.output(interaction.setMessage("First message: " + firstMessage));
-        output.output(interaction.setMessage("Second message: " + secondMessage));
+        output.output(interaction.setMessage("First message: " + firstMessage).setInline(false));
+        output.output(interaction.setMessage("Second message: " + secondMessage).setInline(false));
         interaction.getUserInputExpectation().clearExpectedInput(getCommandName());
     }
 }

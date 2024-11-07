@@ -62,4 +62,16 @@ public class InteractionConsole implements Interaction {
     public InputExpectation getUserInputExpectation() {
         return userInputExpectation;
     }
+
+    @Override
+    public String toString() {
+        String debugMessage = "InteractionConsole({"
+                + "Platform=" + platform
+                + "\nMessage=" + message
+                + "\nInline=" + inline
+                + "\nArguments=" + arguments
+                + "\nUserInputExpectation=" + userInputExpectation
+                + "})";
+        return debugMessage;
+    }
 }

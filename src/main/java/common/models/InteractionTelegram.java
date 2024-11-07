@@ -44,7 +44,6 @@ public class InteractionTelegram implements Interaction {
     }
 
     public InteractionTelegram setUpdate(Content update) {
-        this.userID = update.chatId();
         this.message = update.message();
         this.arguments = update.arguments();
         return this;
@@ -105,6 +104,9 @@ public class InteractionTelegram implements Interaction {
     }
 
     public InputExpectation getUserInputExpectation() {
+        if (inputExpectation == null) {
+            inputExpectation = new InputExpectation();
+        }
         return inputExpectation;
     }
 
@@ -132,5 +134,20 @@ public class InteractionTelegram implements Interaction {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public String toString() {
+        String debugMessage = "InteractionConsole({"
+                +  "Token=" + TELEGRAM_BOT
+                + "\nTIMESTAMP_BOT_START=" + TIMESTAMP_BOT_START
+                + "\nPlatform=" + platform
+                + "\nUserID=" + userID
+                + "\nMessage=" + message
+                + "\nInline=" + inline
+                + "\narguments=" + arguments
+                + "\nUserInputExpectation=" + inputExpectation
+                + "})";
+        return debugMessage;
     }
 }

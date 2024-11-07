@@ -8,6 +8,7 @@ import common.models.Content;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InputTelegram {
@@ -16,15 +17,19 @@ public class InputTelegram {
 
         // Обработка всех изменений
         ((InteractionTelegram)interaction).TELEGRAM_BOT.setUpdatesListener(updates -> {
+            List<Content> contents = new ArrayList<>();
+
+            ((InteractionTelegram)interaction).setUserID(updates.getLast().message().chat().id());
 
             for(Update update : updates) {
-                commandHandler.run(interaction, List.of(new Content(
-                    update.message().chat().id(), // ID чата
-                    update.message().text(), // Сообщение пользователя
-                    update.message().date(), // Время отправки, пользователем, сообщения
-                    List.of(update.message().text().split(" ")) // Аргументы сообщения
-                )));
+                contents.add(new Content(
+                        update.message().text(), // Сообщение пользователя
+                        update.message().date(), // Время отправки, пользователем, сообщения
+                        List.of(update.message().text().split(" ")) // Аргументы сообщения
+                ));
             }
+
+            commandHandler.launchCommand(interaction, contents);
 
             // Вернут идентификатор последнего обработанного обновления или подтверждение их
             return UpdatesListener.CONFIRMED_UPDATES_ALL;

@@ -5,16 +5,10 @@ import java.util.List;
 public interface Interaction {
 
     enum Platform {
-        CONSOLE("console"),
-        TELEGRAM("telegram"),
-        DISCORD("discord"),
-        ALL("all");
-
-        final String type;
-
-        Platform(String type) {
-            this.type = type;
-        }
+        CONSOLE,
+        TELEGRAM,
+        DISCORD,
+        ALL
     }
 
     enum UserInputType {

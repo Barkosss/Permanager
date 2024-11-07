@@ -16,10 +16,6 @@ public class InputExpectation {
     // Map значений, которые указываются пользователем
     Map<String, Map<String, String>> expectedInput;
 
-    InputExpectation() {
-
-    }
-
     public String getInputCommandName() {
         return inputCommandName;
     }
