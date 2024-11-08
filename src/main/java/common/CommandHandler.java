@@ -45,37 +45,22 @@ public class CommandHandler {
 
     // Запуск программы
     public void launch(Interaction interaction) {
-        switch(interaction.getPlatform()) {
-            case TELEGRAM: {
-                System.out.println("Telegram is active");
-                inputTelegram.read(interaction, this);
-                break;
-            }
+        Interaction.Platform platform = interaction.getPlatform();
 
-            case CONSOLE: {
-                inputConsole.listener(((InteractionConsole) interaction), this);
-            }
-
-            case ALL: {
-                System.out.println("All platforms are active");
-
-                // Поток для Telegram
-                Thread telegramThread = new Thread(() ->
+        // Проверка, что Platform это Telegram или ALL
+        if (platform == Interaction.Platform.TELEGRAM || platform == Interaction.Platform.ALL) {
+            // Поток для Telegram
+            new Thread(() ->
                     inputTelegram.read(interaction.setPlatform(Interaction.Platform.TELEGRAM), this)
-                );
+            ).start();
+        }
 
-                // Запуск потока
-                telegramThread.start();
-
-                // Поток для Console
-                Thread consoleThread = new Thread(() ->
+        // Проверка, что Platform это Console или ALL
+        if (platform == Interaction.Platform.CONSOLE || platform == Interaction.Platform.ALL) {
+            // Поток для Console
+            new Thread(() ->
                     inputConsole.listener(new InteractionConsole(), this)
-                );
-
-                // Запуск потока
-                consoleThread.start();
-            }
-
+            ).start();
         }
     }
 
