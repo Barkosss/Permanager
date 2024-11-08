@@ -5,17 +5,20 @@ import common.iostream.*;
 import common.models.Interaction;
 import common.models.Content;
 
+import common.models.InteractionConsole;
 import org.reflections.Reflections;
 
 import java.util.Set;
-import java.util.*;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
 
 public class CommandHandler {
 
     // Хэшмап классов команд
     public Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
     InputTelegram inputTelegram = new InputTelegram();
-    Input inputConsole = new InputConsole();
+    InputConsole inputConsole = new InputConsole();
     Output output = new OutputHandler();
 
     // Загрузка команд
@@ -50,57 +53,27 @@ public class CommandHandler {
             }
 
             case CONSOLE: {
-                while(true) {
-                    // Проверка, ожидаем ли что-то от пользователя
-                    if (interaction.getUserInputExpectation().getExpectedInputKey() == null) {
-                        output.output(interaction.setMessage("Enter command: ").setInline(true));
-                    }
-
-                    String userInputMessage = inputConsole.getString(interaction).trim();
-
-                    // Если команда - выключить бота
-                    if (userInputMessage.equals("exit")) {
-                        System.out.println("Program is stop");
-                        System.exit(0);
-                    }
-                    launchCommand(interaction, List.of(
-                            new Content(userInputMessage,
-                                    System.currentTimeMillis() / 1000,
-                                    List.of(userInputMessage.split(" "))
-                            )
-                        )
-                    );
-                }
+                inputConsole.listener(((InteractionConsole) interaction), this);
             }
 
-            case ALL: { // TODO: Подумать над переработкой или надобностью. Всё работает только в одной платформе
+            case ALL: {
                 System.out.println("All platforms are active");
-                inputTelegram.read(interaction.setPlatform(Interaction.Platform.TELEGRAM), this);
-                while(true) {
-                    interaction.setPlatform(Interaction.Platform.CONSOLE);
 
-                    // Проверка, ожидаем ли что-то от пользователя
-                    if (interaction.getUserInputExpectation().getExpectedInputKey() == null) {
-                        output.output(interaction.setMessage("Enter command: ").setInline(true));
-                    }
+                // Поток для Telegram
+                Thread telegramThread = new Thread(() ->
+                    inputTelegram.read(interaction.setPlatform(Interaction.Platform.TELEGRAM), this)
+                );
 
-                    String userInputMessage = inputConsole.getString(interaction).trim();
+                // Запуск потока
+                telegramThread.start();
 
+                // Поток для Console
+                Thread consoleThread = new Thread(() ->
+                    inputConsole.listener(new InteractionConsole(), this)
+                );
 
-                    // Если команда - выключить бота
-                    if (userInputMessage.equals("exit")) {
-                        System.out.println("Program is stop");
-                        System.exit(0);
-                    }
-
-                    launchCommand(interaction, List.of(
-                            new Content(userInputMessage,
-                                    System.currentTimeMillis() / 1000,
-                                    List.of(userInputMessage.split(" "))
-                            )
-                        )
-                    );
-                }
+                // Запуск потока
+                consoleThread.start();
             }
 
         }
@@ -144,7 +117,7 @@ public class CommandHandler {
 
                 } else {
                     // Ошибка: Команда не найдена.
-                    output.output(interaction.setMessage("Error: Command \"" + commandName + "\" is not found."));
+                    output.output(interaction.setMessage("Error: Command \"" + commandName + "\" is not found.").setInline(false));
                 }
 
                 // Если не команда
@@ -167,7 +140,7 @@ public class CommandHandler {
         do {
             output.output(interaction.setPlatform(Interaction.Platform.CONSOLE).setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
 
-            String platform = inputConsole.getString(interaction).toLowerCase();
+            String platform = inputConsole.getString().toLowerCase();
 
             try {
                 interaction.setPlatform(Interaction.Platform.valueOf(platform.toUpperCase()));

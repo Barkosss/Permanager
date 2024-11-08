@@ -30,7 +30,7 @@ public class InteractionTelegram implements Interaction {
     List<String> arguments;
 
     // ...
-    InputExpectation inputExpectation;
+    InputExpectation userInputExpectation;
 
 
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
@@ -93,10 +93,10 @@ public class InteractionTelegram implements Interaction {
     }
 
     public InputExpectation getUserInputExpectation() {
-        if (inputExpectation == null) {
-            inputExpectation = new InputExpectation();
+        if (userInputExpectation == null) {
+            userInputExpectation = new InputExpectation();
         }
-        return inputExpectation;
+        return userInputExpectation;
     }
 
     @Override
@@ -110,7 +110,7 @@ public class InteractionTelegram implements Interaction {
                 + "\nMessage=" + message
                 + "\nInline=" + inline
                 + "\narguments=" + arguments
-                + "\nUserInputExpectation=" + inputExpectation
+                + "\nUserInputExpectation=" + userInputExpectation
                 + "})";
     }
 }

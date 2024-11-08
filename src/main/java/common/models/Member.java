@@ -67,4 +67,4 @@ public class Member {
     public void setPermissions(Permissions permissions) {
         this.permissions = permissions;
     }
-};
+}
