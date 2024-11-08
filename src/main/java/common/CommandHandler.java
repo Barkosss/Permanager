@@ -4,8 +4,8 @@ import common.commands.BaseCommand;
 import common.iostream.*;
 import common.models.Interaction;
 import common.models.Content;
-
 import common.models.InteractionConsole;
+
 import org.reflections.Reflections;
 
 import java.util.Set;
