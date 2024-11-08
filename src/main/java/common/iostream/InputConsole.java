@@ -4,7 +4,6 @@ import common.models.Content;
 import common.models.InteractionConsole;
 import common.CommandHandler;
 
-import javax.swing.*;
 import java.util.List;
 import java.util.Scanner;
 
@@ -38,11 +37,11 @@ public class InputConsole {
             }
 
             commandHandler.launchCommand(interaction, List.of(
-                            new Content(userInputMessage,
-                                    System.currentTimeMillis() / 1000,
-                                    List.of(userInputMessage.split(" "))
-                            )
+                    new Content(userInputMessage,
+                            System.currentTimeMillis() / 1000,
+                            List.of(userInputMessage.split(" "))
                     )
+                )
             );
         }
     }
