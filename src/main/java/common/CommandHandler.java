@@ -45,37 +45,22 @@ public class CommandHandler {
 
     // Запуск программы
     public void launch(Interaction interaction) {
-        switch(interaction.getPlatform()) {
-            case TELEGRAM: {
-                System.out.println("Telegram is active");
-                inputTelegram.read(interaction, this);
-                break;
-            }
+        Interaction.Platform platform = interaction.getPlatform();
 
-            case CONSOLE: {
-                inputConsole.listener(((InteractionConsole) interaction), this);
-            }
-
-            case ALL: {
-                System.out.println("All platforms are active");
-
-                // Поток для Telegram
-                Thread telegramThread = new Thread(() ->
+        // Проверка, что Platform это Telegram или ALL
+        if (platform == Interaction.Platform.TELEGRAM || platform == Interaction.Platform.ALL) {
+            // Поток для Telegram
+            new Thread(() ->
                     inputTelegram.read(interaction.setPlatform(Interaction.Platform.TELEGRAM), this)
-                );
+            ).start();
+        }
 
-                // Запуск потока
-                telegramThread.start();
-
-                // Поток для Console
-                Thread consoleThread = new Thread(() ->
+        // Проверка, что Platform это Console или ALL
+        if (platform == Interaction.Platform.CONSOLE || platform == Interaction.Platform.ALL) {
+            // Поток для Console
+            new Thread(() ->
                     inputConsole.listener(new InteractionConsole(), this)
-                );
-
-                // Запуск потока
-                consoleThread.start();
-            }
-
+            ).start();
         }
     }
 
@@ -84,6 +69,10 @@ public class CommandHandler {
 
         for(Content content : contents) {
             String message = content.message();
+
+            if (content.platform() == Interaction.Platform.TELEGRAM) {
+                continue;
+            }
 
             // Проверка, что это команда
             if (message.startsWith("/") && message.charAt(1) != ' ') {
@@ -140,18 +129,22 @@ public class CommandHandler {
         do {
             output.output(interaction.setPlatform(Interaction.Platform.CONSOLE).setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
 
+            // Получаем платформу от пользователя, с консоли
             String platform = inputConsole.getString().toLowerCase();
 
             try {
+                // Пытаемся установить платформу
                 interaction.setPlatform(Interaction.Platform.valueOf(platform.toUpperCase()));
                 break;
 
+                // Ошибка, если указан неправильная платформа
             } catch(IllegalArgumentException err) {
                 output.output(interaction.setMessage("No, there is no such platform. Try again.").setInline(false));
             }
 
         } while(true);
 
+        // Вызываем взаимодействие с нужной платформой
         launch(interaction);
     }
 }

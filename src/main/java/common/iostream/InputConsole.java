@@ -38,10 +38,10 @@ public class InputConsole {
             }
 
             commandHandler.launchCommand(interaction, List.of(
-                    new Content(userInputMessage,
-                            System.currentTimeMillis() / 1000,
-                            List.of(userInputMessage.split(" ")),
-                            Interaction.Platform.CONSOLE
+                    new Content(userInputMessage, // Сообщение пользователя
+                            System.currentTimeMillis() / 1000, // Время отправки, пользователем, сообщения
+                            List.of(userInputMessage.split(" ")), // Аргументы сообщения
+                            Interaction.Platform.CONSOLE // Платформа, с которой пришёл контент
                     )
                 )
             );
