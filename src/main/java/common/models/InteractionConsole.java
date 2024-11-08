@@ -19,6 +19,10 @@ public class InteractionConsole implements Interaction {
     // Объект с информацией об ожидаемых данных
     InputExpectation userInputExpectation;
 
+    public InteractionConsole() {
+        this.platform = Platform.CONSOLE;
+    }
+
     public Platform getPlatform() {
         return platform;
     }
@@ -56,6 +60,9 @@ public class InteractionConsole implements Interaction {
     }
 
     public InputExpectation getUserInputExpectation() {
+        if (userInputExpectation == null) {
+            userInputExpectation = new InputExpectation();
+        }
         return userInputExpectation;
     }
 

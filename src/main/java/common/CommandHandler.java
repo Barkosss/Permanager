@@ -1,11 +1,11 @@
 package common;
 
-import com.pengrad.telegrambot.TelegramException;
 import common.commands.BaseCommand;
 import common.iostream.*;
 import common.models.Interaction;
 import common.models.Content;
 
+import common.models.InteractionConsole;
 import org.reflections.Reflections;
 
 import java.util.Set;
@@ -74,41 +74,41 @@ public class CommandHandler {
                 }
             }
 
-            case ALL: { // TODO: Подумать над переработкой или надобностью. Всё работает только в одной платформе
+            case ALL: { // TODO: Реализовать два потока
                 System.out.println("All platforms are active");
-                Thread telegramThread = new Thread(() -> {
-                    try {
-                        inputTelegram.read(interaction.setPlatform(Interaction.Platform.TELEGRAM), this);
-                    } catch(TelegramException err) {
-                        System.out.println("[ERROR] Telegram thread:" + err);
+                Thread telegramThread = new Thread(() ->
+                    inputTelegram.read(interaction.setPlatform(Interaction.Platform.TELEGRAM), this)
+                );
+                telegramThread.start();
+
+                Thread consoleThread = new Thread(() -> {
+                    InteractionConsole interactionConsole = new InteractionConsole();
+
+                    while(true) {
+                        // Проверка, ожидаем ли что-то от пользователя
+                        if (interactionConsole.getUserInputExpectation().getExpectedInputKey() == null) {
+                            output.output(interactionConsole.setMessage("Enter command: ").setInline(true));
+                        }
+
+                        String userInputMessage = inputConsole.getString(interactionConsole).trim();
+
+
+                        // Если команда - выключить бота
+                        if (userInputMessage.equals("exit")) {
+                            System.out.println("Program is stop");
+                            System.exit(0);
+                        }
+
+                        launchCommand(interactionConsole, List.of(
+                                        new Content(userInputMessage,
+                                                System.currentTimeMillis() / 1000,
+                                                List.of(userInputMessage.split(" "))
+                                        )
+                                )
+                        );
                     }
                 });
-
-                while(true) {
-                    interaction.setPlatform(Interaction.Platform.CONSOLE);
-
-                    // Проверка, ожидаем ли что-то от пользователя
-                    if (interaction.getUserInputExpectation().getExpectedInputKey() == null) {
-                        output.output(interaction.setMessage("Enter command: ").setInline(true));
-                    }
-
-                    String userInputMessage = inputConsole.getString(interaction).trim();
-
-
-                    // Если команда - выключить бота
-                    if (userInputMessage.equals("exit")) {
-                        System.out.println("Program is stop");
-                        System.exit(0);
-                    }
-
-                    launchCommand(interaction, List.of(
-                            new Content(userInputMessage,
-                                    System.currentTimeMillis() / 1000,
-                                    List.of(userInputMessage.split(" "))
-                            )
-                        )
-                    );
-                }
+                consoleThread.start();
             }
 
         }
@@ -152,7 +152,7 @@ public class CommandHandler {
 
                 } else {
                     // Ошибка: Команда не найдена.
-                    output.output(interaction.setMessage("Error: Command \"" + commandName + "\" is not found."));
+                    output.output(interaction.setMessage("Error: Command \"" + commandName + "\" is not found.").setInline(false));
                 }
 
                 // Если не команда
