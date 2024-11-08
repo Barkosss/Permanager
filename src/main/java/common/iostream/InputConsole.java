@@ -1,6 +1,7 @@
 package common.iostream;
 
 import common.models.Content;
+import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.CommandHandler;
 
@@ -39,7 +40,8 @@ public class InputConsole {
             commandHandler.launchCommand(interaction, List.of(
                     new Content(userInputMessage,
                             System.currentTimeMillis() / 1000,
-                            List.of(userInputMessage.split(" "))
+                            List.of(userInputMessage.split(" ")),
+                            Interaction.Platform.CONSOLE
                     )
                 )
             );
