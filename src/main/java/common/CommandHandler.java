@@ -9,7 +9,9 @@ import common.models.InteractionConsole;
 import org.reflections.Reflections;
 
 import java.util.Set;
-import java.util.*;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
 
 public class CommandHandler {
 
