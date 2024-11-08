@@ -1,62 +1,49 @@
 package common.iostream;
 
-import common.models.Interaction;
-import common.utils.Validate;
+import common.models.Content;
+import common.models.InteractionConsole;
+import common.CommandHandler;
 
-import java.time.LocalDate;
+import javax.swing.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 
 
-public class InputConsole implements Input {
+public class InputConsole {
     public Scanner scanner = new Scanner(System.in);
     public Output output = new OutputHandler();
-    public Validate validate = new Validate();
 
     public String read() {
         return scanner.nextLine();
     }
 
-    @Override
-    public String getString(Interaction interaction) {
+    public String getString() {
         return read();
     }
 
-    @Override
-    public List<String> getString(Interaction interaction, String separator) {
-        return List.of(read().split(separator));
-    }
-
-    @Override
-    public int getInt(Interaction interaction) {
-        String strInteger;
-
+    public void listener(InteractionConsole interaction, CommandHandler commandHandler) {
         while(true) {
-            strInteger = read();
-
-            Optional<Integer> intValue = validate.isValidInteger(strInteger);
-            if (intValue.isPresent()) {
-                return intValue.get();
-            } else {
-                output.output(interaction.setMessage("Error. Invalid value. Try again: "));
+            // Проверка, ожидаем ли что-то от пользователя
+            if (interaction.getUserInputExpectation().getExpectedInputKey() == null) {
+                output.output(interaction.setMessage("Enter command: ").setInline(true));
             }
-        }
-    }
 
-    @Override
-    public LocalDate getDate(Interaction interaction) {
-        String strDate;
+            String userInputMessage = read().trim();
 
-        while (true) {
-            strDate = read();
 
-            Optional<LocalDate> dateValue = validate.isValidDate(strDate);
-            if (dateValue.isPresent()) {
-                return dateValue.get();
-            } else {
-                output.output(interaction.setMessage("Error. Invalid value. Try again: "));
+            // Если команда - выключить бота
+            if (userInputMessage.equals("exit")) {
+                System.out.println("Program is stop");
+                System.exit(0);
             }
+
+            commandHandler.launchCommand(interaction, List.of(
+                            new Content(userInputMessage,
+                                    System.currentTimeMillis() / 1000,
+                                    List.of(userInputMessage.split(" "))
+                            )
+                    )
+            );
         }
     }
 }

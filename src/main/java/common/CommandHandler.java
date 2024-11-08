@@ -16,7 +16,7 @@ public class CommandHandler {
     // Хэшмап классов команд
     public Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
     InputTelegram inputTelegram = new InputTelegram();
-    Input inputConsole = new InputConsole();
+    InputConsole inputConsole = new InputConsole();
     Output output = new OutputHandler();
 
     // Загрузка команд
@@ -51,63 +51,26 @@ public class CommandHandler {
             }
 
             case CONSOLE: {
-                while(true) {
-                    // Проверка, ожидаем ли что-то от пользователя
-                    if (interaction.getUserInputExpectation().getExpectedInputKey() == null) {
-                        output.output(interaction.setMessage("Enter command: ").setInline(true));
-                    }
-
-                    String userInputMessage = inputConsole.getString(interaction).trim();
-
-                    // Если команда - выключить бота
-                    if (userInputMessage.equals("exit")) {
-                        System.out.println("Program is stop");
-                        System.exit(0);
-                    }
-                    launchCommand(interaction, List.of(
-                            new Content(userInputMessage,
-                                    System.currentTimeMillis() / 1000,
-                                    List.of(userInputMessage.split(" "))
-                            )
-                        )
-                    );
-                }
+                inputConsole.listener(((InteractionConsole) interaction), this);
             }
 
-            case ALL: { // TODO: Реализовать два потока
+            case ALL: {
                 System.out.println("All platforms are active");
+
+                // Поток для Telegram
                 Thread telegramThread = new Thread(() ->
                     inputTelegram.read(interaction.setPlatform(Interaction.Platform.TELEGRAM), this)
                 );
+
+                // Запуск потока
                 telegramThread.start();
 
-                Thread consoleThread = new Thread(() -> {
-                    InteractionConsole interactionConsole = new InteractionConsole();
+                // Поток для Console
+                Thread consoleThread = new Thread(() ->
+                    inputConsole.listener(new InteractionConsole(), this)
+                );
 
-                    while(true) {
-                        // Проверка, ожидаем ли что-то от пользователя
-                        if (interactionConsole.getUserInputExpectation().getExpectedInputKey() == null) {
-                            output.output(interactionConsole.setMessage("Enter command: ").setInline(true));
-                        }
-
-                        String userInputMessage = inputConsole.getString(interactionConsole).trim();
-
-
-                        // Если команда - выключить бота
-                        if (userInputMessage.equals("exit")) {
-                            System.out.println("Program is stop");
-                            System.exit(0);
-                        }
-
-                        launchCommand(interactionConsole, List.of(
-                                        new Content(userInputMessage,
-                                                System.currentTimeMillis() / 1000,
-                                                List.of(userInputMessage.split(" "))
-                                        )
-                                )
-                        );
-                    }
-                });
+                // Запуск потока
                 consoleThread.start();
             }
 
@@ -175,7 +138,7 @@ public class CommandHandler {
         do {
             output.output(interaction.setPlatform(Interaction.Platform.CONSOLE).setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
 
-            String platform = inputConsole.getString(interaction).toLowerCase();
+            String platform = inputConsole.getString().toLowerCase();
 
             try {
                 interaction.setPlatform(Interaction.Platform.valueOf(platform.toUpperCase()));
