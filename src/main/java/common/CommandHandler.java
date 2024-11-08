@@ -1,5 +1,6 @@
 package common;
 
+import com.pengrad.telegrambot.TelegramException;
 import common.commands.BaseCommand;
 import common.iostream.*;
 import common.models.Interaction;
@@ -75,7 +76,14 @@ public class CommandHandler {
 
             case ALL: { // TODO: Подумать над переработкой или надобностью. Всё работает только в одной платформе
                 System.out.println("All platforms are active");
-                inputTelegram.read(interaction.setPlatform(Interaction.Platform.TELEGRAM), this);
+                Thread telegramThread = new Thread(() -> {
+                    try {
+                        inputTelegram.read(interaction.setPlatform(Interaction.Platform.TELEGRAM), this);
+                    } catch(TelegramException err) {
+                        System.out.println("[ERROR] Telegram thread:" + err);
+                    }
+                });
+
                 while(true) {
                     interaction.setPlatform(Interaction.Platform.CONSOLE);
 
