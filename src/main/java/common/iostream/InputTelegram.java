@@ -25,7 +25,8 @@ public class InputTelegram {
                 contents.add(new Content(
                         update.message().text(), // Сообщение пользователя
                         update.message().date(), // Время отправки, пользователем, сообщения
-                        List.of(update.message().text().split(" ")) // Аргументы сообщения
+                        List.of(update.message().text().split(" ")), // Аргументы сообщения
+                        Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));
             }
 

@@ -6,6 +6,7 @@ import common.models.Interaction;
 import common.models.Content;
 
 import common.models.InteractionConsole;
+import common.models.InteractionTelegram;
 import org.reflections.Reflections;
 
 import java.util.Set;
@@ -69,6 +70,11 @@ public class CommandHandler {
 
         for(Content content : contents) {
             String message = content.message();
+
+            // Если сообщение в Telegram было отправлено во время offline
+            if (content.platform() == Interaction.Platform.TELEGRAM && content.createdAt() < ((InteractionTelegram) interaction).TIMESTAMP_BOT_START) {
+                continue;
+            }
 
             // Проверка, что это команда
             if (message.startsWith("/") && message.charAt(1) != ' ') {
