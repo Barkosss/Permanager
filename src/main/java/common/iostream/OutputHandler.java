@@ -29,8 +29,7 @@ public class OutputHandler implements Output {
                 break;
             }
 
-            case CONSOLE: {}
-            default: {
+            case CONSOLE: {
                 boolean inline = interaction.getInline();
                 if (inline) {
                     System.out.print(interaction.getMessage());

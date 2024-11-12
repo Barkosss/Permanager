@@ -21,7 +21,7 @@ public class InputConsole {
         return read();
     }
 
-    public void listener(InteractionConsole interaction, CommandHandler commandHandler) {
+    public void listener(Interaction interaction, CommandHandler commandHandler) {
         while(true) {
             // Проверка, ожидаем ли что-то от пользователя
             if (interaction.getUserInputExpectation().getExpectedInputKey() == null) {

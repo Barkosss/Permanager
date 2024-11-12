@@ -34,8 +34,9 @@ public class InteractionTelegram implements Interaction {
 
 
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
-        TELEGRAM_BOT = telegramBot;
-        TIMESTAMP_BOT_START = timestampBotStart;
+        this.TELEGRAM_BOT = telegramBot;
+        this.TIMESTAMP_BOT_START = timestampBotStart;
+        this.platform = Platform.TELEGRAM;
     }
 
     public Platform getPlatform() {

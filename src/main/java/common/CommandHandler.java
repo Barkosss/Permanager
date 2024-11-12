@@ -48,11 +48,12 @@ public class CommandHandler {
     public void launch(Interaction interaction) {
         Interaction.Platform platform = interaction.getPlatform();
 
+        System.out.println("Launch: " + platform);
         // Проверка, что Platform это Telegram или ALL
         if (platform == Interaction.Platform.TELEGRAM || platform == Interaction.Platform.ALL) {
             // Поток для Telegram
             new Thread(() ->
-                    inputTelegram.read(interaction.setPlatform(Interaction.Platform.TELEGRAM), this)
+                    inputTelegram.read(interaction, this)
             ).start();
         }
 
@@ -60,7 +61,7 @@ public class CommandHandler {
         if (platform == Interaction.Platform.CONSOLE || platform == Interaction.Platform.ALL) {
             // Поток для Console
             new Thread(() ->
-                    inputConsole.listener(new InteractionConsole(), this)
+                    inputConsole.listener(interaction, this)
             ).start();
         }
     }
@@ -127,16 +128,20 @@ public class CommandHandler {
     }
 
     // Настройка взаимодействий и запуск программы
-    public void choosePlatform(Interaction interaction) {
+    public Interaction choosePlatform() {
+        Interaction interaction = new InteractionConsole();
         do {
-            output.output(interaction.setPlatform(Interaction.Platform.CONSOLE).setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
+            output.output(interaction.setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
 
             // Получаем платформу от пользователя, с консоли
-            String platform = inputConsole.getString().toLowerCase();
+            String userPlatform = inputConsole.getString().toLowerCase();
 
             try {
-                // Пытаемся установить платформу
-                interaction.setPlatform(Interaction.Platform.valueOf(platform.toUpperCase()));
+                // Пытаемся получить платформу
+                Interaction.Platform platform = Interaction.Platform.valueOf(userPlatform.toUpperCase());
+
+                // Устанавливаем платформу
+                interaction.setPlatform(platform);
                 break;
 
                 // Ошибка, если указан неправильная платформа
@@ -146,7 +151,6 @@ public class CommandHandler {
 
         } while(true);
 
-        // Вызываем взаимодействие с нужной платформой
-        launch(interaction);
+        return interaction;
     }
 }
