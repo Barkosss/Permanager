@@ -1,8 +1,6 @@
 package common.iostream;
 
-import common.models.Content;
-import common.models.Interaction;
-import common.models.InteractionConsole;
+import common.models.*;
 import common.CommandHandler;
 
 import java.util.List;
@@ -24,7 +22,7 @@ public class InputConsole {
     public void listener(Interaction interaction, CommandHandler commandHandler) {
         while(true) {
             // Проверка, ожидаем ли что-то от пользователя
-            if (interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputKey() == null) {
+            if (interaction.getUser(interaction.getUserID()).getInputStatus() != User.InputStatus.WAITING) {
                 output.output(interaction.setMessage("Enter command: ").setInline(true));
             }
 

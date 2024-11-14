@@ -11,12 +11,6 @@ public interface Interaction {
         TELEGRAM
     }
 
-    enum UserInputType {
-        INT,
-        STRING,
-        DATE,
-    }
-
     Interaction setUserRepository(UserRepository userRepository);
 
     User getUser(long userId);

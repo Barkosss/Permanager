@@ -5,10 +5,7 @@ import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
 import common.iostream.Output;
 import common.iostream.OutputHandler;
-import common.models.Content;
-import common.models.Interaction;
-import common.models.InteractionConsole;
-import common.models.InteractionTelegram;
+import common.models.*;
 import common.repositories.UserRepository;
 
 import java.util.*;
@@ -97,22 +94,15 @@ public class CommandHandler {
                 List<String> args = List.of(message.split(" "));
                 String commandName = args.getFirst().toLowerCase().substring(1);
 
+                if (commandName.equals("exit") && interaction.getPlatform() == Interaction.Platform.CONSOLE) {
+                    System.out.println("Program is stop");
+                    System.exit(0);
+                }
+
                 interaction.setMessage(message).setArguments(args.subList(1, args.size()));
 
                 // Если введённая команда имеется в хэшмап
                 if (baseCommandClasses.containsKey(commandName)) {
-                    // Если хэшмапа не инициализирована
-                    if (interaction.getUser(interaction.getUserID()).getUserInputExpectation() == null) {
-                        // Инициализируем
-                        interaction.getUser(interaction.getUserID()).getUserInputExpectation().setValue(new HashMap<>());
-                    }
-
-                    // Если в хэшмапе не нашли ключ со значением "название команды"
-                    if (!interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputs().containsKey(commandName)) {
-                        Map<String, Map<String, String>> map = interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputs();
-                        map.put(commandName, new HashMap<>());
-                        interaction.getUser(interaction.getUserID()).getUserInputExpectation().setValue(map);
-                    }
 
                     // Запустить класс, в котором будет работать команда
                     try {
@@ -131,12 +121,9 @@ public class CommandHandler {
             } else {
 
                 // Проверка, ожидаем ли мы что-то от пользователя
-                if (interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputKey() != null) {
-                    Map<String, Map<String, String>> map = interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputs();
-                    map.get(interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedCommandName()).put(interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputKey(), message);
-                    interaction.getUser(interaction.getUserID()).getUserInputExpectation().setValue(map);
-
-                    baseCommandClasses.get(interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedCommandName()).run(interaction);
+                if (interaction.getUser(interaction.getUserID()).getInputStatus() == User.InputStatus.WAITING) {
+                    interaction.getUser(interaction.getUserID()).setValue(message);
+                    baseCommandClasses.get(interaction.getUser(interaction.getUserID()).getCommandException()).run(interaction);
                 }
             }
         }
