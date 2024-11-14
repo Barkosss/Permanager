@@ -7,7 +7,7 @@ import common.models.Interaction;
 import java.util.Map;
 
 public class TestCommand implements BaseCommand {
-    public Output output = new OutputHandler();
+    Output output = new OutputHandler();
 
     @Override
     public String getCommandName() {

@@ -23,6 +23,7 @@ public class InputTelegram {
 
             for(Update update : updates) {
                 contents.add(new Content(
+                        update.message().chat().id(), // Идентификатор пользователя
                         update.message().text(), // Сообщение пользователя
                         update.message().date(), // Время отправки, пользователем, сообщения
                         List.of(update.message().text().split(" ")), // Аргументы сообщения

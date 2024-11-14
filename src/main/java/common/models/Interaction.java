@@ -6,8 +6,7 @@ public interface Interaction {
 
     enum Platform {
         CONSOLE,
-        TELEGRAM,
-        ALL
+        TELEGRAM
     }
 
     enum UserInputType {

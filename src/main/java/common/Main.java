@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import java.sql.Timestamp;
 
 import common.models.Interaction;
+import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
 import common.utils.JSONHandler;
 
@@ -17,9 +18,10 @@ public class Main {
         CommandHandler commandHandler = new CommandHandler();
 
         // Настройка взаимодействий и запуск программы
-        Interaction interaction = commandHandler.choosePlatform();
+        CommandHandler.launchPlatform platform = commandHandler.choosePlatform();
+        Interaction interaction = new InteractionConsole();
 
-        if (interaction.getPlatform() == Interaction.Platform.TELEGRAM || interaction.getPlatform() == Interaction.Platform.ALL) {
+        if (platform == CommandHandler.launchPlatform.TELEGRAM || platform == CommandHandler.launchPlatform.ALL) {
             TelegramBot bot = null;
             try {
                 bot = new TelegramBot(String.valueOf(jsonHandler.read("./src/main/resources/config.json", "tokenTelegram")));
@@ -33,6 +35,6 @@ public class Main {
         }
 
         // Вызываем взаимодействие с нужной платформой
-        commandHandler.launch(interaction);
+        commandHandler.launch(interaction, platform);
     }
 }

@@ -1,23 +1,34 @@
 package common;
 
 import common.commands.BaseCommand;
-import common.iostream.*;
-import common.models.Interaction;
+import common.iostream.InputConsole;
+import common.iostream.InputTelegram;
+import common.iostream.Output;
+import common.iostream.OutputHandler;
 import common.models.Content;
-
+import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
-import org.reflections.Reflections;
+import common.repositories.UserRepository;
 
 import java.util.Set;
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
 
+import org.reflections.Reflections;
+
 public class CommandHandler {
 
+    public enum launchPlatform {
+        TELEGRAM,
+        CONSOLE,
+        ALL
+    }
+
     // Хэшмап классов команд
-    public Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
+    Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
+    UserRepository userRepository = new UserRepository();
     InputTelegram inputTelegram = new InputTelegram();
     InputConsole inputConsole = new InputConsole();
     Output output = new OutputHandler();
@@ -45,12 +56,10 @@ public class CommandHandler {
     }
 
     // Запуск программы
-    public void launch(Interaction interaction) {
-        Interaction.Platform platform = interaction.getPlatform();
+    public void launch(Interaction interaction, launchPlatform platform) {
 
-        System.out.println("Launch: " + platform);
         // Проверка, что Platform это Telegram или ALL
-        if (platform == Interaction.Platform.TELEGRAM || platform == Interaction.Platform.ALL) {
+        if (platform == launchPlatform.TELEGRAM || platform == launchPlatform.ALL) {
             // Поток для Telegram
             new Thread(() ->
                     inputTelegram.read(interaction, this)
@@ -58,7 +67,8 @@ public class CommandHandler {
         }
 
         // Проверка, что Platform это Console или ALL
-        if (platform == Interaction.Platform.CONSOLE || platform == Interaction.Platform.ALL) {
+        if (platform == launchPlatform.CONSOLE || platform == launchPlatform.ALL) {
+            userRepository.create(0L);
             // Поток для Console
             new Thread(() ->
                     inputConsole.listener(interaction, this)
@@ -75,6 +85,11 @@ public class CommandHandler {
             // Если сообщение в Telegram было отправлено во время offline
             if (content.platform() == Interaction.Platform.TELEGRAM && content.createdAt() < ((InteractionTelegram) interaction).TIMESTAMP_BOT_START) {
                 continue;
+            }
+
+            // сли пользователь отсутствует в памяти
+            if (!userRepository.existsById(content.userId())) {
+                userRepository.create(content.userId());
             }
 
             // Проверка, что это команда
@@ -128,7 +143,7 @@ public class CommandHandler {
     }
 
     // Настройка взаимодействий и запуск программы
-    public Interaction choosePlatform() {
+    public launchPlatform choosePlatform() {
         Interaction interaction = new InteractionConsole();
         do {
             output.output(interaction.setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
@@ -138,11 +153,7 @@ public class CommandHandler {
 
             try {
                 // Пытаемся получить платформу
-                Interaction.Platform platform = Interaction.Platform.valueOf(userPlatform.toUpperCase());
-
-                // Устанавливаем платформу
-                interaction.setPlatform(platform);
-                break;
+                return launchPlatform.valueOf(userPlatform.toUpperCase());
 
                 // Ошибка, если указан неправильная платформа
             } catch(IllegalArgumentException err) {
@@ -150,7 +161,5 @@ public class CommandHandler {
             }
 
         } while(true);
-
-        return interaction;
     }
 }
