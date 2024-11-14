@@ -96,12 +96,13 @@ public class CommandHandler {
                 userRepository.create(content.userId());
             }
 
-            // Проверка, что это команда
-            if (message.startsWith("/") && message.charAt(1) != ' ') {
-                List<String> args = List.of(message.split(" "));
-                String commandName = args.getFirst().toLowerCase().substring(1);
+            List<String> args = List.of(message.split(" "));
+            String commandName = args.getFirst().toLowerCase().substring(1);
 
-                if (commandName.equals("exit") && interaction.getPlatform() == Interaction.Platform.CONSOLE) {
+            // Проверка, что это команда
+            if (message.startsWith("/") && message.charAt(1) != ' ' && interaction.getUser(interaction.getUserID()).getInputStatus() != User.InputStatus.WAITING) {
+
+                if (commandName.startsWith("exit") && interaction.getPlatform() == Interaction.Platform.CONSOLE) {
                     System.out.println("Program is stop");
                     System.exit(0);
                 }
@@ -126,6 +127,14 @@ public class CommandHandler {
 
                 // Если не команда
             } else {
+
+                if (commandName.startsWith("cancel")) {
+                    User user = interaction.getUser(interaction.getUserID());
+                    String commandException = user.getCommandException();
+                    user.clearExpected(commandException);
+                    output.output(interaction.setMessage("Command \"" + commandException + "\" is cancel").setInline(false));
+                    return;
+                }
 
                 // Проверка, ожидаем ли мы что-то от пользователя
                 if (interaction.getUser(interaction.getUserID()).getInputStatus() == User.InputStatus.WAITING) {
