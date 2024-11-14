@@ -22,15 +22,14 @@ public class OutputHandler implements Output {
                 }
 
                 // Отправляем сообщение пользователю в Telegram
-                interactionTelegram.TELEGRAM_BOT.execute(sendMessage);
+                interactionTelegram.telegramBot.execute(sendMessage);
 
                 // Очищаем объект отправки сообщения
                 interactionTelegram.setSendMessage(null);
                 break;
             }
 
-            case CONSOLE: {}
-            default: {
+            case CONSOLE: {
                 boolean inline = interaction.getInline();
                 if (inline) {
                     System.out.print(interaction.getMessage());

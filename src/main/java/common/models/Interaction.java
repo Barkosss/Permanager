@@ -1,24 +1,23 @@
 package common.models;
 
+import common.repositories.UserRepository;
+
 import java.util.List;
 
 public interface Interaction {
 
     enum Platform {
         CONSOLE,
-        TELEGRAM,
-        ALL
+        TELEGRAM
     }
 
-    enum UserInputType {
-        INT,
-        STRING,
-        DATE,
-    }
+    Interaction setUserRepository(UserRepository userRepository);
+
+    User getUser(long userId);
+
+    long getUserID();
 
     Platform getPlatform();
-
-    Interaction setPlatform(Platform platform);
 
     Interaction setMessage(String message);
 
@@ -31,6 +30,4 @@ public interface Interaction {
     Interaction setArguments(List<String> arguments);
 
     List<String> getArguments();
-
-    InputExpectation getUserInputExpectation();
 }
