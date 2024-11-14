@@ -20,6 +20,9 @@ public class User {
     }
 
     public InputStatus getInputStatus() {
+        if (inputStatus == null) {
+            this.inputStatus = InputStatus.COMPLETED;
+        }
         return inputStatus;
     }
 

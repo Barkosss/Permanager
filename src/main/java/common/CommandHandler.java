@@ -100,7 +100,7 @@ public class CommandHandler {
             String commandName = args.getFirst().toLowerCase().substring(1);
 
             // Проверка, что это команда
-            if (message.startsWith("/") && message.charAt(1) != ' ' && interaction.getUser(interaction.getUserID()).getInputStatus() != User.InputStatus.WAITING) {
+            if (message.startsWith("/") && message.charAt(1) != ' ' && interaction.getUser(interaction.getUserID()).getInputStatus() == User.InputStatus.COMPLETED) {
 
                 if (commandName.startsWith("exit") && interaction.getPlatform() == Interaction.Platform.CONSOLE) {
                     System.out.println("Program is stop");
@@ -125,7 +125,7 @@ public class CommandHandler {
                     output.output(interaction.setMessage("Error: Command \"" + commandName + "\" is not found.").setInline(false));
                 }
 
-                // Если не команда
+                // Если что-то ожидаем от пользователя
             } else {
 
                 if (commandName.startsWith("cancel")) {
