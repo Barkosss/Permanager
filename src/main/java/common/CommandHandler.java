@@ -5,10 +5,17 @@ import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
 import common.iostream.Output;
 import common.iostream.OutputHandler;
-import common.models.*;
+import common.models.Content;
+import common.models.Interaction;
+import common.models.InteractionConsole;
+import common.models.InteractionTelegram;
+import common.models.User;
 import common.repositories.UserRepository;
 
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import org.reflections.Reflections;
 
