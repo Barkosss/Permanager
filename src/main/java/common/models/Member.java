@@ -6,19 +6,25 @@ package common.models;
 public class Member {
 
     // Id пользователя (Telegram ID или Discord ID)
-    public long id;
+    long id;
 
     // Список разрешений
-    public Permissions permissions;
+    Permissions permissions;
 
     // Список ограничений
-    public Restrictions restrictions;
+    Restrictions restrictions;
 
     // Приоритет пользователя (Совпадает с приоритетностью группы, иначе она -1)
-    public int priority;
+    int priority;
 
     // Синхронизация с группой (Для обновления прав доступа)
-    public boolean statusSyncGroup;
+    boolean statusSyncGroup;
+
+    // Объект с информацией об ожидаемых данных
+    InputExpectation userInputExpectation;
+
+    // Выключить участника
+    boolean disabled;
 
     // Конструктор пользователя
     public Member(long id, int priority, boolean statusSyncGroup, Permissions permissions) {
@@ -67,4 +73,22 @@ public class Member {
     public void setPermissions(Permissions permissions) {
         this.permissions = permissions;
     }
-};
+
+    // Получить статус активности
+    public boolean getDisabled() {
+        return disabled;
+    }
+
+    // Изменить статус активности
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    // Получить список ожидаемых входных данных
+    public InputExpectation getUserInputExpectation() {
+        if (userInputExpectation == null) {
+            userInputExpectation = new InputExpectation();
+        }
+        return userInputExpectation;
+    }
+}

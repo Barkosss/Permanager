@@ -1,19 +1,17 @@
 package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.request.SendMessage;
+import common.exceptions.MemberNotFoundException;
+import common.repositories.UserRepository;
 
-import common.utils.Validate;
-
-import java.time.LocalDate;
-import java.util.Optional;
 import java.util.List;
-import java.util.Map;
 
 public class InteractionTelegram implements Interaction {
 
-    public final TelegramBot TELEGRAM_BOT;
+    public TelegramBot telegramBot;
 
-    public final long TIMESTAMP_BOT_START;
+    public long timestampBotStart;
 
     // Платформа: Terminal, Telegram, Discord
     Platform platform;
@@ -24,52 +22,49 @@ public class InteractionTelegram implements Interaction {
     // Полное сообщение
     String message;
 
+    // Объект сообщения (Для Telegram)
+    SendMessage sendMessage;
+
     // Выводить в одну строку или нет
     boolean inline;
 
     // Массив аргументов в сообщении (разделитель - пробел)
     List<String> arguments;
 
-    // Какой тип ожидается от пользователя
-    Type userInputType;
+    // ...
+    UserRepository userRepository;
 
-    // Название команды
-    String inputCommandName;
-
-    // Какое значение требуется (ключ Map)
-    String inputKey;
-
-    // Map значений, которые указываются пользователем
-    Map<String, Map<String, String>> expectedInput;
 
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
-        TELEGRAM_BOT = telegramBot;
-        TIMESTAMP_BOT_START = timestampBotStart;
+        this.telegramBot = telegramBot;
+        this.timestampBotStart = timestampBotStart;
+        this.platform = Platform.TELEGRAM;
     }
 
-    public InteractionTelegram setUpdate(Update update) {
-        this.userID = update.chatId;
-        this.message = update.message;
-        this.arguments = update.arguments;
+    public Interaction setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
         return this;
+    }
+
+    public User getUser(long userId) {
+        try {
+            return userRepository.findById(userId);
+        } catch(MemberNotFoundException err) {
+            return null;
+        }
+
     }
 
     public Platform getPlatform() {
         return platform;
     }
 
-    public Interaction setPlatform(Platform platform) {
-        this.platform = platform;
-        return this;
-    }
-
     public long getUserID() {
         return userID;
     }
 
-    public InteractionTelegram setUserID(long userID) {
+    public void setUserID(long userID) {
         this.userID = userID;
-        return this;
     }
 
     public String getMessage() {
@@ -78,6 +73,15 @@ public class InteractionTelegram implements Interaction {
 
     public Interaction setMessage(String message) {
         this.message = message;
+        return this;
+    }
+
+    public SendMessage getSendMessage() {
+        return sendMessage;
+    }
+
+    public InteractionTelegram setSendMessage(SendMessage sendMessage) {
+        this.sendMessage = sendMessage;
         return this;
     }
 
@@ -99,81 +103,17 @@ public class InteractionTelegram implements Interaction {
         return this;
     }
 
-    public String getInputCommandName() {
-        return inputCommandName;
-    }
+    @Override
+    public String toString() {
 
-    public Interaction setInputCommandName(String inputCommandName) {
-        this.inputCommandName = inputCommandName;
-        return this;
-    }
-
-    public String getInputKey() {
-        return inputKey;
-    }
-
-    public Interaction setInputKey(String inputKey) {
-        this.inputKey = inputKey;
-        return this;
-    }
-
-    public void getValue(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Type.STRING;
-    }
-
-    public void getValueInt(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Type.INT;
-    }
-
-    public InteractionTelegram getValueDate(String commandName, String key) {
-        setInputCommandName(commandName);
-        setInputKey(key);
-        this.userInputType = Type.DATE;
-        return this;
-    }
-
-    public Map<String, Map<String, String>> getExpectedInput() {
-        return expectedInput;
-    }
-
-    public Interaction setValue(Map<String, Map<String, String>> expectedInput) {
-        this.expectedInput = expectedInput;
-        return this;
-    }
-
-    public void clearExpectedInput(String commandName) {
-        inputKey = inputCommandName = null;
-        userInputType = null;
-        expectedInput.get(commandName).clear();
-    }
-
-    // Метод для поиска числа в аргументах
-    public Optional<Integer> getInt() {
-        Validate validate = new Validate();
-        Optional<Integer> value;
-        for(String argument : arguments) {
-            value = validate.isValidInteger(argument);
-            if (value.isPresent()) {
-                return value;
-            }
-        }
-        return Optional.empty();
-    }
-
-    // Метод для поиска даты в аргументах
-    public Optional<LocalDate> getDate() {
-        Validate validate = new Validate();
-        Optional<LocalDate> value;
-        for(String argument : arguments) {
-            value = validate.isValidDate(argument);
-            if (value.isPresent()) {
-                return value;
-            }
-        }
-        return Optional.empty();
+        return "InteractionConsole({"
+                +  "Token=" + telegramBot
+                + "\nTIMESTAMP_BOT_START=" + timestampBotStart
+                + "\nPlatform=" + platform
+                + "\nUserID=" + userID
+                + "\nMessage=" + message
+                + "\nInline=" + inline
+                + "\narguments=" + arguments
+                + "})";
     }
 }

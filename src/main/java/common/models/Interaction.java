@@ -1,7 +1,8 @@
 package common.models;
 
+import common.repositories.UserRepository;
+
 import java.util.List;
-import java.util.Map;
 
 public interface Interaction {
 
@@ -10,15 +11,19 @@ public interface Interaction {
         TELEGRAM
     }
 
-    enum Type {
+    enum UserInputType {
         INT,
         STRING,
         DATE,
     }
 
-    Platform getPlatform();
+    Interaction setUserRepository(UserRepository userRepository);
 
-    Interaction setPlatform(Platform platform);
+    User getUser(long userId);
+
+    long getUserID();
+
+    Platform getPlatform();
 
     Interaction setMessage(String message);
 
@@ -31,24 +36,4 @@ public interface Interaction {
     Interaction setArguments(List<String> arguments);
 
     List<String> getArguments();
-
-    String getInputCommandName();
-
-    Interaction setInputCommandName(String inputCommandName);
-
-    String getInputKey();
-
-    Interaction setInputKey(String inputKey);
-
-    void getValue(String commandName, String key);
-
-    void getValueInt(String commandName, String key);
-
-    Interaction getValueDate(String commandName, String key);
-
-    Map<String, Map<String, String>> getExpectedInput();
-
-    Interaction setValue(Map<String, Map<String, String>> expectedInput);
-
-    void clearExpectedInput(String commandName);
 }
