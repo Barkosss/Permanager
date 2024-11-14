@@ -12,7 +12,7 @@ public class User {
     // Объект с информацией ожидаемых ответов
     InputExpectation userInputExpectation = new InputExpectation();
 
-    // Состояние вводао
+    // Состояние ввода
     InputStatus inputStatus;
 
     public User(long userId) {
