@@ -29,7 +29,7 @@ public class InteractionTelegram implements Interaction {
     // Массив аргументов в сообщении (разделитель - пробел)
     List<String> arguments;
 
-    // ...
+    // Объект с информацией ожидаемых ответов
     InputExpectation userInputExpectation;
 
 

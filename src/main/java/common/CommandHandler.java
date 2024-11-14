@@ -10,12 +10,10 @@ import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
 import common.repositories.UserRepository;
-
-import java.util.Set;
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
-
+import java.util.Set;
 import org.reflections.Reflections;
 
 public class CommandHandler {
