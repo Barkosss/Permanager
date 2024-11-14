@@ -1,5 +1,6 @@
 package common.models;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class InputExpectation {
@@ -41,6 +42,9 @@ public class InputExpectation {
     }
 
     public Map<String, Map<String, String>> getExpectedInputs() {
+        if (expectedInputs == null) {
+            expectedInputs = new HashMap<>();
+        }
         return expectedInputs;
     }
 

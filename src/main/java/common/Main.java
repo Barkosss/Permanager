@@ -18,7 +18,7 @@ public class Main {
         CommandHandler commandHandler = new CommandHandler();
 
         // Настройка взаимодействий и запуск программы
-        CommandHandler.launchPlatform platform = commandHandler.choosePlatform();
+        CommandHandler.launchPlatform platform = commandHandler.choosePlatform(args);
         Interaction interaction = new InteractionConsole();
 
         if (platform == CommandHandler.launchPlatform.TELEGRAM || platform == CommandHandler.launchPlatform.ALL) {

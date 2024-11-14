@@ -1,8 +1,13 @@
 package common.models;
 
+import common.exceptions.MemberNotFoundException;
+import common.repositories.UserRepository;
+
 import java.util.List;
 
 public class InteractionConsole implements Interaction {
+
+    long userID;
 
     // Платформа: Terminal, Telegram, Discord
     Platform platform;
@@ -16,20 +21,34 @@ public class InteractionConsole implements Interaction {
     // Массив аргументов в сообщении (разделитель - пробел)
     List<String> arguments;
 
-    // Объект с информацией об ожидаемых данных
-    InputExpectation userInputExpectation;
+    // ...
+    UserRepository userRepository;
 
     public InteractionConsole() {
+        this.userID = 0L;
         this.platform = Platform.CONSOLE;
+    }
+
+    public Interaction setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        return this;
+    }
+
+    public User getUser(long userId) {
+        try {
+            return userRepository.findById(userId);
+        } catch(MemberNotFoundException err) {
+            return null;
+        }
+
+    }
+
+    public long getUserID() {
+        return userID;
     }
 
     public Platform getPlatform() {
         return platform;
-    }
-
-    public Interaction setPlatform(Platform platform) {
-        this.platform = platform;
-        return this;
     }
 
     public String getMessage() {
@@ -59,13 +78,6 @@ public class InteractionConsole implements Interaction {
         return this;
     }
 
-    public InputExpectation getUserInputExpectation() {
-        if (userInputExpectation == null) {
-            userInputExpectation = new InputExpectation();
-        }
-        return userInputExpectation;
-    }
-
     @Override
     public String toString() {
 
@@ -74,7 +86,6 @@ public class InteractionConsole implements Interaction {
                 + "\nMessage=" + message
                 + "\nInline=" + inline
                 + "\nArguments=" + arguments
-                + "\nUserInputExpectation=" + userInputExpectation
                 + "})";
     }
 }

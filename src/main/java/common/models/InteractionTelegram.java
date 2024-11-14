@@ -2,14 +2,16 @@ package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
+import common.exceptions.MemberNotFoundException;
+import common.repositories.UserRepository;
 
 import java.util.List;
 
 public class InteractionTelegram implements Interaction {
 
-    public final TelegramBot TELEGRAM_BOT;
+    public TelegramBot telegramBot;
 
-    public final long TIMESTAMP_BOT_START;
+    public long timestampBotStart;
 
     // Платформа: Terminal, Telegram, Discord
     Platform platform;
@@ -29,32 +31,40 @@ public class InteractionTelegram implements Interaction {
     // Массив аргументов в сообщении (разделитель - пробел)
     List<String> arguments;
 
-    // Объект с информацией ожидаемых ответов
-    InputExpectation userInputExpectation;
+    // ...
+    UserRepository userRepository;
 
 
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
-        this.TELEGRAM_BOT = telegramBot;
-        this.TIMESTAMP_BOT_START = timestampBotStart;
+        this.telegramBot = telegramBot;
+        this.timestampBotStart = timestampBotStart;
         this.platform = Platform.TELEGRAM;
+    }
+
+    public Interaction setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        return this;
+    }
+
+    public User getUser(long userId) {
+        try {
+            return userRepository.findById(userId);
+        } catch(MemberNotFoundException err) {
+            return null;
+        }
+
     }
 
     public Platform getPlatform() {
         return platform;
     }
 
-    public Interaction setPlatform(Platform platform) {
-        this.platform = platform;
-        return this;
-    }
-
     public long getUserID() {
         return userID;
     }
 
-    public InteractionTelegram setUserID(long userID) {
+    public void setUserID(long userID) {
         this.userID = userID;
-        return this;
     }
 
     public String getMessage() {
@@ -93,25 +103,17 @@ public class InteractionTelegram implements Interaction {
         return this;
     }
 
-    public InputExpectation getUserInputExpectation() {
-        if (userInputExpectation == null) {
-            userInputExpectation = new InputExpectation();
-        }
-        return userInputExpectation;
-    }
-
     @Override
     public String toString() {
 
         return "InteractionConsole({"
-                +  "Token=" + TELEGRAM_BOT
-                + "\nTIMESTAMP_BOT_START=" + TIMESTAMP_BOT_START
+                +  "Token=" + telegramBot
+                + "\nTIMESTAMP_BOT_START=" + timestampBotStart
                 + "\nPlatform=" + platform
                 + "\nUserID=" + userID
                 + "\nMessage=" + message
                 + "\nInline=" + inline
                 + "\narguments=" + arguments
-                + "\nUserInputExpectation=" + userInputExpectation
                 + "})";
     }
 }

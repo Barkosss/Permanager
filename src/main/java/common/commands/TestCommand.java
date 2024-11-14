@@ -21,16 +21,16 @@ public class TestCommand implements BaseCommand {
 
     @Override
     public void run(Interaction interaction) {
-        Map<String, Map<String, String>> expectedInput = interaction.getUserInputExpectation().getExpectedInputs();
+        Map<String, Map<String, String>> expectedInput = interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputs();
 
         if (!expectedInput.get(getCommandName()).containsKey("firstMessage")) {
-            interaction.getUserInputExpectation().getValue(getCommandName(), "firstMessage");
+            interaction.getUser(interaction.getUserID()).getUserInputExpectation().getValue(getCommandName(), "firstMessage");
             output.output(interaction.setMessage("Enter first message: ").setInline(true));
             return;
         }
 
         if (!expectedInput.get(getCommandName()).containsKey("secondMessage")) {
-            interaction.getUserInputExpectation().getValue(getCommandName(), "secondMessage");
+            interaction.getUser(interaction.getUserID()).getUserInputExpectation().getValue(getCommandName(), "secondMessage");
             output.output(interaction.setMessage("Enter second message: ").setInline(true));
             return;
         }
@@ -40,6 +40,6 @@ public class TestCommand implements BaseCommand {
 
         output.output(interaction.setMessage("First message: " + firstMessage).setInline(false));
         output.output(interaction.setMessage("Second message: " + secondMessage).setInline(false));
-        interaction.getUserInputExpectation().clearExpectedInput(getCommandName());
+        interaction.getUser(interaction.getUserID()).getUserInputExpectation().clearExpectedInput(getCommandName());
     }
 }

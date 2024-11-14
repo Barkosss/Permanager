@@ -24,7 +24,7 @@ public class InputConsole {
     public void listener(Interaction interaction, CommandHandler commandHandler) {
         while(true) {
             // Проверка, ожидаем ли что-то от пользователя
-            if (interaction.getUserInputExpectation().getExpectedInputKey() == null) {
+            if (interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputKey() == null) {
                 output.output(interaction.setMessage("Enter command: ").setInline(true));
             }
 

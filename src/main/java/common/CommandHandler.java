@@ -11,10 +11,7 @@ import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
 import common.repositories.UserRepository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.reflections.Reflections;
 
@@ -60,18 +57,20 @@ public class CommandHandler {
 
         // Проверка, что Platform это Telegram или ALL
         if (platform == launchPlatform.TELEGRAM || platform == launchPlatform.ALL) {
+            System.out.println("Telegram is launch");
             // Поток для Telegram
             new Thread(() ->
-                    inputTelegram.read(interaction, this)
+                    inputTelegram.read(interaction.setUserRepository(userRepository), this)
             ).start();
         }
 
         // Проверка, что Platform это Console или ALL
         if (platform == launchPlatform.CONSOLE || platform == launchPlatform.ALL) {
             userRepository.create(0L);
+            System.out.println("Console is launch");
             // Поток для Console
             new Thread(() ->
-                    inputConsole.listener(interaction, this)
+                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository), this)
             ).start();
         }
     }
@@ -83,7 +82,8 @@ public class CommandHandler {
             String message = content.message();
 
             // Если сообщение в Telegram было отправлено во время offline
-            if (content.platform() == Interaction.Platform.TELEGRAM && content.createdAt() < ((InteractionTelegram) interaction).TIMESTAMP_BOT_START) {
+            if (content.platform() == Interaction.Platform.TELEGRAM &&
+                    content.createdAt() < ((InteractionTelegram) interaction).timestampBotStart) {
                 continue;
             }
 
@@ -102,16 +102,16 @@ public class CommandHandler {
                 // Если введённая команда имеется в хэшмап
                 if (baseCommandClasses.containsKey(commandName)) {
                     // Если хэшмапа не инициализирована
-                    if (interaction.getUserInputExpectation().getExpectedInputs() == null) {
+                    if (interaction.getUser(interaction.getUserID()).getUserInputExpectation() == null) {
                         // Инициализируем
-                        interaction.getUserInputExpectation().setValue(new HashMap<>());
+                        interaction.getUser(interaction.getUserID()).getUserInputExpectation().setValue(new HashMap<>());
                     }
 
                     // Если в хэшмапе не нашли ключ со значением "название команды"
-                    if (!interaction.getUserInputExpectation().getExpectedInputs().containsKey(commandName)) {
-                        Map<String, Map<String, String>> map = interaction.getUserInputExpectation().getExpectedInputs();
+                    if (!interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputs().containsKey(commandName)) {
+                        Map<String, Map<String, String>> map = interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputs();
                         map.put(commandName, new HashMap<>());
-                        interaction.getUserInputExpectation().setValue(map);
+                        interaction.getUser(interaction.getUserID()).getUserInputExpectation().setValue(map);
                     }
 
                     // Запустить класс, в котором будет работать команда
@@ -131,25 +131,31 @@ public class CommandHandler {
             } else {
 
                 // Проверка, ожидаем ли мы что-то от пользователя
-                if (interaction.getUserInputExpectation().getExpectedInputKey() != null) {
-                    Map<String, Map<String, String>> map = interaction.getUserInputExpectation().getExpectedInputs();
-                    map.get(interaction.getUserInputExpectation().getExpectedCommandName()).put(interaction.getUserInputExpectation().getExpectedInputKey(), message);
-                    interaction.getUserInputExpectation().setValue(map);
+                if (interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputKey() != null) {
+                    Map<String, Map<String, String>> map = interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputs();
+                    map.get(interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedCommandName()).put(interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputKey(), message);
+                    interaction.getUser(interaction.getUserID()).getUserInputExpectation().setValue(map);
 
-                    baseCommandClasses.get(interaction.getUserInputExpectation().getExpectedCommandName()).run(interaction);
+                    baseCommandClasses.get(interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedCommandName()).run(interaction);
                 }
             }
         }
     }
 
     // Настройка взаимодействий и запуск программы
-    public launchPlatform choosePlatform() {
+    public launchPlatform choosePlatform(String[] args) {
         Interaction interaction = new InteractionConsole();
-        do {
-            output.output(interaction.setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
 
-            // Получаем платформу от пользователя, с консоли
-            String userPlatform = inputConsole.getString().toLowerCase();
+        String userPlatform;
+        do {
+            if (List.of("console", "telegram", "all").contains(args[0].toLowerCase())) {
+                userPlatform = args[0];
+            } else {
+                output.output(interaction.setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
+                // Получаем платформу от пользователя, с консоли
+                userPlatform = inputConsole.getString().toLowerCase();
+            }
+
 
             try {
                 // Пытаемся получить платформу

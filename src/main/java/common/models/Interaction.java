@@ -1,5 +1,7 @@
 package common.models;
 
+import common.repositories.UserRepository;
+
 import java.util.List;
 
 public interface Interaction {
@@ -15,9 +17,13 @@ public interface Interaction {
         DATE,
     }
 
-    Platform getPlatform();
+    Interaction setUserRepository(UserRepository userRepository);
 
-    Interaction setPlatform(Platform platform);
+    User getUser(long userId);
+
+    long getUserID();
+
+    Platform getPlatform();
 
     Interaction setMessage(String message);
 
@@ -30,6 +36,4 @@ public interface Interaction {
     Interaction setArguments(List<String> arguments);
 
     List<String> getArguments();
-
-    InputExpectation getUserInputExpectation();
 }

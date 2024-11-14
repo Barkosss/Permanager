@@ -4,6 +4,9 @@ public class User {
 
     long userId;
 
+    // Объект с информацией ожидаемых ответов
+    InputExpectation userInputExpectation;
+
     Interaction.Platform platform;
 
     public User(long userId) {
@@ -25,5 +28,12 @@ public class User {
 
     public void setPlatform(Interaction.Platform platform) {
         this.platform = platform;
+    }
+
+    public InputExpectation getUserInputExpectation() {
+        if (userInputExpectation == null) {
+            userInputExpectation = new InputExpectation();
+        }
+        return userInputExpectation;
     }
 }
