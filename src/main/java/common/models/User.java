@@ -12,6 +12,7 @@ public class User {
     // Объект с информацией ожидаемых ответов
     InputExpectation userInputExpectation = new InputExpectation();
 
+    // Состояние вводао
     InputStatus inputStatus;
 
     public User(long userId) {
@@ -49,6 +50,7 @@ public class User {
     }
 
     public void clearExpected(String commandName) {
+        this.inputStatus = InputStatus.COMPLETED;
         this.userInputExpectation.getExpectedInputs().remove(commandName);
     }
 }
