@@ -13,8 +13,10 @@ public class JSONHandler {
         try {
             Object object = new JSONParser().parse(new FileReader(pathJSON));
             JSONObject jsonObject = (JSONObject) object;
-
-            return jsonObject.get(keys);
+            for (Object key : keys.split("\\.")) {
+                jsonObject = (JSONObject) jsonObject.get(key);
+            }
+            return jsonObject;
         } catch(IOException | ParseException err) {
             System.out.println("[ERROR] JSONHandler: " + err);
             return new Object();
