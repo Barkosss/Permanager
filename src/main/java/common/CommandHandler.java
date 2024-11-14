@@ -10,10 +10,12 @@ import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
 import common.repositories.UserRepository;
-import java.util.Map;
-import java.util.List;
+
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
 import org.reflections.Reflections;
 
 public class CommandHandler {
@@ -77,7 +79,7 @@ public class CommandHandler {
     // Вызов команды
     public void launchCommand(Interaction interaction, List<Content> contents) {
 
-        for(Content content : contents) {
+        for (Content content : contents) {
             String message = content.message();
 
             // Если сообщение в Telegram было отправлено во время offline
@@ -154,10 +156,10 @@ public class CommandHandler {
                 return launchPlatform.valueOf(userPlatform.toUpperCase());
 
                 // Ошибка, если указан неправильная платформа
-            } catch(IllegalArgumentException err) {
+            } catch (IllegalArgumentException err) {
                 output.output(interaction.setMessage("No, there is no such platform. Try again.").setInline(false));
             }
 
-        } while(true);
+        } while (true);
     }
 }
