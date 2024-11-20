@@ -63,8 +63,10 @@ public class InteractionTelegram implements Interaction {
         return userID;
     }
 
-    public void setUserID(long userID) {
+    public Interaction setUserID(long userID) {
         this.userID = userID;
+        createSendMessage();
+        return this;
     }
 
     public String getMessage() {
@@ -73,16 +75,12 @@ public class InteractionTelegram implements Interaction {
 
     public Interaction setMessage(String message) {
         this.message = message;
+        createSendMessage();
         return this;
     }
 
     public SendMessage getSendMessage() {
         return sendMessage;
-    }
-
-    public InteractionTelegram setSendMessage(SendMessage sendMessage) {
-        this.sendMessage = sendMessage;
-        return this;
     }
 
     public boolean getInline() {
@@ -115,5 +113,13 @@ public class InteractionTelegram implements Interaction {
                 + "\nInline=" + inline
                 + "\narguments=" + arguments
                 + "})";
+    }
+
+    private void createSendMessage() {
+        if (this.userID == 0 || this.message == null) {
+            return;
+        }
+
+        this.sendMessage = new SendMessage(userID, message);
     }
 }
