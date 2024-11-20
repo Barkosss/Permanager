@@ -151,7 +151,7 @@ public class CommandHandler {
 
         String userPlatform;
         do {
-            if (List.of("console", "telegram", "all").contains(args[0].toLowerCase())) {
+            if (args.length > 0 && List.of("console", "telegram", "all").contains(args[0].toLowerCase())) {
                 userPlatform = args[0];
             } else {
                 output.output(interaction.setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
