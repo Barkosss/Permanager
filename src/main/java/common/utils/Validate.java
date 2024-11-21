@@ -7,7 +7,7 @@ import java.util.Optional;
 
 /**
  * Валидация: Проверка строки на необходимое значение
-*/
+ */
 public class Validate {
 
     /**
@@ -19,7 +19,7 @@ public class Validate {
     public Optional<Integer> isValidInteger(String strInteger) {
         try {
             return Optional.of(Integer.parseInt(strInteger));
-        } catch(Exception err) {
+        } catch (Exception err) {
             return Optional.empty();
         }
     }
@@ -41,11 +41,11 @@ public class Validate {
         };
 
         // Проходимся по каждому форматы дат
-        for(String pattern : patterns) {
+        for (String pattern : patterns) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
                 return Optional.of(LocalDate.parse(strLocalDate, formatter));
-            } catch(Exception err) {
+            } catch (Exception err) {
                 break;
             }
         }
