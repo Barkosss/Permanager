@@ -34,10 +34,10 @@ public class Validate {
     public Optional<LocalDate> isValidDate(String strLocalDate) {
 
         String[] patterns = {
-                "H:mm dd.MM.yyyy",
-                "H:mm:ss dd.MM.yyyy",
-                "H:mm dd.MM.yy",
-                "H:mm:ss dd.MM.yy"
+            "H:mm dd.MM.yyyy",
+            "H:mm:ss dd.MM.yyyy",
+            "H:mm dd.MM.yy",
+            "H:mm:ss dd.MM.yy"
         };
 
         // Проходимся по каждому форматы дат
