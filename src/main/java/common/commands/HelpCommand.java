@@ -4,6 +4,7 @@ import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.utils.JSONHandler;
+
 import org.reflections.Reflections;
 
 import java.util.Set;
@@ -42,7 +43,7 @@ public class HelpCommand implements BaseCommand {
 
             StringBuilder helpOutput;
             if (isHas(subclasses, commandName.toLowerCase())) {
-                helpOutput = new StringBuilder("--------- HELP " + commandName +  " ---------\n");
+                helpOutput = new StringBuilder("--------- HELP " + commandName + " ---------\n");
                 helpOutput.append(jsonHandler.read("", "help.manual" + commandName.toLowerCase()));
                 helpOutput.append("--------- HELP ").append(commandName).append(" ---------\n");
 

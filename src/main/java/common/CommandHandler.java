@@ -41,14 +41,22 @@ public class CommandHandler {
             // Получаем множеством всех классов, которые реализовывают интерфейс BaseCommand
             Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
 
+            String commandName;
             BaseCommand instanceClass;
             // Проходимся по каждому классу
             for (Class<? extends BaseCommand> subclass : subclasses) {
                 // Создаём экземпляр класса
                 instanceClass = subclass.getConstructor().newInstance();
 
-                // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
-                baseCommandClasses.put(instanceClass.getCommandName().toLowerCase(), instanceClass);
+                commandName = instanceClass.getCommandName().toLowerCase();
+                // Проверка, нет ли команд с таким именем в мапе
+                if (!baseCommandClasses.containsKey(commandName)) {
+                    // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
+                    baseCommandClasses.put(commandName, instanceClass);
+                } else {
+                    System.out.println("There was a duplication of the command -о" + commandName);
+                    System.exit(0);
+                }
             }
 
         } catch (Exception err) {

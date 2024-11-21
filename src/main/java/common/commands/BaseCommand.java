@@ -17,12 +17,14 @@ public interface BaseCommand {
 
     /**
      * Получить короткое название команды
+     *
      * @return String
      */
     String getCommandName();
 
     /**
      * Получить описание команды
+     *
      * @return String
      */
     String getCommandDescription();
