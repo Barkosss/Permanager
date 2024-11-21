@@ -15,6 +15,7 @@ public class DatabaseHandler {
 
     /**
      * Чтение значения
+     *
      * @return Object
      */
     Object read(/* Сигнатура */) {
@@ -23,6 +24,7 @@ public class DatabaseHandler {
 
     /**
      * Редактировать значение(-я)
+     *
      * @return boolean
      */
     boolean edit(/* Сигнатура */) {
@@ -31,6 +33,7 @@ public class DatabaseHandler {
 
     /**
      * Проверить, существует ли в БД
+     *
      * @return boolean
      */
     boolean check(/* Сигнатура */) {

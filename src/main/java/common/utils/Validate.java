@@ -12,6 +12,7 @@ public class Validate {
 
     /**
      * Валидация числа и конвертация строки в число
+     *
      * @param strInteger Строка с числом
      * @return Integer
      */
@@ -26,6 +27,7 @@ public class Validate {
 
     /**
      * Валидация даты и конвертация строки в дату
+     *
      * @param strLocalDate Строка с датой
      * @return LocalDate
      */
