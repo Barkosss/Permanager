@@ -22,29 +22,22 @@ public class HelpCommand implements BaseCommand {
         return "Справка по всем командам";
     }
 
-    public boolean isHas(Set<Class<? extends BaseCommand>> subclasses, String commandName) {
-
-        for (Class<? extends BaseCommand> subclass : subclasses) {
-            if (subclass.getName().toLowerCase().equals(commandName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     // Вызвать основной методы команды
     public void run(Interaction interaction) {
         try {
             // Получаем в Set все классы, которые имеют интерфейс BaseCommand и находятся в common.commands
             Reflections reflections = new Reflections("common.commands");
             Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
-            String commandName = interaction.getArguments().get(1);
+            String commandName = "";
+            if (!interaction.getArguments().isEmpty()) {
+                commandName = interaction.getArguments().getFirst().toLowerCase();
+            }
 
             StringBuilder helpOutput;
-            if (isHas(subclasses, commandName.toLowerCase())) {
-                helpOutput = new StringBuilder("--------- HELP " + commandName + " ---------\n");
-                helpOutput.append(jsonHandler.read("", "help.manual" + commandName.toLowerCase()));
-                helpOutput.append("--------- HELP ").append(commandName).append(" ---------\n");
+            if (!commandName.isEmpty() && jsonHandler.check("./src/main/resources/manual.json", "help.manual." + commandName)) {
+                helpOutput = new StringBuilder("--------- HELP \"" + commandName + "\" ---------\n");
+                helpOutput.append(jsonHandler.read("./src/main/resources/manual.json", "help.manual." + commandName));
+                helpOutput.append("\n--------- HELP \"").append(commandName).append("\" ---------\n");
 
             } else {
                 helpOutput = new StringBuilder("--------- HELP ---------\n");
@@ -61,7 +54,7 @@ public class HelpCommand implements BaseCommand {
             output.output(interaction.setMessage(helpOutput.toString()).setInline(false));
 
         } catch (Exception err) {
-            System.out.println("[ERROR] Error: " + err);
+            System.out.println("[ERROR] Error (helpCommand): " + err);
         }
     }
 }

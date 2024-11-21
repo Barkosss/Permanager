@@ -26,4 +26,21 @@ public class JSONHandler {
             return new Object();
         }
     }
+
+    public boolean check(String pathJSON, String keys) {
+        try {
+            Object object = new JSONParser().parse(new FileReader(pathJSON));
+            JSONObject jsonObject = (JSONObject) object;
+            for (Object key : keys.split("\\.")) {
+                try {
+                    jsonObject = (JSONObject) jsonObject.get(key);
+                } catch(Exception err) {
+                    return jsonObject != null;
+                }
+            }
+            return jsonObject != null;
+        } catch(Exception err) {
+            return false;
+        }
+    }
 }
