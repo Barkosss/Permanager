@@ -16,12 +16,12 @@ public class JSONHandler {
             for (Object key : keys.split("\\.")) {
                 try {
                     jsonObject = (JSONObject) jsonObject.get(key);
-                } catch(Exception err) {
+                } catch (Exception err) {
                     return jsonObject.get(key);
                 }
             }
             return jsonObject;
-        } catch(IOException | ParseException err) {
+        } catch (IOException | ParseException err) {
             System.out.println("[ERROR] JSONHandler: " + err);
             return new Object();
         }
@@ -34,12 +34,12 @@ public class JSONHandler {
             for (Object key : keys.split("\\.")) {
                 try {
                     jsonObject = (JSONObject) jsonObject.get(key);
-                } catch(Exception err) {
+                } catch (Exception err) {
                     return jsonObject != null;
                 }
             }
             return jsonObject != null;
-        } catch(Exception err) {
+        } catch (Exception err) {
             return false;
         }
     }
