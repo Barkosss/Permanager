@@ -4,7 +4,6 @@ import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.utils.JSONHandler;
-
 import org.reflections.Reflections;
 
 import java.util.Set;
