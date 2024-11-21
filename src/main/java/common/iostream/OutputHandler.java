@@ -14,6 +14,11 @@ public class OutputHandler implements Output {
                 InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
                 SendMessage sendMessage = interactionTelegram.getSendMessage();
 
+                // Если объект не создан, то принудительно выйти, то есть не отправить сообщение)
+                if (sendMessage == null) {
+                    return;
+                }
+
                 // Отправляем сообщение пользователю в Telegram
                 interactionTelegram.telegramBot.execute(sendMessage);
                 break;
