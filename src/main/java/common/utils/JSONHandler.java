@@ -14,7 +14,11 @@ public class JSONHandler {
             Object object = new JSONParser().parse(new FileReader(pathJSON));
             JSONObject jsonObject = (JSONObject) object;
             for (Object key : keys.split("\\.")) {
-                jsonObject = (JSONObject) jsonObject.get(key);
+                try {
+                    jsonObject = (JSONObject) jsonObject.get(key);
+                } catch(Exception err) {
+                    return jsonObject.get(key);
+                }
             }
             return jsonObject;
         } catch(IOException | ParseException err) {
