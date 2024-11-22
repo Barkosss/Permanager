@@ -52,7 +52,7 @@ public class HelpCommand implements BaseCommand {
                 helpOutput.append("--------- HELP ---------\n");
             }
 
-            output.output(interaction.setMessage(helpOutput.toString()).setInline(false));
+            output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
 
         } catch (Exception err) {
             System.out.println("[ERROR] Error (helpCommand): " + err);
