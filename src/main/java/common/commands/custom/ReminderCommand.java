@@ -1,5 +1,6 @@
-package common.commands;
+package common.commands.custom;
 
+import common.commands.BaseCommand;
 import common.models.Interaction;
 
 import java.lang.reflect.InvocationTargetException;

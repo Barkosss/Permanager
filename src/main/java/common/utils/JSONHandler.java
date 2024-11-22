@@ -22,7 +22,7 @@ public class JSONHandler {
             }
             return jsonObject;
         } catch (IOException | ParseException err) {
-            System.out.println("[ERROR] JSONHandler: " + err);
+            System.out.println("[ERROR] JSONHandler (read): " + err);
             return new Object();
         }
     }
