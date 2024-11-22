@@ -1,5 +1,6 @@
-package common.commands;
+package common.commands.custom;
 
+import common.commands.BaseCommand;
 import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.Interaction;

@@ -13,7 +13,7 @@ public class LoggerHandler {
         this.logFileName = "";
 
         try {
-            this.logFile = new FileWriter(logFileName);
+            this.logFile = new FileWriter(logFileName, true);
         } catch (IOException e) {
             System.out.println("File with name \"" + logFileName + "\" isn't open");
         }
@@ -29,6 +29,15 @@ public class LoggerHandler {
     }
 
     public void debug(String message) {
+        String log = "";
+        try {
+            this.logFile.write(log);
+        } catch (IOException err) {
+            System.out.println("Log message isn't write in \"" + logFileName + "\" file");
+        }
+    }
+
+    public void error(String message) {
         String log = "";
         try {
             this.logFile.write(log);
