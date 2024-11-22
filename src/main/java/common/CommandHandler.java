@@ -3,22 +3,23 @@ package common;
 import common.commands.BaseCommand;
 import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
+import common.iostream.Output;
 import common.iostream.OutputHandler;
-import common.models.*;
-import common.repositories.ReminderRepository;
-import common.repositories.ServerRepository;
+import common.models.Content;
+import common.models.Interaction;
+import common.models.InteractionConsole;
+import common.models.InteractionTelegram;
+import common.models.User;
 import common.repositories.UserRepository;
-import common.utils.LoggerHandler;
-import common.utils.ReminderHandler;
-import org.reflections.Reflections;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.reflections.Reflections;
+
 public class CommandHandler {
-    LoggerHandler logger = new LoggerHandler();
 
     public enum LaunchPlatform {
         TELEGRAM,
@@ -28,14 +29,10 @@ public class CommandHandler {
 
     // Хэшмап классов команд
     Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
-
     UserRepository userRepository = new UserRepository();
-    ServerRepository serverRepository = new ServerRepository();
-    ReminderRepository reminderRepository = new ReminderRepository();
-
     InputTelegram inputTelegram = new InputTelegram();
     InputConsole inputConsole = new InputConsole();
-    OutputHandler output = new OutputHandler();
+    Output output = new OutputHandler();
 
     // Загрузка команд
     public CommandHandler() {
@@ -57,14 +54,13 @@ public class CommandHandler {
                     // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
                     baseCommandClasses.put(commandName, instanceClass);
                 } else {
-                    logger.error("There was a duplication of the command - " + commandName);
-                    System.out.println("There was a duplication of the command - " + commandName);
+                    System.out.println("There was a duplication of the command -о" + commandName);
                     System.exit(0);
                 }
             }
 
         } catch (Exception err) {
-            logger.error("Command loader: " + err);
+            System.out.println("[ERROR] Command loader: " + err);
         }
     }
 
@@ -73,31 +69,21 @@ public class CommandHandler {
 
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
+            System.out.println("Telegram is launch");
             // Поток для Telegram
             new Thread(() ->
-                    inputTelegram.read(interaction.setUserRepository(userRepository)
-                            .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
+                    inputTelegram.read(interaction.setUserRepository(userRepository), this)
             ).start();
-            logger.info("Telegram is launch");
-            System.out.println("SYSTEM: Telegram is launch");
         }
-
-        // Поток для системы напоминаний
-        new Thread(() ->
-                new ReminderHandler().run(interaction)
-        ).start();
-        System.out.println("SYSTEM: ReminderHandler is launch");
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
             userRepository.create(0L);
+            System.out.println("Console is launch");
             // Поток для Console
             new Thread(() ->
-                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository)
-                            .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
+                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository), this)
             ).start();
-            logger.info("Console is launch");
-            System.out.println("SYSTEM: Console is launch");
         }
     }
 
@@ -105,7 +91,6 @@ public class CommandHandler {
     public void launchCommand(Interaction interaction, List<Content> contents) {
 
         for (Content content : contents) {
-            interaction.setContent(content);
             String message = content.message();
 
             // Если сообщение в Telegram было отправлено во время offline
@@ -122,36 +107,26 @@ public class CommandHandler {
             List<String> args = List.of(message.split(" "));
             String commandName = args.getFirst().toLowerCase().substring(1);
 
-            // Берём название команды до "@"
-            if (message.startsWith("/") && message.charAt(1) != ' ' && commandName.contains("@")) {
-                commandName = commandName.substring(0, commandName.lastIndexOf("@"));
-            }
-
             // Проверка, что это команда
             if (message.startsWith("/") && message.charAt(1) != ' '
                     && interaction.getUser(interaction.getUserId()).getInputStatus() == User.InputStatus.COMPLETED) {
 
-                if (commandName.startsWith("exit")
-                        && (interaction.getPlatform() == Interaction.Platform.CONSOLE
-                        || List.of(746875461L, 0L).contains(interaction.getUserId()))) {
-                    output.output(interaction.setMessage("Program is stop"));
-                    logger.info("Program is stop");
+                if (commandName.startsWith("exit") && interaction.getPlatform() == Interaction.Platform.CONSOLE) {
+                    System.out.println("Program is stop");
                     System.exit(0);
                 }
 
-                interaction.setMessage(message).setArguments(args.subList(1, args.size()))
-                        .setLanguageCode(content.language());
+                interaction.setMessage(message).setArguments(args.subList(1, args.size()));
 
                 // Если введённая команда имеется в хэшмап
                 if (baseCommandClasses.containsKey(commandName)) {
 
                     // Запустить класс, в котором будет работать команда
                     try {
-                        logger.debug("Method(run) from command(" + commandName + ") with Interaction=" + interaction);
                         baseCommandClasses.get(commandName).run(interaction);
 
                     } catch (Exception err) {
-                        logger.error("Invoke method (run) in command \"" + commandName + "\": " + err);
+                        System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);
                     }
 
                 } else {
@@ -162,9 +137,9 @@ public class CommandHandler {
 
                 // Если что-то ожидаем от пользователя
             } else {
-                User user = interaction.getUser(interaction.getUserId());
 
                 if (commandName.startsWith("cancel")) {
+                    User user = interaction.getUser(interaction.getUserId());
                     String commandException = user.getCommandException();
                     user.clearExpected(commandException);
                     output.output(interaction.setMessage("Command \"" + commandException + "\" is cancel")
@@ -174,10 +149,7 @@ public class CommandHandler {
 
                 // Проверка, ожидаем ли мы что-то от пользователя
                 if (interaction.getUser(interaction.getUserId()).getInputStatus() == User.InputStatus.WAITING) {
-                    logger.debug("Get exception value: chatId" + interaction.getChatId()
-                            + ", userId=" + interaction.getUserId()
-                            + ", message=" + message);
-                    user.setValue(message);
+                    interaction.getUser(interaction.getUserId()).setValue(message);
                     baseCommandClasses.get(interaction.getUser(interaction.getUserId()).getCommandException())
                             .run(interaction);
                 }

@@ -1,20 +1,19 @@
 package common;
 
 import com.pengrad.telegrambot.TelegramBot;
+
+import java.sql.Timestamp;
+
+import com.pengrad.telegrambot.request.SendMessage;
 import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
 import common.utils.JSONHandler;
-import common.utils.LoggerHandler;
-
-import java.sql.Timestamp;
 
 public class Main {
 
     public static void main(String[] args) {
-        LoggerHandler logger = new LoggerHandler();
         JSONHandler jsonHandler = new JSONHandler();
-        logger.debug("----------------");
 
         // Загрузка команд
         CommandHandler commandHandler = new CommandHandler();
@@ -26,17 +25,10 @@ public class Main {
         if (platform == CommandHandler.LaunchPlatform.TELEGRAM || platform == CommandHandler.LaunchPlatform.ALL) {
             TelegramBot bot = null;
             try {
-                if (jsonHandler.check("config.json", "tokenTelegram")) {
-                    bot = new TelegramBot(String.valueOf(jsonHandler.read("config.json", "tokenTelegram")));
-                    logger.info("Telegram bot is start");
-                } else {
-                    logger.error("Telegram token isn't found");
-                    System.out.println("Telegram token isn't found");
-                    System.exit(404);
-                }
+                bot = new TelegramBot(String.valueOf(jsonHandler.read("config.json", "tokenTelegram")));
 
             } catch (Exception err) {
-                logger.error("Telegram authorization: " + err);
+                System.out.println("[ERROR] Telegram authorization: " + err);
                 System.exit(511);
             }
 

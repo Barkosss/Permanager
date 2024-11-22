@@ -6,13 +6,11 @@ import common.CommandHandler;
 import common.models.Content;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.utils.LoggerHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InputTelegram {
-    LoggerHandler logger = new LoggerHandler();
 
     public void read(Interaction interaction, CommandHandler commandHandler) {
 
@@ -20,33 +18,16 @@ public class InputTelegram {
         ((InteractionTelegram) interaction).telegramBot.setUpdatesListener(updates -> {
             List<Content> contents = new ArrayList<>();
 
-            Interaction.Language language;
+            ((InteractionTelegram) interaction).setUserId(updates.getLast().message().chat().id());
+
             for (Update update : updates) {
-
-                if (update.message() == null || update.message().text() == null || update.message().chat() == null) {
-                    continue;
-                }
-
-                ((InteractionTelegram) interaction).setChatId(update.message().chat().id())
-                        .setUserId(update.message().from().id());
-
-                // Языковой
-                language = (update.message().from().languageCode() != null
-                        && update.message().from().languageCode().equals("ru")) ? (Interaction.Language.RUSSIAN)
-                        : (Interaction.Language.ENGLISH);
-
-
                 contents.add(new Content(
-                        update.message().from().id(), // Идентификатор пользователя
-                        update.message().chat(), // Информация о чате
-                        update.message().replyToMessage(), // Информация об ответном сообщении
-                        update.message().text(), // Содержимое сообщения
+                        update.message().chat().id(), // Идентификатор пользователя
+                        update.message().text(), // Сообщение пользователя
                         update.message().date(), // Время отправки, пользователем, сообщения
-                        language,
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));
-                logger.debug("Add new content: " + contents.getLast());
             }
 
             commandHandler.launchCommand(interaction, contents);
@@ -55,12 +36,6 @@ public class InputTelegram {
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
 
             // Создать обработчик исключений
-        }, err -> {
-            if (err.response() != null) {
-                logger.error("Telegram updates listener (Bad response): " + err);
-            } else {
-                logger.error("Telegram updates listener (Network): " + err);
-            }
-        });
+        }, err -> System.out.println("[ERROR] Telegram updates listener: " + err));
     }
 }
