@@ -4,15 +4,16 @@ import com.pengrad.telegrambot.TelegramBot;
 
 import java.sql.Timestamp;
 
-import com.pengrad.telegrambot.request.SendMessage;
 import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
 import common.utils.JSONHandler;
+import common.utils.LoggerHandler;
 
 public class Main {
 
     public static void main(String[] args) {
+        LoggerHandler logger = new LoggerHandler();
         JSONHandler jsonHandler = new JSONHandler();
 
         // Загрузка команд
@@ -26,9 +27,10 @@ public class Main {
             TelegramBot bot = null;
             try {
                 bot = new TelegramBot(String.valueOf(jsonHandler.read("config.json", "tokenTelegram")));
+                logger.info("Telegram bot is start");
 
             } catch (Exception err) {
-                System.out.println("[ERROR] Telegram authorization: " + err);
+                logger.error("Telegram authorization: " + err);
                 System.exit(511);
             }
 
