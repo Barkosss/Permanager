@@ -15,7 +15,9 @@ public class UserRepository {
 
     // Создать пользователя в памяти
     public void create(long userId) {
-        if (users.containsKey(userId)) return;
+        if (users.containsKey(userId)) {
+            return;
+        }
         users.put(userId, new User(userId));
     }
 
