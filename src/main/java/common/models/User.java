@@ -28,7 +28,8 @@ public class User {
 
     public void setValue(String value) {
         InputExpectation inputExpectation = this.userInputExpectation;
-        inputExpectation.getExpectedInputs().get(inputExpectation.expectedCommandName).put(inputExpectation.expectedInputKey, value);
+        inputExpectation.getExpectedInputs().get(inputExpectation.expectedCommandName)
+                .put(inputExpectation.expectedInputKey, value);
     }
 
     public String getValue(String commandName, String key) {

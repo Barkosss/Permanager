@@ -21,7 +21,7 @@ import org.reflections.Reflections;
 
 public class CommandHandler {
 
-    public enum launchPlatform {
+    public enum LaunchPlatform {
         TELEGRAM,
         CONSOLE,
         ALL
@@ -65,10 +65,10 @@ public class CommandHandler {
     }
 
     // Запуск программы
-    public void launch(Interaction interaction, launchPlatform platform) {
+    public void launch(Interaction interaction, LaunchPlatform platform) {
 
         // Проверка, что Platform это Telegram или ALL
-        if (platform == launchPlatform.TELEGRAM || platform == launchPlatform.ALL) {
+        if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
             System.out.println("Telegram is launch");
             // Поток для Telegram
             new Thread(() ->
@@ -77,7 +77,7 @@ public class CommandHandler {
         }
 
         // Проверка, что Platform это Console или ALL
-        if (platform == launchPlatform.CONSOLE || platform == launchPlatform.ALL) {
+        if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
             userRepository.create(0L);
             System.out.println("Console is launch");
             // Поток для Console
@@ -94,8 +94,8 @@ public class CommandHandler {
             String message = content.message();
 
             // Если сообщение в Telegram было отправлено во время offline
-            if (content.platform() == Interaction.Platform.TELEGRAM &&
-                    content.createdAt() < ((InteractionTelegram) interaction).timestampBotStart) {
+            if (content.platform() == Interaction.Platform.TELEGRAM
+                    && content.createdAt() < ((InteractionTelegram) interaction).timestampBotStart) {
                 continue;
             }
 
@@ -154,7 +154,7 @@ public class CommandHandler {
     }
 
     // Настройка взаимодействий и запуск программы
-    public launchPlatform choosePlatform(String[] args) {
+    public LaunchPlatform choosePlatform(String[] args) {
         Interaction interaction = new InteractionConsole();
 
         String userPlatform;
@@ -170,7 +170,7 @@ public class CommandHandler {
 
             try {
                 // Пытаемся получить платформу
-                return launchPlatform.valueOf(userPlatform.toUpperCase());
+                return LaunchPlatform.valueOf(userPlatform.toUpperCase());
 
                 // Ошибка, если указан неправильная платформа
             } catch (IllegalArgumentException err) {

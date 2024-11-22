@@ -46,7 +46,7 @@ public class Permissions {
     }
 
     public Permissions(boolean canKick, boolean canBan, boolean canUnban,
-                       boolean canMute, boolean canUnMute,boolean canWarn,
+                       boolean canMute, boolean canUnMute, boolean canWarn,
                        boolean canRemWarn, boolean canResetWarn, boolean canClear, boolean canGiveTempRole) {
         this.canKick = canKick;
         this.canBan = canBan;
