@@ -37,7 +37,7 @@ public class InteractionConsole implements Interaction {
     public User getUser(long userId) {
         try {
             return userRepository.findById(userId);
-        } catch(MemberNotFoundException err) {
+        } catch (MemberNotFoundException err) {
             return null;
         }
 
