@@ -1,7 +1,9 @@
 package common.iostream;
 
-import common.models.*;
 import common.CommandHandler;
+import common.models.Content;
+import common.models.Interaction;
+import common.models.User;
 
 import java.util.List;
 import java.util.Scanner;
@@ -20,9 +22,9 @@ public class InputConsole {
     }
 
     public void listener(Interaction interaction, CommandHandler commandHandler) {
-        while(true) {
+        while (true) {
             // Проверка, ожидаем ли что-то от пользователя
-            if (interaction.getUser(interaction.getUserID()).getInputStatus() != User.InputStatus.WAITING) {
+            if (interaction.getUser(interaction.getUserId()).getInputStatus() != User.InputStatus.WAITING) {
                 output.output(interaction.setMessage("Enter command: ").setInline(true));
             }
 
@@ -36,13 +38,13 @@ public class InputConsole {
             }
 
             commandHandler.launchCommand(interaction, List.of(
-                    new Content(0L, // Идентификатор пользователя (Для консоли он равен 0
-                            userInputMessage, // Сообщение пользователя
-                            System.currentTimeMillis() / 1000, // Время отправки, пользователем, сообщения
-                            List.of(userInputMessage.split(" ")), // Аргументы сообщения
-                            Interaction.Platform.CONSOLE // Платформа, с которой пришёл контент
+                            new Content(0L, // Идентификатор пользователя (Для консоли он равен 0
+                                    userInputMessage, // Сообщение пользователя
+                                    System.currentTimeMillis() / 1000, // Время отправки, пользователем, сообщения
+                                    List.of(userInputMessage.split(" ")), // Аргументы сообщения
+                                    Interaction.Platform.CONSOLE // Платформа, с которой пришёл контент
+                            )
                     )
-                )
             );
         }
     }

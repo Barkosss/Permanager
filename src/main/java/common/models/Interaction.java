@@ -15,7 +15,7 @@ public interface Interaction {
 
     User getUser(long userId);
 
-    long getUserID();
+    long getUserId();
 
     Platform getPlatform();
 

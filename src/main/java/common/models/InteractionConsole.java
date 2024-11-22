@@ -7,7 +7,7 @@ import java.util.List;
 
 public class InteractionConsole implements Interaction {
 
-    long userID;
+    long userId;
 
     // Платформа: Terminal, Telegram, Discord
     Platform platform;
@@ -25,7 +25,7 @@ public class InteractionConsole implements Interaction {
     UserRepository userRepository;
 
     public InteractionConsole() {
-        this.userID = 0L;
+        this.userId = 0L;
         this.platform = Platform.CONSOLE;
     }
 
@@ -37,14 +37,14 @@ public class InteractionConsole implements Interaction {
     public User getUser(long userId) {
         try {
             return userRepository.findById(userId);
-        } catch(MemberNotFoundException err) {
+        } catch (MemberNotFoundException err) {
             return null;
         }
 
     }
 
-    public long getUserID() {
-        return userID;
+    public long getUserId() {
+        return userId;
     }
 
     public Platform getPlatform() {

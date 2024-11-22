@@ -20,7 +20,7 @@ public class TestCommand implements BaseCommand {
 
     @Override
     public void run(Interaction interaction) {
-        User user = interaction.getUser(interaction.getUserID());
+        User user = interaction.getUser(interaction.getUserId());
 
         if (!user.isExceptedKey(getCommandName(), "firstMessage")) {
             user.setExcepted(getCommandName(), "firstMessage");

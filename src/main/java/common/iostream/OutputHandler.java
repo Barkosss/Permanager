@@ -1,20 +1,19 @@
 package common.iostream;
 
 import com.pengrad.telegrambot.request.SendMessage;
-
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 
 public class OutputHandler implements Output {
 
     public void output(Interaction interaction) {
-        switch(interaction.getPlatform()) {
+        switch (interaction.getPlatform()) {
 
             case TELEGRAM: {
                 InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
                 SendMessage sendMessage = interactionTelegram.getSendMessage();
 
-                // Если объект не создан, то принудительно выйти, то есть не отправить сообщение)
+                // Если объект не создан, то принудительно выйти, то есть не отправить сообщение
                 if (sendMessage == null) {
                     return;
                 }

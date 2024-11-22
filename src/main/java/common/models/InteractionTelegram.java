@@ -17,7 +17,7 @@ public class InteractionTelegram implements Interaction {
     Platform platform;
 
     // Для Telegram - Chat ID, для Discord - User ID
-    long userID;
+    long userId;
 
     // Полное сообщение
     String message;
@@ -49,7 +49,7 @@ public class InteractionTelegram implements Interaction {
     public User getUser(long userId) {
         try {
             return userRepository.findById(userId);
-        } catch(MemberNotFoundException err) {
+        } catch (MemberNotFoundException err) {
             return null;
         }
 
@@ -59,12 +59,12 @@ public class InteractionTelegram implements Interaction {
         return platform;
     }
 
-    public long getUserID() {
-        return userID;
+    public long getUserId() {
+        return userId;
     }
 
-    public Interaction setUserID(long userID) {
-        this.userID = userID;
+    public Interaction setUserId(long userId) {
+        this.userId = userId;
         createSendMessage();
         return this;
     }
@@ -105,10 +105,10 @@ public class InteractionTelegram implements Interaction {
     public String toString() {
 
         return "InteractionConsole({"
-                +  "Token=" + telegramBot
+                + "Token=" + telegramBot
                 + "\nTIMESTAMP_BOT_START=" + timestampBotStart
                 + "\nPlatform=" + platform
-                + "\nUserID=" + userID
+                + "\nuserId=" + userId
                 + "\nMessage=" + message
                 + "\nInline=" + inline
                 + "\narguments=" + arguments
@@ -116,10 +116,10 @@ public class InteractionTelegram implements Interaction {
     }
 
     private void createSendMessage() {
-        if (this.userID == 0 || this.message == null) {
+        if (this.userId == 0 || this.message == null) {
             return;
         }
 
-        this.sendMessage = new SendMessage(userID, message);
+        this.sendMessage = new SendMessage(userId, message);
     }
 }

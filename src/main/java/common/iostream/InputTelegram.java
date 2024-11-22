@@ -2,7 +2,6 @@ package common.iostream;
 
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-
 import common.CommandHandler;
 import common.models.Content;
 import common.models.Interaction;
@@ -16,12 +15,12 @@ public class InputTelegram {
     public void read(Interaction interaction, CommandHandler commandHandler) {
 
         // Обработка всех изменений
-        ((InteractionTelegram)interaction).telegramBot.setUpdatesListener(updates -> {
+        ((InteractionTelegram) interaction).telegramBot.setUpdatesListener(updates -> {
             List<Content> contents = new ArrayList<>();
 
-            ((InteractionTelegram)interaction).setUserID(updates.getLast().message().chat().id());
+            ((InteractionTelegram) interaction).setUserId(updates.getLast().message().chat().id());
 
-            for(Update update : updates) {
+            for (Update update : updates) {
                 contents.add(new Content(
                         update.message().chat().id(), // Идентификатор пользователя
                         update.message().text(), // Сообщение пользователя
