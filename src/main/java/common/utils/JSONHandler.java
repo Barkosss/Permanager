@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class JSONHandler {
-    LoggerHandler logger = new LoggerHandler();
 
     public Object read(String pathJSON, String keys) {
         try {
@@ -23,7 +22,7 @@ public class JSONHandler {
             }
             return jsonObject;
         } catch (IOException | ParseException err) {
-            logger.error("JSONHandler (read): " + err);
+            System.out.println("[ERROR] JSONHandler: " + err);
             return new Object();
         }
     }

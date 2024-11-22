@@ -5,20 +5,21 @@ import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
 import common.iostream.Output;
 import common.iostream.OutputHandler;
-import common.models.*;
+import common.models.Content;
+import common.models.Interaction;
+import common.models.InteractionConsole;
+import common.models.InteractionTelegram;
+import common.models.User;
 import common.repositories.UserRepository;
-import common.utils.LoggerHandler;
-import common.utils.ReminderHandler;
-import org.reflections.Reflections;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class CommandHandler {
+import org.reflections.Reflections;
 
-    private final LoggerHandler logger = new LoggerHandler();
+public class CommandHandler {
 
     public enum LaunchPlatform {
         TELEGRAM,
@@ -53,14 +54,13 @@ public class CommandHandler {
                     // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
                     baseCommandClasses.put(commandName, instanceClass);
                 } else {
-                    logger.error("There was a duplication of the command -о" + commandName);
                     System.out.println("There was a duplication of the command -о" + commandName);
                     System.exit(0);
                 }
             }
 
         } catch (Exception err) {
-            logger.error("Command loader: " + err);
+            System.out.println("[ERROR] Command loader: " + err);
         }
     }
 
@@ -69,7 +69,7 @@ public class CommandHandler {
 
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
-            logger.info("Telegram is launch");
+            System.out.println("Telegram is launch");
             // Поток для Telegram
             new Thread(() ->
                     inputTelegram.read(interaction.setUserRepository(userRepository), this)
@@ -79,17 +79,12 @@ public class CommandHandler {
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
             userRepository.create(0L);
-            logger.info("Console is launch");
+            System.out.println("Console is launch");
             // Поток для Console
             new Thread(() ->
                     inputConsole.listener(new InteractionConsole().setUserRepository(userRepository), this)
             ).start();
         }
-
-        // Поток для системы напоминаний
-        new Thread(() ->
-                new ReminderHandler().run()
-        ).start();
     }
 
     // Вызов команды
@@ -131,7 +126,7 @@ public class CommandHandler {
                         baseCommandClasses.get(commandName).run(interaction);
 
                     } catch (Exception err) {
-                        logger.error("Invoke method (run) in command \"" + commandName + "\": " + err);
+                        System.out.println("[ERROR] Invoke method (run) in command \"" + commandName + "\": " + err);
                     }
 
                 } else {
@@ -189,4 +184,3 @@ public class CommandHandler {
         } while (true);
     }
 }
-

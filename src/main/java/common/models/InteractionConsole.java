@@ -83,9 +83,9 @@ public class InteractionConsole implements Interaction {
 
         return "InteractionConsole({"
                 + "Platform=" + platform
-                + "; Message=" + message
-                + "; Inline=" + inline
-                + "; Arguments=" + arguments
+                + "\nMessage=" + message
+                + "\nInline=" + inline
+                + "\nArguments=" + arguments
                 + "})";
     }
 }

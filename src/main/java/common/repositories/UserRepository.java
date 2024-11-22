@@ -2,13 +2,11 @@ package common.repositories;
 
 import common.models.User;
 import common.exceptions.MemberNotFoundException;
-import common.utils.LoggerHandler;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserRepository {
-    LoggerHandler logger = new LoggerHandler();
     public Map<Long, User> users;
 
     public UserRepository() {
@@ -29,7 +27,6 @@ public class UserRepository {
         if ((user = users.get(userId)) != null) {
             return user;
         }
-        logger.error("Member by id(" + userId + ") is not found");
         throw new MemberNotFoundException();
     }
 
