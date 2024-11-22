@@ -1,6 +1,6 @@
 package common.commands;
 
-import java.util.List;
+import common.models.Interaction;
 
 /**
  * Интерфейс команд
@@ -13,16 +13,18 @@ public interface BaseCommand {
     /**
      * Запустить команду
      */
-    void run(List<String> args);
+    void run(Interaction interaction);
 
     /**
      * Получить короткое название команды
+     *
      * @return String
      */
     String getCommandName();
 
     /**
      * Получить описание команды
+     *
      * @return String
      */
     String getCommandDescription();

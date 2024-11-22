@@ -8,7 +8,7 @@ public class Reminder {
     public long id;
 
     // ID пользователя, создавший напоминание
-    public long userID;
+    public long userId;
 
     // Содержимое напоминание
     public String content;
