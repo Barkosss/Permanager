@@ -45,7 +45,9 @@ public class Permissions {
         this.canGiveTempRole = false;
     }
 
-    public Permissions(boolean canKick, boolean canBan, boolean canUnban, boolean canMute, boolean canUnMute, boolean canWarn, boolean canRemWarn, boolean canResetWarn, boolean canClear, boolean canGiveTempRole) {
+    public Permissions(boolean canKick, boolean canBan, boolean canUnban,
+                       boolean canMute, boolean canUnMute,boolean canWarn,
+                       boolean canRemWarn, boolean canResetWarn, boolean canClear, boolean canGiveTempRole) {
         this.canKick = canKick;
         this.canBan = canBan;
         this.canUnban = canUnban;
@@ -94,8 +96,8 @@ public class Permissions {
     }
 
     // Установить значение, имеет ли пользователь доступ к mute
-    public void setCanMute(boolean CanMute) {
-        this.canMute = CanMute;
+    public void setCanMute(boolean canMute) {
+        this.canMute = canMute;
     }
 
     // Получить, имеет ли пользователь доступ к unmute

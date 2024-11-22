@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 
 import java.sql.Timestamp;
 
+import com.pengrad.telegrambot.request.SendMessage;
 import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
@@ -30,6 +31,7 @@ public class Main {
                 System.out.println("[ERROR] Telegram authorization: " + err);
                 System.exit(511);
             }
+
             // Сохраняем токен бота
             interaction = new InteractionTelegram(bot, new Timestamp(System.currentTimeMillis() / 1000).getTime());
         }

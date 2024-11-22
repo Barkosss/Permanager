@@ -22,7 +22,7 @@ public class InputConsole {
     public void listener(Interaction interaction, CommandHandler commandHandler) {
         while(true) {
             // Проверка, ожидаем ли что-то от пользователя
-            if (interaction.getUser(interaction.getUserID()).getInputStatus() != User.InputStatus.WAITING) {
+            if (interaction.getUser(interaction.getUserId()).getInputStatus() != User.InputStatus.WAITING) {
                 output.output(interaction.setMessage("Enter command: ").setInline(true));
             }
 

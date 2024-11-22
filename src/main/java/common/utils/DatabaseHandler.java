@@ -14,9 +14,9 @@ import java.io.IOException;
 public class DatabaseHandler {
 
     public static Connection getConnection() throws SQLException {
-        String url = "jdbc:postgresql://localhost:8080/mydatabase";  // Адрес базы данных
-        String user = "barkos";  // Ваше имя пользователя
-        String password = "1234";  // Ваш пароль
+        String url = "jdbc:postgresql://localhost:5432/postgres";  // Адрес базы данных
+        String user = "postgres";  // Ваше имя пользователя
+        String password = "postgres";  // Ваш пароль
 
         return DriverManager.getConnection(url, user, password);
     }

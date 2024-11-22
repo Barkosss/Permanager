@@ -108,7 +108,7 @@ public class CommandHandler {
             String commandName = args.getFirst().toLowerCase().substring(1);
 
             // Проверка, что это команда
-            if (message.startsWith("/") && message.charAt(1) != ' ' && interaction.getUser(interaction.getUserID()).getInputStatus() == User.InputStatus.COMPLETED) {
+            if (message.startsWith("/") && message.charAt(1) != ' ' && interaction.getUser(interaction.getUserId()).getInputStatus() == User.InputStatus.COMPLETED) {
 
                 if (commandName.startsWith("exit") && interaction.getPlatform() == Interaction.Platform.CONSOLE) {
                     System.out.println("Program is stop");
@@ -137,7 +137,7 @@ public class CommandHandler {
             } else {
 
                 if (commandName.startsWith("cancel")) {
-                    User user = interaction.getUser(interaction.getUserID());
+                    User user = interaction.getUser(interaction.getUserId());
                     String commandException = user.getCommandException();
                     user.clearExpected(commandException);
                     output.output(interaction.setMessage("Command \"" + commandException + "\" is cancel").setInline(false));
@@ -145,9 +145,9 @@ public class CommandHandler {
                 }
 
                 // Проверка, ожидаем ли мы что-то от пользователя
-                if (interaction.getUser(interaction.getUserID()).getInputStatus() == User.InputStatus.WAITING) {
-                    interaction.getUser(interaction.getUserID()).setValue(message);
-                    baseCommandClasses.get(interaction.getUser(interaction.getUserID()).getCommandException()).run(interaction);
+                if (interaction.getUser(interaction.getUserId()).getInputStatus() == User.InputStatus.WAITING) {
+                    interaction.getUser(interaction.getUserId()).setValue(message);
+                    baseCommandClasses.get(interaction.getUser(interaction.getUserId()).getCommandException()).run(interaction);
                 }
             }
         }

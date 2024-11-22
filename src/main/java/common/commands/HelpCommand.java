@@ -34,9 +34,9 @@ public class HelpCommand implements BaseCommand {
             }
 
             StringBuilder helpOutput;
-            if (!commandName.isEmpty() && jsonHandler.check("./src/main/resources/manual.json", "help.manual." + commandName)) {
+            if (!commandName.isEmpty() && jsonHandler.check("manual.json", "help.manual." + commandName)) {
                 helpOutput = new StringBuilder("--------- HELP \"" + commandName + "\" ---------\n");
-                helpOutput.append(jsonHandler.read("./src/main/resources/manual.json", "help.manual." + commandName));
+                helpOutput.append(jsonHandler.read("manual.json", "help.manual." + commandName));
                 helpOutput.append("\n--------- HELP \"").append(commandName).append("\" ---------\n");
 
             } else {
@@ -45,7 +45,8 @@ public class HelpCommand implements BaseCommand {
                 // Вывести короткое название и описание команды
                 for (Class<? extends BaseCommand> subclass : subclasses) {
                     BaseCommand command = subclass.getConstructor().newInstance();
-                    helpOutput.append(command.getCommandName()).append(":\n|---\t").append(command.getCommandDescription()).append("\n");
+                    helpOutput.append(command.getCommandName()).append(":\n|---\t")
+                            .append(command.getCommandDescription()).append("\n");
                 }
 
                 helpOutput.append("--------- HELP ---------\n");

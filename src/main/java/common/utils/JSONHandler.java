@@ -11,7 +11,7 @@ public class JSONHandler {
 
     public Object read(String pathJSON, String keys) {
         try {
-            Object object = new JSONParser().parse(new FileReader(pathJSON));
+            Object object = new JSONParser().parse(new FileReader("./src/main/resources/" + pathJSON));
             JSONObject jsonObject = (JSONObject) object;
             for (Object key : keys.split("\\.")) {
                 try {
@@ -29,7 +29,7 @@ public class JSONHandler {
 
     public boolean check(String pathJSON, String keys) {
         try {
-            Object object = new JSONParser().parse(new FileReader(pathJSON));
+            Object object = new JSONParser().parse(new FileReader("./src/main/resources/" + pathJSON));
             JSONObject jsonObject = (JSONObject) object;
             for (Object key : keys.split("\\.")) {
                 try {
