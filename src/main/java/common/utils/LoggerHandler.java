@@ -1,8 +1,9 @@
 package common.utils;
 
-import java.time.LocalDate;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class LoggerHandler {
@@ -11,52 +12,57 @@ public class LoggerHandler {
 
     String logFileName;
 
+    String logFilePath;
+    
+    private String getTimeFormatter() {
+        return "dd-MM-yyyy HH:mm:ss";
+    }
+
     public LoggerHandler() {
-        this.logFileName = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".log";
+        this.logFileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".log";
+        this.logFilePath = "./src/main/resources/logs/" + logFileName;
 
         try {
-            this.logFile = new FileWriter("./src/main/resources/logs/" + logFileName, true);
+            this.logFile = new FileWriter(this.logFilePath, true);
         } catch (IOException e) {
             System.out.println("File with name \"" + logFileName + "\" isn't open");
         }
     }
 
     public void info(String message) {
-        StringBuilder log = new StringBuilder();
-        log.append("[INFO]\t");
-        log.append("[").append(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))).append("]\t");
-        log.append(message);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
+            String log = "[INFO]\t" +
+                    "[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())) + "]\t" +
+                    message;
 
-        System.out.println(log);
-        try {
-            logFile.write(String.valueOf(log));
-            System.out.println("write");
+            writer.write(log); // Форматируем и записываем сообщение в файл
+            writer.newLine();  // Переход на новую строку
         } catch (IOException err) {
             System.out.println("Log message isn't write in \"" + logFileName + "\" file");
         }
     }
 
     public void debug(String message) {
-        StringBuilder log = new StringBuilder();
-        log.append("[DEBUG]\t");
-        log.append("[").append(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))).append("]\t");
-        log.append(message);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
+            String log = "[DEBUG]\t" +
+                    "[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())) + "]\t" +
+                    message;
 
-        try {
-            this.logFile.write(String.valueOf(log));
+            writer.write(log); // Форматируем и записываем сообщение в файл
+            writer.newLine();  // Переход на новую строку
         } catch (IOException err) {
             System.out.println("Log message isn't write in \"" + logFileName + "\" file");
         }
     }
 
     public void error(String message) {
-        StringBuilder log = new StringBuilder();
-        log.append("[ERROR]\t");
-        log.append("[").append(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))).append("]\t");
-        log.append(message);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
+            String log = "[ERROR]\t" +
+                    "[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())) + "]\t" +
+                    message;
 
-        try {
-            this.logFile.write(String.valueOf(log));
+            writer.write(log); // Форматируем и записываем сообщение в файл
+            writer.newLine();  // Переход на новую строку
         } catch (IOException err) {
             System.out.println("Log message isn't write in \"" + logFileName + "\" file");
         }

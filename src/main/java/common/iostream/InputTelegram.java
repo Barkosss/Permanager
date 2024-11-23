@@ -6,11 +6,13 @@ import common.CommandHandler;
 import common.models.Content;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.utils.LoggerHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InputTelegram {
+    LoggerHandler logger = new LoggerHandler();
 
     public void read(Interaction interaction, CommandHandler commandHandler) {
 
@@ -21,6 +23,11 @@ public class InputTelegram {
             ((InteractionTelegram) interaction).setUserId(updates.getLast().message().chat().id());
 
             for (Update update : updates) {
+
+                if (update.message() == null || update.message().text() == null || update.message().chat() == null) {
+                    continue;
+                }
+
                 contents.add(new Content(
                         update.message().chat().id(), // Идентификатор пользователя
                         update.message().text(), // Сообщение пользователя
@@ -36,6 +43,6 @@ public class InputTelegram {
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
 
             // Создать обработчик исключений
-        }, err -> System.out.println("[ERROR] Telegram updates listener: " + err));
+        }, err -> logger.error("Telegram updates listener: " + err));
     }
 }

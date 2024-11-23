@@ -2,13 +2,13 @@ package common;
 
 import com.pengrad.telegrambot.TelegramBot;
 
-import java.sql.Timestamp;
-
 import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
 import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
+
+import java.sql.Timestamp;
 
 public class Main {
 
