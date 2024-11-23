@@ -1,0 +1,8 @@
+.gradle
+.idea
+build
+*.jar
+gradlew
+gradlew.bat
+/src/main/resources/config.json
+/src/main/resources/logs
