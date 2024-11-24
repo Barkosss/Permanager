@@ -122,7 +122,7 @@ public class CommandHandler {
                     System.exit(0);
                 }
 
-                interaction.setMessage(message).setArguments(args.subList(1, args.size()));
+                interaction.setMessage(message).setArguments(args.subList(1, args.size())).setLanguageCode(content.language());
 
                 // Если введённая команда имеется в хэшмап
                 if (baseCommandClasses.containsKey(commandName)) {

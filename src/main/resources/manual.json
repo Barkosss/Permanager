@@ -1,7 +1,14 @@
 {
     "help": {
         "manual": {
-            "test": "basc"
+            "test": {
+                "ru": {
+
+                },
+                "en": {
+
+                }
+            }
         }
     }
 }

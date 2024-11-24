@@ -41,6 +41,7 @@ public class InputConsole {
                             new Content(0L, // Идентификатор пользователя (Для консоли он равен 0
                                     userInputMessage, // Сообщение пользователя
                                     System.currentTimeMillis() / 1000, // Время отправки, пользователем, сообщения
+                                    Interaction.Language.ENGLISH,
                                     List.of(userInputMessage.split(" ")), // Аргументы сообщения
                                     Interaction.Platform.CONSOLE // Платформа, с которой пришёл контент
                             )

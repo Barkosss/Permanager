@@ -38,6 +38,9 @@ public class InteractionTelegram implements Interaction {
     // ...
     ServerRepository serverRepository;
 
+    // Языковой код
+    Language languageCode;
+
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
         this.telegramBot = telegramBot;
         this.timestampBotStart = timestampBotStart;
@@ -106,6 +109,15 @@ public class InteractionTelegram implements Interaction {
 
     public Interaction setArguments(List<String> arguments) {
         this.arguments = arguments;
+        return this;
+    }
+
+    public Language getLanguageCode() {
+        return languageCode;
+    }
+
+    public Interaction setLanguageCode(Language languageCode) {
+        this.languageCode = languageCode;
         return this;
     }
 

@@ -22,16 +22,20 @@ public class InputTelegram {
 
             ((InteractionTelegram) interaction).setUserId(updates.getLast().message().chat().id());
 
+            Interaction.Language language;
             for (Update update : updates) {
 
                 if (update.message() == null || update.message().text() == null || update.message().chat() == null) {
                     continue;
                 }
 
+                // Языковой
+                language = (update.message().from().languageCode().equals("ru")) ? (Interaction.Language.RUSSIAN) : (Interaction.Language.ENGLISH);
                 contents.add(new Content(
-                        update.message().chat().id(), // Идентификатор пользователя
+                        update.message().chat().id(), // Идентификатор чата
                         update.message().text(), // Сообщение пользователя
                         update.message().date(), // Время отправки, пользователем, сообщения
+                        language, // Код языка
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));

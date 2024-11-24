@@ -19,7 +19,13 @@ public class StartCommand implements BaseCommand {
 
     @Override
     public void run(Interaction interaction) {
-        String message = "";
+        String message;
+
+        if (interaction.getLanguageCode() == Interaction.Language.RUSSIAN) {
+            message = "Привет!";
+        } else {
+            message = "Hello!";
+        }
 
 
         output.output(interaction.setMessage(message));

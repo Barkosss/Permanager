@@ -28,6 +28,9 @@ public class InteractionConsole implements Interaction {
     // ...
     ServerRepository serverRepository;
 
+    // Языковой код
+    Language languageCode;
+
     public InteractionConsole() {
         this.userId = 0L;
         this.platform = Platform.CONSOLE;
@@ -86,6 +89,15 @@ public class InteractionConsole implements Interaction {
 
     public Interaction setArguments(List<String> arguments) {
         this.arguments = arguments;
+        return this;
+    }
+
+    public Language getLanguageCode() {
+        return languageCode;
+    }
+
+    public Interaction setLanguageCode(Language languageCode) {
+        this.languageCode = languageCode;
         return this;
     }
 
