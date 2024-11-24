@@ -104,7 +104,10 @@ public class InteractionConsole implements Interaction {
 
     public String getLanguageValue(String languageKey) {
         JSONHandler jsonHandler = new JSONHandler();
-        return (String) jsonHandler.read("content_" + languageCode.getLang() + ".json", languageKey);
+        if (jsonHandler.check("content_" + languageCode.getLang() + ".json", languageKey)) {
+            return (String) jsonHandler.read("content_" + languageCode.getLang() + ".json", languageKey);
+        }
+        return "Undefined";
     }
 
     @Override

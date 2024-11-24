@@ -21,7 +21,7 @@ public class StartCommand implements BaseCommand {
     public void run(Interaction interaction) {
         String message;
 
-        message = interaction.getLanguageValue("start.message");
+        message = interaction.getLanguageValue("start.messagss522e");
 
         output.output(interaction.setMessage(message));
     }
