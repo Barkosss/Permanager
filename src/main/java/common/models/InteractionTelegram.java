@@ -106,12 +106,12 @@ public class InteractionTelegram implements Interaction {
 
         return "InteractionConsole({"
                 + "Token=" + telegramBot
-                + "\nTIMESTAMP_BOT_START=" + timestampBotStart
-                + "\nPlatform=" + platform
-                + "\nuserId=" + userId
-                + "\nMessage=" + message
-                + "\nInline=" + inline
-                + "\narguments=" + arguments
+                + "; TIMESTAMP_BOT_START=" + timestampBotStart
+                + "; Platform=" + platform
+                + "; userId=" + userId
+                + "; Message=" + message
+                + "; Inline=" + inline
+                + "; arguments=" + arguments
                 + "})";
     }
 
