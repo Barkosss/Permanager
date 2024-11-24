@@ -70,27 +70,30 @@ public class CommandHandler {
 
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
-            logger.info("Telegram is launch");
             // Поток для Telegram
             new Thread(() ->
                     inputTelegram.read(interaction.setUserRepository(userRepository).setServerRepository(serverRepository), this)
             ).start();
+            logger.info("Telegram is launch");
+            System.out.println("SYSTEM: Telegram is launch");
         }
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
             userRepository.create(0L);
-            logger.info("Console is launch");
             // Поток для Console
             new Thread(() ->
                     inputConsole.listener(new InteractionConsole().setUserRepository(userRepository).setServerRepository(serverRepository), this)
             ).start();
+            logger.info("Console is launch");
+            System.out.println("SYSTEM: Console is launch");
         }
 
         // Поток для системы напоминаний
         new Thread(() ->
                 new ReminderHandler().run(interaction)
         ).start();
+        System.out.println("SYSTEM: ReminderHandler is launch");
     }
 
     // Вызов команды
@@ -112,7 +115,7 @@ public class CommandHandler {
 
             List<String> args = List.of(message.split(" "));
             String commandName = args.getFirst().toLowerCase().substring(1);
-            
+
             // Берём название команды до "@"
             if (commandName.contains("@")) {
                 commandName = commandName.substring(0, commandName.lastIndexOf("@"));
