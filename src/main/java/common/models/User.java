@@ -47,8 +47,14 @@ public class User {
         return this.userInputExpectation.getExpectedInputs().get(commandName).containsKey(key);
     }
 
-    public void setExcepted(String commandName, String valueKey) {
+    public User setExcepted(String commandName, String valueKey) {
         this.inputStatus = InputStatus.WAITING;
+        this.userInputExpectation.setExpected(commandName, valueKey);
+        this.userInputExpectation.userInputType = InputExpectation.UserInputType.STRING;
+        return this;
+    }
+
+    public void setExcepted(String commandName, String valueKey, String value) {
         this.userInputExpectation.setExpected(commandName, valueKey);
         this.userInputExpectation.userInputType = InputExpectation.UserInputType.STRING;
     }
