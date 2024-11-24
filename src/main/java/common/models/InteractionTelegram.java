@@ -3,6 +3,7 @@ package common.models;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 import common.exceptions.MemberNotFoundException;
+import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public class InteractionTelegram implements Interaction {
     // ...
     UserRepository userRepository;
 
+    // ...
+    ServerRepository serverRepository;
 
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
         this.telegramBot = telegramBot;
@@ -43,6 +46,11 @@ public class InteractionTelegram implements Interaction {
 
     public Interaction setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+        return this;
+    }
+
+    public Interaction setServerRepository(ServerRepository serverRepository) {
+        this.serverRepository = serverRepository;
         return this;
     }
 

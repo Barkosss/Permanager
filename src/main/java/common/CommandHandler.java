@@ -6,6 +6,7 @@ import common.iostream.InputTelegram;
 import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.*;
+import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 import common.utils.LoggerHandler;
 import common.utils.ReminderHandler;
@@ -29,6 +30,7 @@ public class CommandHandler {
     // Хэшмап классов команд
     Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
     UserRepository userRepository = new UserRepository();
+    ServerRepository serverRepository = new ServerRepository();
     InputTelegram inputTelegram = new InputTelegram();
     InputConsole inputConsole = new InputConsole();
     Output output = new OutputHandler();
@@ -72,7 +74,7 @@ public class CommandHandler {
             logger.info("Telegram is launch");
             // Поток для Telegram
             new Thread(() ->
-                    inputTelegram.read(interaction.setUserRepository(userRepository), this)
+                    inputTelegram.read(interaction.setUserRepository(userRepository).setServerRepository(serverRepository), this)
             ).start();
         }
 
@@ -82,13 +84,13 @@ public class CommandHandler {
             logger.info("Console is launch");
             // Поток для Console
             new Thread(() ->
-                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository), this)
+                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository).setServerRepository(serverRepository), this)
             ).start();
         }
 
         // Поток для системы напоминаний
         new Thread(() ->
-                new ReminderHandler().run()
+                new ReminderHandler().run(interaction)
         ).start();
     }
 

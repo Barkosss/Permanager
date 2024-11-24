@@ -1,6 +1,7 @@
 package common.models;
 
 import common.exceptions.MemberNotFoundException;
+import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 
 import java.util.List;
@@ -24,6 +25,9 @@ public class InteractionConsole implements Interaction {
     // ...
     UserRepository userRepository;
 
+    // ...
+    ServerRepository serverRepository;
+
     public InteractionConsole() {
         this.userId = 0L;
         this.platform = Platform.CONSOLE;
@@ -33,6 +37,13 @@ public class InteractionConsole implements Interaction {
         this.userRepository = userRepository;
         return this;
     }
+
+    @Override
+    public Interaction setServerRepository(ServerRepository serverRepository) {
+        this.serverRepository = serverRepository;
+        return this;
+    }
+
 
     public User getUser(long userId) {
         try {

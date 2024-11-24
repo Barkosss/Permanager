@@ -1,5 +1,6 @@
 package common.models;
 
+import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 
 import java.util.List;
@@ -12,6 +13,8 @@ public interface Interaction {
     }
 
     Interaction setUserRepository(UserRepository userRepository);
+
+    Interaction setServerRepository(ServerRepository serverRepository);
 
     User getUser(long userId);
 
