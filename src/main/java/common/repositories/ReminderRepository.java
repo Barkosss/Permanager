@@ -3,12 +3,13 @@ package common.repositories;
 import common.models.Reminder;
 import common.utils.LoggerHandler;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class ReminderRepository {
     LoggerHandler logger = new LoggerHandler();
-    public Map<Long, Reminder> reminders;
+    public Map<Long, List<Reminder>> reminders;
 
     public ReminderRepository() {
         this.reminders = new TreeMap<>();
@@ -18,23 +19,29 @@ public class ReminderRepository {
     public void create(Reminder reminder) {
         long reminderId = reminder.getId();
         if (reminders.containsKey(reminderId)) {
+            reminders.get(reminderId).add(reminder);
             return;
         }
-        reminders.put(reminderId, reminder);
+        reminders.put(reminderId, List.of(reminder));
+    }
+
+    // Удалить напоминания
+    public void remove(Long timestamp) {
+        reminders.remove(timestamp);
     }
 
     // Найти напоминание по ID у пользователя
-    public Reminder findById(long reminderId) {
-        Reminder reminder;
-        if ((reminder = reminders.get(reminderId)) != null) {
+    public List<Reminder> findByTimestamp(long timestamp) {
+        List<Reminder> reminder;
+        if ((reminder = reminders.get(timestamp)) != null) {
             return reminder;
         }
-        logger.error("Reminder by id(" + reminderId + ") is not found");
+        logger.error("Reminder by timestamp(" + timestamp + ") is not found");
         return null;
     }
 
     // Существует ли напоминание у пользователя
-    public boolean existsById(long reminderId) {
+    public boolean existsByTimestamp(long reminderId) {
         return reminders.get(reminderId) != null;
     }
 }

@@ -5,25 +5,29 @@ import java.time.LocalDate;
 public class Reminder {
 
     // ID напоминание
-    public long id;
+    long id;
 
     // ID пользователя, создавший напоминание
-    public long userId;
+    long userId;
 
     // Содержимое напоминание
-    public String content;
+    String content;
 
     // Дата создание напоминания
-    public LocalDate createdAt;
+    LocalDate createdAt;
 
     // Дата, когда надо отправить напоминание
-    public LocalDate sendAt;
+    LocalDate sendAt;
+
+    // Платформа, откуда было создано напоминание
+    Interaction.Platform platform;
 
     // Конструктор напоминания
-    public Reminder(String content, LocalDate createdAt, LocalDate sendAt) {
+    public Reminder(String content, LocalDate createdAt, LocalDate sendAt, Interaction.Platform platform) {
         this.content = content;
         this.createdAt = createdAt;
         this.sendAt = sendAt;
+        this.platform = platform;
     }
 
 
@@ -32,9 +36,9 @@ public class Reminder {
         return id;
     }
 
-    // Установить ID напоминания
-    public void setId(long id) {
-        this.id = id;
+    // Получить user ID пользователя
+    public long getUserId() {
+        return userId;
     }
 
     // Получить содержимое напоминания
@@ -42,19 +46,9 @@ public class Reminder {
         return content;
     }
 
-    // Установить содержимое напоминания
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     // Получить время создания
     public LocalDate getCreatedAt() {
         return createdAt;
-    }
-
-    // Установить время создания
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
     }
 
     // Получить дату отправки
@@ -62,8 +56,8 @@ public class Reminder {
         return sendAt;
     }
 
-    // Назначить дату отправкин
-    public void setSendAt(LocalDate sendAt) {
-        this.sendAt = sendAt;
+    // Получить платформу
+    public Interaction.Platform getPlatform() {
+        return platform;
     }
 }
