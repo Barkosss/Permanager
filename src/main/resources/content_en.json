@@ -1,8 +1,5 @@
 {
     "start": {
-
-    },
-    "help": {
-
+        "message": "Hello!"
     }
 }

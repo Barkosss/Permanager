@@ -3,6 +3,7 @@ package common.models;
 import common.exceptions.MemberNotFoundException;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.utils.JSONHandler;
 
 import java.util.List;
 
@@ -99,6 +100,11 @@ public class InteractionConsole implements Interaction {
     public Interaction setLanguageCode(Language languageCode) {
         this.languageCode = languageCode;
         return this;
+    }
+
+    public String getLanguageValue(String languageKey) {
+        JSONHandler jsonHandler = new JSONHandler();
+        return (String) jsonHandler.read("content_" + languageCode.getLang() + ".json", languageKey);
     }
 
     @Override

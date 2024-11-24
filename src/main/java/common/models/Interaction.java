@@ -13,8 +13,18 @@ public interface Interaction {
     }
 
     enum Language {
-        RUSSIAN,
-        ENGLISH
+        RUSSIAN("ru"),
+        ENGLISH("en");
+
+        private String lang;
+
+        Language(String lang) {
+            this.lang = lang;
+        }
+
+        public String getLang() {
+            return lang;
+        }
     }
 
     Interaction setUserRepository(UserRepository userRepository);
@@ -42,4 +52,6 @@ public interface Interaction {
     Language getLanguageCode();
 
     Interaction setLanguageCode(Language languageCode);
+
+    String getLanguageValue(String languageKey);
 }
