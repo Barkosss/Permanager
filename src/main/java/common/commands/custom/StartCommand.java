@@ -19,6 +19,9 @@ public class StartCommand implements BaseCommand {
 
     @Override
     public void run(Interaction interaction) {
+        String message = "";
 
+
+        output.output(interaction.setMessage(message));
     }
 }
