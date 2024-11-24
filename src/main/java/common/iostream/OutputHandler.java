@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 
-public class OutputHandler implements Output {
+public class OutputHandler {
 
     public void output(Interaction interaction) {
         switch (interaction.getPlatform()) {

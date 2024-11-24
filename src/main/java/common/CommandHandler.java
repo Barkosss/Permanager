@@ -3,7 +3,6 @@ package common;
 import common.commands.BaseCommand;
 import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
-import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.*;
 import common.repositories.ServerRepository;
@@ -33,7 +32,7 @@ public class CommandHandler {
     ServerRepository serverRepository = new ServerRepository();
     InputTelegram inputTelegram = new InputTelegram();
     InputConsole inputConsole = new InputConsole();
-    Output output = new OutputHandler();
+    OutputHandler output = new OutputHandler();
 
     // Загрузка команд
     public CommandHandler() {

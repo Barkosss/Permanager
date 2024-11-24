@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class InputConsole {
     public Scanner scanner = new Scanner(System.in);
-    public Output output = new OutputHandler();
+    public OutputHandler output = new OutputHandler();
 
     public String read() {
         return scanner.nextLine();

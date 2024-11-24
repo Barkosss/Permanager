@@ -1,6 +1,5 @@
 package common.commands;
 
-import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.User;
@@ -8,7 +7,7 @@ import common.utils.LoggerHandler;
 
 public class TestCommand implements BaseCommand {
     LoggerHandler logger = new LoggerHandler();
-    Output output = new OutputHandler();
+    OutputHandler output = new OutputHandler();
 
     @Override
     public String getCommandName() {
