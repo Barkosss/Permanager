@@ -24,6 +24,7 @@ public class LoggerHandler {
 
         try {
             this.logFile = new FileWriter(this.logFilePath, true);
+            info("Logger is start");
         } catch (IOException e) {
             System.out.println("File with name \"" + logFileName + "\" isn't open");
         }
