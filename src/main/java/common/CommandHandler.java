@@ -8,6 +8,7 @@ import common.iostream.OutputHandler;
 import common.models.*;
 import common.repositories.UserRepository;
 import common.utils.LoggerHandler;
+import common.utils.ReminderHandler;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
@@ -84,6 +85,11 @@ public class CommandHandler {
                     inputConsole.listener(new InteractionConsole().setUserRepository(userRepository), this)
             ).start();
         }
+
+        // Поток для системы напоминаний
+        new Thread(() ->
+                new ReminderHandler().run()
+        ).start();
     }
 
     // Вызов команды
