@@ -11,11 +11,6 @@ import common.models.Interaction;
 public interface BaseCommand {
 
     /**
-     * Запустить команду
-     */
-    void run(Interaction interaction);
-
-    /**
      * Получить короткое название команды
      *
      * @return String
@@ -28,4 +23,9 @@ public interface BaseCommand {
      * @return String
      */
     String getCommandDescription();
+
+    /**
+     * Запустить команду
+     */
+    void run(Interaction interaction);
 }
