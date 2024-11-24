@@ -112,6 +112,11 @@ public class CommandHandler {
 
             List<String> args = List.of(message.split(" "));
             String commandName = args.getFirst().toLowerCase().substring(1);
+            
+            // Берём название команды до "@"
+            if (commandName.contains("@")) {
+                commandName = commandName.substring(0, commandName.lastIndexOf("@"));
+            }
 
             // Проверка, что это команда
             if (message.startsWith("/") && message.charAt(1) != ' '

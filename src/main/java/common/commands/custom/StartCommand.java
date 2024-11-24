@@ -21,12 +21,12 @@ public class StartCommand implements BaseCommand {
     public void run(Interaction interaction) {
         String message;
 
+
         if (interaction.getLanguageCode() == Interaction.Language.RUSSIAN) {
             message = "Привет!";
         } else {
             message = "Hello!";
         }
-
 
         output.output(interaction.setMessage(message));
     }
