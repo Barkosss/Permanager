@@ -3,15 +3,15 @@ package common.repositories;
 import common.models.Reminder;
 import common.utils.LoggerHandler;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class ReminderRepository {
     LoggerHandler logger = new LoggerHandler();
     public Map<Long, Reminder> reminders;
 
     public ReminderRepository() {
-        this.reminders = new HashMap<>();
+        this.reminders = new TreeMap<>();
     }
 
     // Создать напоминание в памяти
