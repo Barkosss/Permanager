@@ -128,8 +128,11 @@ public class CommandHandler {
             if (message.startsWith("/") && message.charAt(1) != ' '
                     && interaction.getUser(interaction.getUserId()).getInputStatus() == User.InputStatus.COMPLETED) {
 
-                if (commandName.startsWith("exit") && interaction.getPlatform() == Interaction.Platform.CONSOLE) {
-                    System.out.println("Program is stop");
+                if (commandName.startsWith("exit")
+                        && (interaction.getPlatform() == Interaction.Platform.CONSOLE
+                        || List.of(746875461L, 0L).contains(interaction.getUserId()))) {
+                    output.output(interaction.setMessage("Program is stop"));
+                    logger.info("Program is stop");
                     System.exit(0);
                 }
 
