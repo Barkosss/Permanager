@@ -3,8 +3,10 @@ package common.iostream;
 import com.pengrad.telegrambot.request.SendMessage;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.utils.LoggerHandler;
 
 public class OutputHandler {
+    LoggerHandler logger = new LoggerHandler();
 
     public void output(Interaction interaction) {
         switch (interaction.getPlatform()) {
@@ -20,6 +22,9 @@ public class OutputHandler {
 
                 // Отправляем сообщение пользователю в Telegram
                 interactionTelegram.telegramBot.execute(sendMessage);
+                logger.debug("Send message to chatId(" + interaction.getChatId()
+                        + ", userId=" + interaction.getUserId()
+                        + ") with message(\"" + interaction.getMessage().trim().replace("\n", " ") + "\")");
                 break;
             }
 

@@ -60,8 +60,25 @@ public class CommandHandler {
                 }
             }
 
+            validateLanguageText();
+
         } catch (Exception err) {
             logger.error("Command loader: " + err);
+        }
+    }
+
+    private void validateLanguageText() {
+        try {
+            logger.info("Validate language text is start");
+
+            // ...
+            // TODO: Реализовать валидацию текст в content_ru и content_en
+            // ...
+
+            logger.info("Validate language text is end");
+
+        } catch(Exception err) {
+            logger.error("Validate language text: " + err);
         }
     }
 
@@ -119,7 +136,7 @@ public class CommandHandler {
             String commandName = args.getFirst().toLowerCase().substring(1);
 
             // Берём название команды до "@"
-            if (commandName.contains("@")) {
+            if (message.startsWith("/") && message.charAt(1) != ' ' && commandName.contains("@")) {
                 commandName = commandName.substring(0, commandName.lastIndexOf("@"));
             }
 
@@ -140,6 +157,7 @@ public class CommandHandler {
 
                     // Запустить класс, в котором будет работать команда
                     try {
+                        logger.debug("Method(run) from command(" + commandName + ") is run with Interaction=" + interaction);
                         baseCommandClasses.get(commandName).run(interaction);
 
                     } catch (Exception err) {
@@ -154,9 +172,9 @@ public class CommandHandler {
 
                 // Если что-то ожидаем от пользователя
             } else {
+                User user = interaction.getUser(interaction.getUserId());
 
                 if (commandName.startsWith("cancel")) {
-                    User user = interaction.getUser(interaction.getUserId());
                     String commandException = user.getCommandException();
                     user.clearExpected(commandException);
                     output.output(interaction.setMessage("Command \"" + commandException + "\" is cancel")
@@ -166,7 +184,10 @@ public class CommandHandler {
 
                 // Проверка, ожидаем ли мы что-то от пользователя
                 if (interaction.getUser(interaction.getUserId()).getInputStatus() == User.InputStatus.WAITING) {
-                    interaction.getUser(interaction.getUserId()).setValue(message);
+                    logger.debug("Get exception value: chatId" + interaction.getChatId()
+                            + ", userId=" + interaction.getUserId()
+                            + ", message=" + message);
+                    user.setValue(message);
                     baseCommandClasses.get(interaction.getUser(interaction.getUserId()).getCommandException())
                             .run(interaction);
                 }

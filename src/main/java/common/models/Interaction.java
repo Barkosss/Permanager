@@ -35,6 +35,8 @@ public interface Interaction {
 
     long getUserId();
 
+    Interaction setUserId(long userId);
+
     long getChatId();
 
     Platform getPlatform();

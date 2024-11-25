@@ -7,9 +7,6 @@ public class User {
         COMPLETED
     }
 
-    // Идентификатор чата
-    long chatId;
-
     // Идентификатор пользователя
     long userId;
 
@@ -56,11 +53,6 @@ public class User {
         this.userInputExpectation.setExpected(commandName, valueKey);
         this.userInputExpectation.userInputType = InputExpectation.UserInputType.STRING;
         return this;
-    }
-
-    public void setExcepted(String commandName, String valueKey, String value) {
-        this.userInputExpectation.setExpected(commandName, valueKey);
-        this.userInputExpectation.userInputType = InputExpectation.UserInputType.STRING;
     }
 
     public void clearExpected(String commandName) {

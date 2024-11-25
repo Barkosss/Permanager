@@ -15,6 +15,7 @@ public class Main {
     public static void main(String[] args) {
         LoggerHandler logger = new LoggerHandler();
         JSONHandler jsonHandler = new JSONHandler();
+        logger.debug("----------------");
 
         // Загрузка команд
         CommandHandler commandHandler = new CommandHandler();

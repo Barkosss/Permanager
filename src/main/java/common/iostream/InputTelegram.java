@@ -20,8 +20,6 @@ public class InputTelegram {
         ((InteractionTelegram) interaction).telegramBot.setUpdatesListener(updates -> {
             List<Content> contents = new ArrayList<>();
 
-            ((InteractionTelegram) interaction).setChatId(updates.getLast().message().chat().id());
-
             Interaction.Language language;
             for (Update update : updates) {
 
@@ -29,8 +27,11 @@ public class InputTelegram {
                     continue;
                 }
 
+                ((InteractionTelegram) interaction).setChatId(update.message().chat().id())
+                        .setUserId(update.message().from().id());
+
                 // Языковой
-                language = (update.message().from().languageCode().equals("ru")) ? (Interaction.Language.RUSSIAN)
+                language = (update.message().from().languageCode() != null && update.message().from().languageCode().equals("ru")) ? (Interaction.Language.RUSSIAN)
                         : (Interaction.Language.ENGLISH);
                 contents.add(new Content(
                         update.message().from().id(), // Идентификатор пользователя
@@ -41,6 +42,7 @@ public class InputTelegram {
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));
+                logger.debug("Add new content: " + contents.getLast());
             }
 
             commandHandler.launchCommand(interaction, contents);

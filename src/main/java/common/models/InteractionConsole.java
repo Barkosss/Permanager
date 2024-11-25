@@ -62,6 +62,11 @@ public class InteractionConsole implements Interaction {
 
     }
 
+    public Interaction setUserId(long userId) {
+        this.userId = userId;
+        return this;
+    }
+
     public long getChatId() {
         return chatId;
     }

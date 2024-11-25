@@ -88,6 +88,11 @@ public class InteractionTelegram implements Interaction {
         return userId;
     }
 
+    public Interaction setUserId(long userId) {
+        this.userId = userId;
+        return this;
+    }
+
     public String getMessage() {
         return message;
     }

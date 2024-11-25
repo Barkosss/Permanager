@@ -30,6 +30,8 @@ public class ConfigCommand implements BaseCommand {
         String argument = arguments.getFirst().toLowerCase();
         if (List.of("dashboard", "user", "group").contains(argument)) {
             user.setExcepted(getCommandName(), "section").setValue(argument);
+            logger.debug("Parse arguments from chatId(" + interaction.getChatId()
+                    + ", userId=" + interaction.getUserId() + "), with argument=" + argument);
         }
     }
 
@@ -45,7 +47,7 @@ public class ConfigCommand implements BaseCommand {
             return;
         }
 
-        switch (user.getValue(getCommandName(), "section")) {
+        switch (user.getValue(getCommandName(), "section").toLowerCase()) {
             case "dashboard": {
                 logger.debug("Run method \"dashboard\" in config command");
                 dashboard(interaction, user);
@@ -59,11 +61,19 @@ public class ConfigCommand implements BaseCommand {
                 group(interaction, user);
                 break;
             }
+
+            default: {
+                user.setExcepted(getCommandName(), "section");
+                output.output(interaction.setMessage(interaction.getLanguageValue("config.start.againSection")).setInline(true));
+                logger.debug("Config command requested a first argument");
+                break;
+            }
         }
     }
 
     private void dashboard(Interaction interaction, User user) {
         output.output(interaction.setMessage(interaction.getLanguageValue("config.dashboard")).setInline(true));
+        user.clearExpected(getCommandName());
     }
 
     private void user(Interaction interaction, User user) {
