@@ -72,7 +72,8 @@ public class CommandHandler {
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
             // Поток для Telegram
             new Thread(() ->
-                    inputTelegram.read(interaction.setUserRepository(userRepository).setServerRepository(serverRepository), this)
+                    inputTelegram.read(interaction.setUserRepository(userRepository)
+                            .setServerRepository(serverRepository), this)
             ).start();
             logger.info("Telegram is launch");
             System.out.println("SYSTEM: Telegram is launch");
@@ -83,7 +84,8 @@ public class CommandHandler {
             userRepository.create(0L);
             // Поток для Console
             new Thread(() ->
-                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository).setServerRepository(serverRepository), this)
+                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository)
+                            .setServerRepository(serverRepository), this)
             ).start();
             logger.info("Console is launch");
             System.out.println("SYSTEM: Console is launch");
@@ -130,7 +132,8 @@ public class CommandHandler {
                     System.exit(0);
                 }
 
-                interaction.setMessage(message).setArguments(args.subList(1, args.size())).setLanguageCode(content.language());
+                interaction.setMessage(message).setArguments(args.subList(1, args.size()))
+                        .setLanguageCode(content.language());
 
                 // Если введённая команда имеется в хэшмап
                 if (baseCommandClasses.containsKey(commandName)) {
