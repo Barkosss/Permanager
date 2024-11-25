@@ -77,7 +77,7 @@ public class CommandHandler {
 
             logger.info("Validate language text is end");
 
-        } catch(Exception err) {
+        } catch (Exception err) {
             logger.error("Validate language text: " + err);
         }
     }

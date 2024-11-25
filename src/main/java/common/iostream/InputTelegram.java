@@ -31,7 +31,8 @@ public class InputTelegram {
                         .setUserId(update.message().from().id());
 
                 // Языковой
-                language = (update.message().from().languageCode() != null && update.message().from().languageCode().equals("ru")) ? (Interaction.Language.RUSSIAN)
+                language = (update.message().from().languageCode() != null
+                        && update.message().from().languageCode().equals("ru")) ? (Interaction.Language.RUSSIAN)
                         : (Interaction.Language.ENGLISH);
                 contents.add(new Content(
                         update.message().from().id(), // Идентификатор пользователя

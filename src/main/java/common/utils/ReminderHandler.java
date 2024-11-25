@@ -29,7 +29,8 @@ public class ReminderHandler {
                         interaction = ((InteractionTelegram) interaction).setChatId(reminder.getChatId());
                     }
 
-                    logger.info("The reminder was sent to the user id(" + reminder.getUserId() + ", chatId=" + reminder.getChatId() + ")");
+                    logger.info("The reminder was sent to the user id(" + reminder.getUserId()
+                            + ", chatId=" + reminder.getChatId() + ")");
                     output.output(interaction.setMessage(reminder.getContent()));
                 }
                 logger.info("Reminder(s) for timestamp(" + timestamp + ") has been deleted(s)");
