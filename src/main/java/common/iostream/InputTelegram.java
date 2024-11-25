@@ -20,7 +20,7 @@ public class InputTelegram {
         ((InteractionTelegram) interaction).telegramBot.setUpdatesListener(updates -> {
             List<Content> contents = new ArrayList<>();
 
-            ((InteractionTelegram) interaction).setUserId(updates.getLast().message().chat().id());
+            ((InteractionTelegram) interaction).setChatId(updates.getLast().message().chat().id());
 
             Interaction.Language language;
             for (Update update : updates) {

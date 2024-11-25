@@ -78,14 +78,14 @@ public class InteractionTelegram implements Interaction {
         return chatId;
     }
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public Interaction setUserId(long userId) {
-        this.userId = userId;
+    public Interaction setChatId(long chatId) {
+        this.chatId = chatId;
         createSendMessage();
         return this;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 
     public String getMessage() {
@@ -145,6 +145,7 @@ public class InteractionTelegram implements Interaction {
                 + "; TIMESTAMP_BOT_START=" + timestampBotStart
                 + "; Platform=" + platform
                 + "; userId=" + userId
+                + "; chatId=" + chatId
                 + "; Message=" + message
                 + "; Inline=" + inline
                 + "; arguments=" + arguments
@@ -152,10 +153,10 @@ public class InteractionTelegram implements Interaction {
     }
 
     private void createSendMessage() {
-        if (this.userId == 0 || this.message == null) {
+        if (this.chatId == 0 || this.message == null) {
             return;
         }
 
-        this.sendMessage = new SendMessage(userId, message);
+        this.sendMessage = new SendMessage(chatId, message);
     }
 }

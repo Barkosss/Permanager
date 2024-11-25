@@ -10,6 +10,9 @@ public class Reminder {
     // ID пользователя, создавший напоминание
     long userId;
 
+    // Идентификатор чата
+    long chatId;
+
     // Содержимое напоминание
     String content;
 
@@ -39,6 +42,11 @@ public class Reminder {
     // Получить user ID пользователя
     public long getUserId() {
         return userId;
+    }
+
+    // Получить chat ID
+    public long getChatId() {
+        return chatId;
     }
 
     // Получить содержимое напоминания

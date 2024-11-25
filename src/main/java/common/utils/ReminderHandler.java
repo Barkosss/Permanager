@@ -26,10 +26,10 @@ public class ReminderHandler {
                 for (Reminder reminder : reminders) {
                     // Проверка на платформу
                     if (reminder.getPlatform() == Interaction.Platform.TELEGRAM) {
-                        interaction = ((InteractionTelegram) interaction).setUserId(reminder.getUserId());
+                        interaction = ((InteractionTelegram) interaction).setChatId(reminder.getChatId());
                     }
 
-                    logger.info("The reminder was sent to the user id(" + reminder.getUserId() + ")");
+                    logger.info("The reminder was sent to the user id(" + reminder.getUserId() + ", chatId=" + reminder.getChatId() + ")");
                     output.output(interaction.setMessage(reminder.getContent()));
                 }
                 logger.info("Reminder(s) for timestamp(" + timestamp + ") has been deleted(s)");
