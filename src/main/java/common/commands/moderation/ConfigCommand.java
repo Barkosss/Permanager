@@ -64,7 +64,8 @@ public class ConfigCommand implements BaseCommand {
 
             default: {
                 user.setExcepted(getCommandName(), "section");
-                output.output(interaction.setMessage(interaction.getLanguageValue("config.start.againSection")).setInline(true));
+                output.output(interaction.setMessage(interaction.getLanguageValue("config.start.againSection"))
+                        .setInline(true));
                 logger.debug("Config command requested a first argument");
                 break;
             }
