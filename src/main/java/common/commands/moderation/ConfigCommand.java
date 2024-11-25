@@ -22,7 +22,7 @@ public class ConfigCommand implements BaseCommand {
         return "";
     }
 
-    private void parseArgs(Interaction interaction, User user) {
+    public void parseArgs(Interaction interaction, User user) {
         List<String> arguments = interaction.getArguments();
         if (arguments.isEmpty()) {
             return;
@@ -37,6 +37,10 @@ public class ConfigCommand implements BaseCommand {
 
     @Override
     public void run(Interaction interaction) {
+        if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
+            return;
+        }
+
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
 
@@ -75,6 +79,44 @@ public class ConfigCommand implements BaseCommand {
     }
 
     private void dashboard(Interaction interaction, User user) {
+
+        if (!user.isExceptedKey(getCommandName(), "dashboardAction")) {
+            user.setExcepted(getCommandName(), "dashboardAction");
+            output.output(interaction.setMessage(interaction.getLanguageValue("config.dashboard.start")));
+            logger.info("Config command requested a dashboard action");
+            return;
+        }
+
+        String action = user.getValue(getCommandName(), "dashboardAction").toLowerCase();
+        switch (action) {
+            case "default right access": {
+                String message = "";
+                message += interaction.getLanguageValue("config.dashboard.defaultRightAccess.title");
+                // Настройка стандартных прав доступа
+
+
+
+                output.output(interaction.setMessage(message));
+                break;
+            }
+
+            case "default limits": {
+                // Настройка стандартных ограничений
+                break;
+            }
+
+            case "moderation commands": {
+                // Настройка команд
+                break;
+            }
+
+            default: { // Если пользователь указал неправильный аргумент
+                user.setExcepted(getCommandName(), "dashboardAction");
+                output.output(interaction.setMessage(interaction.getLanguageValue("config.dashboard.start")));
+                logger.info("Config command requested a dashboard action");
+                break;
+            }
+        }
         output.output(interaction.setMessage(interaction.getLanguageValue("config.dashboard")));
         user.clearExpected(getCommandName());
     }

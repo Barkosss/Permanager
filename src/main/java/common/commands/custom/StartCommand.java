@@ -3,6 +3,7 @@ package common.commands.custom;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
+import common.models.User;
 
 public class StartCommand implements BaseCommand {
     OutputHandler output = new OutputHandler();
@@ -15,6 +16,11 @@ public class StartCommand implements BaseCommand {
     @Override
     public String getCommandDescription() {
         return "The command to receive a welcome message";
+    }
+
+    @Override
+    public void parseArgs(Interaction interaction, User user) {
+
     }
 
     @Override

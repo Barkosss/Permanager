@@ -3,6 +3,7 @@ package common.commands.custom;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
+import common.models.User;
 import common.utils.JSONHandler;
 import org.reflections.Reflections;
 
@@ -20,6 +21,11 @@ public class HelpCommand implements BaseCommand {
     // Получить описание команды
     public String getCommandDescription() {
         return "Справка по всем командам";
+    }
+
+    @Override
+    public void parseArgs(Interaction interaction, User user) {
+
     }
 
     // Вызвать основной методы команды

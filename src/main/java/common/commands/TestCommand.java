@@ -20,6 +20,11 @@ public class TestCommand implements BaseCommand {
     }
 
     @Override
+    public void parseArgs(Interaction interaction, User user) {
+
+    }
+
+    @Override
     public void run(Interaction interaction) {
         logger.debug("Test command is start");
         User user = interaction.getUser(interaction.getUserId());

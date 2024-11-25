@@ -1,6 +1,7 @@
 package common.commands;
 
 import common.models.Interaction;
+import common.models.User;
 
 /**
  * Интерфейс команд
@@ -23,6 +24,8 @@ public interface BaseCommand {
      * @return String
      */
     String getCommandDescription();
+
+    void parseArgs(Interaction interaction, User user);
 
     /**
      * Запустить команду
