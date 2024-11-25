@@ -157,7 +157,7 @@ public class CommandHandler {
 
                     // Запустить класс, в котором будет работать команда
                     try {
-                        logger.debug("Method(run) from command(" + commandName + ") is run with Interaction=" + interaction);
+                        logger.debug("Method(run) from command(" + commandName + ") with Interaction=" + interaction);
                         baseCommandClasses.get(commandName).run(interaction);
 
                     } catch (Exception err) {
