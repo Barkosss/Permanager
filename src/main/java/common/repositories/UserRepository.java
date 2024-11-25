@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class UserRepository {
     LoggerHandler logger = new LoggerHandler();
-    public Map<Long, User> users;
+    Map<Long, User> users;
 
     public UserRepository() {
         this.users = new HashMap<>();

@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 public class ReminderRepository {
     LoggerHandler logger = new LoggerHandler();
-    public Map<Long, List<Reminder>> reminders;
+    Map<Long, List<Reminder>> reminders;
 
     public ReminderRepository() {
         this.reminders = new TreeMap<>();

@@ -7,6 +7,7 @@ import common.iostream.OutputHandler;
 import common.models.*;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 import common.utils.ReminderHandler;
 import org.reflections.Reflections;
@@ -17,8 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class CommandHandler {
-
-    private final LoggerHandler logger = new LoggerHandler();
+    JSONHandler jsonHandler = new JSONHandler();
+    LoggerHandler logger = new LoggerHandler();
 
     public enum LaunchPlatform {
         TELEGRAM,
@@ -60,25 +61,8 @@ public class CommandHandler {
                 }
             }
 
-            validateLanguageText();
-
         } catch (Exception err) {
             logger.error("Command loader: " + err);
-        }
-    }
-
-    private void validateLanguageText() {
-        try {
-            logger.info("Validate language text is start");
-
-            // ...
-            // TODO: Реализовать валидацию текст в content_ru и content_en
-            // ...
-
-            logger.info("Validate language text is end");
-
-        } catch (Exception err) {
-            logger.error("Validate language text: " + err);
         }
     }
 

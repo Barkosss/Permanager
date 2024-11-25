@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 public class ServerRepository {
     LoggerHandler logger = new LoggerHandler();
-    public Map<Long, Server> servers;
+    Map<Long, Server> servers;
 
     public ServerRepository() {
         this.servers = new TreeMap<>();

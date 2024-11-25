@@ -43,7 +43,7 @@ public class ConfigCommand implements BaseCommand {
         if (!user.isExceptedKey(getCommandName(), "section")) {
             user.setExcepted(getCommandName(), "section");
             output.output(interaction.setMessage(interaction.getLanguageValue("config.start.section")).setInline(true));
-            logger.debug("Config command requested a first argument");
+            logger.debug("Config command requested a section argument");
             return;
         }
 
@@ -54,10 +54,12 @@ public class ConfigCommand implements BaseCommand {
                 break;
             }
             case "user": {
+                logger.debug("Run method \"user\" in config command");
                 user(interaction, user);
                 break;
             }
             case "group": {
+                logger.debug("Run method \"group\" in config command");
                 group(interaction, user);
                 break;
             }
@@ -66,22 +68,24 @@ public class ConfigCommand implements BaseCommand {
                 user.setExcepted(getCommandName(), "section");
                 output.output(interaction.setMessage(interaction.getLanguageValue("config.start.againSection"))
                         .setInline(true));
-                logger.debug("Config command requested a first argument");
+                logger.debug("Config command requested a section argument");
                 break;
             }
         }
     }
 
     private void dashboard(Interaction interaction, User user) {
-        output.output(interaction.setMessage(interaction.getLanguageValue("config.dashboard")).setInline(true));
+        output.output(interaction.setMessage(interaction.getLanguageValue("config.dashboard")));
         user.clearExpected(getCommandName());
     }
 
     private void user(Interaction interaction, User user) {
-        // ...
+        output.output(interaction.setMessage("Settings of user"));
+        user.clearExpected(getCommandName());
     }
 
     private void group(Interaction interaction, User user) {
-        // ...
+        output.output(interaction.setMessage("Settings of group"));
+        user.clearExpected(getCommandName());
     }
 }
