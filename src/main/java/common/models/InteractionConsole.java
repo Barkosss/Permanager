@@ -9,6 +9,10 @@ import java.util.List;
 
 public class InteractionConsole implements Interaction {
 
+    // Идентификатор чата
+    long chatId;
+
+    // Идентификатор пользователя
     long userId;
 
     // Платформа: Terminal, Telegram, Discord
@@ -56,6 +60,10 @@ public class InteractionConsole implements Interaction {
             return null;
         }
 
+    }
+
+    public long getChatId() {
+        return chatId;
     }
 
     public long getUserId() {

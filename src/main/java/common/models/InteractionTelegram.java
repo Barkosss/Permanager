@@ -18,7 +18,10 @@ public class InteractionTelegram implements Interaction {
     // Платформа: Terminal, Telegram, Discord
     Platform platform;
 
-    // Для Telegram - Chat ID, для Discord - User ID
+    // Идентификатор чата
+    long chatId;
+
+    // Идентификатор пользователя
     long userId;
 
     // Полное сообщение
@@ -69,6 +72,10 @@ public class InteractionTelegram implements Interaction {
 
     public Platform getPlatform() {
         return platform;
+    }
+
+    public long getChatId() {
+        return chatId;
     }
 
     public long getUserId() {

@@ -35,6 +35,8 @@ public interface Interaction {
 
     long getUserId();
 
+    long getChatId();
+
     Platform getPlatform();
 
     Interaction setMessage(String message);
