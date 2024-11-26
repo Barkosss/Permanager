@@ -1,6 +1,8 @@
-package common.commands;
+package common.commands.custom;
 
+import common.commands.BaseCommand;
 import common.models.Interaction;
+import common.models.User;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,6 +18,11 @@ public class ReminderCommand implements BaseCommand {
     // Получить описание команды
     public String getCommandDescription() {
         return "Управление напоминаниями";
+    }
+
+    @Override
+    public void parseArgs(Interaction interaction, User user) {
+
     }
 
     // Вызвать основной метод команды

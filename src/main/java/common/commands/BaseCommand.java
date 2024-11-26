@@ -1,6 +1,7 @@
 package common.commands;
 
 import common.models.Interaction;
+import common.models.User;
 
 /**
  * Интерфейс команд
@@ -11,20 +12,23 @@ import common.models.Interaction;
 public interface BaseCommand {
 
     /**
-     * Запустить команду
-     */
-    void run(Interaction interaction);
-    //void run(Interaction interaction, Client client);
-
-    /**
      * Получить короткое название команды
+     *
      * @return String
      */
     String getCommandName();
 
     /**
      * Получить описание команды
+     *
      * @return String
      */
     String getCommandDescription();
+
+    void parseArgs(Interaction interaction, User user);
+
+    /**
+     * Запустить команду
+     */
+    void run(Interaction interaction);
 }

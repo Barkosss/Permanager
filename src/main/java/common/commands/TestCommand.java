@@ -1,13 +1,13 @@
 package common.commands;
 
-import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
-
-import java.util.Map;
+import common.models.User;
+import common.utils.LoggerHandler;
 
 public class TestCommand implements BaseCommand {
-    Output output = new OutputHandler();
+    LoggerHandler logger = new LoggerHandler();
+    OutputHandler output = new OutputHandler();
 
     @Override
     public String getCommandName() {
@@ -20,26 +20,35 @@ public class TestCommand implements BaseCommand {
     }
 
     @Override
+    public void parseArgs(Interaction interaction, User user) {
+
+    }
+
+    @Override
     public void run(Interaction interaction) {
-        Map<String, Map<String, String>> expectedInput = interaction.getUser(interaction.getUserID()).getUserInputExpectation().getExpectedInputs();
+        logger.debug("Test command is start");
+        User user = interaction.getUser(interaction.getUserId());
 
-        if (!expectedInput.get(getCommandName()).containsKey("firstMessage")) {
-            interaction.getUser(interaction.getUserID()).getUserInputExpectation().getValue(getCommandName(), "firstMessage");
+        if (!user.isExceptedKey(getCommandName(), "firstMessage")) {
+            user.setExcepted(getCommandName(), "firstMessage");
             output.output(interaction.setMessage("Enter first message: ").setInline(true));
+            logger.debug("Test command requested a first argument");
             return;
         }
 
-        if (!expectedInput.get(getCommandName()).containsKey("secondMessage")) {
-            interaction.getUser(interaction.getUserID()).getUserInputExpectation().getValue(getCommandName(), "secondMessage");
+        if (!user.isExceptedKey(getCommandName(), "secondMessage")) {
+            user.setExcepted(getCommandName(), "secondMessage");
             output.output(interaction.setMessage("Enter second message: ").setInline(true));
+            logger.debug("Test command requested a second argument");
             return;
         }
 
-        String firstMessage = expectedInput.get(getCommandName()).get("firstMessage");
-        String secondMessage = expectedInput.get(getCommandName()).get("secondMessage");
+        String firstMessage = (String)user.getValue(getCommandName(), "firstMessage");
+        String secondMessage = (String)user.getValue(getCommandName(), "secondMessage");
 
         output.output(interaction.setMessage("First message: " + firstMessage).setInline(false));
         output.output(interaction.setMessage("Second message: " + secondMessage).setInline(false));
-        interaction.getUser(interaction.getUserID()).getUserInputExpectation().clearExpectedInput(getCommandName());
+        logger.debug("Test command is end");
+        user.clearExpected(getCommandName());
     }
 }

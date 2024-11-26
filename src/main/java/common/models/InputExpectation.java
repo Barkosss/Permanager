@@ -5,8 +5,14 @@ import java.util.Map;
 
 public class InputExpectation {
 
+    enum UserInputType {
+        INT,
+        STRING,
+        DATE,
+    }
+
     // Какой тип ожидается от пользователя
-    Interaction.UserInputType userInputType;
+    UserInputType userInputType;
 
     // Название команды, ожидающая ввод
     String expectedCommandName;
@@ -15,47 +21,27 @@ public class InputExpectation {
     String expectedInputKey;
 
     // Map значений, которые указываются пользователем
-    Map<String, Map<String, String>> expectedInputs;
+    Map<String, Map<String, Object>> expectedInputs;
 
-    public String getExpectedCommandName() {
-        return expectedCommandName;
-    }
+    public void setExpected(String expectedCommandName, String expectedInputKey) {
+        if (this.expectedInputs == null) {
+            this.expectedInputs = new HashMap<>();
+        }
 
-    public InputExpectation setExpectedCommandName(String expectedCommandName) {
+        if (!this.expectedInputs.containsKey(expectedCommandName)) {
+            expectedInputs.put(expectedCommandName, new HashMap<>());
+        }
+        if (!this.expectedInputs.get(expectedCommandName).containsKey(expectedInputKey)) {
+            expectedInputs.get(expectedCommandName).put(expectedCommandName, null);
+        }
         this.expectedCommandName = expectedCommandName;
-        return this;
-    }
-
-    public String getExpectedInputKey() {
-        return expectedInputKey;
-    }
-
-    public InputExpectation setExpectedInputKey(String expectedInputKey) {
         this.expectedInputKey = expectedInputKey;
-        return this;
     }
 
-    public void getValue(String commandName, String key) {
-        setExpectedCommandName(commandName);
-        setExpectedInputKey(key);
-        this.userInputType = Interaction.UserInputType.STRING;
-    }
-
-    public Map<String, Map<String, String>> getExpectedInputs() {
+    public Map<String, Map<String, Object>> getExpectedInputs() {
         if (expectedInputs == null) {
             expectedInputs = new HashMap<>();
         }
         return expectedInputs;
-    }
-
-    public InputExpectation setValue(Map<String, Map<String, String>> expectedInput) {
-        this.expectedInputs = expectedInput;
-        return this;
-    }
-
-    public void clearExpectedInput(String commandName) {
-        expectedInputKey = expectedCommandName = null;
-        userInputType = null;
-        expectedInputs.get(commandName).clear();
     }
 }

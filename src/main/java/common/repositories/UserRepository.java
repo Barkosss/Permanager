@@ -2,12 +2,14 @@ package common.repositories;
 
 import common.models.User;
 import common.exceptions.MemberNotFoundException;
+import common.utils.LoggerHandler;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserRepository {
-    public Map<Long, User> users;
+    LoggerHandler logger = new LoggerHandler();
+    Map<Long, User> users;
 
     public UserRepository() {
         this.users = new HashMap<>();
@@ -15,7 +17,10 @@ public class UserRepository {
 
     // Создать пользователя в памяти
     public void create(long userId) {
-        if (users.containsKey(userId)) return;
+        if (users.containsKey(userId)) {
+            return;
+        }
+        logger.debug("User by id(" + userId + ") is create");
         users.put(userId, new User(userId));
     }
 
@@ -23,8 +28,10 @@ public class UserRepository {
     public User findById(long userId) throws MemberNotFoundException {
         User user;
         if ((user = users.get(userId)) != null) {
+            logger.debug("User by id(" + userId + ") is find");
             return user;
         }
+        logger.error("Member by id(" + userId + ") is not found");
         throw new MemberNotFoundException();
     }
 

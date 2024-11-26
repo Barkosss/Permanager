@@ -1,31 +1,30 @@
 package common.iostream;
 
 import com.pengrad.telegrambot.request.SendMessage;
-
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.utils.LoggerHandler;
 
-public class OutputHandler implements Output {
+public class OutputHandler {
+    LoggerHandler logger = new LoggerHandler();
 
     public void output(Interaction interaction) {
-        switch(interaction.getPlatform()) {
+        switch (interaction.getPlatform()) {
 
             case TELEGRAM: {
                 InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
                 SendMessage sendMessage = interactionTelegram.getSendMessage();
 
-                // Если отсутствует объект отправки сообщения
+                // Если объект не создан, то принудительно выйти, то есть не отправить сообщение
                 if (sendMessage == null) {
-                    long chatId = interactionTelegram.getUserID();
-                    String message = interactionTelegram.getMessage();
-                    sendMessage = interactionTelegram.setSendMessage(new SendMessage(chatId, message)).getSendMessage();
+                    return;
                 }
 
                 // Отправляем сообщение пользователю в Telegram
                 interactionTelegram.telegramBot.execute(sendMessage);
-
-                // Очищаем объект отправки сообщения
-                interactionTelegram.setSendMessage(null);
+                logger.debug("Send message to chatId(" + interaction.getChatId()
+                        + ", userId=" + interaction.getUserId()
+                        + ") with message(\"" + interaction.getMessage().trim().replace("\n", " ") + "\")");
                 break;
             }
 
