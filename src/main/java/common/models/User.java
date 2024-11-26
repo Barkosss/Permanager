@@ -1,5 +1,10 @@
 package common.models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class User {
 
     public enum InputStatus {
@@ -15,6 +20,12 @@ public class User {
 
     // Состояние ввода
     InputStatus inputStatus;
+
+    // ...
+    List<Member> members = new ArrayList<>();
+
+    // ...
+    Map<Server, List<Warning>> warnings = new HashMap<>();
 
     public User(long userId) {
         this.userId = userId;

@@ -8,6 +8,9 @@ public class Member {
     // Id пользователя (Telegram ID или Discord ID)
     long id;
 
+    // ...
+    long chatId;
+
     // Список разрешений
     Permissions permissions;
 
