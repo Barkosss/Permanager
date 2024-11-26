@@ -11,8 +11,6 @@ public class InputExpectation {
         DATE,
     }
 
-    // Какой тип ожидается от пользователя
-    UserInputType userInputType;
 
     // Название команды, ожидающая ввод
     String expectedCommandName;
