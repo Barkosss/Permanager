@@ -51,7 +51,6 @@ public class User {
     public User setExcepted(String commandName, String valueKey) {
         this.inputStatus = InputStatus.WAITING;
         this.userInputExpectation.setExpected(commandName, valueKey);
-        this.userInputExpectation.userInputType = InputExpectation.UserInputType.STRING;
         return this;
     }
 

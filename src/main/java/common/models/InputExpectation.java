@@ -24,6 +24,10 @@ public class InputExpectation {
     Map<String, Map<String, Object>> expectedInputs;
 
     public void setExpected(String expectedCommandName, String expectedInputKey) {
+        if (this.expectedInputs == null) {
+            this.expectedInputs = new HashMap<>();
+        }
+
         if (!this.expectedInputs.containsKey(expectedCommandName)) {
             expectedInputs.put(expectedCommandName, new HashMap<>());
         }
