@@ -100,9 +100,10 @@ public class BanCommand implements BaseCommand {
 
         try {
             long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
-            //((InteractionTelegram)interaction).telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
+            //((InteractionTelegram)interaction).telegramBot.execute(new BanChatMember(interaction.getChatId(),userId));
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + " has been banned");
-            output.output(interactionTelegram.setMessage("The user @" + ((Message) user.getValue(getCommandName(), "user")).from().username()
+            output.output(interactionTelegram.setMessage("The user @"
+                    + ((Message) user.getValue(getCommandName(), "user")).from().username()
                     + " has been banned to " + user.getValue(getCommandName(), "duration")
                     + " with reason: " + user.getValue(getCommandName(), "reason")));
         } catch (Exception err) {

@@ -133,7 +133,7 @@ public class InteractionTelegram implements Interaction {
         try {
             return content.reply();
 
-        } catch(Exception err) {
+        } catch (Exception err) {
             return null;
         }
     }

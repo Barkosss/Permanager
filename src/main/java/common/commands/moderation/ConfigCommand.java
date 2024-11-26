@@ -51,7 +51,7 @@ public class ConfigCommand implements BaseCommand {
             return;
         }
 
-        switch (((String)user.getValue(getCommandName(), "section")).toLowerCase()) {
+        switch (((String) user.getValue(getCommandName(), "section")).toLowerCase()) {
             case "dashboard": {
                 logger.debug("Run method \"dashboard\" in config command");
                 dashboard(interaction, user);
@@ -87,13 +87,12 @@ public class ConfigCommand implements BaseCommand {
             return;
         }
 
-        String action = ((String)user.getValue(getCommandName(), "dashboardAction")).toLowerCase();
+        String action = ((String) user.getValue(getCommandName(), "dashboardAction")).toLowerCase();
         switch (action) {
             case "default right access": {
                 String message = "";
                 message += interaction.getLanguageValue("config.dashboard.defaultRightAccess.title");
                 // Настройка стандартных прав доступа
-
 
 
                 output.output(interaction.setMessage(message));
