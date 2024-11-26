@@ -1,7 +1,6 @@
 package common.commands.moderation;
 
-import com.pengrad.telegrambot.request.BanChatMember;
-import com.pengrad.telegrambot.request.BanChatSenderChat;
+import com.pengrad.telegrambot.request.GetChat;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -46,6 +45,10 @@ public class BanCommand implements BaseCommand {
             return;
         }
         // Валидация пользователя...
+        String username = user.getValue(getCommandName(), "user");
+        System.out.println("'" + username + "'");
+        System.out.println(((InteractionTelegram)interaction).telegramBot
+                .execute(new GetChat(username)).chat());
 
         // Получаем причину блокировки
         if (!user.isExceptedKey(getCommandName(), "reason")) {
