@@ -3,10 +3,11 @@ package common;
 import common.commands.BaseCommand;
 import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
-import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.*;
+import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 import common.utils.ReminderHandler;
 import org.reflections.Reflections;
@@ -17,8 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class CommandHandler {
-
-    private final LoggerHandler logger = new LoggerHandler();
+    JSONHandler jsonHandler = new JSONHandler();
+    LoggerHandler logger = new LoggerHandler();
 
     public enum LaunchPlatform {
         TELEGRAM,
@@ -29,9 +30,10 @@ public class CommandHandler {
     // Хэшмап классов команд
     Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
     UserRepository userRepository = new UserRepository();
+    ServerRepository serverRepository = new ServerRepository();
     InputTelegram inputTelegram = new InputTelegram();
     InputConsole inputConsole = new InputConsole();
-    Output output = new OutputHandler();
+    OutputHandler output = new OutputHandler();
 
     // Загрузка команд
     public CommandHandler() {
@@ -69,33 +71,39 @@ public class CommandHandler {
 
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
-            logger.info("Telegram is launch");
             // Поток для Telegram
             new Thread(() ->
-                    inputTelegram.read(interaction.setUserRepository(userRepository), this)
+                    inputTelegram.read(interaction.setUserRepository(userRepository)
+                            .setServerRepository(serverRepository), this)
             ).start();
+            logger.info("Telegram is launch");
+            System.out.println("SYSTEM: Telegram is launch");
         }
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
             userRepository.create(0L);
-            logger.info("Console is launch");
             // Поток для Console
             new Thread(() ->
-                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository), this)
+                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository)
+                            .setServerRepository(serverRepository), this)
             ).start();
+            logger.info("Console is launch");
+            System.out.println("SYSTEM: Console is launch");
         }
 
         // Поток для системы напоминаний
         new Thread(() ->
-                new ReminderHandler().run()
+                new ReminderHandler().run(interaction)
         ).start();
+        System.out.println("SYSTEM: ReminderHandler is launch");
     }
 
     // Вызов команды
     public void launchCommand(Interaction interaction, List<Content> contents) {
 
         for (Content content : contents) {
+            interaction.setContent(content);
             String message = content.message();
 
             // Если сообщение в Telegram было отправлено во время offline
@@ -112,22 +120,32 @@ public class CommandHandler {
             List<String> args = List.of(message.split(" "));
             String commandName = args.getFirst().toLowerCase().substring(1);
 
+            // Берём название команды до "@"
+            if (message.startsWith("/") && message.charAt(1) != ' ' && commandName.contains("@")) {
+                commandName = commandName.substring(0, commandName.lastIndexOf("@"));
+            }
+
             // Проверка, что это команда
             if (message.startsWith("/") && message.charAt(1) != ' '
                     && interaction.getUser(interaction.getUserId()).getInputStatus() == User.InputStatus.COMPLETED) {
 
-                if (commandName.startsWith("exit") && interaction.getPlatform() == Interaction.Platform.CONSOLE) {
-                    System.out.println("Program is stop");
+                if (commandName.startsWith("exit")
+                        && (interaction.getPlatform() == Interaction.Platform.CONSOLE
+                        || List.of(746875461L, 0L).contains(interaction.getUserId()))) {
+                    output.output(interaction.setMessage("Program is stop"));
+                    logger.info("Program is stop");
                     System.exit(0);
                 }
 
-                interaction.setMessage(message).setArguments(args.subList(1, args.size()));
+                interaction.setMessage(message).setArguments(args.subList(1, args.size()))
+                        .setLanguageCode(content.language());
 
                 // Если введённая команда имеется в хэшмап
                 if (baseCommandClasses.containsKey(commandName)) {
 
                     // Запустить класс, в котором будет работать команда
                     try {
+                        logger.debug("Method(run) from command(" + commandName + ") with Interaction=" + interaction);
                         baseCommandClasses.get(commandName).run(interaction);
 
                     } catch (Exception err) {
@@ -142,9 +160,9 @@ public class CommandHandler {
 
                 // Если что-то ожидаем от пользователя
             } else {
+                User user = interaction.getUser(interaction.getUserId());
 
                 if (commandName.startsWith("cancel")) {
-                    User user = interaction.getUser(interaction.getUserId());
                     String commandException = user.getCommandException();
                     user.clearExpected(commandException);
                     output.output(interaction.setMessage("Command \"" + commandException + "\" is cancel")
@@ -154,7 +172,10 @@ public class CommandHandler {
 
                 // Проверка, ожидаем ли мы что-то от пользователя
                 if (interaction.getUser(interaction.getUserId()).getInputStatus() == User.InputStatus.WAITING) {
-                    interaction.getUser(interaction.getUserId()).setValue(message);
+                    logger.debug("Get exception value: chatId" + interaction.getChatId()
+                            + ", userId=" + interaction.getUserId()
+                            + ", message=" + message);
+                    user.setValue(message);
                     baseCommandClasses.get(interaction.getUser(interaction.getUserId()).getCommandException())
                             .run(interaction);
                 }

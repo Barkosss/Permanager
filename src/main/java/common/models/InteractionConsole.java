@@ -1,12 +1,20 @@
 package common.models;
 
+import com.pengrad.telegrambot.model.Message;
+
 import common.exceptions.MemberNotFoundException;
+import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.utils.JSONHandler;
 
 import java.util.List;
 
 public class InteractionConsole implements Interaction {
 
+    // Идентификатор чата
+    long chatId;
+
+    // Идентификатор пользователя
     long userId;
 
     // Платформа: Terminal, Telegram, Discord
@@ -24,6 +32,15 @@ public class InteractionConsole implements Interaction {
     // ...
     UserRepository userRepository;
 
+    // ...
+    ServerRepository serverRepository;
+
+    // ...
+    Content content;
+
+    // Языковой код
+    Language languageCode;
+
     public InteractionConsole() {
         this.userId = 0L;
         this.platform = Platform.CONSOLE;
@@ -34,6 +51,13 @@ public class InteractionConsole implements Interaction {
         return this;
     }
 
+    @Override
+    public Interaction setServerRepository(ServerRepository serverRepository) {
+        this.serverRepository = serverRepository;
+        return this;
+    }
+
+
     public User getUser(long userId) {
         try {
             return userRepository.findById(userId);
@@ -41,6 +65,15 @@ public class InteractionConsole implements Interaction {
             return null;
         }
 
+    }
+
+    public Interaction setUserId(long userId) {
+        this.userId = userId;
+        return this;
+    }
+
+    public long getChatId() {
+        return chatId;
     }
 
     public long getUserId() {
@@ -76,6 +109,24 @@ public class InteractionConsole implements Interaction {
     public Interaction setArguments(List<String> arguments) {
         this.arguments = arguments;
         return this;
+    }
+
+    public Interaction setContent(Content content) {
+        this.content = content;
+        return this;
+    }
+
+    public Interaction setLanguageCode(Language languageCode) {
+        this.languageCode = languageCode;
+        return this;
+    }
+
+    public String getLanguageValue(String languageKey) {
+        JSONHandler jsonHandler = new JSONHandler();
+        if (jsonHandler.check("content_" + languageCode.getLang() + ".json", languageKey)) {
+            return (String) jsonHandler.read("content_" + languageCode.getLang() + ".json", languageKey);
+        }
+        return "Undefined";
     }
 
     @Override

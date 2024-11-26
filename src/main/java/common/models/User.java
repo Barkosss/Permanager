@@ -7,6 +7,7 @@ public class User {
         COMPLETED
     }
 
+    // Идентификатор пользователя
     long userId;
 
     // Объект с информацией ожидаемых ответов
@@ -26,13 +27,13 @@ public class User {
         return inputStatus;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         InputExpectation inputExpectation = this.userInputExpectation;
         inputExpectation.getExpectedInputs().get(inputExpectation.expectedCommandName)
                 .put(inputExpectation.expectedInputKey, value);
     }
 
-    public String getValue(String commandName, String key) {
+    public Object getValue(String commandName, String key) {
         return this.userInputExpectation.getExpectedInputs().get(commandName).get(key);
     }
 
@@ -47,10 +48,10 @@ public class User {
         return this.userInputExpectation.getExpectedInputs().get(commandName).containsKey(key);
     }
 
-    public void setExcepted(String commandName, String valueKey) {
+    public User setExcepted(String commandName, String valueKey) {
         this.inputStatus = InputStatus.WAITING;
         this.userInputExpectation.setExpected(commandName, valueKey);
-        this.userInputExpectation.userInputType = InputExpectation.UserInputType.STRING;
+        return this;
     }
 
     public void clearExpected(String commandName) {

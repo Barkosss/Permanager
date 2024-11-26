@@ -1,6 +1,7 @@
 package common.commands;
 
 import common.models.Interaction;
+import common.models.User;
 
 /**
  * Интерфейс команд
@@ -9,11 +10,6 @@ import common.models.Interaction;
  * getCommandDescription() - Информационный метод. Выводит описание команды. Используется для команды "help"
  */
 public interface BaseCommand {
-
-    /**
-     * Запустить команду
-     */
-    void run(Interaction interaction);
 
     /**
      * Получить короткое название команды
@@ -28,4 +24,11 @@ public interface BaseCommand {
      * @return String
      */
     String getCommandDescription();
+
+    void parseArgs(Interaction interaction, User user);
+
+    /**
+     * Запустить команду
+     */
+    void run(Interaction interaction);
 }

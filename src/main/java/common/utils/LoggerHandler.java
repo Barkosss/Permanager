@@ -31,9 +31,9 @@ public class LoggerHandler {
 
     public void info(String message) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
-            String log = "[INFO]\t" +
-                    "[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())) + "]\t" +
-                    message;
+            String log = "[INFO]\t"
+                    + "[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())) + "]\t"
+                    + message;
 
             writer.write(log); // Форматируем и записываем сообщение в файл
             writer.newLine();  // Переход на новую строку
@@ -44,9 +44,9 @@ public class LoggerHandler {
 
     public void debug(String message) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
-            String log = "[DEBUG]\t" +
-                    "[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())) + "]\t" +
-                    message;
+            String log = "[DEBUG]\t"
+                    + "[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())) + "]\t"
+                    + message;
 
             writer.write(log); // Форматируем и записываем сообщение в файл
             writer.newLine();  // Переход на новую строку
@@ -57,9 +57,9 @@ public class LoggerHandler {
 
     public void error(String message) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
-            String log = "[ERROR]\t" +
-                    "[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())) + "]\t" +
-                    message;
+            String log = "[ERROR]\t"
+                    + "[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())) + "]\t"
+                    + message;
 
             writer.write(log); // Форматируем и записываем сообщение в файл
             writer.newLine();  // Переход на новую строку

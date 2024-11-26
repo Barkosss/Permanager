@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class UserRepository {
     LoggerHandler logger = new LoggerHandler();
-    public Map<Long, User> users;
+    Map<Long, User> users;
 
     public UserRepository() {
         this.users = new HashMap<>();
@@ -20,6 +20,7 @@ public class UserRepository {
         if (users.containsKey(userId)) {
             return;
         }
+        logger.debug("User by id(" + userId + ") is create");
         users.put(userId, new User(userId));
     }
 
@@ -27,6 +28,7 @@ public class UserRepository {
     public User findById(long userId) throws MemberNotFoundException {
         User user;
         if ((user = users.get(userId)) != null) {
+            logger.debug("User by id(" + userId + ") is find");
             return user;
         }
         logger.error("Member by id(" + userId + ") is not found");

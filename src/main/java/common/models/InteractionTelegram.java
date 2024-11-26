@@ -1,9 +1,12 @@
 package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
 import common.exceptions.MemberNotFoundException;
+import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.utils.JSONHandler;
 
 import java.util.List;
 
@@ -16,7 +19,10 @@ public class InteractionTelegram implements Interaction {
     // Платформа: Terminal, Telegram, Discord
     Platform platform;
 
-    // Для Telegram - Chat ID, для Discord - User ID
+    // Идентификатор чата
+    long chatId;
+
+    // Идентификатор пользователя
     long userId;
 
     // Полное сообщение
@@ -34,6 +40,14 @@ public class InteractionTelegram implements Interaction {
     // ...
     UserRepository userRepository;
 
+    // ...
+    ServerRepository serverRepository;
+
+    // ...
+    Content content;
+
+    // Языковой код
+    Language languageCode;
 
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
         this.telegramBot = telegramBot;
@@ -43,6 +57,11 @@ public class InteractionTelegram implements Interaction {
 
     public Interaction setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+        return this;
+    }
+
+    public Interaction setServerRepository(ServerRepository serverRepository) {
+        this.serverRepository = serverRepository;
         return this;
     }
 
@@ -59,13 +78,22 @@ public class InteractionTelegram implements Interaction {
         return platform;
     }
 
+    public long getChatId() {
+        return chatId;
+    }
+
+    public Interaction setChatId(long chatId) {
+        this.chatId = chatId;
+        createSendMessage();
+        return this;
+    }
+
     public long getUserId() {
         return userId;
     }
 
     public Interaction setUserId(long userId) {
         this.userId = userId;
-        createSendMessage();
         return this;
     }
 
@@ -101,6 +129,33 @@ public class InteractionTelegram implements Interaction {
         return this;
     }
 
+    public Message getContentReply() {
+        try {
+            return content.reply();
+
+        } catch (Exception err) {
+            return null;
+        }
+    }
+
+    public Interaction setContent(Content content) {
+        this.content = content;
+        return this;
+    }
+
+    public Interaction setLanguageCode(Language languageCode) {
+        this.languageCode = languageCode;
+        return this;
+    }
+
+    public String getLanguageValue(String languageKey) {
+        JSONHandler jsonHandler = new JSONHandler();
+        if (jsonHandler.check("content_" + languageCode.getLang() + ".json", languageKey)) {
+            return (String) jsonHandler.read("content_" + languageCode.getLang() + ".json", languageKey);
+        }
+        return "Undefined";
+    }
+
     @Override
     public String toString() {
 
@@ -109,6 +164,7 @@ public class InteractionTelegram implements Interaction {
                 + "; TIMESTAMP_BOT_START=" + timestampBotStart
                 + "; Platform=" + platform
                 + "; userId=" + userId
+                + "; chatId=" + chatId
                 + "; Message=" + message
                 + "; Inline=" + inline
                 + "; arguments=" + arguments
@@ -116,10 +172,10 @@ public class InteractionTelegram implements Interaction {
     }
 
     private void createSendMessage() {
-        if (this.userId == 0 || this.message == null) {
+        if (this.chatId == 0 || this.message == null) {
             return;
         }
 
-        this.sendMessage = new SendMessage(userId, message);
+        this.sendMessage = new SendMessage(chatId, message);
     }
 }

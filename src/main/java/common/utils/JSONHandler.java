@@ -24,7 +24,7 @@ public class JSONHandler {
             return jsonObject;
         } catch (IOException | ParseException err) {
             logger.error("JSONHandler (read): " + err);
-            return new Object();
+            return null;
         }
     }
 
