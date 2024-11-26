@@ -1,5 +1,7 @@
 package common.models;
 
+import com.pengrad.telegrambot.model.Message;
+
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 
@@ -53,9 +55,9 @@ public interface Interaction {
 
     List<String> getArguments();
 
-    Language getLanguageCode();
-
     Interaction setLanguageCode(Language languageCode);
+
+    Interaction setContent(Content content);
 
     String getLanguageValue(String languageKey);
 }

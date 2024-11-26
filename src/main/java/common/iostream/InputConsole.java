@@ -37,9 +37,11 @@ public class InputConsole {
             }
 
             commandHandler.launchCommand(interaction, List.of(
-                    new Content(0L, // Идентификатор пользователя (Для консоли он равен 0)
-                            0L, // Идентификатор чата (Для консоли он равен 0)
-                            userInputMessage, // Сообщение пользователя
+                    new Content(
+                            0L, // Идентификатор пользователя
+                            null, // Информация о чате
+                            null, // Информация об ответном сообщении
+                            userInputMessage, // Содержимое сообщения
                             System.currentTimeMillis() / 1000, // Время отправки, пользователем, сообщения
                             Interaction.Language.ENGLISH,
                             List.of(userInputMessage.split(" ")), // Аргументы сообщения

@@ -103,6 +103,7 @@ public class CommandHandler {
     public void launchCommand(Interaction interaction, List<Content> contents) {
 
         for (Content content : contents) {
+            interaction.setContent(content);
             String message = content.message();
 
             // Если сообщение в Telegram было отправлено во время offline

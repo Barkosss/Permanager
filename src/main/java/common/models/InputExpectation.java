@@ -21,7 +21,7 @@ public class InputExpectation {
     String expectedInputKey;
 
     // Map значений, которые указываются пользователем
-    Map<String, Map<String, String>> expectedInputs;
+    Map<String, Map<String, Object>> expectedInputs;
 
     public void setExpected(String expectedCommandName, String expectedInputKey) {
         if (!this.expectedInputs.containsKey(expectedCommandName)) {
@@ -34,7 +34,7 @@ public class InputExpectation {
         this.expectedInputKey = expectedInputKey;
     }
 
-    public Map<String, Map<String, String>> getExpectedInputs() {
+    public Map<String, Map<String, Object>> getExpectedInputs() {
         if (expectedInputs == null) {
             expectedInputs = new HashMap<>();
         }

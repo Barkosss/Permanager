@@ -43,8 +43,8 @@ public class TestCommand implements BaseCommand {
             return;
         }
 
-        String firstMessage = user.getValue(getCommandName(), "firstMessage");
-        String secondMessage = user.getValue(getCommandName(), "secondMessage");
+        String firstMessage = (String)user.getValue(getCommandName(), "firstMessage");
+        String secondMessage = (String)user.getValue(getCommandName(), "secondMessage");
 
         output.output(interaction.setMessage("First message: " + firstMessage).setInline(false));
         output.output(interaction.setMessage("Second message: " + secondMessage).setInline(false));

@@ -34,12 +34,15 @@ public class InputTelegram {
                 language = (update.message().from().languageCode() != null
                         && update.message().from().languageCode().equals("ru")) ? (Interaction.Language.RUSSIAN)
                         : (Interaction.Language.ENGLISH);
+
+
                 contents.add(new Content(
                         update.message().from().id(), // Идентификатор пользователя
-                        update.message().chat().id(), // Идентификатор чата
-                        update.message().text(), // Сообщение пользователя
+                        update.message().chat(), // Информация о чате
+                        update.message().replyToMessage(), // Информация об ответном сообщении
+                        update.message().text(), // Содержимое сообщения
                         update.message().date(), // Время отправки, пользователем, сообщения
-                        language, // Код языка
+                        language,
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));
@@ -52,6 +55,12 @@ public class InputTelegram {
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
 
             // Создать обработчик исключений
-        }, err -> logger.error("Telegram updates listener: " + err));
+        }, err -> {
+            if (err.response() != null) {
+                logger.error("Telegram updates listener (Bad response): " + err);
+            } else {
+                logger.error("Telegram updates listener (Network): " + err);
+            }
+        });
     }
 }

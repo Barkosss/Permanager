@@ -1,6 +1,6 @@
 package common.commands.moderation;
 
-import com.pengrad.telegrambot.request.GetChat;
+import com.pengrad.telegrambot.model.Message;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -33,28 +33,29 @@ public class BanCommand implements BaseCommand {
             output.output(interaction.setMessage("This command is not available for the console"));
             return;
         }
+        InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        User user = interaction.getUser(interaction.getUserId());
-        parseArgs(interaction, user);
+        User user = interactionTelegram.getUser(interaction.getUserId());
+        parseArgs(interactionTelegram, user);
+
 
         // Получаем пользователя
-        if (!user.isExceptedKey(getCommandName(), "user")) {
-            user.setExcepted(getCommandName(), "user");
+        if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
             logger.info("Ban command requested a user argument");
-            output.output(interaction.setMessage("Enter user"));
+            output.output(interactionTelegram.setMessage("Reply message target user with command /ban"));
             return;
         }
+
+        if (interactionTelegram.getContentReply() != null && !user.isExceptedKey(getCommandName(), "user")) {
+            user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply());
+        }
         // Валидация пользователя...
-        String username = user.getValue(getCommandName(), "user");
-        System.out.println("'" + username + "'");
-        System.out.println(((InteractionTelegram)interaction).telegramBot
-                .execute(new GetChat(username)).chat());
 
         // Получаем причину блокировки
         if (!user.isExceptedKey(getCommandName(), "reason")) {
             user.setExcepted(getCommandName(), "reason");
             logger.info("Ban command requested a reason argument");
-            output.output(interaction.setMessage("Enter reason"));
+            output.output(interactionTelegram.setMessage("Enter reason"));
             return;
         }
 
@@ -62,16 +63,17 @@ public class BanCommand implements BaseCommand {
         if (!user.isExceptedKey(getCommandName(), "duration")) {
             user.setExcepted(getCommandName(), "duration");
             logger.info("Ban command requested a duration argument");
-            output.output(interaction.setMessage("Enter duration"));
+            output.output(interactionTelegram.setMessage("Enter duration"));
             return;
         }
         // Валидация даты...
 
         try {
-            long userId = Long.parseLong(user.getValue(getCommandName(), "user"));
+            long userId = ((Message)user.getValue(getCommandName(), "user")).from().id();
             //((InteractionTelegram)interaction).telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + " has been banned");
-            output.output(interaction.setMessage("The user <@" + userId + "> has been banned"));
+            output.output(interactionTelegram.setMessage("The user @" + ((Message) user.getValue(getCommandName(), "user")).from().username()
+                    + " has been banned"));
         } catch (Exception err) {
             logger.error("Ban command: " + err);
         } finally {

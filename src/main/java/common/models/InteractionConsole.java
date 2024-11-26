@@ -1,5 +1,7 @@
 package common.models;
 
+import com.pengrad.telegrambot.model.Message;
+
 import common.exceptions.MemberNotFoundException;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
@@ -32,6 +34,9 @@ public class InteractionConsole implements Interaction {
 
     // ...
     ServerRepository serverRepository;
+
+    // ...
+    Content content;
 
     // Языковой код
     Language languageCode;
@@ -106,8 +111,9 @@ public class InteractionConsole implements Interaction {
         return this;
     }
 
-    public Language getLanguageCode() {
-        return languageCode;
+    public Interaction setContent(Content content) {
+        this.content = content;
+        return this;
     }
 
     public Interaction setLanguageCode(Language languageCode) {

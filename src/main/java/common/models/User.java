@@ -27,13 +27,13 @@ public class User {
         return inputStatus;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         InputExpectation inputExpectation = this.userInputExpectation;
         inputExpectation.getExpectedInputs().get(inputExpectation.expectedCommandName)
                 .put(inputExpectation.expectedInputKey, value);
     }
 
-    public String getValue(String commandName, String key) {
+    public Object getValue(String commandName, String key) {
         return this.userInputExpectation.getExpectedInputs().get(commandName).get(key);
     }
 
