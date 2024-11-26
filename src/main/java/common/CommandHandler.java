@@ -55,8 +55,8 @@ public class CommandHandler {
                     // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
                     baseCommandClasses.put(commandName, instanceClass);
                 } else {
-                    logger.error("There was a duplication of the command -о" + commandName);
-                    System.out.println("There was a duplication of the command -о" + commandName);
+                    logger.error("There was a duplication of the command - " + commandName);
+                    System.out.println("There was a duplication of the command - " + commandName);
                     System.exit(0);
                 }
             }
@@ -68,6 +68,12 @@ public class CommandHandler {
 
     // Запуск программы
     public void launch(Interaction interaction, LaunchPlatform platform) {
+
+        // Поток для системы напоминаний
+        new Thread(() ->
+                new ReminderHandler().run(interaction)
+        ).start();
+        System.out.println("SYSTEM: ReminderHandler is launch");
 
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
@@ -91,12 +97,6 @@ public class CommandHandler {
             logger.info("Console is launch");
             System.out.println("SYSTEM: Console is launch");
         }
-
-        // Поток для системы напоминаний
-        new Thread(() ->
-                new ReminderHandler().run(interaction)
-        ).start();
-        System.out.println("SYSTEM: ReminderHandler is launch");
     }
 
     // Вызов команды
