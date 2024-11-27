@@ -88,10 +88,16 @@ public class User {
         return this;
     }
 
-    public User removeReminder(long chatId) {
-        if (this.reminders != null) {
-            this.reminders.remove(chatId);
+    public User removeReminder(Reminder reminder) {
+        if (this.reminders == null) {
+            this.reminders = new HashMap<>();
         }
+
+        if (!this.reminders.containsKey(reminder.chatId)) {
+            this.reminders.put(reminder.chatId, new HashMap<>());
+        }
+
+        this.reminders.get(reminder.chatId).remove(reminder.getId());
         return this;
     }
 
