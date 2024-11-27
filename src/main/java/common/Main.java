@@ -27,8 +27,13 @@ public class Main {
         if (platform == CommandHandler.LaunchPlatform.TELEGRAM || platform == CommandHandler.LaunchPlatform.ALL) {
             TelegramBot bot = null;
             try {
-                bot = new TelegramBot(String.valueOf(jsonHandler.read("config.json", "tokenTelegram")));
-                logger.info("Telegram bot is start");
+                if (jsonHandler.check("config.json", "tokenTelegram")) {
+                    bot = new TelegramBot(String.valueOf(jsonHandler.read("config.json", "tokenTelegram")));
+                    logger.info("Telegram bot is start");
+                } else {
+                    logger.error("Telegram token isn't found");
+                    System.exit(404);
+                }
 
             } catch (Exception err) {
                 logger.error("Telegram authorization: " + err);
