@@ -83,9 +83,5 @@ public class TaskCommand implements BaseCommand {
             logger.debug("Task command requested a first argument");
             return;
         }
-
-        String action = user.isExceptedKey(getCommandName(), "action");
-
-
     }
 }
