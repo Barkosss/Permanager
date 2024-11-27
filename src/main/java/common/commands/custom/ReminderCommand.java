@@ -11,6 +11,7 @@ import common.utils.Validate;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ReminderCommand implements BaseCommand {
@@ -117,20 +118,6 @@ public class ReminderCommand implements BaseCommand {
             return;
         }
 
-        if (!"list".equals(user.getValue(getCommandName(), "action")) && !user.isExceptedKey(getCommandName(), "date")) {
-            user.setExcepted(getCommandName(), "date");
-            logger.info("Reminder command requested a date argument");
-            output.output(interaction.setMessage("Enter date for send reminder"));
-            return;
-        }
-
-        if (!"list".equals(user.getValue(getCommandName(), "action")) && !user.isExceptedKey(getCommandName(), "context")) {
-            user.setExcepted(getCommandName(), "context");
-            logger.info("Reminder command requested a context argument");
-            output.output(interaction.setMessage("Enter context for reminder"));
-            return;
-        }
-
         String action = (String) user.getValue(getCommandName(), "action");
         switch (action) {
             case "create": {
@@ -174,6 +161,21 @@ public class ReminderCommand implements BaseCommand {
 
     // Метод для создания напоминания
     public void create(Interaction interaction, User user) {
+
+        if (!user.isExceptedKey(getCommandName(), "date")) {
+            user.setExcepted(getCommandName(), "date");
+            logger.info("Reminder command requested a date argument");
+            output.output(interaction.setMessage("Enter date for send reminder"));
+            return;
+        }
+
+        if (!user.isExceptedKey(getCommandName(), "context")) {
+            user.setExcepted(getCommandName(), "context");
+            logger.info("Reminder command requested a context argument");
+            output.output(interaction.setMessage("Enter context for reminder"));
+            return;
+        }
+
         long reminderId = user.getReminders(interaction.getChatId()).size() + 1;
         long chatId = interaction.getChatId();
         long userId = interaction.getUserId();
@@ -190,11 +192,69 @@ public class ReminderCommand implements BaseCommand {
 
     // Метод для редактирования напоминания
     public void edit(Interaction interaction, User user) {
+
+        if (!user.isExceptedKey(getCommandName(), "index")) {
+            user.setExcepted(getCommandName(), "index");
+            logger.info("");
+            output.output(interaction.setMessage("").setInline(true));
+            return;
+        }
+        long reminderId = (long) user.getValue(getCommandName(), "index");
+
+        if (!user.getReminders(interaction.getChatId()).containsKey(reminderId)) {
+            user.setExcepted(getCommandName(), "index");
+            logger.info("");
+            edit(interaction, user);
+            return;
+        }
+
+        if (!user.isExceptedKey(getCommandName(), "newTime")) {
+            user.setExcepted(getCommandName(), "newTime");
+            logger.info("");
+            output.output(interaction.setMessage("").setInline(true));
+            return;
+        }
+
+        if (user.getValue(getCommandName(), "newTime") != "-" || user.getValue(getCommandName(), "newTime") == null) {
+            user.setExcepted(getCommandName(), "newTime");
+            edit(interaction, user);
+            return;
+        }
+
+        Object newLocalDate = user.getValue(getCommandName(), "newTime");
+        String newContext = (String) user.getValue(getCommandName(), "context");
+        Reminder reminder = user.getReminders(interaction.getChatId()).get(reminderId);
+
+        // Изменяем описание напоминания, если такое имеется
+        if (!Objects.equals(newContext, reminder.getContent()) && !Objects.equals(newContext, "-")) {
+            reminder.setContent(newContext);
+        }
+
+        // Изменяем время отправки, если такое имеется
+        if (!Objects.equals(newLocalDate, reminder.getSendAt()) && !Objects.equals(newLocalDate, "-")) {
+            reminder.setSendAt((LocalDate) newLocalDate);
+        }
+
+        user.getReminders(interaction.getChatId()).put(reminderId, reminder);
+
+        output.output(interaction.setMessage("Reminder is edit").setInline(true));
         user.clearExpected(getCommandName());
     }
 
     // Метод для удаления напоминания
     public void remove(Interaction interaction, User user) {
+
+        if (!user.isExceptedKey(getCommandName(), "index")) {
+            user.setExcepted(getCommandName(), "index");
+            logger.info("Reminder command requested a index argument");
+            output.output(interaction.setMessage("Enter index reminder"));
+            return;
+        }
+
+        long indexReminder = (Long) user.getValue(getCommandName(), "index");
+        user.getReminders(interaction.getChatId()).remove(indexReminder);
+
+        output.output(interaction.setMessage("Reminder is remove").setInline(true));
         user.clearExpected(getCommandName());
     }
 
