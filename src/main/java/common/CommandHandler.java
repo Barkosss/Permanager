@@ -8,7 +8,6 @@ import common.models.*;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
-import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 import common.utils.ReminderHandler;
 import org.reflections.Reflections;
@@ -19,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class CommandHandler {
-    JSONHandler jsonHandler = new JSONHandler();
     LoggerHandler logger = new LoggerHandler();
 
     public enum LaunchPlatform {
