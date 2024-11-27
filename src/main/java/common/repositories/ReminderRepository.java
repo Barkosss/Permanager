@@ -3,6 +3,7 @@ package common.repositories;
 import common.models.Reminder;
 import common.utils.LoggerHandler;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -17,7 +18,13 @@ public class ReminderRepository {
 
     // Создать напоминание в памяти
     public void create(Reminder reminder) {
+        if (reminders == null) {
+            reminders = new TreeMap<>();
+        }
+        
         long reminderId = reminder.getId();
+        LocalDate sendAt = reminder.getSendAt();
+
         if (reminders.containsKey(reminderId)) {
             reminders.get(reminderId).add(reminder);
             return;
