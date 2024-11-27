@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.model.ChatPermissions;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChatMemberCount;
 import com.pengrad.telegrambot.request.RestrictChatMember;
-import com.pengrad.telegrambot.request.UnbanChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -12,13 +11,13 @@ import common.models.InteractionTelegram;
 import common.models.User;
 import common.utils.LoggerHandler;
 
-public class UnbanCommand implements BaseCommand {
+public class UnmuteCommand implements BaseCommand {
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
 
     @Override
     public String getCommandName() {
-        return "unban";
+        return "unmute";
     }
 
     @Override
@@ -58,12 +57,13 @@ public class UnbanCommand implements BaseCommand {
         try {
             long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
-            interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
-            logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been unbaned");
-            output.output(interactionTelegram.setMessage("The user @" + username + " has been unbaned"));
+            interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), userId,
+                    new ChatPermissions().canSendMessages(true)));
+            logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been unmuted");
+            output.output(interactionTelegram.setMessage("The user @" + username + " has been unmuted"));
         } catch (Exception err) {
             output.output(interaction.setMessage("Something went wrong... :("));
-            logger.error("Unban command: " + err);
+            logger.error("Unmute command: " + err);
         } finally {
             user.clearExpected(getCommandName());
         }

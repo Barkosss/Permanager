@@ -1,5 +1,12 @@
 package common.models;
 
+import common.repositories.WarningRepository;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class User {
 
     public enum InputStatus {
@@ -15,6 +22,15 @@ public class User {
 
     // Состояние ввода
     InputStatus inputStatus;
+
+    // ...
+    Map<Long, Member> members;
+
+    // ...
+    Map<Long, Map<Long, Reminder>> reminders;
+
+    // ...
+    Map<Server, WarningRepository> warnings = new HashMap<>();
 
     public User(long userId) {
         this.userId = userId;
@@ -57,5 +73,37 @@ public class User {
     public void clearExpected(String commandName) {
         this.inputStatus = InputStatus.COMPLETED;
         this.userInputExpectation.getExpectedInputs().remove(commandName);
+    }
+
+    public User addReminder(Reminder reminder) {
+        if (this.reminders == null) {
+            this.reminders = new HashMap<>();
+        }
+
+        if (!this.reminders.containsKey(reminder.chatId)) {
+            this.reminders.put(reminder.chatId, new HashMap<>());
+        }
+
+        this.reminders.get(reminder.chatId).put(reminder.getId(), reminder);
+        return this;
+    }
+
+    public User removeReminder(long chatId) {
+        if (this.reminders != null) {
+            this.reminders.remove(chatId);
+        }
+        return this;
+    }
+
+    public Map<Long, Reminder> getReminders(long chatId) {
+        if (this.reminders == null) {
+            this.reminders = new HashMap<>();
+        }
+
+        if (!this.reminders.containsKey(chatId)) {
+            this.reminders.put(chatId, new HashMap<>());
+        }
+
+        return this.reminders.get(chatId);
     }
 }
