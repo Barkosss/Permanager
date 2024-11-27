@@ -1,5 +1,7 @@
 package common.models;
 
+import common.repositories.WarningRepository;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +27,7 @@ public class User {
     List<Member> members = new ArrayList<>();
 
     // ...
-    Map<Server, List<Warning>> warnings = new HashMap<>();
+    Map<Server, WarningRepository> warnings = new HashMap<>();
 
     public User(long userId) {
         this.userId = userId;
