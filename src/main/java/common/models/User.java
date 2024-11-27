@@ -36,6 +36,10 @@ public class User {
         this.userId = userId;
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
     public InputStatus getInputStatus() {
         if (inputStatus == null) {
             this.inputStatus = InputStatus.COMPLETED;
