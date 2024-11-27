@@ -34,10 +34,42 @@ public class Validate {
     public Optional<LocalDate> isValidDate(String strLocalDate) {
 
         String[] patterns = {
-            "H:mm dd.MM.yyyy",
-            "H:mm:ss dd.MM.yyyy",
-            "H:mm dd.MM.yy",
-            "H:mm:ss dd.MM.yy"
+                "HH:mm dd.MM.yyyy",
+                "HH:mm:ss dd.MM.yyyy",
+                "HH:mm dd.MM.yy",
+                "HH:mm:ss dd.MM.yy",
+                "dd.MM.yyyy HH:mm",
+                "dd.MM.yyyy HH:mm:ss",
+                "dd.MM.yy HH:mm",
+                "dd.MM.yy HH:mm:ss"
+        };
+
+        // Проходимся по каждому форматы дат
+        for (String pattern : patterns) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+                return Optional.of(LocalDate.parse(strLocalDate, formatter));
+            } catch (Exception err) {
+                // ...
+            }
+        }
+        return Optional.empty();
+    }
+
+
+    /**
+     *
+     */
+    public Optional<LocalDate> isValidTime(String strLocalDate) {
+        String[] patterns = {
+                "HH:mm dd.MM.yyyy",
+                "HH:mm:ss dd.MM.yyyy",
+                "HH:mm dd.MM.yy",
+                "HH:mm:ss dd.MM.yy",
+                "dd.MM.yyyy HH:mm",
+                "dd.MM.yyyy HH:mm:ss",
+                "dd.MM.yy HH:mm",
+                "dd.MM.yy HH:mm:ss"
         };
 
         // Проходимся по каждому форматы дат

@@ -5,6 +5,7 @@ import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
 import common.iostream.OutputHandler;
 import common.models.*;
+import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 import common.utils.JSONHandler;
@@ -29,8 +30,11 @@ public class CommandHandler {
 
     // Хэшмап классов команд
     Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
+
     UserRepository userRepository = new UserRepository();
     ServerRepository serverRepository = new ServerRepository();
+    ReminderRepository reminderRepository = new ReminderRepository();
+
     InputTelegram inputTelegram = new InputTelegram();
     InputConsole inputConsole = new InputConsole();
     OutputHandler output = new OutputHandler();
@@ -69,22 +73,22 @@ public class CommandHandler {
     // Запуск программы
     public void launch(Interaction interaction, LaunchPlatform platform) {
 
-        // Поток для системы напоминаний
-        new Thread(() ->
-                new ReminderHandler().run(interaction)
-        ).start();
-        System.out.println("SYSTEM: ReminderHandler is launch");
-
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
             // Поток для Telegram
             new Thread(() ->
                     inputTelegram.read(interaction.setUserRepository(userRepository)
-                            .setServerRepository(serverRepository), this)
+                            .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
             ).start();
             logger.info("Telegram is launch");
             System.out.println("SYSTEM: Telegram is launch");
         }
+
+        // Поток для системы напоминаний
+        new Thread(() ->
+                new ReminderHandler().run(interaction)
+        ).start();
+        System.out.println("SYSTEM: ReminderHandler is launch");
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
@@ -92,7 +96,7 @@ public class CommandHandler {
             // Поток для Console
             new Thread(() ->
                     inputConsole.listener(new InteractionConsole().setUserRepository(userRepository)
-                            .setServerRepository(serverRepository), this)
+                            .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
             ).start();
             logger.info("Console is launch");
             System.out.println("SYSTEM: Console is launch");

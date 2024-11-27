@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
 import common.exceptions.MemberNotFoundException;
+import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 import common.utils.JSONHandler;
@@ -44,6 +45,9 @@ public class InteractionTelegram implements Interaction {
     ServerRepository serverRepository;
 
     // ...
+    ReminderRepository reminderRepository;
+
+    // ...
     Content content;
 
     // Языковой код
@@ -63,6 +67,17 @@ public class InteractionTelegram implements Interaction {
     public Interaction setServerRepository(ServerRepository serverRepository) {
         this.serverRepository = serverRepository;
         return this;
+    }
+
+    @Override
+    public Interaction setReminderRepository(ReminderRepository reminderRepository) {
+        this.reminderRepository = reminderRepository;
+        return this;
+    }
+
+    @Override
+    public ReminderRepository getReminderRepository() {
+        return reminderRepository;
     }
 
     public User getUser(long userId) {
