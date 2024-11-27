@@ -3,15 +3,13 @@ package common.models;
 import java.util.HashMap;
 import java.util.Map;
 
-public class
-InputExpectation {
+public class InputExpectation {
 
     enum UserInputType {
         INT,
         STRING,
         DATE,
     }
-
 
     // Название команды, ожидающая ввод
     String expectedCommandName;

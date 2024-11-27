@@ -91,6 +91,11 @@ public class TaskCommand implements BaseCommand {
                 create(interaction, user);
                 break;
             }
+
+            default: {
+                // ...
+                break;
+            }
         }
 
     }
@@ -115,7 +120,7 @@ public class TaskCommand implements BaseCommand {
 
         String title = (String) user.getValue(getCommandName(), "title");
         String description = (String) user.getValue(getCommandName(), "description");
-        if(description.equals("/skip")){
+        if (description.equals("/skip")) {
             description = "";
         }
         user.addTask(new Task(interaction.getUserId(), interaction.getChatId(), title, description));
