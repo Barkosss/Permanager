@@ -44,7 +44,8 @@ public class ClearCommand implements BaseCommand {
 
         // Получаем длительность блокировки
         Optional<Integer> validateInteger = validate.isValidInteger(arguments.getFirst());
-        validateInteger.ifPresent(countMessages -> user.setExcepted(getCommandName(), "countMessages").setValue(countMessages));
+        validateInteger.ifPresent(countMessages ->
+                user.setExcepted(getCommandName(), "countMessages").setValue(countMessages));
     }
 
     @Override

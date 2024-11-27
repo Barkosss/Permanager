@@ -57,7 +57,8 @@ public class UnmuteCommand implements BaseCommand {
         try {
             long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
-            interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), userId, new ChatPermissions().canSendMessages(true)));
+            interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), userId,
+                    new ChatPermissions().canSendMessages(true)));
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been unmuted");
             output.output(interactionTelegram.setMessage("The user @" + username + " has been unmuted"));
         } catch (Exception err) {
