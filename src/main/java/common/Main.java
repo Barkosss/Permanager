@@ -1,7 +1,6 @@
 package common;
 
 import com.pengrad.telegrambot.TelegramBot;
-
 import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
@@ -32,6 +31,7 @@ public class Main {
                     logger.info("Telegram bot is start");
                 } else {
                     logger.error("Telegram token isn't found");
+                    System.out.println("Telegram token isn't found");
                     System.exit(404);
                 }
 

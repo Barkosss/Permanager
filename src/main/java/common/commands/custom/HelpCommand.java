@@ -24,9 +24,7 @@ public class HelpCommand implements BaseCommand {
     }
 
     @Override
-    public void parseArgs(Interaction interaction, User user) {
-
-    }
+    public void parseArgs(Interaction interaction, User user) {}
 
     // Вызвать основной методы команды
     public void run(Interaction interaction) {

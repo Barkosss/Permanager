@@ -26,7 +26,10 @@ public class Reminder {
     Interaction.Platform platform;
 
     // Конструктор напоминания
-    public Reminder(String content, LocalDate createdAt, LocalDate sendAt, Interaction.Platform platform) {
+    public Reminder(long id, long chatId, long userId, String content, LocalDate createdAt, LocalDate sendAt, Interaction.Platform platform) {
+        this.id = id;
+        this.chatId = chatId;
+        this.userId = userId;
         this.content = content;
         this.createdAt = createdAt;
         this.sendAt = sendAt;
