@@ -2,6 +2,7 @@ package common.models;
 
 import com.pengrad.telegrambot.model.Message;
 
+import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 
@@ -32,6 +33,10 @@ public interface Interaction {
     Interaction setUserRepository(UserRepository userRepository);
 
     Interaction setServerRepository(ServerRepository serverRepository);
+
+    Interaction setReminderRepository(ReminderRepository reminderRepository);
+
+    ReminderRepository getReminderRepository();
 
     User getUser(long userId);
 
