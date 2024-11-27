@@ -119,7 +119,7 @@ public class TaskCommand implements BaseCommand {
         if (description.equals("/skip")) {
             description = "";
         }
-
+      
         user.addTask(new Task(interaction.getUserId(), interaction.getChatId(), title, description));
         user.clearExpected(getCommandName());
     }
