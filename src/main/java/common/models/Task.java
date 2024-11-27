@@ -5,6 +5,9 @@ import java.util.List;
 
 public class Task {
 
+    public long userId;
+
+    public long chatId;
     // Идентификатор задачи
     public long id;
 
@@ -41,8 +44,12 @@ public class Task {
     // Состояние, выполнена ли задача
     public boolean isCompleted;
 
+
+
     // Конструктор задачи
-    public Task(String title, String description) {
+    public Task(long userId, long chatId, String title, String description) {
+        this.chatId = chatId;
+        this.userId = userId;
         this.title = title;
         this.description = description;
         this.isCompleted = false;
@@ -56,6 +63,26 @@ public class Task {
     // Установить ID задачи
     public void setId(long id) {
         this.id = id;
+    }
+
+    // Получить user ID задачи
+    public long getUserId() {
+        return userId;
+    }
+
+    // Установить user ID задачи
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    // Получить chat ID задачи
+    public long getChatId() {
+        return chatId;
+    }
+
+    // Установить chat ID задачи
+    public void setChatId(long chatId) {
+        this.chatId = chatId;
     }
 
     // Получить заголовок
