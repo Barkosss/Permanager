@@ -5,6 +5,7 @@ import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
 import common.iostream.OutputHandler;
 import common.models.*;
+import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 import common.utils.JSONHandler;
@@ -29,8 +30,11 @@ public class CommandHandler {
 
     // Хэшмап классов команд
     Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
+
     UserRepository userRepository = new UserRepository();
     ServerRepository serverRepository = new ServerRepository();
+    ReminderRepository reminderRepository = new ReminderRepository();
+
     InputTelegram inputTelegram = new InputTelegram();
     InputConsole inputConsole = new InputConsole();
     OutputHandler output = new OutputHandler();
@@ -55,8 +59,8 @@ public class CommandHandler {
                     // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
                     baseCommandClasses.put(commandName, instanceClass);
                 } else {
-                    logger.error("There was a duplication of the command -о" + commandName);
-                    System.out.println("There was a duplication of the command -о" + commandName);
+                    logger.error("There was a duplication of the command - " + commandName);
+                    System.out.println("There was a duplication of the command - " + commandName);
                     System.exit(0);
                 }
             }
@@ -74,22 +78,10 @@ public class CommandHandler {
             // Поток для Telegram
             new Thread(() ->
                     inputTelegram.read(interaction.setUserRepository(userRepository)
-                            .setServerRepository(serverRepository), this)
+                            .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
             ).start();
             logger.info("Telegram is launch");
             System.out.println("SYSTEM: Telegram is launch");
-        }
-
-        // Проверка, что Platform это Console или ALL
-        if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
-            userRepository.create(0L);
-            // Поток для Console
-            new Thread(() ->
-                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository)
-                            .setServerRepository(serverRepository), this)
-            ).start();
-            logger.info("Console is launch");
-            System.out.println("SYSTEM: Console is launch");
         }
 
         // Поток для системы напоминаний
@@ -97,6 +89,18 @@ public class CommandHandler {
                 new ReminderHandler().run(interaction)
         ).start();
         System.out.println("SYSTEM: ReminderHandler is launch");
+
+        // Проверка, что Platform это Console или ALL
+        if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
+            userRepository.create(0L);
+            // Поток для Console
+            new Thread(() ->
+                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository)
+                            .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
+            ).start();
+            logger.info("Console is launch");
+            System.out.println("SYSTEM: Console is launch");
+        }
     }
 
     // Вызов команды
@@ -210,4 +214,3 @@ public class CommandHandler {
         } while (true);
     }
 }
-
