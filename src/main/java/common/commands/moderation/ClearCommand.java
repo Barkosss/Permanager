@@ -1,12 +1,11 @@
 package common.commands.moderation;
 
+import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.DeleteMessages;
 import com.pengrad.telegrambot.request.GetChatMemberCount;
 import com.pengrad.telegrambot.request.GetUpdates;
 import com.pengrad.telegrambot.response.GetUpdatesResponse;
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.Message;
-
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -15,7 +14,6 @@ import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.Validate;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -87,8 +85,8 @@ public class ClearCommand implements BaseCommand {
         GetUpdatesResponse updatesResponse = interactionTelegram.telegramBot.execute(getUpdates);
         List<Update> updates = updatesResponse.updates();
 
-        int maxCountMessages = (Integer)user.getValue(getCommandName(), "countMessages");
-        for(Update update : updates) {
+        int maxCountMessages = (Integer) user.getValue(getCommandName(), "countMessages");
+        for (Update update : updates) {
             Message message = update.message();
 
             if (user.getValue(getCommandName(), "user") != null && message.from().id() == interaction.getUserId()) {
