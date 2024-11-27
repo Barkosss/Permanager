@@ -1,7 +1,9 @@
 package common.commands.moderation;
 
 import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.request.BanChatMember;
 import com.pengrad.telegrambot.request.GetChatMemberCount;
+import com.pengrad.telegrambot.request.UnbanChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -56,9 +58,8 @@ public class BanCommand implements BaseCommand {
             output.output(interaction.setMessage("This command is not available for the console"));
             return;
         }
-
+        User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
-        User user = interactionTelegram.getUser(interaction.getUserId());
 
         // Парсинг аргументов
         parseArgs(interactionTelegram, user);
@@ -89,7 +90,6 @@ public class BanCommand implements BaseCommand {
         }
 
         // Получаем длительность блокировки
-        System.out.println(user.getValue(getCommandName(), "duration"));
         if (!user.isExceptedKey(getCommandName(), "duration")) {
             user.setExcepted(getCommandName(), "duration");
             logger.info("Ban command requested a duration argument");
@@ -100,13 +100,15 @@ public class BanCommand implements BaseCommand {
 
         try {
             long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
-            //((InteractionTelegram)interaction).telegramBot.execute(new BanChatMember(interaction.getChatId(),userId));
-            logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + " has been banned");
-            output.output(interactionTelegram.setMessage("The user @"
-                    + ((Message) user.getValue(getCommandName(), "user")).from().username()
+            String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
+            interactionTelegram.telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
+            interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
+            logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been banned");
+            output.output(interactionTelegram.setMessage("The user @" + username
                     + " has been banned to " + user.getValue(getCommandName(), "duration")
                     + " with reason: " + user.getValue(getCommandName(), "reason")));
         } catch (Exception err) {
+            output.output(interaction.setMessage("Something went wrong... :("));
             logger.error("Ban command: " + err);
         } finally {
             user.clearExpected(getCommandName());
