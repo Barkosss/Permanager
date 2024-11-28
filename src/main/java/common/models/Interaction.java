@@ -60,6 +60,8 @@ public interface Interaction {
 
     List<String> getArguments();
 
+    Language getLanguageCode();
+
     Interaction setLanguageCode(Language languageCode);
 
     Interaction setContent(Content content);
