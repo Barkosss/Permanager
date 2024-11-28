@@ -33,7 +33,6 @@ public class ReminderCommand implements BaseCommand {
     public void parseArgs(Interaction interaction, User user) {
         List<String> arguments = interaction.getArguments();
 
-        // Проверка на пустоту аргументов
         if (arguments.isEmpty()) {
             return;
         }
@@ -73,7 +72,6 @@ public class ReminderCommand implements BaseCommand {
             }
         }
 
-        // Проверка на пустоту аргументов
         if (arguments.isEmpty()) {
             return;
         }
@@ -97,7 +95,6 @@ public class ReminderCommand implements BaseCommand {
 
         // ---- Ищем содержимое напоминания ----
 
-        // Проверка на пустоту аргументов
         if (arguments.isEmpty()) {
             return;
         }
