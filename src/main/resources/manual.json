@@ -1,13 +1,11 @@
 {
-    "help": {
-        "manual": {
-            "test": {
-                "ru": {
+    "manual": {
+        "test": {
+            "ru": {
 
-                },
-                "en": {
+            },
+            "en": {
 
-                }
             }
         }
     }
