@@ -232,8 +232,8 @@ public class ReminderCommand implements BaseCommand {
             return;
         }
 
-        if (!user.isExceptedKey(getCommandName(), "newTime")) {
-            user.setExcepted(getCommandName(), "newTime");
+        if (!user.isExceptedKey(getCommandName(), "newContext")) {
+            user.setExcepted(getCommandName(), "newContext");
             logger.info("Reminder command request a new context reminder for edit");
             output.output(interaction.setMessage("Enter new content (or \"/skip\" if you don't need): ")
                     .setInline(true));
