@@ -8,13 +8,35 @@ import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 import org.reflections.Reflections;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 public class HelpCommand implements BaseCommand {
+    Map<String, String> methods;
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
     JSONHandler jsonHandler = new JSONHandler();
+
+    public HelpCommand() {
+        try {
+            this.methods = new HashMap<>();
+
+            // Получаем в Set все классы, которые имеют интерфейс BaseCommand и находятся в common.commands
+            Reflections reflections = new Reflections("common.commands");
+            Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
+
+            // Вывести короткое название и описание команды
+            for (Class<? extends BaseCommand> subclass : subclasses) {
+                BaseCommand command = subclass.getConstructor().newInstance();
+                methods.put(command.getCommandName(), command.getCommandDescription());
+            }
+
+        } catch(Exception err) {
+            logger.error("Help constructors: " + err);
+        }
+    }
 
     // Получить короткое название команды
     public String getCommandName() {
@@ -37,8 +59,8 @@ public class HelpCommand implements BaseCommand {
         String commandName = arguments.getFirst().toLowerCase();
 
         if (jsonHandler.check("manual.json", "manual." + commandName)) {
-            System.out.println("parseArgs");
             user.setExcepted(getCommandName(), "commandName").setValue(commandName);
+            return;
         }
         user.setExcepted(getCommandName(), "commandName").setValue("");
     }
@@ -61,23 +83,16 @@ public class HelpCommand implements BaseCommand {
     }
 
     public void help(Interaction interaction, User user) {
-        StringBuilder helpOutput;
         try {
-            // Получаем в Set все классы, которые имеют интерфейс BaseCommand и находятся в common.commands
-            Reflections reflections = new Reflections("common.commands");
-            Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
-            helpOutput = new StringBuilder("--------- HELP ---------\n");
+            StringBuilder helpOutput = new StringBuilder("--------- HELP ---------\n");
 
             // Вывести короткое название и описание команды
-            for (Class<? extends BaseCommand> subclass : subclasses) {
-                // TODO: ? Под вопросом ? (Делать ли методы static или оставлять такой прикол)
-                BaseCommand command = subclass.getConstructor().newInstance();
-                helpOutput.append(command.getCommandName()).append(":\n|---\t")
-                        .append(command.getCommandDescription()).append("\n");
+            for (String commandName : methods.keySet()) {
+                helpOutput.append(commandName).append(":\n|---\t")
+                        .append(methods.get(commandName)).append("\n");
             }
 
             helpOutput.append("--------- HELP ---------\n");
-
             output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
 
         } catch (Exception err) {
@@ -93,7 +108,7 @@ public class HelpCommand implements BaseCommand {
             StringBuilder helpOutput;
 
             String manual = (String) jsonHandler.read("manual.json", "manual." + commandName
-                    + "." + interaction.getLanguageCode());
+                    + "." + interaction.getLanguageCode().getLang());
 
             if (manual.isEmpty()) {
                 manual = interaction.getLanguageValue("help.notFoundManual");
@@ -105,7 +120,7 @@ public class HelpCommand implements BaseCommand {
 
             output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
             user.clearExpected(getCommandName());
-        } catch(Exception err) {
+        } catch (Exception err) {
             logger.error("Error (helpCommand, manual): " + err);
         }
     }
