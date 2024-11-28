@@ -26,13 +26,14 @@ public class UserRepository {
 
     // Найти пользователя по ID
     public User findById(long userId) throws MemberNotFoundException {
-        User user;
-        if ((user = users.get(userId)) != null) {
-            logger.debug("User by id(" + userId + ") is find");
-            return user;
+        if (!users.containsKey(userId)) {
+            logger.error("Member by id(" + userId + ") is not found");
+            throw new MemberNotFoundException();
         }
-        logger.error("Member by id(" + userId + ") is not found");
-        throw new MemberNotFoundException();
+
+
+        logger.debug("User by id(" + userId + ") is find");
+        return users.get(userId);
     }
 
     // Существует ли пользователь

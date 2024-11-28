@@ -1,14 +1,12 @@
 {
-    "help": {
-        "manual": {
-            "test": {
-                "ru": {
-
-                },
-                "en": {
-
-                }
-            }
+    "manual": {
+        "test": {
+            "ru": "",
+            "en": ""
+        },
+        "start": {
+            "ru": "Старт инфо",
+            "en": "Start info"
         }
     }
 }

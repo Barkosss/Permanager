@@ -27,11 +27,17 @@ public class User {
     // ...
     Map<Long, Map<Long, Reminder>> reminders;
 
+    Map<Long, Map<Long, Task>> tasks;
+
     // ...
     Map<Server, WarningRepository> warnings = new HashMap<>();
 
     public User(long userId) {
         this.userId = userId;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 
     public InputStatus getInputStatus() {
@@ -109,5 +115,37 @@ public class User {
         }
 
         return this.reminders.get(chatId);
+    }
+
+    public User addTask(Task task) {
+        if (this.tasks == null) {
+            this.tasks = new HashMap<>();
+        }
+        if (!this.tasks.containsKey(task.getChatId())) {
+            this.tasks.put(task.getChatId(), new HashMap<>());
+        }
+        this.tasks.get(task.getChatId()).put(task.getId(), task);
+        return this;
+    }
+
+    public User removeTask(Task task) {
+        if (this.tasks == null) {
+            this.tasks = new HashMap<>();
+        }
+        if (!this.tasks.containsKey(task.getChatId())) {
+            this.tasks.put(task.getChatId(), new HashMap<>());
+        }
+        this.tasks.get(task.getChatId()).remove(task.getId());
+        return this;
+    }
+
+    public Map<Long, Task> getTasks(long chatId) {
+        if (this.tasks == null) {
+            this.tasks = new HashMap<>();
+        }
+        if (!this.tasks.containsKey(chatId)) {
+            this.tasks.put(chatId, new HashMap<>());
+        }
+        return this.tasks.get(chatId);
     }
 }
