@@ -45,7 +45,6 @@ public class Task {
     public boolean isCompleted;
 
 
-
     // Конструктор задачи
     public Task(long userId, long chatId, String title, String description) {
         this.chatId = chatId;
