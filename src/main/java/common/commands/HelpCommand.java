@@ -1,6 +1,5 @@
-package common.commands.custom;
+package common.commands;
 
-import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.User;
@@ -58,7 +57,7 @@ public class HelpCommand implements BaseCommand {
                 helpOutput.append("--------- HELP ---------\n");
             }
 
-            output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
+            output.output(interaction.setMessage(helpOutput.toString()).setInline(false));
 
         } catch (Exception err) {
             System.out.println("[ERROR] Error (helpCommand): " + err);
