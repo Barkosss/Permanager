@@ -5,6 +5,7 @@ import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.Reminder;
 import common.models.User;
+import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 import common.utils.Validate;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ReminderCommand implements BaseCommand {
+    JSONHandler jsonHandler = new JSONHandler();
     LoggerHandler logger = new LoggerHandler();
     Validate validate = new Validate();
     OutputHandler output = new OutputHandler();
@@ -154,11 +156,20 @@ public class ReminderCommand implements BaseCommand {
 
     // Метод для вывода справочника команды
     public void help(Interaction interaction, User user) {
-        // ...
-        // ...
-        // ...
+        StringBuilder helpOutput;
 
-        output.output(interaction.setMessage("").setInline(false));
+        String manual = (String) jsonHandler.read("manual.json",
+                "manual.reminder.create." + interaction.getLanguageCode().getLang());
+
+        if (manual.isEmpty()) {
+            manual = interaction.getLanguageValue("help.notFoundManual");
+        }
+
+        helpOutput = new StringBuilder("--------- HELP \"Reminder Create\" ---------\n");
+        helpOutput.append(manual);
+        helpOutput.append("\n--------- HELP \"Reminder Create\" ---------\n");
+
+        output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
         user.clearExpected(getCommandName());
     }
 
