@@ -8,7 +8,9 @@ import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.Validate;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public class TaskCommand implements BaseCommand {
     Validate validate = new Validate();
@@ -32,29 +34,14 @@ public class TaskCommand implements BaseCommand {
         String firstArg = arguments.getFirst();
         switch (firstArg) {
             case "create": {
-                user.setExcepted(getCommandName(), "action").setValue(firstArg);
-                if (arguments.size() >= 3) {
-                    user.setExcepted(getCommandName(), "duration")
-                            .setValue(validate.isValidDate(arguments.get(1) + " " + arguments.get(2)));
-                }
-                if (arguments.size() >= 4) {
-                    if (user.isExceptedKey(getCommandName(), "duration")) {
-                        user.setExcepted(getCommandName(), "description")
-                                .setValue(String.join(" ", arguments));
-                    } else {
-                        user.setExcepted(getCommandName(), "description")
-                                .setValue(String.join(" ", arguments.subList(3, arguments.size() - 1)));
-                    }
-                }
+//                if(arguments.size() >= )
                 break;
             }
             case "edit": {
                 user.setExcepted(getCommandName(), "action").setValue(firstArg);
-                user.setExcepted(getCommandName(), "taskIndex").setValue(validate.isValidInteger(arguments.get(1)));
-                user.setExcepted(getCommandName(), "newDuration").setValue(validate
-                        .isValidDate(arguments.get(2) + " " + arguments.get(3)));
-                user.setExcepted(getCommandName(), "newDescription")
-                        .setValue(String.join(" ", arguments.subList(3, arguments.size() - 1)));
+                if (arguments.size() >= 2) {
+                    Optional<LocalDate> date = validate.isValidDate(arguments.get(1));
+                }
                 break;
             }
             case "remove": {
@@ -119,8 +106,10 @@ public class TaskCommand implements BaseCommand {
         if (description.equals("/skip")) {
             description = "";
         }
-      
+
         user.addTask(new Task(interaction.getUserId(), interaction.getChatId(), title, description));
         user.clearExpected(getCommandName());
     }
+
+    public void
 }
