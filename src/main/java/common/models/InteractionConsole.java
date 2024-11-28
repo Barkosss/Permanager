@@ -130,6 +130,10 @@ public class InteractionConsole implements Interaction {
         return this;
     }
 
+    public Language getLanguageCode() {
+        return languageCode;
+    }
+
     public Interaction setLanguageCode(Language languageCode) {
         this.languageCode = languageCode;
         return this;

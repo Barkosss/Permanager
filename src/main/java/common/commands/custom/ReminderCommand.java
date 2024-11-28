@@ -148,7 +148,8 @@ public class ReminderCommand implements BaseCommand {
             default: {
                 user.setExcepted(getCommandName(), "action");
                 logger.info("Reminder command requested a action argument");
-                output.output(interaction.setMessage("Enter action (create, edit, remove, list, help): ").setInline(true));
+                output.output(interaction.setMessage("Enter action (create, edit, remove, list, help): ")
+                        .setInline(true));
                 break;
             }
         }
@@ -187,7 +188,8 @@ public class ReminderCommand implements BaseCommand {
         String context = (String) user.getValue(getCommandName(), "context");
         LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "date");
 
-        Reminder reminder = new Reminder(reminderId, chatId, userId, context, null, sendAt, interaction.getPlatform());
+        Reminder reminder = new Reminder(reminderId, chatId, userId, context,
+                                null, sendAt, interaction.getPlatform());
         interaction.getReminderRepository().create(reminder);
         user.addReminder(reminder);
 
@@ -222,17 +224,19 @@ public class ReminderCommand implements BaseCommand {
             return;
         }
 
-        if (user.getValue(getCommandName(), "newTime") != "-" || user.getValue(getCommandName(), "newTime") == null) {
+        if (user.getValue(getCommandName(), "newTime") != "-"
+                ||user.getValue(getCommandName(), "newTime") == null) {
             user.setExcepted(getCommandName(), "newTime");
             logger.info("Reminder command again request a new time reminder for edit");
             edit(interaction, user);
             return;
         }
 
-        if (!user.isExceptedKey(getCommandName(), "newTime")) {
-            user.setExcepted(getCommandName(), "newTime");
+        if (!user.isExceptedKey(getCommandName(), "newContext")) {
+            user.setExcepted(getCommandName(), "newContext");
             logger.info("Reminder command request a new context reminder for edit");
-            output.output(interaction.setMessage("Enter new content (or \"/skip\" if you don't need): ").setInline(true));
+            output.output(interaction.setMessage("Enter new content (or \"/skip\" if you don't need): ")
+                    .setInline(true));
             return;
         }
 
