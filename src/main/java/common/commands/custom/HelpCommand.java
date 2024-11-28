@@ -10,8 +10,8 @@ import org.reflections.Reflections;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.Map;
 
 public class HelpCommand implements BaseCommand {
     Map<String, String> methods;
@@ -33,7 +33,7 @@ public class HelpCommand implements BaseCommand {
                 methods.put(command.getCommandName(), command.getCommandDescription());
             }
 
-        } catch (Exception err) {
+        } catch(Exception err) {
             logger.error("Help constructors: " + err);
         }
     }

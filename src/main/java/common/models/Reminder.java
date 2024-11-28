@@ -26,8 +26,7 @@ public class Reminder {
     Interaction.Platform platform;
 
     // Конструктор напоминания
-    public Reminder(long id, long chatId, long userId, String content,
-                    LocalDate createdAt, LocalDate sendAt, Interaction.Platform platform) {
+    public Reminder(long id, long chatId, long userId, String content, LocalDate createdAt, LocalDate sendAt, Interaction.Platform platform) {
         this.id = id;
         this.chatId = chatId;
         this.userId = userId;
@@ -58,12 +57,6 @@ public class Reminder {
         return content;
     }
 
-    // Назначить новое содержимое
-    public Reminder setContent(String content) {
-        this.content = content;
-        return this;
-    }
-
     // Получить время создания
     public LocalDate getCreatedAt() {
         return createdAt;
@@ -72,12 +65,6 @@ public class Reminder {
     // Получить дату отправки
     public LocalDate getSendAt() {
         return sendAt;
-    }
-
-    // Назначить новую дату отправки
-    public Reminder setSendAt(LocalDate sendAt) {
-        this.sendAt = sendAt;
-        return this;
     }
 
     // Получить платформу

@@ -189,7 +189,7 @@ public class ReminderCommand implements BaseCommand {
         LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "date");
 
         Reminder reminder = new Reminder(reminderId, chatId, userId, context,
-                null, sendAt, interaction.getPlatform());
+                                null, sendAt, interaction.getPlatform());
         interaction.getReminderRepository().create(reminder);
         user.addReminder(reminder);
 
@@ -225,7 +225,7 @@ public class ReminderCommand implements BaseCommand {
         }
 
         if (user.getValue(getCommandName(), "newTime") != "-"
-                || user.getValue(getCommandName(), "newTime") == null) {
+                ||user.getValue(getCommandName(), "newTime") == null) {
             user.setExcepted(getCommandName(), "newTime");
             logger.info("Reminder command again request a new time reminder for edit");
             edit(interaction, user);
@@ -258,7 +258,7 @@ public class ReminderCommand implements BaseCommand {
 
         output.output(interaction.setMessage("Reminder is edit"));
         logger.info("User by id(" + user.getUserId() + ", chatId=" + interaction.getChatId()
-                + ") edit reminder by id(" + reminderId + ")");
+                    + ") edit reminder by id(" + reminderId + ")");
         user.clearExpected(getCommandName());
     }
 
