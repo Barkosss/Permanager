@@ -29,6 +29,7 @@ public class CommandHandler {
     // Хэшмап классов команд
     Map<String, BaseCommand> baseCommandClasses = new HashMap<>();
 
+    // Репозитории
     UserRepository userRepository = new UserRepository();
     ServerRepository serverRepository = new ServerRepository();
     ReminderRepository reminderRepository = new ReminderRepository();
