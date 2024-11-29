@@ -192,6 +192,10 @@ public class InteractionTelegram implements Interaction {
             String message = (String) jsonHandler.read("content_" + languageCode.getLang() + ".json", languageKey);
             List<String> findReplace = parseReplace(message);
 
+            if (replaces.size() != findReplace.size()) {
+                throw new WrongArgumentsException();
+            }
+
             int indexReplace = 0;
             for (String word : findReplace) {
                 // Если число
@@ -199,11 +203,11 @@ public class InteractionTelegram implements Interaction {
                     Optional<Integer> isInteger = validate.isValidInteger(replaces.get(indexReplace));
 
                     if (isInteger.isPresent()) {
-                        message = message.replace(word, replaces.get(indexReplace));
+                        message = message.replaceFirst(word, replaces.get(indexReplace));
                         indexReplace++;
                     } else {
                         // ОШИБКА
-                        logger.error("");
+                        logger.error("Replace message expected number");
                         throw new WrongArgumentsException();
                     }
                 }
@@ -213,18 +217,18 @@ public class InteractionTelegram implements Interaction {
                     Optional<LocalDate> isLocalDate = validate.isValidDate(replaces.get(indexReplace));
 
                     if (isLocalDate.isPresent()) {
-                        message = message.replace(word, replaces.get(indexReplace));
+                        message = message.replaceFirst(word, replaces.get(indexReplace));
                         indexReplace++;
                     } else {
                         // ОШИБКА
-                        logger.error("");
+                        logger.error("Replace message expected LocalDate");
                         throw new WrongArgumentsException();
                     }
                 }
 
                 // Другие типы
                 else {
-                    message = message.replace(word, replaces.get(indexReplace));
+                    message = message.replaceFirst(word, replaces.get(indexReplace));
                     indexReplace++;
                 }
             }

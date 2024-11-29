@@ -178,7 +178,7 @@ public class InteractionConsole implements Interaction {
                         indexReplace++;
                     } else {
                         // ОШИБКА
-                        logger.error("");
+                        logger.error("Replace message expected number");
                         throw new WrongArgumentsException();
                     }
                 }
@@ -192,7 +192,7 @@ public class InteractionConsole implements Interaction {
                         indexReplace++;
                     } else {
                         // ОШИБКА
-                        logger.error("");
+                        logger.error("Replace message expected LocalDate");
                         throw new WrongArgumentsException();
                     }
                 }
