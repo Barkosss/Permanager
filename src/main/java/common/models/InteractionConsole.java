@@ -1,14 +1,20 @@
 package common.models;
 
-import com.pengrad.telegrambot.model.Message;
-
 import common.exceptions.MemberNotFoundException;
+import common.exceptions.WrongArgumentsException;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 import common.utils.JSONHandler;
+import common.utils.LoggerHandler;
+import common.utils.Validate;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class InteractionConsole implements Interaction {
 
@@ -47,6 +53,7 @@ public class InteractionConsole implements Interaction {
 
     public InteractionConsole() {
         this.userId = 0L;
+        this.languageCode = Language.ENGLISH;
         this.platform = Platform.CONSOLE;
     }
 
@@ -147,6 +154,61 @@ public class InteractionConsole implements Interaction {
         return "Undefined";
     }
 
+    public String getLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException {
+        Validate validate = new Validate();
+        LoggerHandler logger = new LoggerHandler();
+        JSONHandler jsonHandler = new JSONHandler();
+
+        if (jsonHandler.check("content_" + languageCode.getLang() + ".json", languageKey)) {
+            String message = (String) jsonHandler.read("content_" + languageCode.getLang() + ".json", languageKey);
+            List<String> findReplace = parseReplace(message);
+
+            if (replaces.size() != findReplace.size()) {
+                throw new WrongArgumentsException();
+            }
+
+            int indexReplace = 0;
+            for (String word : findReplace) {
+                // Если число
+                if (word.charAt(1) == 'i') {
+                    Optional<Integer> isInteger = validate.isValidInteger(replaces.get(indexReplace));
+
+                    if (isInteger.isPresent()) {
+                        message = message.replaceFirst(word, replaces.get(indexReplace));
+                        indexReplace++;
+                    } else {
+                        // ОШИБКА
+                        logger.error("");
+                        throw new WrongArgumentsException();
+                    }
+                }
+
+                // Если дата
+                else if (word.charAt(1) == 'd') {
+                    Optional<LocalDate> isLocalDate = validate.isValidDate(replaces.get(indexReplace));
+
+                    if (isLocalDate.isPresent()) {
+                        message = message.replaceFirst(word, replaces.get(indexReplace));
+                        indexReplace++;
+                    } else {
+                        // ОШИБКА
+                        logger.error("");
+                        throw new WrongArgumentsException();
+                    }
+                }
+
+                // Другие типы
+                else {
+                    message = message.replaceFirst(word, replaces.get(indexReplace));
+                    indexReplace++;
+                }
+            }
+
+            return message;
+        }
+        return "Undefined";
+    }
+
     @Override
     public String toString() {
 
@@ -156,5 +218,20 @@ public class InteractionConsole implements Interaction {
                 + "; Inline=" + inline
                 + "; Arguments=" + arguments
                 + "})";
+    }
+
+    private List<String> parseReplace(String message) {
+        List<String> array = new ArrayList<>();
+
+        for (String word : message.split(" ")) {
+            // Проверяем, что слово начинается и заканчивается на % (Спец символ)
+            Pattern pattern = Pattern.compile("%[a-z]?[A-Z]+%");
+            Matcher matcher = pattern.matcher(word);
+            if (matcher.find()) {
+                array.add(matcher.group());
+            }
+        }
+
+        return array;
     }
 }
