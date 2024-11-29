@@ -87,11 +87,8 @@ public class ReminderCommand implements BaseCommand {
         if (localDate.isPresent()) {
             user.setExcepted(getCommandName(), "date").setValue(localDate.get());
             arguments = arguments.subList(2, arguments.size());
-        }
-
-        // Если указано время на сегодня
-        if (!user.isExceptedKey(getCommandName(), "date")) {
-            localTime.ifPresent(time -> user.setExcepted(getCommandName(), "date").setValue(time));
+        } else if (!user.isExceptedKey(getCommandName(), "date") && localTime.isPresent()) {
+            user.setExcepted(getCommandName(), "date").setValue(localTime.get());
             arguments = arguments.subList(1, arguments.size());
         }
 
