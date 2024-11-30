@@ -6,4 +6,3 @@ gradlew
 gradlew.bat
 /src/main/resources/config.json
 /src/main/resources/logs
-/src/main/resources/google_checks.xml
