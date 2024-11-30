@@ -49,7 +49,7 @@ public class WarnCommand implements BaseCommand {
 
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
-            logger.info("Ban command requested a user argument");
+            logger.info("Warn command requested a user argument");
             output.output(interactionTelegram.setMessage("Reply message target user with command /ban"));
             return;
         }

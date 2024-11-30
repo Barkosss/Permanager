@@ -1,12 +1,12 @@
 import common.exceptions.WrongArgumentsException;
 import common.models.Interaction;
 import common.models.InteractionConsole;
-
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class LanguageValueTest {
 
@@ -17,7 +17,7 @@ public class LanguageValueTest {
         String checkMessage;
         try {
             checkMessage = interaction.getLanguageValue("test.string", List.of("Тестовая строка"));
-        } catch(WrongArgumentsException err) {
+        } catch (WrongArgumentsException err) {
             checkMessage = "Undefined";
         }
 
@@ -33,7 +33,7 @@ public class LanguageValueTest {
             checkMessage = interaction.getLanguageValue("test.strings", List.of("Тестовая строка #1",
                     "Тестовая строка #2",
                     "Тестовая строка #3"));
-        } catch(WrongArgumentsException err) {
+        } catch (WrongArgumentsException err) {
             checkMessage = "Undefined";
         }
 
@@ -47,7 +47,7 @@ public class LanguageValueTest {
         String checkMessage;
         try {
             checkMessage = interaction.getLanguageValue("test.int", List.of("1"));
-        } catch(WrongArgumentsException err) {
+        } catch (WrongArgumentsException err) {
             checkMessage = "Undefined";
         }
 
@@ -61,7 +61,7 @@ public class LanguageValueTest {
         String checkMessage;
         try {
             checkMessage = interaction.getLanguageValue("test.int", List.of("1a"));
-        } catch(WrongArgumentsException err) {
+        } catch (WrongArgumentsException err) {
             checkMessage = "Undefined";
         }
 
@@ -75,7 +75,7 @@ public class LanguageValueTest {
         String checkMessage;
         try {
             checkMessage = interaction.getLanguageValue("test.date", List.of("29.11.2024 12:50"));
-        } catch(WrongArgumentsException err) {
+        } catch (WrongArgumentsException err) {
             checkMessage = "Undefined";
         }
 
@@ -89,7 +89,7 @@ public class LanguageValueTest {
         String checkMessage;
         try {
             checkMessage = interaction.getLanguageValue("test.date", List.of("Local Date"));
-        } catch(WrongArgumentsException err) {
+        } catch (WrongArgumentsException err) {
             checkMessage = "Undefined";
         }
 
