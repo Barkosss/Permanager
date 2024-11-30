@@ -181,10 +181,7 @@ public class InteractionConsole implements Interaction {
                         logger.error("Replace message expected number");
                         throw new WrongArgumentsException();
                     }
-                }
-
-                // Если дата
-                else if (word.charAt(1) == 'd') {
+                } else if (word.charAt(1) == 'd') {
                     Optional<LocalDate> isLocalDate = validate.isValidDate(replaces.get(indexReplace));
 
                     if (isLocalDate.isPresent()) {
