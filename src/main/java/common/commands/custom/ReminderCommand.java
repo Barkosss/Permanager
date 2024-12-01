@@ -180,6 +180,24 @@ public class ReminderCommand implements BaseCommand {
             return;
         }
 
+        LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "newTime");
+        // Проверка на корректность даты
+        if (sendAt.isBefore(LocalDate.now()) || sendAt.isAfter(sendAt.plusYears(5))) {
+            user.setExcepted(getCommandName(), "date");
+            logger.info("Reminder command again requested a date argument for create");
+            // Пользователь указал время в прошлом
+            if (sendAt.isBefore(LocalDate.now())) {
+                output.output(interaction.setMessage("The date should be in the future. Enter date for send reminder: ")
+                        .setInline(true));
+            } else { // Пользователь создал напоминание более чем на 5 лет в будущее
+                output.output(interaction.setMessage(
+                        "You cannot create a reminder for a date older than 5 years. Enter date for send reminder: "
+                ).setInline(true));
+            }
+            create(interaction, user);
+            return;
+        }
+
         if (!user.isExceptedKey(getCommandName(), "context")) {
             user.setExcepted(getCommandName(), "context");
             logger.info("Reminder command requested a context argument for create");
@@ -191,7 +209,6 @@ public class ReminderCommand implements BaseCommand {
         long chatId = interaction.getChatId();
         long userId = interaction.getUserId();
         String context = (String) user.getValue(getCommandName(), "context");
-        LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "date");
 
         Reminder reminder = new Reminder(reminderId, chatId, userId, context,
                 null, sendAt, interaction.getPlatform());
@@ -229,11 +246,24 @@ public class ReminderCommand implements BaseCommand {
             return;
         }
 
-        if (user.getValue(getCommandName(), "newTime") != "-"
-                || user.getValue(getCommandName(), "newTime") == null) {
-            user.setExcepted(getCommandName(), "newTime");
-            logger.info("Reminder command again request a new time reminder for edit");
-            edit(interaction, user);
+        if (user.getValue(getCommandName(), "newTime") != "/skip") {
+            LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "newTime");
+            // Проверка на корректность даты
+            if (sendAt.isBefore(LocalDate.now()) || sendAt.isAfter(sendAt.plusYears(5))) {
+                user.setExcepted(getCommandName(), "newTime");
+                logger.info("Reminder command again requested a date argument for edit");
+                // Пользователь указал время в прошлом
+                if (sendAt.isBefore(LocalDate.now())) {
+                    output.output(interaction.setMessage(
+                            "The date should be in the future. Enter date for send reminder: "
+                    ).setInline(true));
+                } else { // Пользователь создал напоминание более чем на 5 лет в будущее
+                    output.output(interaction.setMessage("You cannot create a reminder for a date older than 5 years."
+                            + "Enter date for send reminder: ").setInline(true));
+                }
+                edit(interaction, user);
+                return;
+            }
             return;
         }
 
