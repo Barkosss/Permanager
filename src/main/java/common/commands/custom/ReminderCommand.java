@@ -174,13 +174,13 @@ public class ReminderCommand implements BaseCommand {
     public void create(Interaction interaction, User user) {
 
         if (!user.isExceptedKey(getCommandName(), "date")) {
-            user.setExcepted(getCommandName(), "date");
+                user.setExcepted(getCommandName(), "date");
             logger.info("Reminder command requested a date argument for create");
             output.output(interaction.setMessage("Enter date for send reminder: ").setInline(true));
             return;
         }
 
-        LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "newTime");
+        LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "date");
         // Проверка на корректность даты
         if (sendAt.isBefore(LocalDate.now()) || sendAt.isAfter(sendAt.plusYears(5))) {
             user.setExcepted(getCommandName(), "date");

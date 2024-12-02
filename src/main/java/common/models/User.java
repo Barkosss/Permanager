@@ -5,6 +5,7 @@ import common.repositories.WarningRepository;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class User {
 
     public enum InputStatus {
@@ -47,6 +48,13 @@ public class User {
         return inputStatus;
     }
 
+    public InputExpectation.UserInputType getInputType() {
+        if (this.userInputExpectation == null) {
+            return InputExpectation.UserInputType.STRING;
+        }
+        return this.userInputExpectation.userInputType;
+    }
+
     public void setValue(Object value) {
         InputExpectation inputExpectation = this.userInputExpectation;
         inputExpectation.getExpectedInputs().get(inputExpectation.expectedCommandName)
@@ -70,7 +78,13 @@ public class User {
 
     public User setExcepted(String commandName, String valueKey) {
         this.inputStatus = InputStatus.WAITING;
-        this.userInputExpectation.setExpected(commandName, valueKey);
+        this.userInputExpectation.setExpected(commandName, valueKey, InputExpectation.UserInputType.STRING);
+        return this;
+    }
+
+    public User setExcepted(String commandName, String valueKey, InputExpectation.UserInputType inputType) {
+        this.inputStatus = InputStatus.WAITING;
+        this.userInputExpectation.setExpected(commandName, valueKey, inputType);
         return this;
     }
 

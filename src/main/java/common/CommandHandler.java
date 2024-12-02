@@ -10,15 +10,15 @@ import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 import common.utils.LoggerHandler;
 import common.utils.ReminderHandler;
+import common.utils.Validate;
 import org.reflections.Reflections;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 public class CommandHandler {
     LoggerHandler logger = new LoggerHandler();
+    Validate validate = new Validate();
 
     public enum LaunchPlatform {
         TELEGRAM,
@@ -178,7 +178,33 @@ public class CommandHandler {
                     logger.debug("Get exception value: chatId" + interaction.getChatId()
                             + ", userId=" + interaction.getUserId()
                             + ", message=" + message);
-                    user.setValue(message);
+                    InputExpectation.UserInputType inputType = user.getInputType();
+                    switch(inputType) {
+                        case DATE: { // Проверка на дату
+                            Optional<LocalDate> validDate = validate.isValidDate(message);
+                            Optional<LocalDate> validTime = validate.isValidTime(message);
+
+                            if (validDate.isPresent()) {
+                                user.setValue(validDate.get());
+                            } else if (validTime.isPresent()) {
+                                user.setValue(validTime.get());
+                            } else {
+                                output.output(interaction.setMessage("Try again").setInline(true));
+                            }
+                        }
+                        case INTEGER: { // Проверка на число
+                            Optional<Integer> validInteger = validate.isValidInteger(message);
+
+                            if (validInteger.isPresent()) {
+                                user.setValue(validInteger.get());
+                            } else {
+                                output.output(interaction.setMessage("Try again").setInline(true));
+                            }
+                        }
+                        default: { // Строка или любой другой тип
+                            user.setValue(message);
+                        }
+                    }
                     baseCommandClasses.get(interaction.getUser(interaction.getUserId()).getCommandException())
                             .run(interaction);
                 }
