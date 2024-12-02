@@ -1,7 +1,5 @@
 package common.models;
 
-import com.pengrad.telegrambot.model.Message;
-
 import common.exceptions.WrongArgumentsException;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
@@ -20,7 +18,7 @@ public interface Interaction {
         RUSSIAN("ru"),
         ENGLISH("en");
 
-        private String lang;
+        private final String lang;
 
         Language(String lang) {
             this.lang = lang;

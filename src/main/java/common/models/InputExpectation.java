@@ -30,12 +30,14 @@ public class InputExpectation {
 
         Map<String, Object> excepted = this.expectedInputs.get(expectedCommandName);
         if (excepted == null) {
-            expectedInputs.put(expectedCommandName, new HashMap<>());
+            this.expectedInputs.put(expectedCommandName, new HashMap<>());
+            excepted = this.expectedInputs.get(expectedCommandName);
         }
 
-        if (!excepted.containsKey(expectedInputKey)) {
+        if (excepted.containsKey(expectedInputKey)) {
             excepted.put(expectedCommandName, null);
         }
+
         this.expectedCommandName = expectedCommandName;
         this.expectedInputKey = expectedInputKey;
         this.userInputType = userInputType;

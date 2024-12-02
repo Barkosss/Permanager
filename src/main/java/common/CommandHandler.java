@@ -75,28 +75,34 @@ public class CommandHandler {
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
             // Поток для Telegram
-            new Thread(() ->
+            Thread threadTelegram = new Thread(() ->
                     inputTelegram.read(interaction.setUserRepository(userRepository)
                             .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
-            ).start();
+            );
+            threadTelegram.setName("Thread-TELEGRAM");
+            threadTelegram.start();
             logger.info("Telegram is launch");
             System.out.println("SYSTEM: Telegram is launch");
         }
 
         // Поток для системы напоминаний
-        new Thread(() ->
+        Thread threadReminder = new Thread(() ->
                 new ReminderHandler().run(interaction)
-        ).start();
+        );
+        threadReminder.setName("Thread-Reminder");
+        threadReminder.start();
         System.out.println("SYSTEM: ReminderHandler is launch");
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
             userRepository.create(0L);
             // Поток для Console
-            new Thread(() ->
+            Thread threadConsole = new Thread(() ->
                     inputConsole.listener(new InteractionConsole().setUserRepository(userRepository)
                             .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
-            ).start();
+            );
+            threadConsole.setName("Thread-CONSOLE");
+            threadConsole.start();
             logger.info("Console is launch");
             System.out.println("SYSTEM: Console is launch");
         }
@@ -178,8 +184,9 @@ public class CommandHandler {
                     logger.debug("Get exception value: chatId" + interaction.getChatId()
                             + ", userId=" + interaction.getUserId()
                             + ", message=" + message);
+
                     InputExpectation.UserInputType inputType = user.getInputType();
-                    switch(inputType) {
+                    switch (inputType) {
                         case DATE: { // Проверка на дату
                             Optional<LocalDate> validDate = validate.isValidDate(message);
                             Optional<LocalDate> validTime = validate.isValidTime(message);

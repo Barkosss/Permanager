@@ -49,7 +49,7 @@ public class User {
     }
 
     public InputExpectation.UserInputType getInputType() {
-        if (this.userInputExpectation == null) {
+        if (this.userInputExpectation.userInputType == null) {
             return InputExpectation.UserInputType.STRING;
         }
         return this.userInputExpectation.userInputType;
@@ -57,6 +57,9 @@ public class User {
 
     public void setValue(Object value) {
         InputExpectation inputExpectation = this.userInputExpectation;
+        if (inputExpectation.expectedCommandName == null) {
+            return;
+        }
         inputExpectation.getExpectedInputs().get(inputExpectation.expectedCommandName)
                 .put(inputExpectation.expectedInputKey, value);
     }
