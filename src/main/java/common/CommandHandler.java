@@ -58,14 +58,14 @@ public class CommandHandler {
                     // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
                     baseCommandClasses.put(commandName, instanceClass);
                 } else {
-                    logger.error("There was a duplication of the command - " + commandName);
-                    System.out.println("There was a duplication of the command - " + commandName);
+                    String errMessage = String.format("There was a duplication of the command - %s", commandName);
+                    logger.error(errMessage, true);
                     System.exit(0);
                 }
             }
 
         } catch (Exception err) {
-            logger.error("Command loader: " + err);
+            logger.error(String.format("Command loader: %s", err));
         }
     }
 
@@ -77,12 +77,12 @@ public class CommandHandler {
             // Поток для Telegram
             Thread threadTelegram = new Thread(() ->
                     inputTelegram.read(interaction.setUserRepository(userRepository)
-                            .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
+                            .setServerRepository(serverRepository)
+                            .setReminderRepository(reminderRepository), this)
             );
-            threadTelegram.setName("Thread-" + interaction.getPlatform().name() + "-1");
+            threadTelegram.setName(String.format("Thread-%s-1", interaction.getPlatform().name()));
             threadTelegram.start();
-            logger.info("Telegram is launch");
-            System.out.println("SYSTEM: Telegram is launch");
+            logger.info("SYSTEM: Telegram is launch", true);
         }
 
         // Поток для системы напоминаний
@@ -91,7 +91,7 @@ public class CommandHandler {
         );
         threadReminder.setName("Thread-Reminder");
         threadReminder.start();
-        System.out.println("SYSTEM: ReminderHandler is launch");
+        logger.info("SYSTEM: ReminderHandler is launch", true);
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
@@ -99,12 +99,12 @@ public class CommandHandler {
             // Поток для Console
             Thread threadConsole = new Thread(() ->
                     inputConsole.listener(new InteractionConsole().setUserRepository(userRepository)
-                            .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
+                            .setServerRepository(serverRepository)
+                            .setReminderRepository(reminderRepository), this)
             );
-            threadConsole.setName("Thread-" + interaction.getPlatform().name() + "-2");
+            threadConsole.setName(String.format("Thread-%s-2", interaction.getPlatform().name()));
             threadConsole.start();
-            logger.info("Console is launch");
-            System.out.println("SYSTEM: Console is launch");
+            logger.info("SYSTEM: Console is launch", true);
         }
     }
 
@@ -141,8 +141,7 @@ public class CommandHandler {
                 if (commandName.startsWith("exit")
                         && (interaction.getPlatform() == Interaction.Platform.CONSOLE
                         || List.of(746875461L, 0L).contains(interaction.getUserId()))) {
-                    output.output(interaction.setMessage("Program is stop"));
-                    logger.info("Program is stop");
+                    logger.info("Program is stop", true);
                     System.exit(0);
                 }
 
@@ -154,17 +153,18 @@ public class CommandHandler {
 
                     // Запустить класс, в котором будет работать команда
                     try {
-                        logger.debug("Method(run) from command(" + commandName + ") with Interaction=" + interaction);
+                        logger.debug(String.format("Method(run) from command(%s) with Interaction=%s",
+                                commandName, interaction));
                         baseCommandClasses.get(commandName).run(interaction);
 
                     } catch (Exception err) {
-                        logger.error("Invoke method (run) in command \"" + commandName + "\": " + err);
+                        logger.error(String.format("Invoke method (run) in command \"%s\": %s", commandName, err));
                     }
 
                 } else {
                     // Ошибка: Команда не найдена.
-                    output.output(interaction.setMessage("Error: Command \"" + commandName + "\" is not found.")
-                            .setInline(false));
+                    output.output(interaction.setMessage(String.format("Error: Command \"%s\" is not found.",
+                            commandName)).setInline(false));
                 }
 
                 // Если что-то ожидаем от пользователя
@@ -174,16 +174,15 @@ public class CommandHandler {
                 if (commandName.startsWith("cancel")) {
                     String commandException = user.getCommandException();
                     user.clearExpected(commandException);
-                    output.output(interaction.setMessage("Command \"" + commandException + "\" is cancel")
+                    output.output(interaction.setMessage(String.format("Command \"%s\" is cancel", commandException))
                             .setInline(false));
                     return;
                 }
 
                 // Проверка, ожидаем ли мы что-то от пользователя
                 if (interaction.getUser(interaction.getUserId()).getInputStatus() == User.InputStatus.WAITING) {
-                    logger.debug("Get exception value: chatId" + interaction.getChatId()
-                            + ", userId=" + interaction.getUserId()
-                            + ", message=" + message);
+                    logger.debug(String.format("Get exception value: chatId=%d, userId=%d, message=%s",
+                            interaction.getChatId(), interaction.getUserId(), message));
 
                     InputExpectation.UserInputType inputType = user.getInputType();
                     switch (inputType) {
@@ -193,23 +192,20 @@ public class CommandHandler {
 
                             if (validDate.isPresent()) {
                                 user.setValue(validDate.get());
-                            } else if (validTime.isPresent()) {
-                                user.setValue(validTime.get());
                             } else {
-                                output.output(interaction.setMessage("Try again. Enter date").setInline(true));
+                                validTime.ifPresent(user::setValue);
                             }
+                            break;
                         }
                         case INTEGER: { // Проверка на число
                             Optional<Integer> validInteger = validate.isValidInteger(message);
 
-                            if (validInteger.isPresent()) {
-                                user.setValue(validInteger.get());
-                            } else {
-                                output.output(interaction.setMessage("Try again. Enter number").setInline(true));
-                            }
+                            validInteger.ifPresent(user::setValue);
+                            break;
                         }
                         default: { // Строка или любой другой тип
                             user.setValue(message);
+                            break;
                         }
                     }
                     baseCommandClasses.get(interaction.getUser(interaction.getUserId()).getCommandException())
