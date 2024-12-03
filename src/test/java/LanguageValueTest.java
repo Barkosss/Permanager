@@ -1,6 +1,7 @@
 import common.exceptions.WrongArgumentsException;
 import common.models.Interaction;
 import common.models.InteractionConsole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,6 +23,21 @@ public class LanguageValueTest {
         }
 
         assertEquals("Это сообщение \"Тестовая строка\" для проверки метода (Строка)", checkMessage);
+    }
+
+    @Test
+    @DisplayName("Проверка на переменные в несколько слов")
+    public void testLanguageValueLongStringPositive() {
+        InteractionConsole interaction = new InteractionConsole();
+        interaction.setLanguageCode(Interaction.Language.RUSSIAN);
+        String checkMessage;
+        try {
+            checkMessage = interaction.getLanguageValue("test.longString", List.of("Проверка длинных слов"));
+        } catch (WrongArgumentsException err) {
+            checkMessage = "Undefined";
+        }
+
+        assertEquals("Это сообщение \"Проверка длинных слов\" для проверки поиска длинных (Строка)", checkMessage);
     }
 
     @Test
