@@ -58,7 +58,7 @@ public class HelpCommand implements BaseCommand {
 
         String commandName = arguments.getFirst().toLowerCase();
 
-        if (jsonHandler.check("manual.json", "manual." + commandName)) {
+        if (jsonHandler.check("manual_ru.json", "manual." + commandName)) {
             user.setExcepted(getCommandName(), "commandName").setValue(commandName);
             return;
         }
@@ -107,7 +107,7 @@ public class HelpCommand implements BaseCommand {
             String commandName = (String) user.getValue(getCommandName(), "commandName");
             StringBuilder helpOutput;
 
-            String manual = (String) jsonHandler.read("manual.json", "manual." + commandName
+            String manual = (String) jsonHandler.read("manual_ru.json", "manual." + commandName
                     + "." + interaction.getLanguageCode().getLang());
 
             if (manual.isEmpty()) {
