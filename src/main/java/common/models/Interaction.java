@@ -65,6 +65,10 @@ public interface Interaction {
 
     Interaction setContent(Content content);
 
+    Interaction setLanguageValue(String languageKey);
+
+    Interaction setLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException;
+
     String getLanguageValue(String languageKey);
 
     String getLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException;

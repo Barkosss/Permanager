@@ -48,16 +48,10 @@ public class InteractionTelegram extends AbstractInteraction {
     @Override
     public String toString() {
 
-        return "InteractionTelegram({"
-            + "Token=" + telegramBot
-            + "; TIMESTAMP_BOT_START=" + timestampBotStart
-            + "; Platform=" + platform
-            + "; userId=" + userId
-            + "; chatId=" + chatId
-            + "; Message=" + message
-            + "; Inline=" + inline
-            + "; arguments=" + arguments
-            + "})";
+        return String.format("InteractionTelegram({"
+            + "Token=%s; TIMESTAMP_BOT_START=%s; Platform=%s;"
+                + "userId=%s; chatId=%s; Message=%s; Inline=%s; arguments=%s})",
+                telegramBot, timestampBotStart, platform, userId, chatId, message, inline, arguments);
     }
 
     private void createSendMessage() {

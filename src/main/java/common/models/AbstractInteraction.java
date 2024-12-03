@@ -133,60 +133,75 @@ public abstract class AbstractInteraction implements Interaction {
         return this;
     }
 
+    public Interaction setLanguageValue(String languageKey) {
+        this.message = getLanguageValue(languageKey);
+        return this;
+    }
+
+    public Interaction setLanguageValue(String languageKey, List<String> replaces) {
+        try {
+            this.message = getLanguageValue(languageKey, replaces);
+        } catch(Exception err) {
+            LoggerHandler logger = new LoggerHandler();
+            logger.error("");
+        }
+        return this;
+    }
+
     public String getLanguageValue(String languageKey) {
         JSONHandler jsonHandler = new JSONHandler();
-        if (jsonHandler.check("content_" + languageCode.getLang() + ".json", languageKey)) {
-            return (String) jsonHandler.read("content_" + languageCode.getLang() + ".json", languageKey);
+        String languagePath = String.format("content_%s.json", languageCode.getLang());
+        if (jsonHandler.check(languagePath, languageKey)) {
+            return (String) jsonHandler.read(languagePath, languageKey);
         }
-        return "Undefined";
+        return null;
     }
 
     public String getLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException {
         Validate validate = new Validate();
         LoggerHandler logger = new LoggerHandler();
-        JSONHandler jsonHandler = new JSONHandler();
 
-        if (jsonHandler.check("content_" + languageCode.getLang() + ".json", languageKey)) {
-            String message = (String) jsonHandler.read("content_" + languageCode.getLang() + ".json", languageKey);
-            List<String> findReplace = parseReplace(message);
+        String message = getLanguageValue(languageKey);
+        if (message == null) {
+            return null;
+        }
+        List<String> findReplace = parseReplace(message);
 
-            if (replaces.size() != findReplace.size()) {
-                throw new WrongArgumentsException();
-            }
+        if (replaces.size() != findReplace.size()) {
+            throw new WrongArgumentsException();
+        }
 
-            int indexReplace = 0;
-            for (String word : findReplace) {
-                if (word.charAt(1) == 'i') { // Если число
-                    Optional<Integer> isInteger = validate.isValidInteger(replaces.get(indexReplace));
+        int indexReplace = 0;
+        for (String word : findReplace) {
+            if (word.charAt(1) == 'i') { // Если число
+                Optional<Integer> isInteger = validate.isValidInteger(replaces.get(indexReplace));
 
-                    if (isInteger.isPresent()) {
-                        message = message.replaceFirst(word, replaces.get(indexReplace));
-                        indexReplace++;
-                    } else {
-                        // ОШИБКА
-                        logger.error("Replace message expected number");
-                        throw new WrongArgumentsException();
-                    }
-                } else if (word.charAt(1) == 'd') { // Если дата
-                    Optional<LocalDate> isLocalDate = validate.isValidDate(replaces.get(indexReplace));
-
-                    if (isLocalDate.isPresent()) {
-                        message = message.replaceFirst(word, replaces.get(indexReplace));
-                        indexReplace++;
-                    } else {
-                        // ОШИБКА
-                        logger.error("Replace message expected LocalDate");
-                        throw new WrongArgumentsException();
-                    }
-                } else { // Другие типы
+                if (isInteger.isPresent()) {
                     message = message.replaceFirst(word, replaces.get(indexReplace));
                     indexReplace++;
+                } else {
+                    // ОШИБКА
+                    logger.error("Replace message expected number");
+                    throw new WrongArgumentsException();
                 }
-            }
+            } else if (word.charAt(1) == 'd') { // Если дата
+                Optional<LocalDate> isLocalDate = validate.isValidDate(replaces.get(indexReplace));
 
-            return message;
+                if (isLocalDate.isPresent()) {
+                    message = message.replaceFirst(word, replaces.get(indexReplace));
+                    indexReplace++;
+                } else {
+                    // ОШИБКА
+                    logger.error("Replace message expected LocalDate");
+                    throw new WrongArgumentsException();
+                }
+            } else { // Другие типы
+                message = message.replaceFirst(word, replaces.get(indexReplace));
+                indexReplace++;
+            }
         }
-        return "Undefined";
+
+        return message;
     }
 
     private List<String> parseReplace(String message) {
