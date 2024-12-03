@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -22,13 +21,14 @@ public class LoggerHandler {
     }
 
     public LoggerHandler() {
-        this.logFileName = String.format("%s.log", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-        this.logFilePath = String.format("./src/main/resources/logs/%s-%s/%s", LocalDateTime.now().getMonthValue(),
-                LocalDateTime.now().getYear(), logFileName);
+        LocalDateTime dateNow = LocalDateTime.now();
+        this.logFileName = String.format("%s.log", dateNow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        this.logFilePath = String.format("./src/main/resources/logs/%s-%s/%s", dateNow.getMonthValue(),
+                dateNow.getYear(), logFileName);
 
         try {
-            Path path = Path.of(String.format("./src/main/resources/logs/%s-%s", LocalDateTime.now().getMonthValue(),
-                    LocalDateTime.now().getYear()));
+            Path path = Path.of(String.format("./src/main/resources/logs/%s-%s", dateNow.getMonthValue(),
+                    dateNow.getYear()));
 
             // Если не существует директории, то создать
             if (!Files.exists(path)) {
