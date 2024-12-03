@@ -37,7 +37,7 @@ public class LanguageValueTest {
             checkMessage = "Undefined";
         }
 
-        assertEquals("Это сообщение \"Тестовая строка #1\" \"Тестовая строка #2\""
+        assertEquals("Это сообщение \"Тестовая строка #1\" \"Тестовая строка #2\" "
                 + "\"Тестовая строка #3\" для проверки метода (Строка)", checkMessage);
     }
 
