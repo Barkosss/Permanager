@@ -141,7 +141,7 @@ public abstract class AbstractInteraction implements Interaction {
     public Interaction setLanguageValue(String languageKey, List<String> replaces) {
         try {
             this.message = getLanguageValue(languageKey, replaces);
-        } catch(Exception err) {
+        } catch (Exception err) {
             LoggerHandler logger = new LoggerHandler();
             logger.error("");
         }

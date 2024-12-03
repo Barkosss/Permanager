@@ -225,7 +225,7 @@ public class ReminderCommand implements BaseCommand {
         try {
             output.output(interaction.setLanguageValue("reminder.create.complete",
                     List.of(String.valueOf(reminderId))));
-        } catch(Exception err) {
+        } catch (Exception err) {
             logger.error("");
         }
         logger.info(String.format("User by id(%d, chatId=%d) create reminder by id(%d)",
