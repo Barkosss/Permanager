@@ -34,14 +34,14 @@ public class Validate {
     public Optional<LocalDate> isValidDate(String strLocalDate) {
 
         String[] patterns = {
-            "HH:mm dd.MM.yyyy",
-            "HH:mm:ss dd.MM.yyyy",
-            "HH:mm dd.MM.yy",
-            "HH:mm:ss dd.MM.yy",
-            "dd.MM.yyyy HH:mm",
-            "dd.MM.yyyy HH:mm:ss",
-            "dd.MM.yy HH:mm",
-            "dd.MM.yy HH:mm:ss"
+                "HH:mm dd.MM.yyyy",
+                "HH:mm:ss dd.MM.yyyy",
+                "HH:mm dd.MM.yy",
+                "HH:mm:ss dd.MM.yy",
+                "dd.MM.yyyy HH:mm",
+                "dd.MM.yyyy HH:mm:ss",
+                "dd.MM.yy HH:mm",
+                "dd.MM.yy HH:mm:ss"
         };
 
         // Проходимся по каждому форматы дат
@@ -62,14 +62,14 @@ public class Validate {
      */
     public Optional<LocalDate> isValidTime(String strLocalDate) {
         String[] patterns = {
-            "HH:mm dd.MM.yyyy",
-            "HH:mm:ss dd.MM.yyyy",
-            "HH:mm dd.MM.yy",
-            "HH:mm:ss dd.MM.yy",
-            "dd.MM.yyyy HH:mm",
-            "dd.MM.yyyy HH:mm:ss",
-            "dd.MM.yy HH:mm",
-            "dd.MM.yy HH:mm:ss"
+                "HH:mm dd.MM.yyyy",
+                "HH:mm:ss dd.MM.yyyy",
+                "HH:mm dd.MM.yy",
+                "HH:mm:ss dd.MM.yy",
+                "dd.MM.yyyy HH:mm",
+                "dd.MM.yyyy HH:mm:ss",
+                "dd.MM.yy HH:mm",
+                "dd.MM.yy HH:mm:ss"
         };
 
         // Проходимся по каждому форматы дат
