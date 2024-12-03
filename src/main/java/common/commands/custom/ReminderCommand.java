@@ -80,9 +80,15 @@ public class ReminderCommand implements BaseCommand {
         }
 
         // ---- Ищем время в аргументах ----
+        Optional<LocalDate> localDate = Optional.empty();
+        Optional<LocalDate> localTime = Optional.empty();
 
-        Optional<LocalDate> localDate = validate.isValidDate(arguments.getFirst() + " " + arguments.get(1));
-        Optional<LocalDate> localTime = validate.isValidTime(arguments.getFirst());
+        if (arguments.size() >= 2) {
+             localDate = validate.isValidDate(String.format("%s %s", arguments.getFirst(),
+                    arguments.get(1)));
+        } else {
+            localTime = validate.isValidTime(arguments.getFirst());
+        }
 
         // Если указано время (дата и время)
         if (localDate.isPresent()) {
@@ -158,8 +164,8 @@ public class ReminderCommand implements BaseCommand {
     public void help(Interaction interaction, User user) {
         StringBuilder helpOutput;
 
-        String manual = (String) jsonHandler.read("manual.json",
-                "manual.reminder.create." + interaction.getLanguageCode().getLang());
+        String manual = (String) jsonHandler.read("manual.json", String.format("manual.reminder.create.%s",
+                interaction.getLanguageCode().getLang()));
 
         if (manual.isEmpty()) {
             manual = interaction.getLanguageValue("help.notFoundManual");
@@ -177,13 +183,13 @@ public class ReminderCommand implements BaseCommand {
     public void create(Interaction interaction, User user) {
 
         if (!user.isExceptedKey(getCommandName(), "date")) {
-                user.setExcepted(getCommandName(), "date", InputExpectation.UserInputType.DATE);
+            user.setExcepted(getCommandName(), "date", InputExpectation.UserInputType.DATE);
             logger.info("Reminder command requested a date argument for create");
             output.output(interaction.setMessage("Enter date for send reminder: ").setInline(true));
             return;
         }
 
-        LocalDate sendAt = user.getValue(getCommandName(), "date");
+        LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "date");
         // Проверка на корректность даты
         if (sendAt.isBefore(LocalDate.now()) || sendAt.isAfter(sendAt.plusYears(5))) {
             user.setExcepted(getCommandName(), "date");
@@ -219,8 +225,8 @@ public class ReminderCommand implements BaseCommand {
         user.addReminder(reminder);
 
         output.output(interaction.setMessage("Reminder is create"));
-        logger.info("User by id(" + user.getUserId() + ", chatId=" + interaction.getChatId()
-                + ") create reminder by id(" + reminderId + ")");
+        logger.info(String.format("User by id(%d, chatId=%d) create reminder by id(%d)",
+                user.getUserId(), interaction.getChatId(), reminderId));
         user.clearExpected(getCommandName());
     }
 
@@ -295,8 +301,8 @@ public class ReminderCommand implements BaseCommand {
         user.getReminders(interaction.getChatId()).put(reminderId, reminder);
 
         output.output(interaction.setMessage("Reminder is edit"));
-        logger.info("User by id(" + user.getUserId() + ", chatId=" + interaction.getChatId()
-                + ") edit reminder by id(" + reminderId + ")");
+        logger.info(String.format("User by id(%d, chatId=%d) edit reminder by id(%d)",
+                user.getUserId(), interaction.getChatId(), reminderId));
         user.clearExpected(getCommandName());
     }
 
@@ -304,16 +310,16 @@ public class ReminderCommand implements BaseCommand {
     public void remove(Interaction interaction, User user) {
 
         if (!user.isExceptedKey(getCommandName(), "index")) {
-            user.setExcepted(getCommandName(), "index");
+            user.setExcepted(getCommandName(), "index", InputExpectation.UserInputType.INTEGER);
             logger.info("Reminder command requested a index argument for remove");
             output.output(interaction.setMessage("Enter index reminder: ").setInline(true));
             return;
         }
 
-        long reminderId = (long) user.getValue(getCommandName(), "index");
+        Long reminderId = Long.parseLong(String.valueOf(user.getValue(getCommandName(), "index")));
 
         if (!user.getReminders(interaction.getChatId()).containsKey(reminderId)) {
-            user.setExcepted(getCommandName(), "index");
+            user.setExcepted(getCommandName(), "index", InputExpectation.UserInputType.INTEGER);
             logger.info("Reminder command again request a index reminder for remove");
             remove(interaction, user);
             return;
@@ -322,8 +328,8 @@ public class ReminderCommand implements BaseCommand {
         user.getReminders(interaction.getChatId()).remove(reminderId);
 
         output.output(interaction.setMessage("Reminder is remove"));
-        logger.info("User by id(" + user.getUserId() + ", chatId=" + interaction.getChatId()
-                + ") remove reminder by id(" + reminderId + ")");
+        logger.info(String.format("User by id(%d, chatId=%d) remove reminder by id(%d)",
+                user.getUserId(), interaction.getChatId(), reminderId));
         user.clearExpected(getCommandName());
     }
 
