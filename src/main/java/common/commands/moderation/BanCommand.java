@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.request.GetChatMemberCount;
 import com.pengrad.telegrambot.request.UnbanChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
+import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.User;
@@ -28,7 +29,7 @@ public class BanCommand implements BaseCommand {
 
     @Override
     public String getCommandDescription() {
-        return "";
+        return "Блокировка пользователя";
     }
 
     @Override
@@ -40,10 +41,16 @@ public class BanCommand implements BaseCommand {
             return;
         }
 
-        // Получаем длительность блокировки
-        Optional<LocalDate> durationDate = validate.isValidDate(arguments.get(arguments.size() - 2)
-                + " " + arguments.getLast());
-        durationDate.ifPresent(localDate -> user.setExcepted(getCommandName(), "duration").setValue(localDate));
+        if (arguments.size() >= 2) {
+            // Получаем длительность блокировки
+            Optional<LocalDate> durationDate = validate.isValidDate(String.format("%s %s",
+                    arguments.get(arguments.size() - 2), arguments.getLast()));
+
+            if (durationDate.isPresent()) {
+                user.setExcepted(getCommandName(), "duration").setValue(durationDate.get());
+                arguments.subList(0, arguments.size() - 2);
+            }
+        }
 
         // Получаем причину блокировки
         if (arguments.size() > 1) {
@@ -55,7 +62,7 @@ public class BanCommand implements BaseCommand {
     @Override
     public void run(Interaction interaction) {
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
-            output.output(interaction.setMessage("This command is not available for the console"));
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandConsole"));
             return;
         }
         User user = interaction.getUser(interaction.getUserId());
@@ -65,54 +72,49 @@ public class BanCommand implements BaseCommand {
         parseArgs(interactionTelegram, user);
 
         if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
-            output.output(interaction.setMessage("This command is not available for private chat"));
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
 
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
             logger.info("Ban command requested a user argument");
-            output.output(interactionTelegram.setMessage("Reply message target user with command /ban"));
+            output.output(interactionTelegram.setLanguageValue("ban.replyMessage"));
             return;
         }
-
-        if (interactionTelegram.getContentReply() != null && !user.isExceptedKey(getCommandName(), "user")) {
-            // Валидация пользователя...
-            user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply());
-        }
+        user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply());
 
         // Получаем причину блокировки
         if (!user.isExceptedKey(getCommandName(), "reason")) {
             user.setExcepted(getCommandName(), "reason");
             logger.info("Ban command requested a reason argument");
-            output.output(interactionTelegram.setMessage("Enter reason"));
+            output.output(interactionTelegram.setLanguageValue("ban.reason"));
             return;
         }
 
         // Получаем длительность блокировки
         if (!user.isExceptedKey(getCommandName(), "duration")) {
-            user.setExcepted(getCommandName(), "duration");
+            user.setExcepted(getCommandName(), "duration", InputExpectation.UserInputType.DATE);
             logger.info("Ban command requested a duration argument");
-            output.output(interactionTelegram.setMessage("Enter duration"));
+            output.output(interactionTelegram.setLanguageValue("ban.duration"));
             return;
         }
-        // Валидация даты...
 
         try {
             long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
             interactionTelegram.telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
             interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
-            logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been banned");
+            logger.info(String.format("User by id(%s) in chat by id(%s) has been banned",
+                    userId, interaction.getChatId()));
+
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
-            output.output(interactionTelegram.setMessage(
-                    String.format("The user @%s has been banned to %s with reason: %s",
-                        username, user.getValue(getCommandName(), "duration"),
-                        user.getValue(getCommandName(), "reason"))
-                    )
-            );
+            output.output(interaction.setLanguageValue("ban.complete",
+                    List.of(username, (String) user.getValue(getCommandName(), "duration"),
+                            (String) user.getValue(getCommandName(), "reason"))));
+
         } catch (Exception err) {
             output.output(interaction.setMessage("Something went wrong... :("));
-            logger.error("Ban command: " + err);
+            logger.error(String.format("Ban command: %s", err));
         } finally {
             user.clearExpected(getCommandName());
         }

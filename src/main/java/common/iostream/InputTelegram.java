@@ -46,7 +46,7 @@ public class InputTelegram {
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));
-                logger.debug("Add new content: " + contents.getLast());
+                logger.debug(String.format("Add new content: %s", contents.getLast()));
             }
 
             commandHandler.launchCommand(interaction, contents);
@@ -57,9 +57,9 @@ public class InputTelegram {
             // Создать обработчик исключений
         }, err -> {
             if (err.response() != null) {
-                logger.error("Telegram updates listener (Bad response): " + err);
+                logger.error(String.format("Telegram updates listener (Bad response): %s", err));
             } else {
-                logger.error("Telegram updates listener (Network): " + err);
+                logger.error(String.format("Telegram updates listener (Network): %s", err));
             }
         });
     }

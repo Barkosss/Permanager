@@ -209,7 +209,7 @@ public abstract class AbstractInteraction implements Interaction {
 
         for (String word : message.split(" ")) {
             // Проверяем, что слово начинается и заканчивается на % (Спец символ)
-            Pattern pattern = Pattern.compile("%[a-z]?[A-Z]+%");
+            Pattern pattern = Pattern.compile("%[a-z]?[A-Z_]+%");
             Matcher matcher = pattern.matcher(word);
             if (matcher.find()) {
                 array.add(matcher.group());

@@ -34,7 +34,7 @@ public class HelpCommand implements BaseCommand {
             }
 
         } catch (Exception err) {
-            logger.error("Help constructors: " + err);
+            logger.error(String.format("Help constructors: %s", err));
         }
     }
 
@@ -58,7 +58,7 @@ public class HelpCommand implements BaseCommand {
 
         String commandName = arguments.getFirst().toLowerCase();
 
-        if (jsonHandler.check("manual_ru.json", "manual." + commandName)) {
+        if (jsonHandler.check("manual_ru.json", String.format("manual.%s", commandName))) {
             user.setExcepted(getCommandName(), "commandName").setValue(commandName);
             return;
         }
@@ -96,7 +96,7 @@ public class HelpCommand implements BaseCommand {
             output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
 
         } catch (Exception err) {
-            logger.error("Error (helpCommand, help): " + err);
+            logger.error(String.format("Error (helpCommand, help): %s", err));
         }
 
         user.clearExpected(getCommandName());
@@ -107,21 +107,21 @@ public class HelpCommand implements BaseCommand {
             String commandName = (String) user.getValue(getCommandName(), "commandName");
             StringBuilder helpOutput;
 
-            String manual = (String) jsonHandler.read("manual_ru.json", "manual." + commandName
-                    + "." + interaction.getLanguageCode().getLang());
+            String manual = (String) jsonHandler.read("manual_ru.json",
+                    String.format("manual.%s.%s", commandName, interaction.getLanguageCode().getLang()));
 
             if (manual.isEmpty()) {
                 manual = interaction.getLanguageValue("help.notFoundManual");
             }
 
-            helpOutput = new StringBuilder("--------- HELP \"" + commandName + "\" ---------\n");
+            helpOutput = new StringBuilder("--------- HELP \"").append(commandName).append("\" ---------\n");
             helpOutput.append(manual);
             helpOutput.append("\n--------- HELP \"").append(commandName).append("\" ---------\n");
 
             output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
             user.clearExpected(getCommandName());
         } catch (Exception err) {
-            logger.error("Error (helpCommand, manual): " + err);
+            logger.error(String.format("Error (helpCommand, manual): %s", err));
         }
     }
 }
