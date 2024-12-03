@@ -79,7 +79,7 @@ public class CommandHandler {
                     inputTelegram.read(interaction.setUserRepository(userRepository)
                             .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
             );
-            threadTelegram.setName("Thread-TELEGRAM");
+            threadTelegram.setName("Thread-" + interaction.getPlatform().name() + "-1");
             threadTelegram.start();
             logger.info("Telegram is launch");
             System.out.println("SYSTEM: Telegram is launch");
@@ -101,7 +101,7 @@ public class CommandHandler {
                     inputConsole.listener(new InteractionConsole().setUserRepository(userRepository)
                             .setServerRepository(serverRepository).setReminderRepository(reminderRepository), this)
             );
-            threadConsole.setName("Thread-CONSOLE");
+            threadConsole.setName("Thread-" + interaction.getPlatform().name() + "-2");
             threadConsole.start();
             logger.info("Console is launch");
             System.out.println("SYSTEM: Console is launch");
@@ -196,7 +196,7 @@ public class CommandHandler {
                             } else if (validTime.isPresent()) {
                                 user.setValue(validTime.get());
                             } else {
-                                output.output(interaction.setMessage("Try again").setInline(true));
+                                output.output(interaction.setMessage("Try again. Enter date").setInline(true));
                             }
                         }
                         case INTEGER: { // Проверка на число
@@ -205,7 +205,7 @@ public class CommandHandler {
                             if (validInteger.isPresent()) {
                                 user.setValue(validInteger.get());
                             } else {
-                                output.output(interaction.setMessage("Try again").setInline(true));
+                                output.output(interaction.setMessage("Try again. Enter number").setInline(true));
                             }
                         }
                         default: { // Строка или любой другой тип

@@ -2,6 +2,7 @@ package common.commands.custom;
 
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
+import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.Reminder;
 import common.models.User;
@@ -85,10 +86,12 @@ public class ReminderCommand implements BaseCommand {
 
         // Если указано время (дата и время)
         if (localDate.isPresent()) {
-            user.setExcepted(getCommandName(), "date").setValue(localDate.get());
+            user.setExcepted(getCommandName(), "date", InputExpectation.UserInputType.DATE)
+                    .setValue(localDate.get());
             arguments = arguments.subList(2, arguments.size());
         } else if (!user.isExceptedKey(getCommandName(), "date") && localTime.isPresent()) {
-            user.setExcepted(getCommandName(), "date").setValue(localTime.get());
+            user.setExcepted(getCommandName(), "date", InputExpectation.UserInputType.DATE)
+                    .setValue(localTime.get());
             arguments = arguments.subList(1, arguments.size());
         }
 
@@ -174,13 +177,13 @@ public class ReminderCommand implements BaseCommand {
     public void create(Interaction interaction, User user) {
 
         if (!user.isExceptedKey(getCommandName(), "date")) {
-                user.setExcepted(getCommandName(), "date");
+                user.setExcepted(getCommandName(), "date", InputExpectation.UserInputType.DATE);
             logger.info("Reminder command requested a date argument for create");
             output.output(interaction.setMessage("Enter date for send reminder: ").setInline(true));
             return;
         }
 
-        LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "date");
+        LocalDate sendAt = user.getValue(getCommandName(), "date");
         // Проверка на корректность даты
         if (sendAt.isBefore(LocalDate.now()) || sendAt.isAfter(sendAt.plusYears(5))) {
             user.setExcepted(getCommandName(), "date");
