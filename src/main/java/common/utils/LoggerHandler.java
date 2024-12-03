@@ -1,5 +1,7 @@
 package common.utils;
 
+import common.Main;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,10 +12,13 @@ import java.time.format.DateTimeFormatter;
 
 public class LoggerHandler {
 
+    // Объект файла
     FileWriter logFile;
 
+    // Название лог файла
     String logFileName;
 
+    // Путь к лог файлу
     String logFilePath;
 
     private String getTimeFormatter() {
@@ -70,6 +75,13 @@ public class LoggerHandler {
         } catch (IOException err) {
             System.out.printf("Log message isn't write in \"%s\" file\n", logFileName);
         }
+    }
+
+    public void debug(String message, boolean inConsole) {
+        if (inConsole && Main.arguments.contains("debug")) {
+            System.out.printf("DEBUG: %s\n", message);
+        }
+        debug(message);
     }
 
     public void error(String message) {
