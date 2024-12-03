@@ -84,7 +84,7 @@ public class ReminderCommand implements BaseCommand {
         Optional<LocalDate> localTime = Optional.empty();
 
         if (arguments.size() >= 2) {
-             localDate = validate.isValidDate(String.format("%s %s", arguments.getFirst(),
+            localDate = validate.isValidDate(String.format("%s %s", arguments.getFirst(),
                     arguments.get(1)));
         } else {
             localTime = validate.isValidTime(arguments.getFirst());
