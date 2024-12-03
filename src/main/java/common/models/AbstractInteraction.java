@@ -156,8 +156,7 @@ public abstract class AbstractInteraction implements Interaction {
 
             int indexReplace = 0;
             for (String word : findReplace) {
-                // Если число
-                if (word.charAt(1) == 'i') {
+                if (word.charAt(1) == 'i') { // Если число
                     Optional<Integer> isInteger = validate.isValidInteger(replaces.get(indexReplace));
 
                     if (isInteger.isPresent()) {
@@ -168,10 +167,7 @@ public abstract class AbstractInteraction implements Interaction {
                         logger.error("Replace message expected number");
                         throw new WrongArgumentsException();
                     }
-                }
-
-                // Если дата
-                else if (word.charAt(1) == 'd') {
+                } else if (word.charAt(1) == 'd') { // Если дата
                     Optional<LocalDate> isLocalDate = validate.isValidDate(replaces.get(indexReplace));
 
                     if (isLocalDate.isPresent()) {
@@ -182,10 +178,7 @@ public abstract class AbstractInteraction implements Interaction {
                         logger.error("Replace message expected LocalDate");
                         throw new WrongArgumentsException();
                     }
-                }
-
-                // Другие типы
-                else {
+                } else { // Другие типы
                     message = message.replaceFirst(word, replaces.get(indexReplace));
                     indexReplace++;
                 }
