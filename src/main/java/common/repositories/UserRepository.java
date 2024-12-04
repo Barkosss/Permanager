@@ -24,8 +24,12 @@ public class UserRepository {
         if (users.get(chatId).containsKey(userId)) {
             return;
         }
-        logger.debug("User by id(" + userId + ") is create");
-        users.get(chatId).put(userId, new User(userId));
+        logger.debug("User by id(" + userId + ") is create in chat by id(" + chatId + ")");
+        try {
+            users.get(chatId).put(userId, new User(userId));
+        } catch (Exception err) {
+            System.out.println("Err: " + err);
+        }
     }
 
     // Найти пользователя по ID

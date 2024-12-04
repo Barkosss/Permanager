@@ -130,8 +130,10 @@ public class CommandHandler {
             }
 
             // сли пользователь отсутствует в памяти
-            if (!userRepository.existsById(interaction.getChatId(), content.userId())) {
-                userRepository.create(interaction.getChatId(), content.userId());
+            System.out.println("if: " + interaction.getUserRepository().existsById(content.chat().id(), content.userId()));
+            if (!interaction.getUserRepository().existsById(content.chat().id(), content.userId())) {
+                interaction.getUserRepository().create(content.chat().id(), content.userId());
+                System.out.println("Create: " + interaction.getUserRepository().existsById(content.chat().id(), content.userId()));
             }
 
             List<String> args = List.of(message.split(" "));
@@ -142,9 +144,11 @@ public class CommandHandler {
                 commandName = commandName.substring(0, commandName.lastIndexOf("@"));
             }
 
+
+            System.out.println("Debug: " + interaction.getUser(content.userId()) + " | " + content.userId());
             // Проверка, что это команда
             if (message.startsWith("/") && message.charAt(1) != ' '
-                    && interaction.getUser(interaction.getUserId()).getInputStatus() == User.InputStatus.COMPLETED) {
+                    && interaction.getUser(content.userId()).getInputStatus() == User.InputStatus.COMPLETED) {
 
                 if (commandName.startsWith("exit")
                         && (interaction.getPlatform() == Interaction.Platform.CONSOLE

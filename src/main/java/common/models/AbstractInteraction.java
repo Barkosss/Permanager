@@ -51,6 +51,10 @@ public abstract class AbstractInteraction implements Interaction {
     // Языковой код
     Language languageCode;
 
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
+
     public Interaction setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
         return this;

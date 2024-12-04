@@ -29,6 +29,8 @@ public interface Interaction {
         }
     }
 
+    UserRepository getUserRepository();
+
     Interaction setUserRepository(UserRepository userRepository);
 
     Interaction setServerRepository(ServerRepository serverRepository);
