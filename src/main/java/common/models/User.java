@@ -13,6 +13,19 @@ public class User {
         COMPLETED
     }
 
+    public enum Permissions {
+        BAN,
+        UNBAN,
+        MUTE,
+        UNMUTE,
+        KICK,
+        WARN,
+        REMWARN,
+        RESETWARNS,
+        CLEAR,
+        CONFIG
+    }
+
     // Идентификатор пользователя
     long userId;
 
@@ -165,5 +178,15 @@ public class User {
             this.tasks.put(chatId, new HashMap<>());
         }
         return this.tasks.get(chatId);
+    }
+
+    public boolean hasPermission(long chatId, Permissions permission) {
+        Member member = moderators.get(chatId);
+
+        if (member == null) {
+            return false;
+        }
+
+        return member.permissions.canPermission(permission);
     }
 }
