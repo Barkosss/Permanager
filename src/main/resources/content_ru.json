@@ -31,7 +31,7 @@
     "reminder": {
         "start": {
             "action": "Укажите одно из действий (Действия: create, edit, remove, list)",
-            "actionError": "Такого действия нет. Попробуйте ещё раз (Действия: create, edit, remove, list)"
+            "againAction": "Такого действия нет. Попробуйте ещё раз (Действия: create, edit, remove, list)"
         },
         "send": {
             "message": "Ваше напоминание",

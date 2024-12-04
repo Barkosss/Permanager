@@ -119,7 +119,7 @@ public class ReminderCommand implements BaseCommand {
         if (!user.isExceptedKey(getCommandName(), "action")) {
             user.setExcepted(getCommandName(), "action");
             logger.info("Reminder command requested a action argument");
-            output.output(interaction.setMessage("Enter action (create, edit, remove, list, help): ").setInline(true));
+            output.output(interaction.setLanguageValue("reminder.start.action").setInline(true));
             return;
         }
 
@@ -153,8 +153,7 @@ public class ReminderCommand implements BaseCommand {
             default: {
                 user.setExcepted(getCommandName(), "action");
                 logger.info("Reminder command requested a action argument");
-                output.output(interaction.setMessage("Enter action (create, edit, remove, list, help): ")
-                        .setInline(true));
+                output.output(interaction.setLanguageValue("reminder.start.againAction").setInline(true));
                 break;
             }
         }
@@ -226,7 +225,7 @@ public class ReminderCommand implements BaseCommand {
             output.output(interaction.setLanguageValue("reminder.create.complete",
                     List.of(String.valueOf(reminderId))));
         } catch (Exception err) {
-            logger.error("");
+            logger.debug(String.format("Couldn't find replaces symbols (Reminder->create): %s", err));
         }
         logger.info(String.format("User by id(%d, chatId=%d) create reminder by id(%d)",
                 user.getUserId(), interaction.getChatId(), reminderId));
@@ -299,7 +298,12 @@ public class ReminderCommand implements BaseCommand {
 
         user.getReminders(interaction.getChatId()).put(reminderId, reminder);
 
-        output.output(interaction.setLanguageValue("reminder.edit.complete"));
+        try {
+            output.output(interaction.setLanguageValue("reminder.edit.complete",
+                    List.of(String.valueOf(reminderId))));
+        } catch (Exception err) {
+            logger.debug(String.format("Couldn't find replaces symbols (Reminder->edit): %s", err));
+        }
         logger.info(String.format("User by id(%d, chatId=%d) edit reminder by id(%d)",
                 user.getUserId(), interaction.getChatId(), reminderId));
         user.clearExpected(getCommandName());
@@ -326,7 +330,12 @@ public class ReminderCommand implements BaseCommand {
 
         user.getReminders(interaction.getChatId()).remove(reminderId);
 
-        output.output(interaction.setLanguageValue("reminder.remove.complete"));
+        try {
+            output.output(interaction.setLanguageValue("reminder.remove.complete",
+                    List.of(String.valueOf(reminderId))));
+        } catch (Exception err) {
+            logger.debug(String.format("Couldn't find replaces symbols (Reminder->remove): %s", err));
+        }
         logger.info(String.format("User by id(%d, chatId=%d) remove reminder by id(%d)",
                 user.getUserId(), interaction.getChatId(), reminderId));
         user.clearExpected(getCommandName());
