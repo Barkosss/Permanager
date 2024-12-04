@@ -13,7 +13,6 @@ import java.util.List;
 public class WarnCommand implements BaseCommand {
     OutputHandler output = new OutputHandler();
     LoggerHandler logger = new LoggerHandler();
-    Validate validate = new Validate();
 
     @Override
     public String getCommandName() {

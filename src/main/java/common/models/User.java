@@ -4,6 +4,7 @@ import common.repositories.WarningRepository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class User {
@@ -63,10 +64,7 @@ public class User {
     }
 
     public InputExpectation.UserInputType getInputType() {
-        if (this.userInputExpectation.userInputType == null) {
-            return InputExpectation.UserInputType.STRING;
-        }
-        return this.userInputExpectation.userInputType;
+        return Objects.requireNonNullElse(this.userInputExpectation.userInputType, InputExpectation.UserInputType.STRING);
     }
 
     public void setValue(Object value) {

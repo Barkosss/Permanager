@@ -37,5 +37,11 @@ public class RemWarnCommand implements BaseCommand {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }
+
+        // ...
+        // ...
+        // ...
+
+        user.clearExpected(getCommandName());
     }
 }
