@@ -54,6 +54,12 @@ public class CommandHandler {
                 instanceClass = subclass.getConstructor().newInstance();
 
                 commandName = instanceClass.getCommandName().toLowerCase();
+
+                // Если название команды пустое, то пропускаем ход
+                if (commandName.isEmpty()) {
+                    continue;
+                }
+
                 // Проверка, нет ли команд с таким именем в мапе
                 if (!baseCommandClasses.containsKey(commandName)) {
                     // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
