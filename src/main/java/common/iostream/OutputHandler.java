@@ -1,5 +1,6 @@
 package common.iostream;
 
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
@@ -21,10 +22,10 @@ public class OutputHandler {
                 }
 
                 // Отправляем сообщение пользователю в Telegram
-                interactionTelegram.telegramBot.execute(sendMessage);
-                logger.debug("Send message to chatId(" + interaction.getChatId()
-                        + ", userId=" + interaction.getUserId()
-                        + ") with message(\"" + interaction.getMessage().trim().replace("\n", " ") + "\")");
+                interactionTelegram.telegramBot.execute(sendMessage.parseMode(ParseMode.Markdown));
+                logger.debug(String.format("Send message to chatId(%d, userId=%d) with message(\"%s\")",
+                        interaction.getChatId(), interaction.getUserId(),
+                        interaction.getMessage().trim().replace("\n", " ")));
                 break;
             }
 
