@@ -33,18 +33,24 @@ public class WarnCommand implements BaseCommand {
             return;
         }
 
-
+        // Парсинг длительности предупреждения и причины
     }
 
     @Override
     public void run(Interaction interaction) {
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
-            output.output(interaction.setMessage(""));
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandConsole"));
             return;
         }
 
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
+
+        if (!user.hasPermission(interaction.getChatId(), User.Permissions.WARN)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            return;
+        }
+
         parseArgs(interaction, user);
 
         // Получаем пользователя

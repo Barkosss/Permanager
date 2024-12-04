@@ -47,6 +47,11 @@ public class ConfigCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
 
+        if (!user.hasPermission(interaction.getChatId(), User.Permissions.CONFIG)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            return;
+        }
+
         if (!user.isExceptedKey(getCommandName(), "section")) {
             user.setExcepted(getCommandName(), "section");
             output.output(interaction.setMessage(interaction.getLanguageValue("config.start.section")).setInline(true));

@@ -63,6 +63,11 @@ public class MuteCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
+        if (!user.hasPermission(interaction.getChatId(), User.Permissions.MUTE)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            return;
+        }
+
         // Парсинг аргументов
         parseArgs(interactionTelegram, user);
 

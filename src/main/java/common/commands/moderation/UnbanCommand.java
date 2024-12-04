@@ -1,9 +1,7 @@
 package common.commands.moderation;
 
-import com.pengrad.telegrambot.model.ChatPermissions;
 import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.request.GetChatMemberCount;
-import com.pengrad.telegrambot.request.RestrictChatMember;
+import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.UnbanChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
@@ -38,15 +36,15 @@ public class UnbanCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
-            output.output(interaction.setMessage("This command is not available for private chat"));
+        if (!user.hasPermission(interaction.getChatId(), User.Permissions.UNBAN)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }
 
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
-            logger.info("Unmute command requested a user argument");
-            output.output(interactionTelegram.setMessage("Reply message target user with command /unmute"));
+            logger.info("Unban command requested a user argument");
+            output.output(interactionTelegram.setMessage("Reply message target user with command /Unban"));
             return;
         }
 

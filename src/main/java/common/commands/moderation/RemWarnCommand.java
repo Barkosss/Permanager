@@ -1,10 +1,13 @@
 package common.commands.moderation;
 
 import common.commands.BaseCommand;
+import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.User;
 
 public class RemWarnCommand implements BaseCommand {
+    OutputHandler output = new OutputHandler();
+
     @Override
     public String getCommandName() {
         return "remWarn";
@@ -23,5 +26,16 @@ public class RemWarnCommand implements BaseCommand {
     @Override
     public void run(Interaction interaction) {
 
+        if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
+            output.output(interaction.setLanguageValue("..."));
+            return;
+        }
+
+        User user = interaction.getUser(interaction.getUserId());
+
+        if (!user.hasPermission(interaction.getChatId(), User.Permissions.REMWARN)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            return;
+        }
     }
 }
