@@ -1,7 +1,10 @@
 package common.commands;
 
+import com.pengrad.telegrambot.request.GetChatMember;
+import com.pengrad.telegrambot.response.GetChatMemberResponse;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
+import common.models.InteractionTelegram;
 import common.models.User;
 import common.utils.LoggerHandler;
 
