@@ -8,7 +8,7 @@ public class Member {
     // Id пользователя (Telegram ID или Discord ID)
     long id;
 
-    // ...
+    // Id чата
     long chatId;
 
     // Список разрешений
@@ -25,6 +25,9 @@ public class Member {
 
     // Объект с информацией об ожидаемых данных
     InputExpectation userInputExpectation;
+
+    // К какой группе присоединён пользователь
+    Group group;
 
     // Выключить участника
     boolean disabled;

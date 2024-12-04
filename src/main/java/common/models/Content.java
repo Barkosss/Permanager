@@ -11,15 +11,8 @@ public record Content(long userId, Chat chat, Message reply, String message, lon
 
     public String toString() {
 
-        return "Content({"
-                + "; userId=" + userId
-                + "; chat=" + chat
-                + "; reply=" + reply
-                + "; Message=" + message
-                + "; CreatedAt=" + createdAt
-                + "; Language=" + language
-                + "; Arguments=" + arguments
-                + "; Platform=" + platform
-                + "})";
+        return String.format("Content({"
+                + "; userId=%s; chat=%s; reply=%s; Message=%s; CreatedAt=%s; Language=%s; Arguments=%s; Platform=%s})",
+                userId, chat, reply, message, createdAt, language, arguments, platform);
     }
 }

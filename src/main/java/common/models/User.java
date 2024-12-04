@@ -22,15 +22,16 @@ public class User {
     // Состояние ввода
     InputStatus inputStatus;
 
-    // ...
-    Map<Long, Member> members;
+    // ChatId -> Модератор
+    Map<Long, Member> moderators;
 
-    // ...
+    // Список напоминаний
     Map<Long, Map<Long, Reminder>> reminders;
 
+    // ...
     Map<Long, Map<Long, Task>> tasks;
 
-    // ...
+    // Список предупреждений
     Map<Server, WarningRepository> warnings = new HashMap<>();
 
     public User(long userId) {

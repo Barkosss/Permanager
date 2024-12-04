@@ -99,7 +99,8 @@ public class CommandHandler {
             userRepository.create(0L);
             // Поток для Console
             Thread threadConsole = new Thread(() ->
-                    inputConsole.listener(new InteractionConsole().setUserRepository(userRepository)
+                    inputConsole.listener(new InteractionConsole()
+                            .setUserRepository(userRepository)
                             .setServerRepository(serverRepository)
                             .setReminderRepository(reminderRepository), this)
             );
