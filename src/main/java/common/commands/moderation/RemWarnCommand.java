@@ -7,7 +7,7 @@ import common.models.User;
 public class RemWarnCommand implements BaseCommand {
     @Override
     public String getCommandName() {
-        return "remwarn";
+        return "remWarn";
     }
 
     @Override
