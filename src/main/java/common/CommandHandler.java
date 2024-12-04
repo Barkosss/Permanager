@@ -11,7 +11,6 @@ import common.repositories.UserRepository;
 import common.utils.LoggerHandler;
 import common.utils.ReminderHandler;
 import common.utils.Validate;
-
 import org.reflections.Reflections;
 
 import java.time.LocalDate;
