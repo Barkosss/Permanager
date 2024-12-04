@@ -74,7 +74,7 @@ public abstract class AbstractInteraction implements Interaction {
 
     public User getUser(long userId) {
         try {
-            return userRepository.findById(userId);
+            return userRepository.findById(chatId, userId);
         } catch (MemberNotFoundException err) {
             return null;
         }

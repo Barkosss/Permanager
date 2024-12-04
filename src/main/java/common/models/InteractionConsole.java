@@ -2,6 +2,10 @@ package common.models;
 
 public class InteractionConsole extends AbstractInteraction {
 
+    public Interaction setChatId(long chatId) {
+        this.chatId = chatId;
+        return this;
+    }
 
     public InteractionConsole() {
         this.userId = 0L;

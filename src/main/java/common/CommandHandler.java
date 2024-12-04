@@ -101,10 +101,11 @@ public class CommandHandler {
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
-            userRepository.create(0L);
+            userRepository.create(0,0L);
             // Поток для Console
             Thread threadConsole = new Thread(() ->
                     inputConsole.listener(new InteractionConsole()
+                            .setChatId(0)
                             .setUserRepository(userRepository)
                             .setServerRepository(serverRepository)
                             .setReminderRepository(reminderRepository), this)
@@ -129,8 +130,8 @@ public class CommandHandler {
             }
 
             // сли пользователь отсутствует в памяти
-            if (!userRepository.existsById(content.userId())) {
-                userRepository.create(content.userId());
+            if (!userRepository.existsById(interaction.getChatId(), content.userId())) {
+                userRepository.create(interaction.getChatId(), content.userId());
             }
 
             List<String> args = List.of(message.split(" "));
