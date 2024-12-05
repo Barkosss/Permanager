@@ -20,10 +20,19 @@ public class InputTelegram {
         ((InteractionTelegram) interaction).telegramBot.setUpdatesListener(updates -> {
             List<Content> contents = new ArrayList<>();
 
+            System.out.println(updates);
             Interaction.Language language;
             for (Update update : updates) {
-
-                if (update.message() == null || update.message().text() == null || update.message().chat() == null) {
+                System.out.println("-----------------");
+                System.out.println("Add new chat: " + update.myChatMember());
+                try {
+                    System.out.println("Status: " + update.myChatMember().newChatMember().user().username().equals("PermanagerBot"));
+                } catch (NullPointerException err) {
+                    System.out.println("Status err: " + err);
+                }
+                System.out.println("-----------------");
+                break;
+                /* if (update.message() == null || update.message().text() == null || update.message().chat() == null) {
                     continue;
                 }
 
@@ -46,7 +55,7 @@ public class InputTelegram {
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));
-                logger.debug(String.format("Add new content: %s", contents.getLast()));
+                logger.debug(String.format("Add new content: %s", contents.getLast()));*/
             }
 
             commandHandler.launchCommand(interaction, contents);
