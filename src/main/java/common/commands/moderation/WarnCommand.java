@@ -4,6 +4,7 @@ import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.Validate;
@@ -45,7 +46,7 @@ public class WarnCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), User.Permissions.WARN)) {
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.WARN)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }

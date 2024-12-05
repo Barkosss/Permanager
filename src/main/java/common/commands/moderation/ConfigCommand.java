@@ -3,6 +3,8 @@ package common.commands.moderation;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
+import common.models.Permissions;
+import common.models.Server;
 import common.models.User;
 import common.utils.LoggerHandler;
 
@@ -47,7 +49,7 @@ public class ConfigCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
 
-        if (!user.hasPermission(interaction.getChatId(), User.Permissions.CONFIG)) {
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.CONFIG)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }
@@ -98,12 +100,7 @@ public class ConfigCommand implements BaseCommand {
         String action = ((String) user.getValue(getCommandName(), "dashboardAction")).toLowerCase();
         switch (action) {
             case "default right access": {
-                String message = "";
-                message += interaction.getLanguageValue("config.dashboard.defaultRightAccess.title");
-                // Настройка стандартных прав доступа
-
-
-                output.output(interaction.setMessage(message));
+                configDefaultRightAccess(interaction, user);
                 break;
             }
 
@@ -126,6 +123,18 @@ public class ConfigCommand implements BaseCommand {
         }
         output.output(interaction.setMessage(interaction.getLanguageValue("config.dashboard")));
         user.clearExpected(getCommandName());
+    }
+
+    // Настройка стандартных прав доступа
+    private void configDefaultRightAccess(Interaction interaction, User user) {
+        Server server = interaction.getServerRepository().findById(interaction.getChatId());
+        String defaultRightAccess = "config.dashboard.defaultRightAccess";
+        StringBuilder message = new StringBuilder(interaction.getLanguageValue(defaultRightAccess + ".title"));
+
+        message.append(interaction.getLanguageValue(defaultRightAccess + "description"));
+        // ...
+
+        output.output(interaction.setMessage(String.valueOf(message)));
     }
 
     private void user(Interaction interaction, User user) {

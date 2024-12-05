@@ -9,6 +9,7 @@ import common.iostream.OutputHandler;
 import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.Validate;
@@ -68,7 +69,7 @@ public class BanCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), User.Permissions.BAN)) {
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.BAN)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }

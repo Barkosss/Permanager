@@ -10,6 +10,7 @@ import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.Validate;
@@ -59,7 +60,7 @@ public class ClearCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), User.Permissions.CLEAR)) {
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.CLEAR)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }
@@ -109,8 +110,8 @@ public class ClearCommand implements BaseCommand {
         }
 
         int[] arrayMessagesIds = new int[messagesIds.size()];
-        for (int i = 0; i < messagesIds.size(); i++) {
-            arrayMessagesIds[i] = messagesIds.get(i);
+        for (int index = 0; index < messagesIds.size(); index++) {
+            arrayMessagesIds[index] = messagesIds.get(index);
         }
         System.out.println(messagesIds);
 
