@@ -4,16 +4,22 @@ import java.time.LocalDate;
 
 public class Warning {
 
+    // Идентификатор предупреждения
     long id;
 
+    // Идентификатор пользователя
     long userId;
 
+    // Идентификатор чата
     long chatId;
 
+    // Идентификатор модератора
     long moderationId;
 
+    // Причина
     String reason;
 
+    // Длительность
     LocalDate duration;
 
     public Warning(long id) {

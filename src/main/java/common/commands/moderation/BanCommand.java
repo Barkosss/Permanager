@@ -10,6 +10,7 @@ import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.Permissions;
+import common.models.Server;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.Validate;
@@ -114,6 +115,7 @@ public class BanCommand implements BaseCommand {
                     userId, interaction.getChatId()));
 
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
+            interactionTelegram.getServerRepository().findById(interaction.getChatId()).addUserBan(user);
             output.output(interaction.setLanguageValue("ban.complete",
                     List.of(username, (String) user.getValue(getCommandName(), "duration"),
                             (String) user.getValue(getCommandName(), "reason"))));

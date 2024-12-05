@@ -58,6 +58,7 @@ public class UnbanCommand implements BaseCommand {
             long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
             interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
+            interactionTelegram.getServerRepository().findById(interaction.getChatId()).removeUserBan(user);
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been unbaned");
             output.output(interactionTelegram.setMessage("The user @" + username + " has been unbaned"));
         } catch (Exception err) {
