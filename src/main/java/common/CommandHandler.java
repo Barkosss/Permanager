@@ -4,7 +4,12 @@ import common.commands.BaseCommand;
 import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
 import common.iostream.OutputHandler;
-import common.models.*;
+import common.models.Content;
+import common.models.InputExpectation;
+import common.models.Interaction;
+import common.models.InteractionConsole;
+import common.models.InteractionTelegram;
+import common.models.User;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
@@ -14,7 +19,11 @@ import common.utils.Validate;
 import org.reflections.Reflections;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class CommandHandler {
     LoggerHandler logger = new LoggerHandler();
