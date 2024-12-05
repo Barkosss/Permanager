@@ -31,29 +31,60 @@ public class TaskCommand implements BaseCommand {
     public void parseArgs(Interaction interaction, User user) {
         List<String> arguments = interaction.getArguments();
 
+        if (arguments.isEmpty()) {
+            user.setExcepted(getCommandName(), "action");
+            user.setExcepted(getCommandName(), "title");
+            user.setExcepted(getCommandName(), "description");
+            user.setExcepted(getCommandName(), "duration");
+            return;
+        }
+
         String firstArg = arguments.getFirst();
+        arguments = arguments.subList(1, arguments.size() - 1);
         switch (firstArg) {
             case "create": {
-//                if(arguments.size() >= )
-                break;
-            }
-            case "edit": {
-                user.setExcepted(getCommandName(), "action").setValue(firstArg);
                 if (arguments.size() >= 2) {
-                    Optional<LocalDate> date = validate.isValidDate(arguments.get(1));
+                    Optional<LocalDate> date = validate.isValidDate(arguments.get(arguments.size() - 2) + " " + arguments.getLast());
+                    Optional<LocalDate> time = validate.isValidTime(arguments.getLast());
+                    arguments.subList(0, arguments.size() - 2);
+                } else if (!arguments.isEmpty()) {
+                    Optional<LocalDate> time = validate.isValidTime(arguments.getFirst());
+                    if (time.isPresent()) {
+                        user.setExcepted(getCommandName(), "duration").setValue(time);
+                    }
+                    user.setExcepted(getCommandName(), "duration");
+                } else {
+                    user.setExcepted(getCommandName(), "title");
+                    user.setExcepted(getCommandName(), "description");
+                    user.setExcepted(getCommandName(), "duration");
+                    return;
+                }
+                if (!arguments.isEmpty()) {
+                    user.setExcepted(getCommandName(), "title").setValue(String.join(" ", arguments));
+                } else {
+                    user.setExcepted(getCommandName(), "title");
                 }
                 break;
             }
+            case "edit": {
+            }
             case "remove": {
                 user.setExcepted(getCommandName(), "action").setValue(firstArg);
-                user.setExcepted(getCommandName(), "taskIndex").setValue(arguments.get(1));
+                if (arguments.isEmpty()) {
+                    user.setExcepted(getCommandName(), "taskIndex");
+                    return;
+                } else {
+                    Optional<Integer> taskIndex = validate.isValidInteger(arguments.getFirst());
+                    if (taskIndex.isPresent()) {
+                        user.setExcepted(getCommandName(), "taskIndex").setValue(taskIndex);
+                        return;
+                    }
+                    user.setExcepted(getCommandName(), "taskIndex");
+                }
                 break;
             }
             case "list": {
                 user.setExcepted(getCommandName(), "action").setValue(firstArg);
-                break;
-            }
-            default: {
                 return;
             }
         }
@@ -76,6 +107,24 @@ public class TaskCommand implements BaseCommand {
         switch (action) {
             case "create": {
                 create(interaction, user);
+                break;
+            }
+            case "edit": {
+                edit(interaction, user);
+                break;
+            }
+            case "remove": {
+                remove(interaction, user);
+                break;
+            }
+            case "list": {
+                list(interaction, user);
+                break;
+            }
+            default: {
+                user.setExcepted(getCommandName(), "action");
+                logger.info("Task command requested a action argument");
+                output.output(interaction.setMessage("Enter action (create, edit, remove, list): ").setInline(true));
                 break;
             }
         }
@@ -109,5 +158,47 @@ public class TaskCommand implements BaseCommand {
 
         user.addTask(new Task(interaction.getUserId(), interaction.getChatId(), title, description));
         user.clearExpected(getCommandName());
+    }
+
+    public void remove(Interaction interaction, User user){
+        logger.debug("Remove task is start");
+        if (!user.isExceptedKey(getCommandName(), "taskIndex")){
+            user.setExcepted(getCommandName(), "taskIndex");
+            output.output(interaction.setMessage("Enter the taskIndex:"));
+            logger.debug("Task command requested a taskIndex");
+        }
+        long taskId = (long) user.getValue(getCommandName(), "taskIndex");
+        user.getTasks(interaction.getChatId()).remove(taskId);
+    }
+
+    public void edit(Interaction interaction, User user) {
+        logger.debug("Remove task is start");
+        if (!user.isExceptedKey(getCommandName(), "taskIndex")){
+            user.setExcepted(getCommandName(), "taskIndex");
+            output.output(interaction.setMessage("Enter the taskIndex:"));
+            logger.debug("Task command requested a taskIndex");
+        }
+        if (!user.isExceptedKey(getCommandName(), "duration")) {
+            user.setExcepted(getCommandName(), "duration");
+            output.output(interaction.setMessage("Enter the duration or \"/skip\" if you don't need duration:"));
+            logger.debug("Task command requested a duration");
+        }
+        if (!user.isExceptedKey(getCommandName(), "description")) {
+            user.setExcepted(getCommandName(), "description");
+            output.output(interaction.setMessage("Enter the description or \"/skip\" if you don't need description:"));
+            logger.debug("Task command requested a description");
+        }
+
+        String title = (String) user.getValue(getCommandName(), "title");
+        String description = (String) user.getValue(getCommandName(), "description");
+
+        if (description.equals("/skip")) {
+            description = "";
+        }
+        long taskId = (long) user.getValue(getCommandName(), "taskIndex");
+        Task editedTask = user.getTasks(interaction.getChatId()).get(taskId);
+        user.getTasks(interaction.getChatId()).remove(taskId);
+
+
     }
 }

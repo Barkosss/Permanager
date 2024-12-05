@@ -27,6 +27,7 @@ public class User {
     // ...
     Map<Long, Map<Long, Reminder>> reminders;
 
+    // <chatId: <taskId: task>>
     Map<Long, Map<Long, Task>> tasks;
 
     // ...
