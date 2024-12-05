@@ -72,6 +72,8 @@ public class TaskCommand implements BaseCommand {
                 }
                 break;
             }
+            case "edit": {
+            }
             case "remove": {
                 user.setExcepted(getCommandName(), "action").setValue(firstArg);
                 if (arguments.isEmpty()) {
