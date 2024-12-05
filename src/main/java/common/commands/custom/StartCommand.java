@@ -19,16 +19,10 @@ public class StartCommand implements BaseCommand {
     }
 
     @Override
-    public void parseArgs(Interaction interaction, User user) {
-
-    }
+    public void parseArgs(Interaction interaction, User user) {}
 
     @Override
     public void run(Interaction interaction) {
-        String message;
-
-        message = interaction.getLanguageValue("start.message");
-
-        output.output(interaction.setMessage(message));
+        output.output(interaction.setLanguageValue("start.message"));
     }
 }

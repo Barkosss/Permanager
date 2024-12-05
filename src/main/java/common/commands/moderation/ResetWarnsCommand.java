@@ -7,7 +7,7 @@ import common.models.User;
 public class ResetWarnsCommand implements BaseCommand {
     @Override
     public String getCommandName() {
-        return "resetwarns";
+        return "resetWarns";
     }
 
     @Override

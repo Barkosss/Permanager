@@ -8,10 +8,14 @@ import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Main {
 
+    public static List<String> arguments;
+
     public static void main(String[] args) {
+        arguments = List.of(args);
         LoggerHandler logger = new LoggerHandler();
         JSONHandler jsonHandler = new JSONHandler();
         logger.debug("----------------");
@@ -36,7 +40,7 @@ public class Main {
                 }
 
             } catch (Exception err) {
-                logger.error("Telegram authorization: " + err);
+                logger.error(String.format("Telegram authorization: %s", err));
                 System.exit(511);
             }
 
@@ -44,6 +48,7 @@ public class Main {
             interaction = new InteractionTelegram(bot, new Timestamp(System.currentTimeMillis() / 1000).getTime());
         }
 
+        logger.debug("Test debug info", true);
         // Вызываем взаимодействие с нужной платформой
         commandHandler.launch(interaction, platform);
     }

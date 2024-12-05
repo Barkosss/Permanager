@@ -49,6 +49,11 @@ public class KickCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
+        if (!user.hasPermission(interaction.getChatId(), User.Permissions.KICK)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            return;
+        }
+
         // Парсинг аргументов
         parseArgs(interactionTelegram, user);
 
@@ -79,13 +84,13 @@ public class KickCommand implements BaseCommand {
 
         try {
             long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
-            String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
             interactionTelegram.telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
             interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been kicked");
-            output.output(interactionTelegram.setMessage("The user @"
-                    + username
-                    + " has been kicked with reason: " + user.getValue(getCommandName(), "reason")));
+            String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
+            output.output(interactionTelegram.setMessage(String.format("The user @%s has been kicked with reason: %s",
+                    username, user.getValue(getCommandName(), "reason"))));
+
         } catch (Exception err) {
             output.output(interaction.setMessage("Something went wrong... :("));
             logger.error("Kick command: " + err);

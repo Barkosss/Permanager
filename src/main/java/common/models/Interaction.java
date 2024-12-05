@@ -1,7 +1,6 @@
 package common.models;
 
-import com.pengrad.telegrambot.model.Message;
-
+import common.exceptions.WrongArgumentsException;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
@@ -19,7 +18,7 @@ public interface Interaction {
         RUSSIAN("ru"),
         ENGLISH("en");
 
-        private String lang;
+        private final String lang;
 
         Language(String lang) {
             this.lang = lang;
@@ -29,6 +28,8 @@ public interface Interaction {
             return lang;
         }
     }
+
+    UserRepository getUserRepository();
 
     Interaction setUserRepository(UserRepository userRepository);
 
@@ -66,5 +67,11 @@ public interface Interaction {
 
     Interaction setContent(Content content);
 
+    Interaction setLanguageValue(String languageKey);
+
+    Interaction setLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException;
+
     String getLanguageValue(String languageKey);
+
+    String getLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException;
 }

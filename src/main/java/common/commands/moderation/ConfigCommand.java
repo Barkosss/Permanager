@@ -24,25 +24,33 @@ public class ConfigCommand implements BaseCommand {
 
     public void parseArgs(Interaction interaction, User user) {
         List<String> arguments = interaction.getArguments();
+
         if (arguments.isEmpty()) {
             return;
         }
+
         String argument = arguments.getFirst().toLowerCase();
         if (List.of("dashboard", "user", "group").contains(argument)) {
             user.setExcepted(getCommandName(), "section").setValue(argument);
-            logger.debug("Parse arguments from chatId(" + interaction.getChatId()
-                    + ", userId=" + interaction.getUserId() + "), with argument=" + argument);
+            logger.debug(String.format("Parse arguments from chatId(%s, userId=%s), with argument=%s",
+                    interaction.getChatId(), interaction.getUserId(), argument));
         }
     }
 
     @Override
     public void run(Interaction interaction) {
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandConsole"));
             return;
         }
 
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
+
+        if (!user.hasPermission(interaction.getChatId(), User.Permissions.CONFIG)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            return;
+        }
 
         if (!user.isExceptedKey(getCommandName(), "section")) {
             user.setExcepted(getCommandName(), "section");

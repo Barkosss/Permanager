@@ -10,6 +10,9 @@ public class Server {
     // Список модераторов/администраторов сервера (Общее название - администраторы)
     public List<Member> members;
 
+    // Список групп
+    public List<Group> groups;
+
     // Стандартные права доступа
     public Permissions defaultPermissions;
 

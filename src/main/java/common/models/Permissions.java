@@ -2,35 +2,35 @@ package common.models;
 
 public class Permissions {
 
+    // Имеет доступ к настройкам
+    boolean canConfig;
+
     // Имеет ли возможность кикать
-    public boolean canKick;
+    boolean canKick;
 
     // Имеет ли возможность выдавать бан
-    public boolean canBan;
+    boolean canBan;
 
     // Имеет ли возможность снимать бан
-    public boolean canUnban;
+    boolean canUnban;
 
     // Имеет ли возможность выдавать мут
-    public boolean canMute;
+    boolean canMute;
 
     // Имеет ли возможность снимать мут
-    public boolean canUnMute;
+    boolean canUnMute;
 
     // Имеет ли возможность выдавать предупреждение
-    public boolean canWarn;
+    boolean canWarn;
 
     // Имеет ли возможность снимать предупреждение
-    public boolean canRemWarn;
+    boolean canRemWarn;
 
     // Имеет ли возможность обнулять предупреждения
-    public boolean canResetWarn;
+    boolean canResetWarn;
 
     // Имеет ли возможность очищать сообщение(-я) в чате
-    public boolean canClear;
-
-    // Имеет ли возможность выдавать временную роль
-    public boolean canGiveTempRole;
+    boolean canClear;
 
     public Permissions() {
         this.canKick = false;
@@ -42,22 +42,21 @@ public class Permissions {
         this.canRemWarn = false;
         this.canResetWarn = false;
         this.canClear = false;
-        this.canGiveTempRole = false;
     }
 
-    public Permissions(boolean canKick, boolean canBan, boolean canUnban,
-                       boolean canMute, boolean canUnMute, boolean canWarn,
-                       boolean canRemWarn, boolean canResetWarn, boolean canClear, boolean canGiveTempRole) {
-        this.canKick = canKick;
-        this.canBan = canBan;
-        this.canUnban = canUnban;
-        this.canMute = canMute;
-        this.canUnMute = canUnMute;
-        this.canWarn = canWarn;
-        this.canRemWarn = canRemWarn;
-        this.canResetWarn = canResetWarn;
-        this.canClear = canClear;
-        this.canGiveTempRole = canGiveTempRole;
+    public boolean canPermission(User.Permissions permission) {
+        return switch (permission) {
+            case KICK -> this.canKick;
+            case BAN -> this.canBan;
+            case UNBAN -> this.canUnban;
+            case MUTE -> this.canMute;
+            case UNMUTE -> this.canUnMute;
+            case WARN -> this.canWarn;
+            case REMWARN -> this.canRemWarn;
+            case RESETWARNS -> this.canResetWarn;
+            case CLEAR -> this.canClear;
+            case CONFIG -> this.canConfig;
+        };
     }
 
     // Получить, имеет ли пользователь доступ к kick
@@ -148,15 +147,5 @@ public class Permissions {
     // Установить значение, имеет ли пользователь доступ к clear
     public void setCanClear(boolean canClear) {
         this.canClear = canClear;
-    }
-
-    // Получить, имеет ли пользователь доступ к temprole
-    public boolean getCanGiveTempRole() {
-        return canGiveTempRole;
-    }
-
-    // Установить значение, имеет ли пользователь доступ к temprole
-    public void setCanGiveTempRole(boolean canGiveTempRole) {
-        this.canGiveTempRole = canGiveTempRole;
     }
 }

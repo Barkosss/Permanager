@@ -64,6 +64,7 @@ public class Validate {
         String[] patterns = {
             "HH:mm dd.MM.yyyy",
             "HH:mm:ss dd.MM.yyyy",
+            "HH:mm:ss dd.MM.yyyy",
             "HH:mm dd.MM.yy",
             "HH:mm:ss dd.MM.yy",
             "dd.MM.yyyy HH:mm",

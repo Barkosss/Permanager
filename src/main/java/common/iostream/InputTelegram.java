@@ -1,6 +1,8 @@
 package common.iostream;
 
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.ChatMember;
+import com.pengrad.telegrambot.model.ChatMemberUpdated;
 import com.pengrad.telegrambot.model.Update;
 import common.CommandHandler;
 import common.models.Content;
@@ -13,16 +15,34 @@ import java.util.List;
 
 public class InputTelegram {
     LoggerHandler logger = new LoggerHandler();
+    OutputHandler output = new OutputHandler();
 
     public void read(Interaction interaction, CommandHandler commandHandler) {
+        InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
         // Обработка всех изменений
-        ((InteractionTelegram) interaction).telegramBot.setUpdatesListener(updates -> {
+        interactionTelegram.telegramBot.setUpdatesListener(updates -> {
             List<Content> contents = new ArrayList<>();
 
             Interaction.Language language;
             for (Update update : updates) {
+                ChatMemberUpdated chatMember = update.myChatMember();
+                logger.debug("ChatMember: " + chatMember);
 
+                // Проверка, добавили ли бота в беседу
+                if (chatMember != null && chatMember.oldChatMember().status().equals(ChatMember.Status.left)
+                        && chatMember.newChatMember().status().equals(ChatMember.Status.member)
+                        && chatMember.from().username().equals("PermanagerBot")) {
+                    long chatId = chatMember.chat().id();
+                    output.output(interactionTelegram.setChatId(chatId)
+                            .setMessage(String.format(
+                                    "Вы добавили меня в чат: %d. Воспользуйтесь командой /start для ознакомления",
+                                    chatId
+                            )));
+                    continue;
+                }
+
+                // Проверка на содержимое сообщения
                 if (update.message() == null || update.message().text() == null || update.message().chat() == null) {
                     continue;
                 }
@@ -46,7 +66,7 @@ public class InputTelegram {
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));
-                logger.debug("Add new content: " + contents.getLast());
+                logger.debug(String.format("Add new content: %s", contents.getLast()));
             }
 
             commandHandler.launchCommand(interaction, contents);
@@ -57,9 +77,9 @@ public class InputTelegram {
             // Создать обработчик исключений
         }, err -> {
             if (err.response() != null) {
-                logger.error("Telegram updates listener (Bad response): " + err);
+                logger.error(String.format("Telegram updates listener (Bad response): %s", err));
             } else {
-                logger.error("Telegram updates listener (Network): " + err);
+                logger.error(String.format("Telegram updates listener (Network): %s", err));
             }
         });
     }
