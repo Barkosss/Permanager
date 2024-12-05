@@ -101,7 +101,7 @@ public class CommandHandler {
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
-            userRepository.create(0,0L);
+            userRepository.create(0, 0L);
             // Поток для Console
             Thread threadConsole = new Thread(() ->
                     inputConsole.listener(new InteractionConsole()
@@ -121,7 +121,6 @@ public class CommandHandler {
 
         for (Content content : contents) {
             interaction.setContent(content);
-            String message = content.message();
 
             // Если сообщение в Telegram было отправлено во время offline
             if (content.platform() == Interaction.Platform.TELEGRAM
@@ -130,12 +129,11 @@ public class CommandHandler {
             }
 
             // сли пользователь отсутствует в памяти
-            System.out.println("if: " + interaction.getUserRepository().existsById(content.chat().id(), content.userId()));
             if (!interaction.getUserRepository().existsById(content.chat().id(), content.userId())) {
                 interaction.getUserRepository().create(content.chat().id(), content.userId());
-                System.out.println("Create: " + interaction.getUserRepository().existsById(content.chat().id(), content.userId()));
             }
 
+            String message = content.message();
             List<String> args = List.of(message.split(" "));
             String commandName = args.getFirst().toLowerCase().substring(1);
 

@@ -64,7 +64,8 @@ public class User {
     }
 
     public InputExpectation.UserInputType getInputType() {
-        return Objects.requireNonNullElse(this.userInputExpectation.userInputType, InputExpectation.UserInputType.STRING);
+        return Objects.requireNonNullElse(this.userInputExpectation.userInputType,
+                InputExpectation.UserInputType.STRING);
     }
 
     public void setValue(Object value) {

@@ -1,6 +1,7 @@
 package common.iostream;
 
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.ChatMemberUpdated;
 import com.pengrad.telegrambot.model.Update;
 import common.CommandHandler;
 import common.models.Content;
@@ -13,26 +14,29 @@ import java.util.List;
 
 public class InputTelegram {
     LoggerHandler logger = new LoggerHandler();
+    OutputHandler output = new OutputHandler();
 
     public void read(Interaction interaction, CommandHandler commandHandler) {
+        InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
         // Обработка всех изменений
-        ((InteractionTelegram) interaction).telegramBot.setUpdatesListener(updates -> {
+        interactionTelegram.telegramBot.setUpdatesListener(updates -> {
             List<Content> contents = new ArrayList<>();
 
-            System.out.println(updates);
             Interaction.Language language;
             for (Update update : updates) {
-                System.out.println("-----------------");
-                System.out.println("Add new chat: " + update.myChatMember());
-                try {
-                    System.out.println("Status: " + update.myChatMember().newChatMember().user().username().equals("PermanagerBot"));
-                } catch (NullPointerException err) {
-                    System.out.println("Status err: " + err);
+                ChatMemberUpdated chatMember = update.myChatMember();
+
+                // Проверка, добавили ли бота в беседу
+                if (chatMember != null && chatMember.viaJoinRequest()) {
+                    long chatId = chatMember.chat().id();
+                    output.output(interactionTelegram.setChatId(chatId)
+                            .setMessage("Вы добавили меня в чат: " + chatId));
+                    continue;
                 }
-                System.out.println("-----------------");
-                break;
-                /* if (update.message() == null || update.message().text() == null || update.message().chat() == null) {
+
+                // Проверка на содержимое сообщения
+                if (update.message() == null || update.message().text() == null || update.message().chat() == null) {
                     continue;
                 }
 
@@ -55,7 +59,7 @@ public class InputTelegram {
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));
-                logger.debug(String.format("Add new content: %s", contents.getLast()));*/
+                logger.debug(String.format("Add new content: %s", contents.getLast()));
             }
 
             commandHandler.launchCommand(interaction, contents);
