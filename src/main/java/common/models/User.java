@@ -42,7 +42,7 @@ public class User {
     // Список напоминаний
     Map<Long, Map<Long, Reminder>> reminders;
 
-    // ...
+    // Список задач
     Map<Long, Map<Long, Task>> tasks;
 
     // Список предупреждений
