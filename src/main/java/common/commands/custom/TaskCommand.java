@@ -71,8 +71,6 @@ public class TaskCommand implements BaseCommand {
                 }
                 break;
             }
-            case "edit": {
-            }
             case "remove": {
                 user.setExcepted(getCommandName(), "action").setValue(firstArg);
                 if (arguments.isEmpty()) {
@@ -203,7 +201,9 @@ public class TaskCommand implements BaseCommand {
         long taskId = (long) user.getValue(getCommandName(), "taskIndex");
         Task editedTask = user.getTasks(interaction.getChatId()).get(taskId);
         user.getTasks(interaction.getChatId()).remove(taskId);
+    }
 
-
+    public void list(Interaction interaction, User user) {
+        return;
     }
 }
