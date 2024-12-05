@@ -102,4 +102,42 @@ public class LoggerHandler {
         }
         error(message);
     }
+
+    public void warning(String message) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
+            String log = String.format("[WARNING]\t[%s]\t%s",
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())), message);
+
+            writer.write(log); // Форматируем и записываем сообщение в файл
+            writer.newLine();  // Переход на новую строку
+        } catch (IOException err) {
+            System.out.printf("Log message isn't write in \"%s\" file\n", logFileName);
+        }
+    }
+
+    public void warning(String message, boolean inConsole) {
+        if (inConsole) {
+            System.out.printf("WARNING: %s\n", message);
+        }
+        warning(message);
+    }
+
+    public void critical(String message) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
+            String log = String.format("[CRITICAL]\t[%s]\t%s",
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())), message);
+
+            writer.write(log); // Форматируем и записываем сообщение в файл
+            writer.newLine();  // Переход на новую строку
+        } catch (IOException err) {
+            System.out.printf("Log message isn't write in \"%s\" file\n", logFileName);
+        }
+    }
+
+    public void critical(String message, boolean inConsole) {
+        if (inConsole) {
+            System.out.printf("CRITICAL: %s\n", message);
+        }
+        critical(message);
+    }
 }

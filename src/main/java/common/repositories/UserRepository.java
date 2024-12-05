@@ -16,20 +16,22 @@ public class UserRepository {
     }
 
     // Создать пользователя в памяти
-    public void create(long chatId, long userId) {
+    public User create(long chatId, long userId) {
         if (!users.containsKey(chatId)) {
             users.put(chatId, new HashMap<>());
         }
 
         if (users.get(chatId).containsKey(userId)) {
-            return;
+            return users.get(chatId).get(userId);
         }
         logger.debug("User by id(" + userId + ") is create in chat by id(" + chatId + ")");
         try {
-            users.get(chatId).put(userId, new User(userId));
+            User user = users.get(chatId).put(userId, new User(userId));
+            return user;
         } catch (Exception err) {
             System.out.println("Err: " + err);
         }
+        return null;
     }
 
     // Найти пользователя по ID
@@ -40,7 +42,7 @@ public class UserRepository {
 
         if (!users.containsKey(userId)) {
             logger.error("Member by id(" + userId + ") is not found in chat by id(" + chatId + ")");
-            throw new MemberNotFoundException();
+            return create(chatId, userId);
         }
 
 
