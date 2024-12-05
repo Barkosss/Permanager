@@ -15,22 +15,24 @@ public class WarningRepository {
     }
 
     // Создать пользователя в памяти
-    public void create(long warningId) {
+    public Warning create(long warningId) {
         if (warnings.containsKey(warningId)) {
-            return;
+            return null;
         }
-        logger.debug("Warning by id(" + warningId + ") is create");
-        warnings.put(warningId, new Warning());
+        logger.debug(String.format("Warning by id(%s) is create", warningId));
+        Warning warning = new Warning(warningId);
+        warnings.put(warningId, warning);
+        return warning;
     }
 
     // Найти пользователя по ID
     public Warning findById(long warningId) {
         Warning warning;
         if ((warning = warnings.get(warningId)) != null) {
-            logger.debug("Warning by id(" + warningId + ") is find");
+            logger.debug(String.format("Warning by id(%s) is find", warningId));
             return warning;
         }
-        logger.error("Warning by id(" + warningId + ") is not found");
+        logger.error(String.format("Warning by id(%s) is not found", warningId));
         return null;
     }
 

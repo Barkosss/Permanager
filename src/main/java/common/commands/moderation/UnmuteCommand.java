@@ -37,6 +37,11 @@ public class UnmuteCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
+        if (!user.hasPermission(interaction.getChatId(), User.Permissions.UNMUTE)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            return;
+        }
+
         if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
             output.output(interaction.setMessage("This command is not available for private chat"));
             return;

@@ -18,26 +18,30 @@ public class ReminderHandler {
         List<Reminder> reminders;
 
         while (true) {
-            // Проверка на наличие напоминаний на текущее время
-            if (reminderRepository.existsByTimestamp(timestamp)) {
-                reminders = reminderRepository.findByTimestamp(timestamp);
+            try {
+                // Проверка на наличие напоминаний на текущее время
+                if (reminderRepository.existsByTimestamp(timestamp)) {
+                    reminders = reminderRepository.findByTimestamp(timestamp);
 
-                // Проходимся по всем напоминаниям на текущее время
-                for (Reminder reminder : reminders) {
-                    // Проверка на платформу
-                    if (reminder.getPlatform() == Interaction.Platform.TELEGRAM) {
-                        interaction = ((InteractionTelegram) interaction).setChatId(reminder.getChatId());
+                    // Проходимся по всем напоминаниям на текущее время
+                    for (Reminder reminder : reminders) {
+                        // Проверка на платформу
+                        if (reminder.getPlatform() == Interaction.Platform.TELEGRAM) {
+                            interaction = ((InteractionTelegram) interaction).setChatId(reminder.getChatId());
+                        }
+
+                        logger.info(String.format("The reminder was sent to the user id(%s, chatId=%s",
+                                reminder.getUserId(), reminder.getChatId()));
+                        output.output(interaction.setMessage(reminder.getContent()));
                     }
-
-                    logger.info("The reminder was sent to the user id(" + reminder.getUserId()
-                            + ", chatId=" + reminder.getChatId() + ")");
-                    output.output(interaction.setMessage(reminder.getContent()));
+                    logger.info(String.format("Reminder(s) for timestamp(%s) has been deleted(s)", timestamp));
+                    reminderRepository.remove(timestamp);
                 }
-                logger.info("Reminder(s) for timestamp(" + timestamp + ") has been deleted(s)");
-                reminderRepository.remove(timestamp);
-            }
 
-            timestamp = System.currentTimeMillis() / 1000;
+                timestamp = System.currentTimeMillis() / 1000;
+            } catch (Exception err) {
+                logger.error(String.format("ReminderHandler: %s", err));
+            }
         }
     }
 }

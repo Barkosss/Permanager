@@ -12,7 +12,7 @@ public class JSONHandler {
 
     public Object read(String pathJSON, String keys) {
         try {
-            Object object = new JSONParser().parse(new FileReader("./src/main/resources/" + pathJSON));
+            Object object = new JSONParser().parse(new FileReader(String.format("./src/main/resources/%s", pathJSON)));
             JSONObject jsonObject = (JSONObject) object;
             for (Object key : keys.split("\\.")) {
                 try {
@@ -23,14 +23,14 @@ public class JSONHandler {
             }
             return jsonObject;
         } catch (IOException | ParseException err) {
-            logger.error("JSONHandler (read): " + err);
+            logger.error(String.format("JSONHandler (read): %s", err));
             return null;
         }
     }
 
     public boolean check(String pathJSON, String keys) {
         try {
-            Object object = new JSONParser().parse(new FileReader("./src/main/resources/" + pathJSON));
+            Object object = new JSONParser().parse(new FileReader(String.format("./src/main/resources/%s", pathJSON)));
             JSONObject jsonObject = (JSONObject) object;
             for (Object key : keys.split("\\.")) {
                 try {

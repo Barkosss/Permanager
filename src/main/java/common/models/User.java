@@ -4,12 +4,27 @@ import common.repositories.WarningRepository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
 
 public class User {
 
     public enum InputStatus {
         WAITING,
         COMPLETED
+    }
+
+    public enum Permissions {
+        BAN,
+        UNBAN,
+        MUTE,
+        UNMUTE,
+        KICK,
+        WARN,
+        REMWARN,
+        RESETWARNS,
+        CLEAR,
+        CONFIG
     }
 
     // Идентификатор пользователя
@@ -21,16 +36,16 @@ public class User {
     // Состояние ввода
     InputStatus inputStatus;
 
-    // ...
-    Map<Long, Member> members;
+    // ChatId -> Модератор
+    Map<Long, Member> moderators;
 
-    // ...
+    // Список напоминаний
     Map<Long, Map<Long, Reminder>> reminders;
 
-    // <chatId: <taskId: task>>
+    // Список задач
     Map<Long, Map<Long, Task>> tasks;
 
-    // ...
+    // Список предупреждений
     Map<Server, WarningRepository> warnings = new HashMap<>();
 
     public User(long userId) {
@@ -48,8 +63,16 @@ public class User {
         return inputStatus;
     }
 
+    public InputExpectation.UserInputType getInputType() {
+        return Objects.requireNonNullElse(this.userInputExpectation.userInputType,
+                InputExpectation.UserInputType.STRING);
+    }
+
     public void setValue(Object value) {
         InputExpectation inputExpectation = this.userInputExpectation;
+        if (inputExpectation.expectedCommandName == null) {
+            return;
+        }
         inputExpectation.getExpectedInputs().get(inputExpectation.expectedCommandName)
                 .put(inputExpectation.expectedInputKey, value);
     }
@@ -71,7 +94,13 @@ public class User {
 
     public User setExcepted(String commandName, String valueKey) {
         this.inputStatus = InputStatus.WAITING;
-        this.userInputExpectation.setExpected(commandName, valueKey);
+        this.userInputExpectation.setExpected(commandName, valueKey, InputExpectation.UserInputType.STRING);
+        return this;
+    }
+
+    public User setExcepted(String commandName, String valueKey, InputExpectation.UserInputType inputType) {
+        this.inputStatus = InputStatus.WAITING;
+        this.userInputExpectation.setExpected(commandName, valueKey, inputType);
         return this;
     }
 
@@ -148,5 +177,15 @@ public class User {
             this.tasks.put(chatId, new HashMap<>());
         }
         return this.tasks.get(chatId);
+    }
+
+    public boolean hasPermission(long chatId, Permissions permission) {
+        Member member = moderators.get(chatId);
+
+        if (member == null) {
+            return false;
+        }
+
+        return member.permissions.canPermission(permission);
     }
 }

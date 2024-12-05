@@ -43,6 +43,11 @@ public class TaskCommand implements BaseCommand {
         arguments = arguments.subList(1, arguments.size() - 1);
         switch (firstArg) {
             case "create": {
+                // if(arguments.size() >= )
+                break;
+            }
+            case "edit": {
+                user.setExcepted(getCommandName(), "action").setValue(firstArg);
                 if (arguments.size() >= 2) {
                     Optional<LocalDate> date = validate.isValidDate(arguments.get(arguments.size() - 2) + " " + arguments.getLast());
                     Optional<LocalDate> time = validate.isValidTime(arguments.getLast());

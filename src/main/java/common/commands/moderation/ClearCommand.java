@@ -55,8 +55,14 @@ public class ClearCommand implements BaseCommand {
             output.output(interaction.setMessage("This command is not available for the console"));
             return;
         }
+
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
+
+        if (!user.hasPermission(interaction.getChatId(), User.Permissions.CLEAR)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            return;
+        }
 
         // Парсинг аргументов
         parseArgs(interactionTelegram, user);
