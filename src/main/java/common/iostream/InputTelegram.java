@@ -89,18 +89,21 @@ public class InputTelegram {
                     ChatMember creator = new ChatMember();
 
                     // Найти владельца чата
-                    GetChatAdministratorsResponse administrators = interactionTelegram.telegramBot.execute(new GetChatAdministrators(chatId));
-                    for(ChatMember administrator : administrators.administrators()) {
+                    GetChatAdministratorsResponse administrators = interactionTelegram.telegramBot
+                            .execute(new GetChatAdministrators(chatId));
+                    for (ChatMember administrator : administrators.administrators()) {
                         if (administrator.status().equals(ChatMember.Status.creator)) {
                             creator = administrator;
                             break;
                         }
                     }
 
-                    output.output(interactionTelegram.setChatId(chatId)
+                    output.output(interactionTelegram
+                            .setChatId(chatId)
                             .setMessage(String.format(
-                                    "Вы добавили меня в чат: %d. Воспользуйтесь командой /start для ознакомления. Создатель: @%s",
-                                    chatId, creator.user().username()
+                                "Вы добавили меня в чат: %d. Воспользуйтесь командой /start для ознакомления."
+                                        + "Создатель: @%s",
+                                chatId, creator.user().username()
                             )));
 
 

@@ -71,7 +71,10 @@ public class LoggerHandler {
     private void createLog(String message, LoggerStatus status) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
             String log = String.format("[%s]\t[%s]\t%s",
-                    status.getName(), LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())), message);
+                    status.getName(),
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())),
+                    message
+            );
 
             writer.write(log); // Форматируем и записываем сообщение в файл
             writer.newLine();  // Переход на новую строку
