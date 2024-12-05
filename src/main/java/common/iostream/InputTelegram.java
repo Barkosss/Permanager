@@ -1,6 +1,7 @@
 package common.iostream;
 
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.ChatMemberUpdated;
 import com.pengrad.telegrambot.model.Update;
 import common.CommandHandler;
@@ -26,12 +27,18 @@ public class InputTelegram {
             Interaction.Language language;
             for (Update update : updates) {
                 ChatMemberUpdated chatMember = update.myChatMember();
+                logger.debug("ChatMember: " + chatMember);
 
                 // Проверка, добавили ли бота в беседу
-                if (chatMember != null && chatMember.viaJoinRequest()) {
+                if (chatMember != null && chatMember.oldChatMember().status().equals(ChatMember.Status.left)
+                        && chatMember.newChatMember().status().equals(ChatMember.Status.member)
+                        && chatMember.from().username().equals("PermanagerBot")) {
                     long chatId = chatMember.chat().id();
                     output.output(interactionTelegram.setChatId(chatId)
-                            .setMessage("Вы добавили меня в чат: " + chatId));
+                            .setMessage(String.format(
+                                    "Вы добавили меня в чат: %d. Воспользуйтесь командой /start для ознакомления",
+                                    chatId
+                            )));
                     continue;
                 }
 
