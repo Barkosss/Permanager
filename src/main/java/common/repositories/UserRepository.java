@@ -26,10 +26,9 @@ public class UserRepository {
         }
         logger.debug("User by id(" + userId + ") is create in chat by id(" + chatId + ")");
         try {
-            User user = users.get(chatId).put(userId, new User(userId));
-            return user;
+            return users.get(chatId).put(userId, new User(userId));
         } catch (Exception err) {
-            System.out.println("Err: " + err);
+            logger.error(String.format("User repository (Create), chatId=%d, userId=%d: %s", chatId, userId, err));
         }
         return null;
     }
@@ -41,7 +40,7 @@ public class UserRepository {
         }
 
         if (!users.containsKey(userId)) {
-            logger.error("Member by id(" + userId + ") is not found in chat by id(" + chatId + ")");
+            logger.error(String.format("Member by id(%d) is not found in chat by id(%d)", userId, chatId));
             return create(chatId, userId);
         }
 
