@@ -33,6 +33,8 @@ public interface Interaction {
 
     Interaction setUserRepository(UserRepository userRepository);
 
+    ServerRepository getServerRepository();
+
     Interaction setServerRepository(ServerRepository serverRepository);
 
     Interaction setReminderRepository(ReminderRepository reminderRepository);

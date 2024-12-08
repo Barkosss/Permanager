@@ -8,12 +8,12 @@ import common.repositories.ReminderRepository;
 
 import java.util.List;
 
-public class ReminderHandler {
+public class SystemService {
     OutputHandler output = new OutputHandler();
     LoggerHandler logger = new LoggerHandler();
     ReminderRepository reminderRepository = new ReminderRepository();
 
-    public void run(Interaction interaction) {
+    public void reminderHandler(Interaction interaction) {
         long timestamp = System.currentTimeMillis() / 1000;
         List<Reminder> reminders;
 
@@ -43,5 +43,13 @@ public class ReminderHandler {
                 logger.error(String.format("ReminderHandler: %s", err));
             }
         }
+    }
+
+    public void banHandler(Interaction interaction) {
+
+    }
+
+    public void muteHandler(Interaction interaction) {
+
     }
 }

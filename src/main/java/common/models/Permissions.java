@@ -2,6 +2,29 @@ package common.models;
 
 public class Permissions {
 
+    public enum Permission {
+        KICK("KICK"),
+        BAN("BAN"),
+        UNBAN("UNBAN"),
+        MUTE("MUTE"),
+        UNMUTE("UNMUTE"),
+        WARN("WARN"),
+        REMWARN("REMWARN"),
+        RESETWARNS("RESETWARNS"),
+        CLEAR("CLEAR"),
+        CONFIG("CONFIG");
+
+        final String permission;
+
+        Permission(String permission) {
+            this.permission = permission;
+        }
+
+        public String getPermission() {
+            return permission;
+        }
+    }
+
     // Имеет доступ к настройкам
     boolean canConfig;
 
@@ -44,7 +67,7 @@ public class Permissions {
         this.canClear = false;
     }
 
-    public boolean canPermission(User.Permissions permission) {
+    public boolean canPermission(Permission permission) {
         return switch (permission) {
             case KICK -> this.canKick;
             case BAN -> this.canBan;

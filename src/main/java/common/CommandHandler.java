@@ -4,17 +4,27 @@ import common.commands.BaseCommand;
 import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
 import common.iostream.OutputHandler;
-import common.models.*;
+import common.models.Content;
+import common.models.InputExpectation;
+import common.models.Interaction;
+import common.models.InteractionConsole;
+import common.models.InteractionTelegram;
+import common.models.User;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 import common.utils.LoggerHandler;
-import common.utils.ReminderHandler;
+import common.utils.SystemService;
 import common.utils.Validate;
 import org.reflections.Reflections;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 
 public class CommandHandler {
     LoggerHandler logger = new LoggerHandler();
@@ -93,11 +103,27 @@ public class CommandHandler {
 
         // Поток для системы напоминаний
         Thread threadReminder = new Thread(() ->
-                new ReminderHandler().run(interaction)
+                new SystemService().reminderHandler(interaction)
         );
         threadReminder.setName("Thread-Reminder");
         threadReminder.start();
         logger.info("SYSTEM: ReminderHandler is launch", true);
+
+        // Поток для системы банов
+        Thread threadBan = new Thread(() ->
+                new SystemService().banHandler(interaction)
+        );
+        threadBan.setName("Thread-Ban");
+        threadBan.start();
+        logger.info("SYSTEM: BanHandler is launch", true);
+
+        // Поток для системы мьютов
+        Thread threadMute = new Thread(() ->
+                new SystemService().muteHandler(interaction)
+        );
+        threadMute.setName("Thread-Mute");
+        threadMute.start();
+        logger.info("SYSTEM: MuteHandler is launch", true);
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {

@@ -5,11 +5,14 @@ import java.util.List;
 
 public class Task {
 
-    public long userId;
-
-    public long chatId;
     // Идентификатор задачи
     public long id;
+
+    // Идентификатор пользователя
+    public long userId;
+
+    // Идентификатор чата
+    public long chatId;
 
     // Название задачи
     public String title;

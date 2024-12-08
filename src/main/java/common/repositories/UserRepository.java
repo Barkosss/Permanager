@@ -16,20 +16,21 @@ public class UserRepository {
     }
 
     // Создать пользователя в памяти
-    public void create(long chatId, long userId) {
+    public User create(long chatId, long userId) {
         if (!users.containsKey(chatId)) {
             users.put(chatId, new HashMap<>());
         }
 
         if (users.get(chatId).containsKey(userId)) {
-            return;
+            return users.get(chatId).get(userId);
         }
         logger.debug("User by id(" + userId + ") is create in chat by id(" + chatId + ")");
         try {
-            users.get(chatId).put(userId, new User(userId));
+            return users.get(chatId).put(userId, new User(userId));
         } catch (Exception err) {
-            System.out.println("Err: " + err);
+            logger.error(String.format("User repository (Create), chatId=%d, userId=%d: %s", chatId, userId, err));
         }
+        return null;
     }
 
     // Найти пользователя по ID
@@ -38,9 +39,9 @@ public class UserRepository {
             users.put(chatId, new HashMap<>());
         }
 
-        if (!users.containsKey(userId)) {
-            logger.error("Member by id(" + userId + ") is not found in chat by id(" + chatId + ")");
-            throw new MemberNotFoundException();
+        if (!users.get(chatId).containsKey(userId)) {
+            logger.error(String.format("Member by id(%d) is not found in chat by id(%d)", userId, chatId));
+            return create(chatId, userId);
         }
 
 
