@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Logger;
 
 public class LoggerHandler {
 
@@ -64,7 +65,7 @@ public class LoggerHandler {
         if (inConsole) {
             System.out.printf(status.getName() + ": %s\n", message);
         }
-        createLog(message, LoggerCodes.INFO);
+        writeLog(message, LoggerStatus.INFO);
     }
 
     public void info(String message) {
