@@ -1,6 +1,6 @@
 package common.utils;
 
-import common.enums.LoggerCodes;
+import common.enums.LoggerStatus;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
