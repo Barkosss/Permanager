@@ -1,6 +1,6 @@
 package common.utils;
 
-import common.enums.ErrorCategories;
+import common.enums.LoggerStatus;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -46,9 +46,9 @@ public class LoggerHandler {
         }
     }
 
-    public void writeLog(String message, ErrorCategories category) {
+    public void writeLog(String message, LoggerStatus status) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
-            String log = String.format("[%s]\t[%s]\t%s", category.getValue(),
+            String log = String.format("[%s]\t[%s]\t%s", status.getName(),
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())), message);
 
             writer.write(log); // Форматируем и записываем сообщение в файл
@@ -58,57 +58,57 @@ public class LoggerHandler {
         }
     }
 
-    public void writeLog(String message, ErrorCategories category, Boolean inConsole) {
+    public void writeLog(String message, LoggerStatus status, Boolean inConsole) {
         if (inConsole) {
-            System.out.printf(category.getValue() + ": %s\n", message);
+            System.out.printf(status.getName() + ": %s\n", message);
         }
     }
 
     public void info(String message) {
-        writeLog(message, ErrorCategories.INFO);
+        writeLog(message, LoggerStatus.INFO);
     }
 
     public void debug(String message) {
-        writeLog(message, ErrorCategories.DEBUG);
+        writeLog(message, LoggerStatus.DEBUG);
     }
 
     public void error(String message) {
-        writeLog(message, ErrorCategories.ERROR);
+        writeLog(message, LoggerStatus.ERROR);
     }
 
     public void warning(String message) {
-        writeLog(message, ErrorCategories.WARNING);
+        writeLog(message, LoggerStatus.WARNING);
     }
 
     public void trace(String message) {
-        writeLog(message, ErrorCategories.TRACE);
+        writeLog(message, LoggerStatus.TRACE);
     }
 
     public void fatal(String message) {
-        writeLog(message, ErrorCategories.FATAL);
+        writeLog(message, LoggerStatus.FATAL);
     }
 
     public void info(String message, Boolean inConsole) {
-        writeLog(message, ErrorCategories.INFO, inConsole);
+        writeLog(message, LoggerStatus.INFO, inConsole);
     }
 
     public void debug(String message, Boolean inConsole) {
-        writeLog(message, ErrorCategories.DEBUG, inConsole);
+        writeLog(message, LoggerStatus.DEBUG, inConsole);
     }
 
     public void error(String message, Boolean inConsole) {
-        writeLog(message, ErrorCategories.ERROR, inConsole);
+        writeLog(message, LoggerStatus.ERROR, inConsole);
     }
 
     public void warning(String message, Boolean inConsole) {
-        writeLog(message, ErrorCategories.WARNING, inConsole);
+        writeLog(message, LoggerStatus.WARNING, inConsole);
     }
 
     public void trace(String message, Boolean inConsole) {
-        writeLog(message, ErrorCategories.TRACE, inConsole);
+        writeLog(message, LoggerStatus.TRACE, inConsole);
     }
 
     public void fatal(String message, Boolean inConsole) {
-        writeLog(message, ErrorCategories.FATAL, inConsole);
+        writeLog(message, LoggerStatus.FATAL, inConsole);
     }
 }
