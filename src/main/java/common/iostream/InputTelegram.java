@@ -80,7 +80,6 @@ public class InputTelegram {
             Interaction.Language language;
             for (Update update : updates) {
                 ChatMemberUpdated chatMember = update.myChatMember();
-                logger.debug("ChatMember: " + chatMember);
 
                 // Проверка, добавили ли бота в беседу
                 if (chatMember != null && isJoinChat(interactionTelegram, chatMember)) {

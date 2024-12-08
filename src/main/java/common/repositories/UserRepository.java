@@ -39,7 +39,7 @@ public class UserRepository {
             users.put(chatId, new HashMap<>());
         }
 
-        if (!users.containsKey(userId)) {
+        if (!users.get(chatId).containsKey(userId)) {
             logger.error(String.format("Member by id(%d) is not found in chat by id(%d)", userId, chatId));
             return create(chatId, userId);
         }

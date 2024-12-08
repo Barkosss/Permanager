@@ -1,6 +1,7 @@
 package common.utils;
 
 import common.Main;
+import common.enums.LoggerCodes;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -11,25 +12,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class LoggerHandler {
-
-    // Статусы логгера
-    enum LoggerStatus {
-        INFO("INFO"),
-        DEBUG("DEBUG"),
-        ERROR("ERROR"),
-        WARNING("WARNING"),
-        CRITICAL("CRITICAL");
-
-        private final String value;
-
-        LoggerStatus(String critical) {
-            this.value = critical;
-        }
-
-        public String getName() {
-            return value;
-        }
-    }
 
     // Объект файла
     FileWriter logFile;
@@ -68,7 +50,7 @@ public class LoggerHandler {
     }
 
     // Запись лога в файл
-    private void createLog(String message, LoggerStatus status) {
+    private void createLog(String message, LoggerCodes status) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
             String log = String.format("[%s]\t[%s]\t%s",
                     status.getName(),
@@ -84,57 +66,57 @@ public class LoggerHandler {
     }
 
     public void info(String message) {
-        createLog(message, LoggerStatus.INFO);
+        createLog(message, LoggerCodes.INFO);
     }
 
     public void info(String message, boolean inConsole) {
         if (inConsole) {
             System.out.printf("INFO: %s\n", message);
         }
-        createLog(message, LoggerStatus.INFO);
+        createLog(message, LoggerCodes.INFO);
     }
 
     public void debug(String message) {
-        createLog(message, LoggerStatus.DEBUG);
+        createLog(message, LoggerCodes.DEBUG);
     }
 
     public void debug(String message, boolean inConsole) {
         if (inConsole && Main.arguments.contains("debug")) {
             System.out.printf("DEBUG: %s\n", message);
         }
-        createLog(message, LoggerStatus.DEBUG);
+        createLog(message, LoggerCodes.DEBUG);
     }
 
     public void error(String message) {
-        createLog(message, LoggerStatus.ERROR);
+        createLog(message, LoggerCodes.ERROR);
     }
 
     public void error(String message, boolean inConsole) {
         if (inConsole) {
             System.out.printf("ERROR: %s\n", message);
         }
-        createLog(message, LoggerStatus.ERROR);
+        createLog(message, LoggerCodes.ERROR);
     }
 
     public void warning(String message) {
-        createLog(message, LoggerStatus.WARNING);
+        createLog(message, LoggerCodes.WARNING);
     }
 
     public void warning(String message, boolean inConsole) {
         if (inConsole) {
             System.out.printf("WARNING: %s\n", message);
         }
-        createLog(message, LoggerStatus.WARNING);
+        createLog(message, LoggerCodes.WARNING);
     }
 
     public void critical(String message) {
-        createLog(message, LoggerStatus.CRITICAL);
+        createLog(message, LoggerCodes.CRITICAL);
     }
 
     public void critical(String message, boolean inConsole) {
         if (inConsole) {
             System.out.printf("CRITICAL: %s\n", message);
         }
-        createLog(message, LoggerStatus.CRITICAL);
+        createLog(message, LoggerCodes.CRITICAL);
     }
 }
