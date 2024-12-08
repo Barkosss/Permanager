@@ -1,6 +1,6 @@
 package common.utils;
 
-import common.enums.LoggerStatus;
+import common.enums.LoggerCodes;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Logger;
 
 public class LoggerHandler {
 
@@ -21,10 +22,12 @@ public class LoggerHandler {
     // Путь к лог файлу
     String logFilePath;
 
+    // Формат времени
     private String getTimeFormatter() {
         return "dd-MM-yyyy HH:mm:ss";
     }
 
+    // Конструктор логгера
     public LoggerHandler() {
         LocalDateTime dateNow = LocalDateTime.now();
         this.logFileName = String.format("%s.log", dateNow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
@@ -62,6 +65,7 @@ public class LoggerHandler {
         if (inConsole) {
             System.out.printf(status.getName() + ": %s\n", message);
         }
+        writeLog(message, LoggerStatus.INFO);
     }
 
     public void info(String message) {

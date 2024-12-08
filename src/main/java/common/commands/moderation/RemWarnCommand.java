@@ -3,6 +3,7 @@ package common.commands.moderation;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
+import common.models.Permissions;
 import common.models.User;
 
 public class RemWarnCommand implements BaseCommand {
@@ -33,7 +34,7 @@ public class RemWarnCommand implements BaseCommand {
 
         User user = interaction.getUser(interaction.getUserId());
 
-        if (!user.hasPermission(interaction.getChatId(), User.Permissions.REMWARN)) {
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.REMWARN)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }

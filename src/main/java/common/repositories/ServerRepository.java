@@ -1,5 +1,6 @@
 package common.repositories;
 
+import common.models.Permissions;
 import common.models.Server;
 import common.utils.LoggerHandler;
 
@@ -31,7 +32,7 @@ public class ServerRepository {
             return server;
         }
         logger.error("Server by id(" + serverId + ") is not found");
-        return null;
+        return new Server(serverId, null, new Permissions());
     }
 
     // Существует ли сервер

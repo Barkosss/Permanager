@@ -60,6 +60,10 @@ public abstract class AbstractInteraction implements Interaction {
         return this;
     }
 
+    public ServerRepository getServerRepository() {
+        return serverRepository;
+    }
+
     public Interaction setServerRepository(ServerRepository serverRepository) {
         this.serverRepository = serverRepository;
         return this;

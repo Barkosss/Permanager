@@ -10,6 +10,7 @@ import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.Validate;
@@ -63,7 +64,7 @@ public class MuteCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), User.Permissions.MUTE)) {
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.MUTE)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }
@@ -110,6 +111,7 @@ public class MuteCommand implements BaseCommand {
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
             interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), userId,
                     new ChatPermissions().canSendMessages(false)));
+            interactionTelegram.getServerRepository().findById(interaction.getChatId()).addUserMute(user);
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been muted");
             output.output(interactionTelegram.setMessage("The user @"
                     + username

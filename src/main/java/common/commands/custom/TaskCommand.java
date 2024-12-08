@@ -49,7 +49,8 @@ public class TaskCommand implements BaseCommand {
             case "edit": {
                 user.setExcepted(getCommandName(), "action").setValue(firstArg);
                 if (arguments.size() >= 2) {
-                    Optional<LocalDate> date = validate.isValidDate(arguments.get(arguments.size() - 2) + " " + arguments.getLast());
+                    Optional<LocalDate> date = validate.isValidDate(arguments.get(arguments.size() - 2)
+                            + " " + arguments.getLast());
                     Optional<LocalDate> time = validate.isValidTime(arguments.getLast());
                     arguments.subList(0, arguments.size() - 2);
                 } else if (!arguments.isEmpty()) {
@@ -70,8 +71,6 @@ public class TaskCommand implements BaseCommand {
                     user.setExcepted(getCommandName(), "title");
                 }
                 break;
-            }
-            case "edit": {
             }
             case "remove": {
                 user.setExcepted(getCommandName(), "action").setValue(firstArg);
@@ -165,9 +164,9 @@ public class TaskCommand implements BaseCommand {
         user.clearExpected(getCommandName());
     }
 
-    public void remove(Interaction interaction, User user){
+    public void remove(Interaction interaction, User user) {
         logger.debug("Remove task is start");
-        if (!user.isExceptedKey(getCommandName(), "taskIndex")){
+        if (!user.isExceptedKey(getCommandName(), "taskIndex")) {
             user.setExcepted(getCommandName(), "taskIndex");
             output.output(interaction.setMessage("Enter the taskIndex:"));
             logger.debug("Task command requested a taskIndex");
@@ -178,7 +177,7 @@ public class TaskCommand implements BaseCommand {
 
     public void edit(Interaction interaction, User user) {
         logger.debug("Remove task is start");
-        if (!user.isExceptedKey(getCommandName(), "taskIndex")){
+        if (!user.isExceptedKey(getCommandName(), "taskIndex")) {
             user.setExcepted(getCommandName(), "taskIndex");
             output.output(interaction.setMessage("Enter the taskIndex:"));
             logger.debug("Task command requested a taskIndex");

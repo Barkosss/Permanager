@@ -8,6 +8,7 @@ import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 
@@ -49,7 +50,7 @@ public class KickCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), User.Permissions.KICK)) {
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.KICK)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }
