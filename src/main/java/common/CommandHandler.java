@@ -96,7 +96,7 @@ public class CommandHandler {
                             .setServerRepository(serverRepository)
                             .setReminderRepository(reminderRepository), this)
             );
-            threadTelegram.setName(String.format("Thread-%s-1", interaction.getPlatform().name()));
+            threadTelegram.setName("Thread-TELEGRAM-1");
             threadTelegram.start();
             logger.info("SYSTEM: Telegram is launch", true);
         }
@@ -136,7 +136,7 @@ public class CommandHandler {
                             .setServerRepository(serverRepository)
                             .setReminderRepository(reminderRepository), this)
             );
-            threadConsole.setName(String.format("Thread-%s-2", interaction.getPlatform().name()));
+            threadConsole.setName("Thread-CONSOLE-2");
             threadConsole.start();
             logger.info("SYSTEM: Console is launch", true);
         }
