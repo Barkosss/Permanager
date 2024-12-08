@@ -1,11 +1,12 @@
-package common.commands;
+package common.commands.custom;
 
-import common.iostream.Output;
+import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
+import common.models.User;
 
 public class StartCommand implements BaseCommand {
-    Output output = new OutputHandler();
+    OutputHandler output = new OutputHandler();
 
     @Override
     public String getCommandName() {
@@ -18,7 +19,10 @@ public class StartCommand implements BaseCommand {
     }
 
     @Override
-    public void run(Interaction interaction) {
+    public void parseArgs(Interaction interaction, User user) {}
 
+    @Override
+    public void run(Interaction interaction) {
+        output.output(interaction.setLanguageValue("start.message"));
     }
 }
