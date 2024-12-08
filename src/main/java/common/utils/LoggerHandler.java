@@ -1,6 +1,6 @@
 package common.utils;
 
-import common.Main;
+import common.enums.LoggerStatus;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -46,9 +46,9 @@ public class LoggerHandler {
         }
     }
 
-    public void info(String message) {
+    public void writeLog(String message, LoggerStatus status) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
-            String log = String.format("[INFO]\t[%s]\t%s",
+            String log = String.format("[%s]\t[%s]\t%s", status.getName(),
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())), message);
 
             writer.write(log); // Форматируем и записываем сообщение в файл
@@ -58,48 +58,57 @@ public class LoggerHandler {
         }
     }
 
-    public void info(String message, boolean inConsole) {
+    public void writeLog(String message, LoggerStatus status, Boolean inConsole) {
         if (inConsole) {
-            System.out.printf("INFO: %s\n", message);
+            System.out.printf(status.getName() + ": %s\n", message);
         }
-        info(message);
+    }
+
+    public void info(String message) {
+        writeLog(message, LoggerStatus.INFO);
     }
 
     public void debug(String message) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
-            String log = String.format("[DEBUG]\t[%s]\t%s",
-                    LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())), message);
-
-            writer.write(log); // Форматируем и записываем сообщение в файл
-            writer.newLine();  // Переход на новую строку
-        } catch (IOException err) {
-            System.out.printf("Log message isn't write in \"%s\" file\n", logFileName);
-        }
-    }
-
-    public void debug(String message, boolean inConsole) {
-        if (inConsole && Main.arguments.contains("debug")) {
-            System.out.printf("DEBUG: %s\n", message);
-        }
-        debug(message);
+        writeLog(message, LoggerStatus.DEBUG);
     }
 
     public void error(String message) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
-            String log = String.format("[ERROR]\t[%s]\t%s",
-                    LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())), message);
-
-            writer.write(log); // Форматируем и записываем сообщение в файл
-            writer.newLine();  // Переход на новую строку
-        } catch (IOException err) {
-            System.out.printf("Log message isn't write in \"%s\" file\n", logFileName);
-        }
+        writeLog(message, LoggerStatus.ERROR);
     }
 
-    public void error(String message, boolean inConsole) {
-        if (inConsole) {
-            System.out.printf("ERROR: %s\n", message);
-        }
-        error(message);
+    public void warning(String message) {
+        writeLog(message, LoggerStatus.WARNING);
+    }
+
+    public void trace(String message) {
+        writeLog(message, LoggerStatus.TRACE);
+    }
+
+    public void fatal(String message) {
+        writeLog(message, LoggerStatus.FATAL);
+    }
+
+    public void info(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.INFO, inConsole);
+    }
+
+    public void debug(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.DEBUG, inConsole);
+    }
+
+    public void error(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.ERROR, inConsole);
+    }
+
+    public void warning(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.WARNING, inConsole);
+    }
+
+    public void trace(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.TRACE, inConsole);
+    }
+
+    public void fatal(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.FATAL, inConsole);
     }
 }
