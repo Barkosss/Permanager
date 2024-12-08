@@ -34,12 +34,12 @@ public class Main {
                     bot = new TelegramBot(String.valueOf(jsonHandler.read("config.json", "tokenTelegram")));
                     logger.info("Telegram bot is start");
                 } else {
-                    logger.critical("Telegram token isn't found", true);
+                    logger.error("Telegram token isn't found", true);
                     System.exit(404);
                 }
 
             } catch (Exception err) {
-                logger.critical(String.format("Telegram authorization: %s", err), true);
+                logger.error(String.format("Telegram authorization: %s", err), true);
                 System.exit(511);
             }
 
