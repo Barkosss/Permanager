@@ -1,6 +1,6 @@
 package common.utils;
 
-import common.enums.LoggerCodes;
+import common.enums.LoggerStatus;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.logging.Logger;
+
 
 public class LoggerHandler {
 
