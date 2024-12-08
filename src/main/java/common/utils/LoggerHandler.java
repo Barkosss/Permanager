@@ -1,6 +1,5 @@
 package common.utils;
 
-import common.Main;
 import common.enums.LoggerCodes;
 
 import java.io.BufferedWriter;
@@ -49,14 +48,10 @@ public class LoggerHandler {
         }
     }
 
-    // Запись лога в файл
-    private void createLog(String message, LoggerCodes status) {
+    public void writeLog(String message, LoggerStatus status) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
-            String log = String.format("[%s]\t[%s]\t%s",
-                    status.getName(),
-                    LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())),
-                    message
-            );
+            String log = String.format("[%s]\t[%s]\t%s", status.getName(),
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern(getTimeFormatter())), message);
 
             writer.write(log); // Форматируем и записываем сообщение в файл
             writer.newLine();  // Переход на новую строку
@@ -65,58 +60,58 @@ public class LoggerHandler {
         }
     }
 
-    public void info(String message) {
+    public void writeLog(String message, LoggerStatus status, Boolean inConsole) {
+        if (inConsole) {
+            System.out.printf(status.getName() + ": %s\n", message);
+        }
         createLog(message, LoggerCodes.INFO);
     }
 
-    public void info(String message, boolean inConsole) {
-        if (inConsole) {
-            System.out.printf("INFO: %s\n", message);
-        }
-        createLog(message, LoggerCodes.INFO);
+    public void info(String message) {
+        writeLog(message, LoggerStatus.INFO);
     }
 
     public void debug(String message) {
-        createLog(message, LoggerCodes.DEBUG);
-    }
-
-    public void debug(String message, boolean inConsole) {
-        if (inConsole && Main.arguments.contains("debug")) {
-            System.out.printf("DEBUG: %s\n", message);
-        }
-        createLog(message, LoggerCodes.DEBUG);
+        writeLog(message, LoggerStatus.DEBUG);
     }
 
     public void error(String message) {
-        createLog(message, LoggerCodes.ERROR);
-    }
-
-    public void error(String message, boolean inConsole) {
-        if (inConsole) {
-            System.out.printf("ERROR: %s\n", message);
-        }
-        createLog(message, LoggerCodes.ERROR);
+        writeLog(message, LoggerStatus.ERROR);
     }
 
     public void warning(String message) {
-        createLog(message, LoggerCodes.WARNING);
+        writeLog(message, LoggerStatus.WARNING);
     }
 
-    public void warning(String message, boolean inConsole) {
-        if (inConsole) {
-            System.out.printf("WARNING: %s\n", message);
-        }
-        createLog(message, LoggerCodes.WARNING);
+    public void trace(String message) {
+        writeLog(message, LoggerStatus.TRACE);
     }
 
-    public void critical(String message) {
-        createLog(message, LoggerCodes.CRITICAL);
+    public void fatal(String message) {
+        writeLog(message, LoggerStatus.FATAL);
     }
 
-    public void critical(String message, boolean inConsole) {
-        if (inConsole) {
-            System.out.printf("CRITICAL: %s\n", message);
-        }
-        createLog(message, LoggerCodes.CRITICAL);
+    public void info(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.INFO, inConsole);
+    }
+
+    public void debug(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.DEBUG, inConsole);
+    }
+
+    public void error(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.ERROR, inConsole);
+    }
+
+    public void warning(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.WARNING, inConsole);
+    }
+
+    public void trace(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.TRACE, inConsole);
+    }
+
+    public void fatal(String message, Boolean inConsole) {
+        writeLog(message, LoggerStatus.FATAL, inConsole);
     }
 }
