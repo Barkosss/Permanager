@@ -5,25 +5,36 @@ import java.time.LocalDate;
 public class Reminder {
 
     // ID напоминание
-    public long id;
+    long id;
 
     // ID пользователя, создавший напоминание
-    public long userId;
+    long userId;
+
+    // Идентификатор чата
+    long chatId;
 
     // Содержимое напоминание
-    public String content;
+    String content;
 
     // Дата создание напоминания
-    public LocalDate createdAt;
+    LocalDate createdAt;
 
     // Дата, когда надо отправить напоминание
-    public LocalDate sendAt;
+    LocalDate sendAt;
+
+    // Платформа, откуда было создано напоминание
+    Interaction.Platform platform;
 
     // Конструктор напоминания
-    public Reminder(String content, LocalDate createdAt, LocalDate sendAt) {
+    public Reminder(long id, long chatId, long userId, String content, LocalDate createdAt,
+                    LocalDate sendAt, Interaction.Platform platform) {
+        this.id = id;
+        this.chatId = chatId;
+        this.userId = userId;
         this.content = content;
         this.createdAt = createdAt;
         this.sendAt = sendAt;
+        this.platform = platform;
     }
 
 
@@ -32,9 +43,14 @@ public class Reminder {
         return id;
     }
 
-    // Установить ID напоминания
-    public void setId(long id) {
-        this.id = id;
+    // Получить user ID пользователя
+    public long getUserId() {
+        return userId;
+    }
+
+    // Получить chat ID
+    public long getChatId() {
+        return chatId;
     }
 
     // Получить содержимое напоминания
@@ -42,9 +58,10 @@ public class Reminder {
         return content;
     }
 
-    // Установить содержимое напоминания
-    public void setContent(String content) {
+    // Назначить новое содержимое
+    public Reminder setContent(String content) {
         this.content = content;
+        return this;
     }
 
     // Получить время создания
@@ -52,18 +69,19 @@ public class Reminder {
         return createdAt;
     }
 
-    // Установить время создания
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
-    }
-
     // Получить дату отправки
     public LocalDate getSendAt() {
         return sendAt;
     }
 
-    // Назначить дату отправкин
-    public void setSendAt(LocalDate sendAt) {
+    // Назначить новое дату отправки
+    public Reminder setSendAt(LocalDate sendAt) {
         this.sendAt = sendAt;
+        return this;
+    }
+
+    // Получить платформу
+    public Interaction.Platform getPlatform() {
+        return platform;
     }
 }

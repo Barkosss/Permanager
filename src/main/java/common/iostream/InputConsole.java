@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class InputConsole {
     public Scanner scanner = new Scanner(System.in);
-    public Output output = new OutputHandler();
+    public OutputHandler output = new OutputHandler();
 
     public String read() {
         return scanner.nextLine();
@@ -30,7 +30,6 @@ public class InputConsole {
 
             String userInputMessage = read().trim();
 
-
             // Если команда - выключить бота
             if (userInputMessage.equals("exit")) {
                 System.out.println("Program is stop");
@@ -38,13 +37,17 @@ public class InputConsole {
             }
 
             commandHandler.launchCommand(interaction, List.of(
-                            new Content(0L, // Идентификатор пользователя (Для консоли он равен 0
-                                    userInputMessage, // Сообщение пользователя
-                                    System.currentTimeMillis() / 1000, // Время отправки, пользователем, сообщения
-                                    List.of(userInputMessage.split(" ")), // Аргументы сообщения
-                                    Interaction.Platform.CONSOLE // Платформа, с которой пришёл контент
-                            )
+                    new Content(
+                            0L, // Идентификатор пользователя
+                            null, // Информация о чате
+                            null, // Информация об ответном сообщении
+                            userInputMessage, // Содержимое сообщения
+                            System.currentTimeMillis() / 1000, // Время отправки, пользователем, сообщения
+                            Interaction.Language.ENGLISH,
+                            List.of(userInputMessage.split(" ")), // Аргументы сообщения
+                            Interaction.Platform.CONSOLE // Платформа, с которой пришёл контент
                     )
+                )
             );
         }
     }
