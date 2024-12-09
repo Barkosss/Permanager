@@ -41,8 +41,8 @@ public class LoggerHandler {
             // Если не существует директории, то создать
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
-
             }
+            
             this.logFile = new FileWriter(this.logFilePath, true);
         } catch (IOException e) {
             System.out.printf("File with name \"%s\" isn't open\n", logFileName);
