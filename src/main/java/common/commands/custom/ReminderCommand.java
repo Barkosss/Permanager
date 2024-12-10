@@ -218,7 +218,7 @@ public class ReminderCommand implements BaseCommand {
 
         Reminder reminder = new Reminder(reminderId, chatId, userId, context,
                 null, sendAt, interaction.getPlatform());
-        interaction.getReminderRepository().create(reminder);
+        interaction.createReminder(reminder);
         user.addReminder(reminder);
 
         try {

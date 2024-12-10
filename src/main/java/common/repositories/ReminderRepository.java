@@ -17,7 +17,7 @@ public class ReminderRepository {
     }
 
     // Создать напоминание в памяти
-    public void create(Reminder reminder) {
+    public Reminder create(Reminder reminder) {
         if (reminders == null) {
             reminders = new TreeMap<>();
         }
@@ -27,9 +27,10 @@ public class ReminderRepository {
 
         if (reminders.containsKey(reminderId)) {
             reminders.get(reminderId).add(reminder);
-            return;
+            return reminder;
         }
         reminders.put(reminderId, List.of(reminder));
+        return reminder;
     }
 
     // Удалить напоминания

@@ -29,17 +29,23 @@ public interface Interaction {
         }
     }
 
-    UserRepository getUserRepository();
-
     Interaction setUserRepository(UserRepository userRepository);
 
-    ServerRepository getServerRepository();
+    User createUser(long chatId, long userId);
+
+    User findUserById(long userId);
+
+    boolean existsUserById(long chatId,long userId);
 
     Interaction setServerRepository(ServerRepository serverRepository);
 
+    Server createServer(Server server);
+
+    Server findServerById(long chatId);
+
     Interaction setReminderRepository(ReminderRepository reminderRepository);
 
-    ReminderRepository getReminderRepository();
+    Reminder createReminder(Reminder reminder);
 
     User getUser(long userId);
 

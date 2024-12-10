@@ -110,7 +110,7 @@ public class MuteCommand implements BaseCommand {
             long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
             interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), userId,
                     new ChatPermissions().canSendMessages(false)));
-            interactionTelegram.getServerRepository().findById(interaction.getChatId()).addUserMute(user);
+            interactionTelegram.findServerById(interaction.getChatId()).addUserMute(user);
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been muted");
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
             output.output(interactionTelegram.setMessage("The user @"

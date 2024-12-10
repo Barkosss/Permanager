@@ -51,17 +51,25 @@ public abstract class AbstractInteraction implements Interaction {
     // Языковой код
     Language languageCode;
 
-    public UserRepository getUserRepository() {
-        return userRepository;
-    }
-
     public Interaction setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
         return this;
     }
 
-    public ServerRepository getServerRepository() {
-        return serverRepository;
+    public User createUser(long chatId, long userId) {
+        return this.userRepository.create(chatId, userId);
+    }
+
+    public User findUserById(long userId) {
+        try {
+            return this.userRepository.findById(chatId, userId);
+        } catch (MemberNotFoundException err) {
+            return createUser(chatId, userId);
+        }
+    }
+
+    public boolean existsUserById(long chatId,long userId) {
+        return this.userRepository.existsById(chatId, userId);
     }
 
     public Interaction setServerRepository(ServerRepository serverRepository) {
@@ -69,15 +77,41 @@ public abstract class AbstractInteraction implements Interaction {
         return this;
     }
 
-    @Override
+    public Server createServer(Server server) {
+        return this.serverRepository.create(server);
+    }
+
+    public boolean existsServerById(long chatId) {
+        return this.serverRepository.existsById(chatId);
+    }
+
+    public Server findServerById(long chatId) {
+        return this.serverRepository.findById(chatId);
+    }
+
+    public void removeServer(long chatId) {
+        this.serverRepository.remove(chatId);
+    }
+
     public Interaction setReminderRepository(ReminderRepository reminderRepository) {
         this.reminderRepository = reminderRepository;
         return this;
     }
 
-    @Override
-    public ReminderRepository getReminderRepository() {
-        return reminderRepository;
+    public Reminder createReminder(Reminder reminder) {
+        return reminderRepository.create(reminder);
+    }
+
+    public boolean existsReminderByTimestamp(long reminderId) {
+        return this.reminderRepository.existsByTimestamp(reminderId);
+    }
+
+    public List<Reminder> findReminderByTimestamp(long timestamp) {
+        return this.reminderRepository.findByTimestamp(timestamp);
+    }
+
+    public void removeReminder(long timestamp) {
+        this.reminderRepository.remove(timestamp);
     }
 
     public User getUser(long userId) {

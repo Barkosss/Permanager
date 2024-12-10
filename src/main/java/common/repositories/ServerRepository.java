@@ -16,8 +16,9 @@ public class ServerRepository {
     }
 
     // Создать сервер в памяти
-    public void create(Server server) {
+    public Server create(Server server) {
         servers.put(server.getId(), server);
+        return server;
     }
 
     // Удалить сервер

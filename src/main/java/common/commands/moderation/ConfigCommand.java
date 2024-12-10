@@ -127,7 +127,7 @@ public class ConfigCommand implements BaseCommand {
 
     // Настройка стандартных прав доступа
     private void configDefaultRightAccess(Interaction interaction, User user) {
-        Server server = interaction.getServerRepository().findById(interaction.getChatId());
+        Server server = interaction.findServerById(interaction.getChatId());
         String defaultRightAccess = "config.dashboard.defaultRightAccess";
         StringBuilder message = new StringBuilder(interaction.getLanguageValue(defaultRightAccess + ".title"));
 

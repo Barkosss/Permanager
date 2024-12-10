@@ -101,29 +101,7 @@ public class CommandHandler {
             logger.info("SYSTEM: Telegram is launch", true);
         }
 
-        // Поток для системы напоминаний
-        Thread threadReminder = new Thread(() ->
-                new SystemService().reminderHandler(interaction)
-        );
-        threadReminder.setName("Thread-Reminder");
-        threadReminder.start();
-        logger.info("SYSTEM: ReminderHandler is launch", true);
-
-        // Поток для системы банов
-        Thread threadBan = new Thread(() ->
-                new SystemService().banHandler(interaction)
-        );
-        threadBan.setName("Thread-Ban");
-        threadBan.start();
-        logger.info("SYSTEM: BanHandler is launch", true);
-
-        // Поток для системы мьютов
-        Thread threadMute = new Thread(() ->
-                new SystemService().muteHandler(interaction)
-        );
-        threadMute.setName("Thread-Mute");
-        threadMute.start();
-        logger.info("SYSTEM: MuteHandler is launch", true);
+        new SystemService(interaction);
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
@@ -155,8 +133,8 @@ public class CommandHandler {
             }
 
             // сли пользователь отсутствует в памяти
-            if (!interaction.getUserRepository().existsById(content.chat().id(), content.userId())) {
-                interaction.getUserRepository().create(content.chat().id(), content.userId());
+            if (!interaction.existsUserById(content.chat().id(), content.userId())) {
+                interaction.createUser(content.chat().id(), content.userId());
             }
 
             String message = content.message();
@@ -220,28 +198,32 @@ public class CommandHandler {
                     logger.debug(String.format("Get exception value: chatId=%d, userId=%d, message=%s",
                             interaction.getChatId(), interaction.getUserId(), message));
 
-                    InputExpectation.UserInputType inputType = user.getInputType();
-                    switch (inputType) {
-                        case DATE: { // Проверка на дату
-                            Optional<LocalDate> validDate = validate.isValidDate(message);
-                            Optional<LocalDate> validTime = validate.isValidTime(message);
+                    if (message.equals("/skip")) {
+                        user.setValue(message);
+                    } else {
+                        InputExpectation.UserInputType inputType = user.getInputType();
+                        switch (inputType) {
+                            case DATE: { // Проверка на дату
+                                Optional<LocalDate> validDate = validate.isValidDate(message);
+                                Optional<LocalDate> validTime = validate.isValidTime(message);
 
-                            if (validDate.isPresent()) {
-                                user.setValue(validDate.get());
-                            } else {
-                                validTime.ifPresent(user::setValue);
+                                if (validDate.isPresent()) {
+                                    user.setValue(validDate.get());
+                                } else {
+                                    validTime.ifPresent(user::setValue);
+                                }
+                                break;
                             }
-                            break;
-                        }
-                        case INTEGER: { // Проверка на число
-                            Optional<Integer> validInteger = validate.isValidInteger(message);
+                            case INTEGER: { // Проверка на число
+                                Optional<Integer> validInteger = validate.isValidInteger(message);
 
-                            validInteger.ifPresent(user::setValue);
-                            break;
-                        }
-                        default: { // Строка или любой другой тип
-                            user.setValue(message);
-                            break;
+                                validInteger.ifPresent(user::setValue);
+                                break;
+                            }
+                            default: { // Строка или любой другой тип
+                                user.setValue(message);
+                                break;
+                            }
                         }
                     }
                     baseCommandClasses.get(interaction.getUser(interaction.getUserId()).getCommandException())

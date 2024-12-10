@@ -115,7 +115,7 @@ public class BanCommand implements BaseCommand {
                     userId, interaction.getChatId()));
 
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
-            interactionTelegram.getServerRepository().findById(interaction.getChatId()).addUserBan(user);
+            interactionTelegram.findServerById(interaction.getChatId()).addUserBan(user);
             output.output(interaction.setLanguageValue("ban.complete",
                     List.of(username, (String) user.getValue(getCommandName(), "duration"),
                             (String) user.getValue(getCommandName(), "reason"))));
