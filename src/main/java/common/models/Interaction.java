@@ -35,7 +35,7 @@ public interface Interaction {
 
     User findUserById(long userId);
 
-    boolean existsUserById(long chatId,long userId);
+    boolean existsUserById(long chatId, long userId);
 
     Interaction setServerRepository(ServerRepository serverRepository);
 

@@ -68,7 +68,7 @@ public abstract class AbstractInteraction implements Interaction {
         }
     }
 
-    public boolean existsUserById(long chatId,long userId) {
+    public boolean existsUserById(long chatId, long userId) {
         return this.userRepository.existsById(chatId, userId);
     }
 
