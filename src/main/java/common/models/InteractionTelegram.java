@@ -3,6 +3,9 @@ package common.models;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
+import common.utils.LoggerHandler;
+
+import java.util.List;
 
 public class InteractionTelegram extends AbstractInteraction {
 
@@ -27,7 +30,21 @@ public class InteractionTelegram extends AbstractInteraction {
     }
 
     public Interaction setMessage(String message) {
-        this.message = message;
+        super.message = message;
+        createSendMessage();
+        return this;
+    }
+
+    @Override
+    public Interaction setLanguageValue(String languageKey) {
+        super.setLanguageValue(languageKey);
+        createSendMessage();
+        return this;
+    }
+
+    @Override
+    public Interaction setLanguageValue(String languageKey, List<String> replaces) {
+        super.setLanguageValue(languageKey, replaces);
         createSendMessage();
         return this;
     }

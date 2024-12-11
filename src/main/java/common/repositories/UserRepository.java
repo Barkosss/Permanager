@@ -24,13 +24,16 @@ public class UserRepository {
         if (users.get(chatId).containsKey(userId)) {
             return users.get(chatId).get(userId);
         }
-        logger.debug("User by id(" + userId + ") is create in chat by id(" + chatId + ")");
+
         try {
-            return users.get(chatId).put(userId, new User(userId));
+            User user = new User(userId);
+            logger.debug("User by id(" + userId + ") is create in chat by id(" + chatId + ")");
+            this.users.get(chatId).put(userId, user);
+            return user;
         } catch (Exception err) {
             logger.error(String.format("User repository (Create), chatId=%d, userId=%d: %s", chatId, userId, err));
+            return null;
         }
-        return null;
     }
 
     // Найти пользователя по ID
