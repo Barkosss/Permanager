@@ -167,6 +167,10 @@ public class User {
     }
 
     public boolean hasPermission(long chatId, Permissions.Permission permission) {
+        if (moderators == null) {
+            moderators = new HashMap<>();
+        }
+
         Member member = moderators.get(chatId);
 
         if (member == null) {
