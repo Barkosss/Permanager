@@ -11,7 +11,7 @@ public class RemWarnCommand implements BaseCommand {
 
     @Override
     public String getCommandName() {
-        return "remWarn";
+        return "remwarn";
     }
 
     @Override
