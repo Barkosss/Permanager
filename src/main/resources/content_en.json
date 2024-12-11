@@ -1,6 +1,6 @@
 {
     "start": {
-        "message": "Hello"
+        "message": "Hello! \nI am **Permanager**, your assistant for flexible access rights management in Telegram channels and Discord servers.\nMy goal is to simplify the lives of administrators by providing convenient tools for setting up rights to moderation teams without having to rely on the standard Telegram or Discord roles.\n\n With my help , you can:\n✅ Assign rights to teams in a new way, not limited to standard roles.\n Create custom rights groups for users.\n Simplify moderation management by making it as transparent and convenient as possible.\n\n\uD83C\uDF89 Let's get started!\n\uD83D\uDCCB **Basic commands**:\n\n`/config` — Configure the global parameters of the bot on the server.\n`/reminder` — Managing reminders\n`/cancel` — Canceling the execution of the current command\n`/help` — Show a list of all available commands and their description.\n\nIf you have any questions, just use /help.\nLet's start simplifying your work together! \uD83D\uDE80"
     },
     "config": {
         "start": {
