@@ -28,6 +28,10 @@ public class InteractionTelegram extends AbstractInteraction {
         return this;
     }
 
+    public String getUsername() {
+        return super.content.chat().username();
+    }
+
     public Interaction setMessage(String message) {
         super.message = message;
         createSendMessage();
