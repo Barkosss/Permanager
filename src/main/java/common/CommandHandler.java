@@ -132,7 +132,7 @@ public class CommandHandler {
                 continue;
             }
 
-            // сли пользователь отсутствует в памяти
+            // Если пользователь отсутствует в памяти
             if (!interaction.existsUserById(content.chat().id(), content.userId())) {
                 interaction.createUser(content.chat().id(), content.userId());
             }
@@ -146,8 +146,6 @@ public class CommandHandler {
                 commandName = commandName.substring(0, commandName.lastIndexOf("@"));
             }
 
-
-            System.out.println("Debug: " + interaction.getUser(content.userId()) + " | " + content.userId());
             // Проверка, что это команда
             if (message.startsWith("/") && message.charAt(1) != ' '
                     && interaction.getUser(content.userId()).getInputStatus() == User.InputStatus.COMPLETED) {
