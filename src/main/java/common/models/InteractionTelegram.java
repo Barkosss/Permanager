@@ -3,7 +3,6 @@ package common.models;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
-import common.utils.LoggerHandler;
 
 import java.util.List;
 
@@ -66,8 +65,8 @@ public class InteractionTelegram extends AbstractInteraction {
     public String toString() {
 
         return String.format("InteractionTelegram({"
-            + "Token=%s; TIMESTAMP_BOT_START=%s; Platform=%s;"
-                + "userId=%s; chatId=%s; Message=%s; Inline=%s; arguments=%s})",
+                        + "Token=%s; TIMESTAMP_BOT_START=%s; Platform=%s;"
+                        + "userId=%s; chatId=%s; Message=%s; Inline=%s; arguments=%s})",
                 telegramBot, timestampBotStart, platform, userId, chatId, message, inline, arguments);
     }
 
