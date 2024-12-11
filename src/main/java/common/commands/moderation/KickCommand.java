@@ -1,10 +1,12 @@
 package common.commands.moderation;
 
+import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.BanChatMember;
-import com.pengrad.telegrambot.request.GetChatMemberCount;
+import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.UnbanChatMember;
 import common.commands.BaseCommand;
+import common.exceptions.WrongArgumentsException;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
@@ -25,7 +27,7 @@ public class KickCommand implements BaseCommand {
 
     @Override
     public String getCommandDescription() {
-        return "";
+        return "Выгнать пользователя";
     }
 
     @Override
@@ -37,6 +39,12 @@ public class KickCommand implements BaseCommand {
             return;
         }
 
+        // Сохраняем информации об ответном сообщении
+        if (((InteractionTelegram) interaction).getContentReply() != null) {
+            user.setExcepted(getCommandName(), "user")
+                    .setValue(((InteractionTelegram) interaction).getContentReply());
+        }
+
         // Получаем причину кика
         user.setExcepted(getCommandName(), "reason").setValue(interaction.getMessage());
     }
@@ -44,34 +52,40 @@ public class KickCommand implements BaseCommand {
     @Override
     public void run(Interaction interaction) {
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
-            output.output(interaction.setMessage("This command is not available for the console"));
+            output.output(interaction.setLanguageValue("kick.error.notAvailableCommandConsole"));
             return;
         }
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
         if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.KICK)) {
-            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            try {
+                output.output(interaction.setLanguageValue("system.error.accessDenied",
+                        List.of(((InteractionTelegram) interaction).getUsername())));
+            } catch (WrongArgumentsException err) {
+                logger.error(String.format(": %s", err));
+            }
             return;
         }
 
         // Парсинг аргументов
         parseArgs(interactionTelegram, user);
 
-        if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
-            output.output(interaction.setMessage("This command is not available for private chat"));
+        // Проверяем на приватность чата
+        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
+            output.output(interaction.setLanguageValue("kick.error.notAvailableCommandPrivateChat"));
             return;
         }
 
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
             logger.info("Kick command requested a user argument");
-            output.output(interactionTelegram.setMessage("Reply message target user with command /kick"));
+            output.output(interactionTelegram.setLanguageValue("kick.replyMessage"));
             return;
         }
 
+        // Сохраняем информации об ответном сообщении
         if (interactionTelegram.getContentReply() != null && !user.isExceptedKey(getCommandName(), "user")) {
-            // Валидация пользователя...
             user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply());
         }
 
@@ -79,7 +93,7 @@ public class KickCommand implements BaseCommand {
         if (!user.isExceptedKey(getCommandName(), "reason")) {
             user.setExcepted(getCommandName(), "reason");
             logger.info("Kick command requested a reason argument");
-            output.output(interactionTelegram.setMessage("Enter reason"));
+            output.output(interactionTelegram.setLanguageValue("kick.reason"));
             return;
         }
 
@@ -89,11 +103,11 @@ public class KickCommand implements BaseCommand {
             interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been kicked");
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
-            output.output(interactionTelegram.setMessage(String.format("The user @%s has been kicked with reason: %s",
-                    username, user.getValue(getCommandName(), "reason"))));
+            output.output(interactionTelegram.setLanguageValue("kick.accepted",
+                    List.of(username, (String) user.getValue(getCommandName(), "reason"))));
 
         } catch (Exception err) {
-            output.output(interaction.setMessage("Something went wrong... :("));
+            output.output(interaction.setLanguageValue("system.error.something"));
             logger.error("Kick command: " + err);
         } finally {
             user.clearExpected(getCommandName());
