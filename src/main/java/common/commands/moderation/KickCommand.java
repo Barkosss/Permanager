@@ -63,7 +63,7 @@ public class KickCommand implements BaseCommand {
                 output.output(interaction.setLanguageValue("system.error.accessDenied",
                         List.of(((InteractionTelegram) interaction).getUsername())));
             } catch (WrongArgumentsException err) {
-                logger.error(String.format(": %s", err));
+                logger.error(String.format("Get User from reply message (Kick): %s", err));
             }
             return;
         }
@@ -72,7 +72,10 @@ public class KickCommand implements BaseCommand {
         parseArgs(interactionTelegram, user);
 
         // Проверяем на приватность чата
-        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
+        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
+                == ChatFullInfo.Type.Private) {
+            logger.info(String.format("User by id(%d) use command \"kick\" in Chat by id(%d)",
+                    interaction.getUserId(), interaction.getChatId()));
             output.output(interaction.setLanguageValue("kick.error.notAvailableCommandPrivateChat"));
             return;
         }
@@ -86,6 +89,7 @@ public class KickCommand implements BaseCommand {
 
         // Сохраняем информации об ответном сообщении
         if (interactionTelegram.getContentReply() != null && !user.isExceptedKey(getCommandName(), "user")) {
+            logger.info("Kick command get reply message with User");
             user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply());
         }
 
@@ -102,6 +106,7 @@ public class KickCommand implements BaseCommand {
             interactionTelegram.telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
             interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been kicked");
+
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
             output.output(interactionTelegram.setLanguageValue("kick.accepted",
                     List.of(username, (String) user.getValue(getCommandName(), "reason"))));
