@@ -22,10 +22,18 @@ public class OutputHandler {
                 }
 
                 // Отправляем сообщение пользователю в Telegram
-                interactionTelegram.telegramBot.execute(sendMessage.parseMode(ParseMode.Markdown));
-                logger.debug(String.format("Send message to chatId(%d, userId=%d) with message(\"%s\")",
-                        interaction.getChatId(), interaction.getUserId(),
-                        interaction.getMessage().trim().replace("\n", " ")));
+                try {
+                    interactionTelegram.telegramBot.execute(sendMessage.parseMode(ParseMode.Markdown));
+                    logger.debug(String.format("Send message to chatId(%d, userId=%d) with message(\"%s\")",
+                            interaction.getChatId(), interaction.getUserId(),
+                            interaction.getMessage().trim().replace("\n", " ")));
+                } catch (Exception err) {
+                    interactionTelegram.telegramBot.execute(new SendMessage(interaction.getChatId(),
+                            interaction.getLanguageValue("system.error.something")));
+                    logger.error(String.format("I couldn't send a message in the chat by id(%s): %s",
+                            interactionTelegram.getChatId(), err));
+                }
+
                 break;
             }
 
