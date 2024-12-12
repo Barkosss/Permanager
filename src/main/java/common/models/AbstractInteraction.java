@@ -205,11 +205,11 @@ public abstract class AbstractInteraction implements Interaction {
 
         String message = getLanguageValue(languageKey);
         if (message == null) {
-            return null;
+            return "";
         }
         List<String> findReplace = parseReplace(message);
 
-        if (replaces.size() != findReplace.size()) {
+        if (replaces.size() < findReplace.size()) {
             throw new WrongArgumentsException();
         }
 

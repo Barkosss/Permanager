@@ -1,9 +1,11 @@
 package common.iostream;
 
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.ChatMemberUpdated;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatAdministrators;
 import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.response.GetChatAdministratorsResponse;
@@ -76,6 +78,7 @@ public class InputTelegram {
         // Найти владельца чата
         GetChatAdministratorsResponse administrators = interactionTelegram.telegramBot
                 .execute(new GetChatAdministrators(chatId));
+
         for (ChatMember administrator : administrators.administrators()) {
             if (administrator.status().equals(ChatMember.Status.creator)) {
                 return administrator;
@@ -96,13 +99,18 @@ public class InputTelegram {
             for (Update update : updates) {
                 ChatMemberUpdated chatMember = update.myChatMember();
 
-                // Проверка на администратора канала
                 long chatId = update.message().chat().id();
-                long creatorId = findChatCreator(interactionTelegram, chatId).user().id();
-                if (!interaction.existsUserById(chatId, creatorId)) {
-                    interaction.createUser(chatId, findChatCreator(interactionTelegram, chatId).user().id())
-                            .setPermission(chatId, Permissions.Permission.CONFIG, true);
+                if (interactionTelegram.telegramBot.execute(new GetChat(chatId)).chat().type() != ChatFullInfo.Type.Private) {
+                    // Проверка на администратора канала
+                    long creatorId = findChatCreator(interactionTelegram, chatId).user().id();
+                    if (!interaction.existsUserById(chatId, creatorId)) {
+                        interaction.createUser(chatId, findChatCreator(interactionTelegram, chatId).user().id())
+                                .setPermission(chatId, Permissions.Permission.CONFIG, true);
+                    } else {
+                        interaction.getUser(interaction.getUserId()).setPermission(chatId, Permissions.Permission.CONFIG, true);
+                    }
                 }
+
 
                 // Проверка, добавили ли бота в беседу
                 if (chatMember != null && isJoinChat(interactionTelegram, chatMember)) {
@@ -111,9 +119,9 @@ public class InputTelegram {
                     output.output(interactionTelegram
                             .setChatId(chatId)
                             .setMessage(String.format(
-                                "Вы добавили меня в чат: %d. Воспользуйтесь командой /start для ознакомления."
-                                        + "Создатель: @%s",
-                                chatId, creator.user().username()
+                                    "Вы добавили меня в чат: %d. Воспользуйтесь командой /start для ознакомления."
+                                            + "Создатель: @%s",
+                                    chatId, creator.user().username()
                             )));
 
 

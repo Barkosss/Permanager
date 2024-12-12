@@ -32,8 +32,8 @@ public class ServerRepository {
         if ((server = servers.get(serverId)) != null) {
             return server;
         }
-        logger.error("Server by id(" + serverId + ") is not found");
-        return new Server(serverId, null, new Permissions());
+        logger.error(String.format("Server by id(%s) is not found. Try create server by id(%s)", serverId, serverId));
+        return create(new Server(serverId, null, new Permissions()));
     }
 
     // Существует ли сервер
