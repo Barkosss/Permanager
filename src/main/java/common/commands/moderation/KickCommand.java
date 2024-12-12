@@ -4,7 +4,9 @@ import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.BanChatMember;
 import com.pengrad.telegrambot.request.GetChat;
+import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.UnbanChatMember;
+import com.pengrad.telegrambot.response.GetChatMemberResponse;
 import common.commands.BaseCommand;
 import common.exceptions.WrongArgumentsException;
 import common.iostream.OutputHandler;
@@ -13,12 +15,15 @@ import common.models.InteractionTelegram;
 import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
+import common.utils.Validate;
 
 import java.util.List;
+import java.util.Optional;
 
 public class KickCommand implements BaseCommand {
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
+    Validate validate = new Validate();
 
     @Override
     public String getCommandName() {
@@ -33,16 +38,27 @@ public class KickCommand implements BaseCommand {
     @Override
     public void parseArgs(Interaction interaction, User user) {
         List<String> arguments = interaction.getArguments();
+        InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
         // Проверка на наличие аргументов
         if (arguments.isEmpty()) {
             return;
         }
 
+        // TODO: Переделать получение пользователя не через Message, а через User (без пересечения с нашим User)
+        /* Подумать... Получение пользователя по user ID
+        Optional<Integer> validateUserId = validate.isValidInteger(arguments.getFirst());
+        GetChatMemberResponse member = interactionTelegram.telegramBot
+                .execute(new GetChatMember(interaction.getChatId(), validateUserId.get()));
+        // ...
+        if (member != null) {
+            user.setExcepted(getCommandName(), "user").setValue(member);
+        }*/
+
         // Сохраняем информации об ответном сообщении
-        if (((InteractionTelegram) interaction).getContentReply() != null) {
+        if (!user.isExceptedKey(getCommandName(), "user") && interactionTelegram.getContentReply() != null) {
             user.setExcepted(getCommandName(), "user")
-                    .setValue(((InteractionTelegram) interaction).getContentReply());
+                    .setValue(interactionTelegram.getContentReply().from());
         }
 
         // Получаем причину кика
@@ -72,8 +88,8 @@ public class KickCommand implements BaseCommand {
         parseArgs(interactionTelegram, user);
 
         // Проверяем на приватность чата
-        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
-                == ChatFullInfo.Type.Private) {
+        if (interactionTelegram.telegramBot
+                .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
             logger.info(String.format("User by id(%d) use command \"kick\" in Chat by id(%d)",
                     interaction.getUserId(), interaction.getChatId()));
             output.output(interaction.setLanguageValue("kick.error.notAvailableCommandPrivateChat"));
