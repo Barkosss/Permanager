@@ -13,7 +13,6 @@ import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.Permissions;
-import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.Validate;
 
@@ -36,7 +35,7 @@ public class KickCommand implements BaseCommand {
     }
 
     @Override
-    public void parseArgs(Interaction interaction, User user) {
+    public void parseArgs(Interaction interaction, common.models.User user) {
         List<String> arguments = interaction.getArguments();
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
@@ -45,15 +44,13 @@ public class KickCommand implements BaseCommand {
             return;
         }
 
-        // TODO: Переделать получение пользователя не через Message, а через User (без пересечения с нашим User)
-        /* Подумать... Получение пользователя по user ID
         Optional<Integer> validateUserId = validate.isValidInteger(arguments.getFirst());
         GetChatMemberResponse member = interactionTelegram.telegramBot
                 .execute(new GetChatMember(interaction.getChatId(), validateUserId.get()));
         // ...
         if (member != null) {
             user.setExcepted(getCommandName(), "user").setValue(member);
-        }*/
+        }
 
         // Сохраняем информации об ответном сообщении
         if (!user.isExceptedKey(getCommandName(), "user") && interactionTelegram.getContentReply() != null) {
@@ -71,8 +68,18 @@ public class KickCommand implements BaseCommand {
             output.output(interaction.setLanguageValue("kick.error.notAvailableCommandConsole"));
             return;
         }
-        User user = interaction.getUser(interaction.getUserId());
+
+        common.models.User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
+
+        // Проверяем на приватность чата
+        if (interactionTelegram.telegramBot
+                .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
+            logger.info(String.format("User by id(%d) use command \"kick\" in Chat by id(%d)",
+                    interaction.getUserId(), interaction.getChatId()));
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
+            return;
+        }
 
         if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.KICK)) {
             try {
@@ -86,15 +93,6 @@ public class KickCommand implements BaseCommand {
 
         // Парсинг аргументов
         parseArgs(interactionTelegram, user);
-
-        // Проверяем на приватность чата
-        if (interactionTelegram.telegramBot
-                .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
-            logger.info(String.format("User by id(%d) use command \"kick\" in Chat by id(%d)",
-                    interaction.getUserId(), interaction.getChatId()));
-            output.output(interaction.setLanguageValue("kick.error.notAvailableCommandPrivateChat"));
-            return;
-        }
 
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
@@ -118,14 +116,20 @@ public class KickCommand implements BaseCommand {
         }
 
         try {
-            long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
+            long userId = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user")).id();
             interactionTelegram.telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
             interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been kicked");
 
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
-            output.output(interactionTelegram.setLanguageValue("kick.accepted",
-                    List.of(username, (String) user.getValue(getCommandName(), "reason"))));
+            String reason = (String) user.getValue(getCommandName(), "reason");
+            if (reason != "/skip") {
+                output.output(interactionTelegram.setLanguageValue("kick.complete", List.of(username)));
+            } else {
+                output.output(interactionTelegram.setLanguageValue("kick.completeWithReason",
+                        List.of(username, reason)));
+            }
+
 
         } catch (Exception err) {
             output.output(interaction.setLanguageValue("system.error.something"));
