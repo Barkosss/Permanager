@@ -1,6 +1,7 @@
 package common.iostream;
 
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.ChatMemberUpdated;
@@ -100,14 +101,15 @@ public class InputTelegram {
                 ChatMemberUpdated chatMember = update.myChatMember();
 
                 long chatId = update.message().chat().id();
-                if (interactionTelegram.telegramBot.execute(new GetChat(chatId)).chat().type() != ChatFullInfo.Type.Private) {
+                if (update.message().chat().type() != Chat.Type.Private) {
                     // Проверка на администратора канала
                     long creatorId = findChatCreator(interactionTelegram, chatId).user().id();
                     if (!interaction.existsUserById(chatId, creatorId)) {
                         interaction.createUser(chatId, findChatCreator(interactionTelegram, chatId).user().id())
                                 .setPermission(chatId, Permissions.Permission.CONFIG, true);
                     } else {
-                        interaction.getUser(interaction.getUserId()).setPermission(chatId, Permissions.Permission.CONFIG, true);
+                        interaction.getUser(interaction.getUserId())
+                                .setPermission(chatId, Permissions.Permission.CONFIG, true);
                     }
                 }
 

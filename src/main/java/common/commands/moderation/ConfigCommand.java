@@ -80,7 +80,7 @@ public class ConfigCommand implements BaseCommand {
                 Permissions.Permission.CONFIG.getPermission(), user.getUserId(), interaction.getChatId()));
         if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.CONFIG)) {
             try {
-                logger.info(String.format("The user by id(%s) doesn't have sufficient access rights (%s) in chat by id(%s)",
+                logger.info(String.format("The user by id(%s) doesn't have access rights (%s) in chat by id(%s)",
                         user.getUserId(), Permissions.Permission.CONFIG.getPermission(), interaction.getChatId()));
                 output.output(interaction.setLanguageValue("system.error.accessDenied",
                         List.of(((InteractionTelegram) interaction).getUsername())));
