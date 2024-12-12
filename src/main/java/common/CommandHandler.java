@@ -118,6 +118,8 @@ public class CommandHandler {
             threadConsole.start();
             logger.info("SYSTEM: Console is launch", true);
         }
+
+        System.out.println("Program is launch");
     }
 
     // Вызов команды
