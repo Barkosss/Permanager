@@ -80,8 +80,8 @@ public class KickCommand implements BaseCommand {
         // Проверяем на приватность чата
         if (interactionTelegram.telegramBot
                 .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
-            logger.info(String.format("User by id(%d) use command \"kick\" in Chat by id(%d)",
-                    interaction.getUserId(), interaction.getChatId()));
+            logger.info(String.format("User by id(%d) use command \"%s\" in Chat by id(%d)",
+                    interaction.getUserId(), getCommandName(), interaction.getChatId()));
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
