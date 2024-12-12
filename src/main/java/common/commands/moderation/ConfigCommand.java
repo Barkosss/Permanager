@@ -3,6 +3,7 @@ package common.commands.moderation;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
+import common.models.InteractionTelegram;
 import common.models.Permissions;
 import common.models.Server;
 import common.models.User;
@@ -49,8 +50,18 @@ public class ConfigCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
 
+
+        logger.debug(String.format("Checking the user's access rights (%s) by id(%s) in the chat by id(%s)",
+                Permissions.Permission.CONFIG.getPermission(), user.getUserId(), interaction.getChatId()));
         if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.CONFIG)) {
-            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            try {
+                logger.info(String.format("The user by id(%s) doesn't have sufficient access rights (%s) in chat by id",
+                        user.getUserId(), Permissions.Permission.CONFIG.getPermission() , interaction.getChatId()));
+                output.output(interaction.setLanguageValue("system.error.accessDenied",
+                        List.of(((InteractionTelegram) interaction).getUsername())));
+            } catch (Exception err) {
+                logger.error(String.format("Get User from reply message (Config): %s", err));
+            }
             return;
         }
 
@@ -121,7 +132,6 @@ public class ConfigCommand implements BaseCommand {
                 break;
             }
         }
-        output.output(interaction.setMessage(interaction.getLanguageValue("config.dashboard")));
         user.clearExpected(getCommandName());
     }
 
