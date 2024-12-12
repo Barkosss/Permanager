@@ -11,6 +11,7 @@ import common.CommandHandler;
 import common.models.Content;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.models.Permissions;
 import common.utils.LoggerHandler;
 
 import java.util.ArrayList;
@@ -70,6 +71,20 @@ public class InputTelegram {
         }
     }
 
+    // Поиск владельца чата
+    private ChatMember findChatCreator(InteractionTelegram interactionTelegram, long chatId) {
+        // Найти владельца чата
+        GetChatAdministratorsResponse administrators = interactionTelegram.telegramBot
+                .execute(new GetChatAdministrators(chatId));
+        for (ChatMember administrator : administrators.administrators()) {
+            if (administrator.status().equals(ChatMember.Status.creator)) {
+                return administrator;
+            }
+        }
+
+        return null;
+    }
+
     public void read(Interaction interaction, CommandHandler commandHandler) {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
@@ -81,21 +96,17 @@ public class InputTelegram {
             for (Update update : updates) {
                 ChatMemberUpdated chatMember = update.myChatMember();
 
+                // Проверка на администратора канала
+                long chatId = update.message().chat().id();
+                long creatorId = findChatCreator(interactionTelegram, chatId).user().id();
+                if (!interaction.existsUserById(chatId, creatorId)) {
+                    interaction.createUser(chatId, findChatCreator(interactionTelegram, chatId).user().id())
+                            .setPermission(chatId, Permissions.Permission.CONFIG, true);
+                }
+
                 // Проверка, добавили ли бота в беседу
                 if (chatMember != null && isJoinChat(interactionTelegram, chatMember)) {
-
-                    long chatId = chatMember.chat().id();
-                    ChatMember creator = new ChatMember();
-
-                    // Найти владельца чата
-                    GetChatAdministratorsResponse administrators = interactionTelegram.telegramBot
-                            .execute(new GetChatAdministrators(chatId));
-                    for (ChatMember administrator : administrators.administrators()) {
-                        if (administrator.status().equals(ChatMember.Status.creator)) {
-                            creator = administrator;
-                            break;
-                        }
-                    }
+                    ChatMember creator = findChatCreator(interactionTelegram, chatId);
 
                     output.output(interactionTelegram
                             .setChatId(chatId)

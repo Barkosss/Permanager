@@ -1,5 +1,7 @@
 package common.models;
 
+import java.util.List;
+
 /**
  * Объект участника-модератора у пользователя. Объект хранит в себе:
  * user id: long ()
@@ -84,6 +86,11 @@ public class Member {
     // Назначить разрешения пользователю
     public Member setPermissions(Permissions permissions) {
         this.permissions = permissions;
+        return this;
+    }
+
+    public Member setPermission(Permissions.Permission permission, boolean permissionStatus) {
+        this.permissions.setPermission(permission, permissionStatus);
         return this;
     }
 

@@ -179,4 +179,19 @@ public class User {
 
         return member.permissions.canPermission(permission);
     }
+
+    public User setPermission(long chatId, Permissions.Permission permission, boolean permissionStatus) {
+        if (moderators == null) {
+            moderators = new HashMap<>();
+        }
+
+        Member member = moderators.get(chatId);
+        if (member == null) {
+            member = new Member(userId, -1, true, new Permissions());
+            moderators.put(chatId, member);
+        }
+
+        member.setPermission(permission, permissionStatus);
+        return this;
+    }
 }
