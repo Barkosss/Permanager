@@ -83,6 +83,8 @@ public class KickCommand implements BaseCommand {
 
         if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.KICK)) {
             try {
+                logger.debug(String.format("Checking the user's access rights (%s) by id(%s) in the chat by id(%s)",
+                        Permissions.Permission.KICK.getPermission(), user.getUserId(), interaction.getChatId()));
                 output.output(interaction.setLanguageValue("system.error.accessDenied",
                         List.of(((InteractionTelegram) interaction).getUsername())));
             } catch (WrongArgumentsException err) {
