@@ -127,12 +127,13 @@ public class InputTelegram {
 
 
                 contents.add(new Content(
+                        update.message().from().username(), // Username пользователя
                         update.message().from().id(), // Идентификатор пользователя
                         update.message().chat(), // Информация о чате
                         update.message().replyToMessage(), // Информация об ответном сообщении
                         update.message().text(), // Содержимое сообщения
                         update.message().date(), // Время отправки, пользователем, сообщения
-                        language,
+                        Interaction.Language.RUSSIAN, //language,
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));

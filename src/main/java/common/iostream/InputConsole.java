@@ -38,6 +38,7 @@ public class InputConsole {
 
             commandHandler.launchCommand(interaction, List.of(
                     new Content(
+                            "Console",
                             0L, // Идентификатор пользователя
                             null, // Информация о чате
                             null, // Информация об ответном сообщении
