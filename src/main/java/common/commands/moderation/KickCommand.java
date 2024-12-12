@@ -44,22 +44,27 @@ public class KickCommand implements BaseCommand {
             return;
         }
 
+        logger.info("Start of user validation in the chat by id(" + arguments.getFirst() + ")");
         Optional<Integer> validateUserId = validate.isValidInteger(arguments.getFirst());
         GetChatMemberResponse member = interactionTelegram.telegramBot
                 .execute(new GetChatMember(interaction.getChatId(), validateUserId.get()));
         // ...
         if (member != null) {
             user.setExcepted(getCommandName(), "user").setValue(member);
+            logger.info("Validation of the user by id(s" + arguments.getFirst() + ") has been completed");
         }
 
+        logger.info("Starting to save information about the reply message");
         // Сохраняем информации об ответном сообщении
         if (!user.isExceptedKey(getCommandName(), "user") && interactionTelegram.getContentReply() != null) {
             user.setExcepted(getCommandName(), "user")
                     .setValue(interactionTelegram.getContentReply().from());
+            logger.info("");
         }
 
         // Получаем причину кика
         user.setExcepted(getCommandName(), "reason").setValue(interaction.getMessage());
+        logger.info("Saving the reason");
     }
 
     @Override
@@ -81,10 +86,12 @@ public class KickCommand implements BaseCommand {
             return;
         }
 
+        logger.debug(String.format("Checking the user's access rights (%s) by id(%s) in the chat by id(%s)",
+                Permissions.Permission.KICK.getPermission(), user.getUserId(), interaction.getChatId()));
         if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.KICK)) {
             try {
-                logger.debug(String.format("Checking the user's access rights (%s) by id(%s) in the chat by id(%s)",
-                        Permissions.Permission.KICK.getPermission(), user.getUserId(), interaction.getChatId()));
+                logger.info(String.format("The user by id(%s) does not have sufficient access rights (%s) in chat by id",
+                        user.getUserId(), Permissions.Permission.KICK.getPermission(), interaction.getChatId()));
                 output.output(interaction.setLanguageValue("system.error.accessDenied",
                         List.of(((InteractionTelegram) interaction).getUsername())));
             } catch (WrongArgumentsException err) {
