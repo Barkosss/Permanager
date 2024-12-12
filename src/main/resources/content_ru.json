@@ -8,8 +8,8 @@
             "notAvailableCommandConsole": "Данная команда не доступна из Консоли",
             "notAvailableCommandPrivateChat": "Данная команда не доступна в приватном чате",
             "commandNotFound": "Команда \"%COMMAND_NAME%\" не найдена",
-            "something": "Произошла неизвестная ошибка",
-            "accessDenied": "@%USERNAME%, у Вас недостаточно прав для использование команды"
+            "accessDenied": "@%USERNAME%, у Вас недостаточно прав для использование команды",
+            "something": "Произошла неизвестная ошибка"
         }
     },
     "test": {
