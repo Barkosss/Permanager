@@ -185,7 +185,7 @@ public abstract class AbstractInteraction implements Interaction {
             this.message = getLanguageValue(languageKey, replaces);
         } catch (Exception err) {
             LoggerHandler logger = new LoggerHandler();
-            logger.error("");
+            logger.error("Incorrect number of arguments to replace (setLanguageValue: String, List<>)");
         }
         return this;
     }
