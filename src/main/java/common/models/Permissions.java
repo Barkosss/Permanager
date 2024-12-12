@@ -99,7 +99,7 @@ public class Permissions {
             case RESETWARNS -> this.canResetWarn = permissionStatus;
             case CLEAR -> this.canClear = permissionStatus;
             case CONFIG -> this.canConfig = permissionStatus;
-        };
+        }
     }
 
     // Получить, имеет ли пользователь доступ к kick
