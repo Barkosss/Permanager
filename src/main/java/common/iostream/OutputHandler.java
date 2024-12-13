@@ -25,7 +25,7 @@ public class OutputHandler {
                 // Отправляем сообщение пользователю в Telegram
                 try {
                     SendResponse sendRequest = interactionTelegram.telegramBot
-                            .execute(sendMessage.parseMode(ParseMode.Markdown));
+                            .execute(sendMessage.parseMode(ParseMode.MarkdownV2));
 
                     if (!sendRequest.isOk()) {
                         interactionTelegram.telegramBot.execute(sendMessage);
