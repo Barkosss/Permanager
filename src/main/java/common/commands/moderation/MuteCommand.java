@@ -58,7 +58,7 @@ public class MuteCommand implements BaseCommand {
     @Override
     public void run(Interaction interaction) {
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
-            output.output(interaction.setMessage("This command is not available for the console"));
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandConsole"));
             return;
         }
         User user = interaction.getUser(interaction.getUserId());
@@ -73,14 +73,14 @@ public class MuteCommand implements BaseCommand {
         parseArgs(interactionTelegram, user);
 
         if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
-            output.output(interaction.setMessage("This command is not available for private chat"));
+            output.output(interaction.setLangaugeValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
 
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
             logger.info("Mute command requested a user argument");
-            output.output(interactionTelegram.setMessage("Reply message target user with command /mute"));
+            output.output(interactionTelegram.setLanguageValue("mute.replyMessage"));
             return;
         }
 
@@ -93,7 +93,7 @@ public class MuteCommand implements BaseCommand {
         if (!user.isExceptedKey(getCommandName(), "reason")) {
             user.setExcepted(getCommandName(), "reason");
             logger.info("Mute command requested a reason argument");
-            output.output(interactionTelegram.setMessage("Enter reason"));
+            output.output(interactionTelegram.setLanguageValue("mute.reason"));
             return;
         }
 
@@ -101,7 +101,7 @@ public class MuteCommand implements BaseCommand {
         if (!user.isExceptedKey(getCommandName(), "duration")) {
             user.setExcepted(getCommandName(), "duration");
             logger.info("Mute command requested a duration argument");
-            output.output(interactionTelegram.setMessage("Enter duration"));
+            output.output(interactionTelegram.setLangaugeValue("mute.duration"));
             return;
         }
         // Валидация даты...
@@ -113,12 +113,13 @@ public class MuteCommand implements BaseCommand {
             interactionTelegram.findServerById(interaction.getChatId()).addUserMute(user);
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been muted");
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
-            output.output(interactionTelegram.setMessage("The user @"
-                    + username
-                    + " has been mute to " + user.getValue(getCommandName(), "duration")
-                    + " with reason: " + user.getValue(getCommandName(), "reason")));
+            output.output(interactionTelegram.setLanguageValue("mute.complete", List.of(
+                username,
+                user.getValue(getCommandName(), "duration"),
+                user.getValue(getCommandName(), "reason")
+            )));
         } catch (Exception err) {
-            output.output(interaction.setMessage("Something went wrong... :("));
+            output.output(interaction.setLanguageValue("system.error.something"));
             logger.error("Mute command: " + err);
         } finally {
             user.clearExpected(getCommandName());
