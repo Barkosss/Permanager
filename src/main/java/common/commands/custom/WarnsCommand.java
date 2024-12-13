@@ -7,9 +7,11 @@ import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.User;
+import common.models.Warning;
 import common.utils.LoggerHandler;
 import common.utils.Validate;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,9 +71,34 @@ public class WarnsCommand implements BaseCommand {
 
         // Получаем userId целевого пользователя
         long targetUserId = (long) user.getValue(getCommandName(), "userId");
+        StringBuilder message = new StringBuilder();
+        String warnReason;
+        LocalDate warnDuration;
+        long moderatorId;
+        try {
+            message = new StringBuilder(interaction.getLanguageValue("warns.complete",
+                    List.of(String.valueOf(targetUserId))));
+
+            for (Warning warning : user.getWarnings) {
+                warnReason = warning.getReason();
+                warnDuration = warning.getDuration();
+                
+                message.append(interaction.getLanguageValue("warns.warn", List.of(
+                        String.valueOf(warning.getId()),
+                        String.valueOf(warning.getDuration()),
+                        String.valueOf(warning.getModeratorId()),
+                        warning.getReason()
+                ))).append("\n");
+            }
+
+        } catch (Exception err) {
+            logger.error("");
+            output.output(interaction.setLanguageValue("system.error.something"));
+        }
+
 
         try {
-            output.output(interaction.setLanguageValue("warns.complete", List.of(String.valueOf(targetUserId))));
+            output.output(interaction.setMessage(message.toString()));
             logger.info(String.format("User by id(%d) in chat by id(%d) has look warns at target user by id (%d)",
                     user.getUserId(), interaction.getChatId(), targetUserId));
         } catch (Exception err) {

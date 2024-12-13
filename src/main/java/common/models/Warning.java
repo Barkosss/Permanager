@@ -14,7 +14,7 @@ public class Warning {
     long chatId;
 
     // Идентификатор модератора
-    long moderationId;
+    long moderatorId;
 
     // Причина
     String reason;
@@ -53,12 +53,12 @@ public class Warning {
         return this;
     }
 
-    public long getModerationId() {
-        return moderationId;
+    public long getModeratorId() {
+        return moderatorId;
     }
 
-    public Warning setModerationId(long moderationId) {
-        this.moderationId = moderationId;
+    public Warning setModeratorId(long moderatorId) {
+        this.moderatorId = moderatorId;
         return this;
     }
 
