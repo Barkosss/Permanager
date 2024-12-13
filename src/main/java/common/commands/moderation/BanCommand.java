@@ -10,7 +10,6 @@ import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.Permissions;
-import common.models.Server;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.Validate;

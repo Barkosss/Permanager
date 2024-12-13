@@ -1,5 +1,7 @@
 package common.commands.custom;
 
+import com.pengrad.telegrambot.request.GetChatMember;
+import com.pengrad.telegrambot.response.GetChatMemberResponse;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -9,6 +11,7 @@ import common.utils.LoggerHandler;
 import common.utils.Validate;
 
 import java.util.List;
+import java.util.Optional;
 
 public class WarnsCommand implements BaseCommand {
     OutputHandler output = new OutputHandler();
@@ -38,11 +41,11 @@ public class WarnsCommand implements BaseCommand {
 
         // Если аргумент не пустой - Смотрим по Id первым аргументом
         Optional<Integer> validInteger = validate.isValidInteger(arguments.getFirst());
-        if (validInteger.isPreset()) {
-            ChatMember chatMember = interactionTelegram.telegramBot.execute(new GetChatMember(interaction.getChatId(), arguments.getFirst()));
+        if (validInteger.isPresent()) {
+            GetChatMemberResponse chatMember = interactionTelegram.telegramBot.execute(new GetChatMember(interaction.getChatId(), validInteger.get()));
             // Если такой пользователь есть в чате
             if (chatMember != null) {
-                user.setExcepted(getCommandName(), "userId").setValue(chatMember.user().id());
+                user.setExcepted(getCommandName(), "userId").setValue(chatMember.chatMember().user().id());
                 return;
             }
         }

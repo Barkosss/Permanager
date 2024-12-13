@@ -2,10 +2,8 @@ package common.commands.moderation;
 
 import com.pengrad.telegrambot.model.ChatPermissions;
 import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.request.BanChatMember;
 import com.pengrad.telegrambot.request.GetChatMemberCount;
 import com.pengrad.telegrambot.request.RestrictChatMember;
-import com.pengrad.telegrambot.request.UnbanChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -73,7 +71,7 @@ public class MuteCommand implements BaseCommand {
         parseArgs(interactionTelegram, user);
 
         if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
-            output.output(interaction.setLangaugeValue("system.error.notAvailableCommandPrivateChat"));
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
 
@@ -101,7 +99,7 @@ public class MuteCommand implements BaseCommand {
         if (!user.isExceptedKey(getCommandName(), "duration")) {
             user.setExcepted(getCommandName(), "duration");
             logger.info("Mute command requested a duration argument");
-            output.output(interactionTelegram.setLangaugeValue("mute.duration"));
+            output.output(interactionTelegram.setLanguageValue("mute.duration"));
             return;
         }
         // Валидация даты...
@@ -114,9 +112,9 @@ public class MuteCommand implements BaseCommand {
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been muted");
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
             output.output(interactionTelegram.setLanguageValue("mute.complete", List.of(
-                username,
-                user.getValue(getCommandName(), "duration"),
-                user.getValue(getCommandName(), "reason")
+                    username,
+                    (String) user.getValue(getCommandName(), "duration"),
+                    (String) user.getValue(getCommandName(), "reason")
             )));
         } catch (Exception err) {
             output.output(interaction.setLanguageValue("system.error.something"));

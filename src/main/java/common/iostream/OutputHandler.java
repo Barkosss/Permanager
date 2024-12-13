@@ -28,7 +28,8 @@ public class OutputHandler {
                             .execute(sendMessage.parseMode(ParseMode.MarkdownV2));
 
                     if (!sendRequest.isOk()) {
-                        interactionTelegram.telegramBot.execute(sendMessage);
+                        interactionTelegram.telegramBot.execute(new SendMessage(interaction.getChatId(),
+                                interaction.getMessage()));
                     }
 
                 } catch (Exception err) {

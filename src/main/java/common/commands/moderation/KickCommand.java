@@ -90,7 +90,7 @@ public class KickCommand implements BaseCommand {
                 Permissions.Permission.KICK.getPermission(), user.getUserId(), interaction.getChatId()));
         if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.KICK)) {
             try {
-                logger.info(String.format("The user by id(%s) doesn't have sufficient access rights (%s) in chat by id",
+                logger.info(String.format("The user by id(%s) doesn't have access rights (%s) in chat by id(%s)",
                         user.getUserId(), Permissions.Permission.KICK.getPermission(), interaction.getChatId()));
                 output.output(interaction.setLanguageValue("system.error.accessDenied",
                         List.of(((InteractionTelegram) interaction).getUsername())));
@@ -132,7 +132,7 @@ public class KickCommand implements BaseCommand {
 
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
             String reason = (String) user.getValue(getCommandName(), "reason");
-            if (reason != "/skip") {
+            if (!reason.equals("/skip")) {
                 output.output(interactionTelegram.setLanguageValue("kick.complete", List.of(username)));
             } else {
                 output.output(interactionTelegram.setLanguageValue("kick.completeWithReason",
