@@ -24,19 +24,13 @@ public class OutputHandler {
 
                 // Отправляем сообщение пользователю в Telegram
                 try {
-                    // TODO: Не отправляет сообщение длиною большее, чем 523
                     SendResponse sendRequest = interactionTelegram.telegramBot
                             .execute(sendMessage.parseMode(ParseMode.Markdown));
 
                     if (!sendRequest.isOk()) {
-                        logger.error(String.format("Couldn't send a message to the chat (%s): %s",
-                                interaction.getChatId(),
-                                interaction.getMessage()));
-                    } else {
-                        logger.debug(String.format("Send message to chatId(%d, userId=%d) with message(\"%s\")",
-                                interaction.getChatId(), interaction.getUserId(),
-                                interaction.getMessage().trim().replace("\n", " ")));
+                        interactionTelegram.telegramBot.execute(sendMessage);
                     }
+
                 } catch (Exception err) {
                     interactionTelegram.telegramBot.execute(new SendMessage(interaction.getChatId(),
                             interaction.getLanguageValue("system.error.something")));
