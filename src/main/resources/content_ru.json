@@ -34,7 +34,7 @@
             "defaultRightAccess": {
                 "title": "Настройка стандартных прав доступа",
                 "description": "`\uD83D\uDFE2 | Доступ к команде имеется`\n`\uD83D\uDD34 | Доступ к команде отсутствует`\n**Правильно настраивайте права доступа**. Данные разрешения будут установлены новым добавленным модераторам, которым не находятся в группе, также будут выданы новосозданным группам",
-                "permissions": "**Ban** - `%BAN%`\n**Unban** - `%UNBAN%`\n**Kick** - `%KICK%`\n**Mute** - `%MUTE%`\n**Unmute** - `%UNMUTE%`\n**warn** - `%WARN%`\n**remwarn** - `%REMWARN%`\n**resetwarns** - `%RESETWARNS%`\n**clear** - `%CLEAR%"
+                "permissions": "**Ban** - `%BAN%`\n**Unban** - `%UNBAN%`\n**Kick** - `%KICK%`\n**Mute** - `%MUTE%`\n**Unmute** - `%UNMUTE%`\n**Warn** - `%WARN%`\n**Remwarn** - `%REMWARN%`\n**Resetwarns** - `%RESETWARNS%`\n**Clear** - `%CLEAR%`"
             }
         }
     },
