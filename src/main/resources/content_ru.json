@@ -99,6 +99,9 @@
     },
     "warns": {
         "listWarns": "Список активных предупреждений у @%USERNAME%",
+        "reason": "Причина",
+        "duration": "Длительность",
+        "moderator": "Модератор",
         "warnsNotFound": "У @%USERNAME% отсутствуют предупреждения"
     },
     "warn": {
