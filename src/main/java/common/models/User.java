@@ -1,7 +1,5 @@
 package common.models;
 
-import common.repositories.WarningRepository;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,7 +31,7 @@ public class User {
     Map<Long, Map<Long, Task>> tasks;
 
     // Список предупреждений
-    Map<Server, WarningRepository> warnings = new HashMap<>();
+    Map<Long, Map<Long, Warning>> warnings = new HashMap<>();
 
     public User(long userId) {
         this.userId = userId;
@@ -193,5 +191,30 @@ public class User {
 
         member.setPermission(permission, permissionStatus);
         return this;
+    }
+
+    public User addWarning(Warning warning) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(warning.getChatId())) {
+            this.warnings.put(warning.getChatId(), new HashMap<>());
+        }
+
+        this.warnings.get(warning.getChatId()).put(warning.getId(), warning);
+        return this;
+    }
+
+    public Map<Long, Warning> getWarnings(long chatId) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        return this.warnings.get(chatId);
     }
 }

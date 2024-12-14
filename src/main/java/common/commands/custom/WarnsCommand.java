@@ -13,6 +13,7 @@ import common.utils.Validate;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class WarnsCommand implements BaseCommand {
@@ -74,25 +75,37 @@ public class WarnsCommand implements BaseCommand {
         StringBuilder message = new StringBuilder();
         String warnReason;
         LocalDate warnDuration;
-        long moderatorId;
         try {
             message = new StringBuilder(interaction.getLanguageValue("warns.complete",
                     List.of(String.valueOf(targetUserId))));
 
-            for (Warning warning : user.getWarnings) {
+            Map<Long, Warning> warnings = user.getWarnings(interaction.getChatId());
+            for (Warning warning : warnings.values()) {
                 warnReason = warning.getReason();
                 warnDuration = warning.getDuration();
                 
                 message.append(interaction.getLanguageValue("warns.warn", List.of(
                         String.valueOf(warning.getId()),
-                        String.valueOf(warning.getDuration()),
-                        String.valueOf(warning.getModeratorId()),
-                        warning.getReason()
-                ))).append("\n");
+                        String.valueOf(warning.getModeratorId())
+                )));
+
+                // Указана ли причина
+                if (warnReason != null) {
+                    message.append(interaction.getLanguageValue("warns.warnReason", List.of(warnReason)));
+                }
+
+                // Указана ли длительность
+                if (warnDuration != null) {
+                    message.append(interaction.getLanguageValue("warns.warnDuration", List.of(
+                            String.valueOf(warnDuration)
+                    )));
+                }
+
+                message.append("\n\n");
             }
 
         } catch (Exception err) {
-            logger.error("");
+            logger.error(String.format("Error in command \"%s\" (Building message with warnings): %s", getCommandName(), err));
             output.output(interaction.setLanguageValue("system.error.something"));
         }
 
@@ -103,7 +116,7 @@ public class WarnsCommand implements BaseCommand {
                     user.getUserId(), interaction.getChatId(), targetUserId));
         } catch (Exception err) {
             output.output(interaction.setLanguageValue("system.error.something"));
-            logger.error(String.format("Warns not show for user by id(%d)", user.getUserId()));
+            logger.error(String.format("Warns not show for user by id(%d): %s", user.getUserId(), err));
         } finally {
             user.clearExpected(getCommandName());
         }
