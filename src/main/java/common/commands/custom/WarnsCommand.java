@@ -105,6 +105,10 @@ public class WarnsCommand implements BaseCommand {
                 message.append("\n\n");
             }
 
+            if (warnings.isEmpty()) {
+                message.append(interaction.getLanguageValue("warns.empty"));
+            }
+
         } catch (Exception err) {
             logger.error(String.format("Error in command \"%s\" (Building message with warnings): %s",
                     getCommandName(), err));
