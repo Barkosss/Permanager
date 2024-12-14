@@ -45,7 +45,8 @@ public class WarnsCommand implements BaseCommand {
         // Если аргумент не пустой - Смотрим по Id первым аргументом
         Optional<Integer> validInteger = validate.isValidInteger(arguments.getFirst());
         if (validInteger.isPresent()) {
-            GetChatMemberResponse chatMember = interactionTelegram.telegramBot.execute(new GetChatMember(interaction.getChatId(), validInteger.get()));
+            GetChatMemberResponse chatMember = interactionTelegram.telegramBot.execute(
+                    new GetChatMember(interaction.getChatId(), validInteger.get()));
             // Если такой пользователь есть в чате
             if (chatMember != null) {
                 user.setExcepted(getCommandName(), "userId").setValue(chatMember.chatMember().user().id());
@@ -83,7 +84,7 @@ public class WarnsCommand implements BaseCommand {
             for (Warning warning : warnings.values()) {
                 warnReason = warning.getReason();
                 warnDuration = warning.getDuration();
-                
+
                 message.append(interaction.getLanguageValue("warns.warn", List.of(
                         String.valueOf(warning.getId()),
                         String.valueOf(warning.getModeratorId())
@@ -105,7 +106,8 @@ public class WarnsCommand implements BaseCommand {
             }
 
         } catch (Exception err) {
-            logger.error(String.format("Error in command \"%s\" (Building message with warnings): %s", getCommandName(), err));
+            logger.error(String.format("Error in command \"%s\" (Building message with warnings): %s",
+                    getCommandName(), err));
             output.output(interaction.setLanguageValue("system.error.something"));
         }
 
