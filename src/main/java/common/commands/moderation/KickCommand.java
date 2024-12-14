@@ -14,7 +14,7 @@ import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.Permissions;
 import common.utils.LoggerHandler;
-import common.utils.Validate;
+import common.utils.ValidateService;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +22,7 @@ import java.util.Optional;
 public class KickCommand implements BaseCommand {
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
-    Validate validate = new Validate();
+    ValidateService validate = new ValidateService();
 
     @Override
     public String getCommandName() {

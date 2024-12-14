@@ -15,7 +15,7 @@ import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 import common.utils.LoggerHandler;
 import common.utils.SystemService;
-import common.utils.Validate;
+import common.utils.ValidateService;
 import org.reflections.Reflections;
 
 import java.time.LocalDate;
@@ -28,7 +28,7 @@ import java.util.Set;
 
 public class CommandHandler {
     LoggerHandler logger = new LoggerHandler();
-    Validate validate = new Validate();
+    ValidateService validate = new ValidateService();
 
     public enum LaunchPlatform {
         TELEGRAM,

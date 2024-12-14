@@ -8,7 +8,7 @@ import common.models.Reminder;
 import common.models.User;
 import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
-import common.utils.Validate;
+import common.utils.ValidateService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class ReminderCommand implements BaseCommand {
     JSONHandler jsonHandler = new JSONHandler();
     LoggerHandler logger = new LoggerHandler();
-    Validate validate = new Validate();
+    ValidateService validate = new ValidateService();
     OutputHandler output = new OutputHandler();
 
     // Получить короткое название команды

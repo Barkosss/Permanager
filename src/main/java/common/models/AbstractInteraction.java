@@ -7,7 +7,7 @@ import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
 import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
-import common.utils.Validate;
+import common.utils.ValidateService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -200,7 +200,7 @@ public abstract class AbstractInteraction implements Interaction {
     }
 
     public String getLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException {
-        Validate validate = new Validate();
+        ValidateService validate = new ValidateService();
         LoggerHandler logger = new LoggerHandler();
 
         String message = getLanguageValue(languageKey);

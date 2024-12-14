@@ -15,6 +15,9 @@ public class User {
     // Идентификатор пользователя
     long userId;
 
+    // Часовой пояс пользователя
+    TimeZone timeZone;
+
     // Объект с информацией ожидаемых ответов
     InputExpectation userInputExpectation = new InputExpectation();
 
@@ -39,6 +42,15 @@ public class User {
 
     public long getUserId() {
         return userId;
+    }
+
+    public User setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
+        return this;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
     }
 
     public InputStatus getInputStatus() {
@@ -92,6 +104,13 @@ public class User {
     public void clearExpected(String commandName) {
         this.inputStatus = InputStatus.COMPLETED;
         this.userInputExpectation.getExpectedInputs().remove(commandName);
+    }
+
+    public void clearExpected(String commandName, String valueKey) {
+        this.inputStatus = InputStatus.COMPLETED;
+        if (this.userInputExpectation.getExpectedInputs().containsKey(commandName)) {
+            this.userInputExpectation.getExpectedInputs().get(commandName).remove(valueKey);
+        }
     }
 
     public User addReminder(Reminder reminder) {

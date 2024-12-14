@@ -7,7 +7,6 @@ import common.models.InteractionTelegram;
 import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
-import common.utils.Validate;
 
 import java.util.List;
 
