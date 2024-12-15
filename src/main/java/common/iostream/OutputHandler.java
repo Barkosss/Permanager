@@ -1,5 +1,6 @@
 package common.iostream;
 
+import com.pengrad.telegrambot.model.LinkPreviewOptions;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -25,7 +26,8 @@ public class OutputHandler {
                 // Отправляем сообщение пользователю в Telegram
                 try {
                     SendResponse sendRequest = interactionTelegram.telegramBot
-                            .execute(sendMessage.parseMode(ParseMode.MarkdownV2));
+                            .execute(sendMessage.parseMode(ParseMode.Markdown)
+                                    .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true)));
 
                     if (!sendRequest.isOk()) {
                         interactionTelegram.telegramBot.execute(new SendMessage(interaction.getChatId(),

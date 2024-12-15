@@ -38,6 +38,20 @@
             }
         }
     },
+    "settings": {
+        "language": {
+            "request": "Укажите язык (ru, en)",
+            "complete": ""
+        },
+        "timezone": {
+            "request": "Укажите [часовой пояс](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) [ютуб](https://youtube.com) [VK](https://vk.com) (Например, Europe/Moscow)",
+
+            "complete": ""
+        },
+        "error": {
+            "": ""
+        }
+    },
     "reminder": {
         "start": {
             "action": "Укажите одно из действий (Действия: create, edit, remove, list)",

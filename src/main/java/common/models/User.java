@@ -18,6 +18,9 @@ public class User {
     // Часовой пояс пользователя
     TimeZone timeZone;
 
+    // Язык пользователя
+    Interaction.Language language;
+
     // Объект с информацией ожидаемых ответов
     InputExpectation userInputExpectation = new InputExpectation();
 
@@ -51,6 +54,15 @@ public class User {
 
     public TimeZone getTimeZone() {
         return timeZone;
+    }
+
+    public User setLanguage(Interaction.Language language) {
+        this.language = language;
+        return this;
+    }
+
+    public Interaction.Language getLanguage() {
+        return language;
     }
 
     public InputStatus getInputStatus() {
