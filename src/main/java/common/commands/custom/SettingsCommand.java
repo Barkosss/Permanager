@@ -47,8 +47,7 @@ public class SettingsCommand implements BaseCommand {
                 String language = arguments.get(1).trim().toLowerCase();
                 // Сохраняем язык
                 switch (language) {
-                    case "ru": {
-                    }
+                    case "ru":
                     case "en": {
                         user.setExcepted(getCommandName(), "language").setValue(language);
                         break;
