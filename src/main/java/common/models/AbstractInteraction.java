@@ -192,7 +192,7 @@ public abstract class AbstractInteraction implements Interaction {
 
     public String getLanguageValue(String languageKey) {
         JSONHandler jsonHandler = new JSONHandler();
-        String languagePath = String.format("content_%s.json", languageCode.getLang());
+        String languagePath = String.format("content_%s.json", getUser(userId).getLanguage().getLang());
         if (jsonHandler.check(languagePath, languageKey)) {
             return (String) jsonHandler.read(languagePath, languageKey);
         }

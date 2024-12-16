@@ -85,7 +85,7 @@ public class SettingsCommand implements BaseCommand {
         parseArgs(interaction, user);
 
         if (!user.isExceptedKey(getCommandName(), "section")) {
-            logger.info("...");
+            logger.info("Settings command requested a section argument");
             user.setExcepted(getCommandName(), "section");
             output.output(interaction.setLanguageValue("settings.request"));
             return;
@@ -105,7 +105,7 @@ public class SettingsCommand implements BaseCommand {
             }
 
             default: {
-                logger.info("");
+                logger.info("Settings command again requested a section argument");
                 output.output(interaction.setLanguageValue("settings.error.sectionNotFound"));
                 user.clearExpected(getCommandName(), "section");
                 break;
@@ -117,7 +117,7 @@ public class SettingsCommand implements BaseCommand {
     private void configLanguage(Interaction interaction, User user) {
 
         if (!user.isExceptedKey(getCommandName(), "language")) {
-            logger.info("...");
+            logger.info("Settings command requested a language argument (configLanguage)");
             user.setExcepted(getCommandName(), "language");
             output.output(interaction.setLanguageValue("settings.language.request"));
             return;
@@ -140,7 +140,7 @@ public class SettingsCommand implements BaseCommand {
     private void configTimezone(Interaction interaction, User user) {
 
         if (!user.isExceptedKey(getCommandName(), "timezone")) {
-            logger.info("...");
+            logger.info("Settings command requested a timezone argument (configTimezone)");
             user.setExcepted(getCommandName(), "timezone");
             output.output(interaction.setLanguageValue("settings.timezone.request"));
             return;
@@ -150,15 +150,15 @@ public class SettingsCommand implements BaseCommand {
         try {
             Optional<TimeZone> validTimeZone = validate.isValidTimeZone(timezone);
             if (validTimeZone.isPresent()) {
-                logger.info("...");
+                logger.info(String.format("User by id(%s) change the timezone (%s)", user.getUserId(), validTimeZone.get()));
                 user.setTimeZone(validTimeZone.get());
                 output.output(interaction.setLanguageValue("settings.timezone.complete"));
             } else {
-                logger.info("...");
+                logger.info(String.format("User by id(%s) not change (error) the language (%s)", user.getUserId(), timezone));
                 output.output(interaction.setLanguageValue("settings.timezone.error.invalidTimezone"));
             }
-        } catch (Exception e) {
-            logger.error("...");
+        } catch (Exception err) {
+            logger.error("Something error: " + err);
             output.output(interaction.setLanguageValue("system.error.something"));
         }
     }
