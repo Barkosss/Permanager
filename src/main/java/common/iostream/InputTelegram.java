@@ -154,7 +154,7 @@ public class InputTelegram {
                         update.message().replyToMessage(), // Информация об ответном сообщении
                         update.message().text(), // Содержимое сообщения
                         update.message().date(), // Время отправки, пользователем, сообщения
-                        Interaction.Language.RUSSIAN, //language,
+                        interaction.getUser(interaction.getUserId()).getLanguage(),
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
                 ));

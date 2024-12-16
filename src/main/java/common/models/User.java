@@ -62,6 +62,9 @@ public class User {
     }
 
     public Interaction.Language getLanguage() {
+        if (language == null) {
+            this.language = Interaction.Language.ENGLISH;
+        }
         return language;
     }
 
