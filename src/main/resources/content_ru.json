@@ -1,14 +1,15 @@
 {
     "system": {
         "disable": "Выключить",
-        "enable": "Выключить",
+        "enable": "Включить",
         "off": "Выключен",
         "on": "Включён",
+        "undefined": "Не указано",
         "true": "\uD83D\uDFE2 | Доступ имеется",
         "false": "\uD83D\uDD34 | Доступ отсутствует",
         "error": {
-            "notAvailableCommandConsole": "Данная команда не доступна из Консоли",
-            "notAvailableCommandPrivateChat": "Данная команда не доступна в приватном чате",
+            "notAvailableCommandConsole": "Данная команда недоступна из Консоли",
+            "notAvailableCommandPrivateChat": "Данная команда недоступна в приватном чате",
             "commandNotFound": "Команда \"%COMMAND_NAME%`\" не найдена",
             "accessDenied": "@%USERNAME%, у Вас недостаточно прав для использование команды",
             "something": "Произошла неизвестная ошибка"
@@ -39,6 +40,7 @@
         }
     },
     "settings": {
+        "start": "...\n\nТекущий язык: `%LANGUAGE%`\nВаш часовой пояс: `%TIMEZONE%`",
         "request": "Укажите раздел (language, timezone)",
         "language": {
             "request": "Укажите язык (ru, en)",

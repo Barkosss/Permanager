@@ -87,7 +87,23 @@ public class SettingsCommand implements BaseCommand {
         if (!user.isExceptedKey(getCommandName(), "section")) {
             logger.info("Settings command requested a section argument");
             user.setExcepted(getCommandName(), "section");
-            output.output(interaction.setLanguageValue("settings.request"));
+            Object timezone = user.getTimeZone();
+            if (timezone == null) {
+                timezone = interaction.getLanguageValue("system.undefined");
+            }
+            Interaction.Language language = user.getLanguage();
+            try {
+                output.output(interaction.setLanguageValue("settings.start", List.of(
+                        String.valueOf(language),
+                        String.valueOf(timezone)
+                )));
+                output.output(interaction.setLanguageValue("settings.request"));
+            } catch (Exception err) {
+                logger.error("Something error (run): " + err);
+                output.output(interaction.setLanguageValue("system.error.something"));
+            } finally {
+                user.clearExpected(getCommandName());
+            }
             return;
         }
 
