@@ -44,7 +44,7 @@
             "complete": ""
         },
         "timezone": {
-            "request": "Укажите [часовой пояс](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) [ютуб](https://youtube.com) [VK](https://vk.com) (Например, Europe/Moscow)",
+            "request": "Укажите [часовой пояс](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) (Например, Europe/Moscow)",
 
             "complete": ""
         },

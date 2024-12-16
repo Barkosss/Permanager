@@ -8,6 +8,8 @@ import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.utils.LoggerHandler;
 
+import java.util.List;
+
 public class OutputHandler {
     LoggerHandler logger = new LoggerHandler();
 
@@ -29,9 +31,11 @@ public class OutputHandler {
                             .execute(sendMessage.parseMode(ParseMode.Markdown)
                                     .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true)));
 
+                    // Если не получилось отправить сообщение после парсинга стиля
                     if (!sendRequest.isOk()) {
                         interactionTelegram.telegramBot.execute(new SendMessage(interaction.getChatId(),
-                                interaction.getMessage()));
+                                interaction.getMessage())
+                                .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true)));
                     }
 
                 } catch (Exception err) {
