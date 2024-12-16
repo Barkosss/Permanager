@@ -8,5 +8,19 @@
             "againSection": "Try again. Enter section (dashboard, user, group)"
         },
         "dashboard": "Dashboard:\n\n- Настройка стандартных прав доступа\n*Стандартные права доступа, которые будут выдавать новым модераторам или группе*\n\n-Настройка стандартных ограничений\n*Стандартные ограничения, которые будут выдавать новым модераторам или группе*\n\n- Настройка модерационных команд\n*Включить или выключить модерационные команды.* ***ВАЖНО**: данный раздел не **скрывает** команды, а не даёт работать с ними*"
+    },
+    "settings": {
+        "request": "Specify the section (language, timezone)",
+        "language": {
+            "request": "Specify the language (ru, en)",
+            "complete": "The language has been successfully switched"
+        },
+        "timezone": {
+            "request": "Specify [time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) (For example, Europe/Moscow)",
+            "complete": "The time zone has been successfully set"
+        },
+        "error": {
+            "sectionNotFound": "The section was not found"
+        }
     }
 }

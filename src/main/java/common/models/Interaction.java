@@ -27,6 +27,15 @@ public interface Interaction {
         public String getLang() {
             return lang;
         }
+
+        public static Language getLanguage(String userLang) {
+            for (Language lang : Language.values()) {
+                if (lang.lang.equalsIgnoreCase(userLang)) {
+                    return lang;
+                }
+            }
+            return null;
+        }
     }
 
     Interaction setUserRepository(UserRepository userRepository);

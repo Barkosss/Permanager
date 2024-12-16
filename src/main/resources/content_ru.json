@@ -39,17 +39,17 @@
         }
     },
     "settings": {
+        "request": "Укажите раздел (language, timezone)",
         "language": {
             "request": "Укажите язык (ru, en)",
-            "complete": ""
+            "complete": "Язык успешно переключён"
         },
         "timezone": {
             "request": "Укажите [часовой пояс](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) (Например, Europe/Moscow)",
-
-            "complete": ""
+            "complete": "Успешно установлен часовой пояс"
         },
         "error": {
-            "": ""
+            "sectionNotFound": "Раздел не найден"
         }
     },
     "reminder": {

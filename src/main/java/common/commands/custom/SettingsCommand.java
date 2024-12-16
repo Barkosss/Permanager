@@ -44,7 +44,7 @@ public class SettingsCommand implements BaseCommand {
                     return;
                 }
 
-                String language = arguments.get(1).trim().toLowerCase();
+                String language = arguments.getFirst().trim().toLowerCase();
                 // Сохраняем язык
                 switch (language) {
                     case "ru":
@@ -84,6 +84,13 @@ public class SettingsCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
 
+        if (!user.isExceptedKey(getCommandName(), "section")) {
+            logger.info("...");
+            user.setExcepted(getCommandName(), "section");
+            output.output(interaction.setLanguageValue("settings.request"));
+            return;
+        }
+
 
         String section = (String) user.getValue(getCommandName(), "section");
         switch (section) {
@@ -118,12 +125,12 @@ public class SettingsCommand implements BaseCommand {
 
         String language = ((String) user.getValue(getCommandName(), "language")).trim().toLowerCase();
         try {
-            user.setLanguage(Interaction.Language.valueOf(language));
-            logger.info("...");
+            user.setLanguage(Interaction.Language.getLanguage(language));
+            logger.info(String.format("User by id(%s) change the language (%s)", user.getUserId(), user.getLanguage()));
             output.output(interaction.setLanguageValue("settings.language.complete"));
             user.clearExpected(getCommandName());
         } catch (Exception err) {
-            logger.info("...");
+            logger.info("Unknown error: " + err);
             user.setExcepted(getCommandName(), "language");
             output.output(interaction.setLanguageValue("settings.language.request"));
         }
