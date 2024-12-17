@@ -13,6 +13,7 @@ import common.models.User;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.repositories.WarningRepository;
 import common.utils.LoggerHandler;
 import common.utils.SystemService;
 import common.utils.ValidateService;
@@ -43,6 +44,7 @@ public class CommandHandler {
     UserRepository userRepository = new UserRepository();
     ServerRepository serverRepository = new ServerRepository();
     ReminderRepository reminderRepository = new ReminderRepository();
+    WarningRepository warningRepository = new WarningRepository();
 
     InputTelegram inputTelegram = new InputTelegram();
     InputConsole inputConsole = new InputConsole();
@@ -92,9 +94,12 @@ public class CommandHandler {
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
             // Поток для Telegram
             Thread threadTelegram = new Thread(() ->
-                    inputTelegram.read(interaction.setUserRepository(userRepository)
-                            .setServerRepository(serverRepository)
-                            .setReminderRepository(reminderRepository), this)
+                    inputTelegram.read(interaction
+                                    .setUserRepository(userRepository)
+                                    .setServerRepository(serverRepository)
+                                    .setReminderRepository(reminderRepository)
+                                    .setWarningRepository(warningRepository),
+                            this)
             );
             threadTelegram.setName("Thread-TELEGRAM-1");
             threadTelegram.start();
@@ -111,7 +116,6 @@ public class CommandHandler {
                     inputConsole.listener(new InteractionConsole()
                             .setChatId(0)
                             .setUserRepository(userRepository)
-                            .setServerRepository(serverRepository)
                             .setReminderRepository(reminderRepository), this)
             );
             threadConsole.setName("Thread-CONSOLE-2");

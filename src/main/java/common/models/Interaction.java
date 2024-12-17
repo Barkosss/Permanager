@@ -4,6 +4,7 @@ import common.exceptions.WrongArgumentsException;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.repositories.WarningRepository;
 
 import java.util.List;
 
@@ -55,6 +56,8 @@ public interface Interaction {
     Interaction setReminderRepository(ReminderRepository reminderRepository);
 
     Reminder createReminder(Reminder reminder);
+
+    Interaction setWarningRepository(WarningRepository warningRepository);
 
     User getUser(long userId);
 

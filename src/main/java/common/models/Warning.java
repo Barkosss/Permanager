@@ -79,4 +79,15 @@ public class Warning {
         this.duration = duration;
         return this;
     }
+
+    public String toString() {
+        return String.format("Warning({" +
+                "id=%s" +
+                "userId=%s" +
+                "chatId=%s" +
+                "moderationId=%s" +
+                "reason=%s" +
+                "duration=%s" +
+                "})", id, userId, chatId, moderatorId, reason, duration);
+    }
 }
