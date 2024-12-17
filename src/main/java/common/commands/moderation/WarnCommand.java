@@ -51,11 +51,6 @@ public class WarnCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.WARN)) {
-            output.output(interaction.setLanguageValue("system.error.accessDenied"));
-            return;
-        }
-
         // Проверяем на приватность чата
         if (interactionTelegram.telegramBot
                 .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
@@ -65,12 +60,24 @@ public class WarnCommand implements BaseCommand {
             return;
         }
 
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.WARN)) {
+            try {
+                output.output(interaction.setLanguageValue("system.error.accessDenied", List.of(
+                        interactionTelegram.getUsername()
+                )));
+            } catch (Exception err) {
+                logger.error("");
+                output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            }
+            return;
+        }
+
         parseArgs(interaction, user);
 
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
             logger.info("Warn command requested a user argument");
-            output.output(interactionTelegram.setLanguageValue("warn.user"));
+            output.output(interactionTelegram.setLanguageValue("warn.replyMessage"));
             return;
         }
 
@@ -110,8 +117,8 @@ public class WarnCommand implements BaseCommand {
             return;
         }
 
-        long targetMemberId = ((Message) user.getValue(getCommandName(), "user")).from().id();
-        Warning warning = new Warning(interaction.getChatId(), targetMemberId, interaction.getUserId());
+        com.pengrad.telegrambot.model.User targetMember = ((Message) user.getValue(getCommandName(), "user")).from();
+        Warning warning = new Warning(interaction.getChatId(), targetMember.id(), interaction.getUserId());
         warning.setId(user.getWarnings(interaction.getChatId()).size());
 
         // Если указали причину
@@ -125,9 +132,17 @@ public class WarnCommand implements BaseCommand {
         }
 
         user.addWarning(warning);
-        logger.info(String.format("Moderator by id(%s) give warn #%s for user by id(%s) in chat by id(%s)",
-                interaction.getUserId(), warning.getId(), targetMemberId, interaction.getChatId()));
-        output.output(interaction.setLanguageValue("warn.complete"));
-        user.clearExpected(getCommandName());
+        try {
+            logger.info(String.format("Moderator by id(%s) give warn #%s for user by id(%s) in chat by id(%s)",
+                    interaction.getUserId(), warning.getId(), targetMember.id(), interaction.getChatId()));
+            output.output(interaction.setLanguageValue("warn.complete",
+                    List.of(targetMember.username(), String.valueOf(warning.getId()))));
+        } catch (Exception err) {
+            logger.error("...");
+            output.output(interaction.setLanguageValue("system.error.something"));
+
+        } finally {
+            user.clearExpected(getCommandName());
+        }
     }
 }

@@ -11,7 +11,7 @@
             "notAvailableCommandConsole": "This command is not available from the Console",
             "notAvailableCommandPrivateChat": "This command is not available in private chat",
             "commandNotFound": "The command \"%COMMAND_NAME%`\" was not found",
-            "accessDenied": "@%USERNAME%, uou don't have enough rights to use the command",
+            "accessDenied": "@%USERNAME%, you don't have enough rights to use the command",
             "something": "An unknown error has occurred"
         }
     },
