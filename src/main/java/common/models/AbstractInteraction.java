@@ -127,16 +127,16 @@ public abstract class AbstractInteraction implements Interaction {
         return this.warningRepository.create(warning);
     }
 
-    public boolean existsWarningById(long chatId, long warningId) {
-        return this.warningRepository.existsById(chatId, warningId);
+    public boolean existsWarningById(long chatId, long userId, long warningId) {
+        return this.warningRepository.existsById(chatId, userId, warningId);
     }
 
-    public Warning findWarningById(long chatId, long warningId) {
-        return this.warningRepository.findById(chatId, warningId);
+    public Warning findWarningById(long chatId, long userId, long warningId) {
+        return this.warningRepository.findById(chatId, userId, warningId);
     }
 
-    public void removeWarning(long chatId, long warningId) {
-        this.warningRepository.remove(chatId, warningId);
+    public void removeWarning(long chatId, long userId, long warningId) {
+        this.warningRepository.remove(findWarningById(chatId, userId, warningId));
     }
 
     public User getUser(long userId) {

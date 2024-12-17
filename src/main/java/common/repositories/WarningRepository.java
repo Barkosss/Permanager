@@ -8,7 +8,8 @@ import java.util.Map;
 
 public class WarningRepository {
     LoggerHandler logger = new LoggerHandler();
-    Map<Long, Map<Long, Warning>> warnings;
+    // chatId | userId | warningId | Warning
+    Map<Long, Map<Long, Map<Long, Warning>>> warnings;
 
     public WarningRepository() {
         this.warnings = new HashMap<>();
@@ -29,36 +30,60 @@ public class WarningRepository {
             return null;
         }
         logger.debug(String.format("Warning by id(%s) is create", warningId));
-        this.warnings.get(warning.getChatId()).put(warningId, warning);
+        this.warnings.get(warning.getChatId()).get(warning.getUserId()).put(warningId, warning);
         return warning;
     }
 
     // Удалить сервер
-    public void remove(long chatId, long warningId) {
+    public void remove(Warning warning) {
+        long chatId = warning.getChatId();
+        long userId = warning.getUserId();
+
         if (this.warnings == null) {
             this.warnings = new HashMap<>();
         }
 
-        this.warnings.get(chatId).remove(warningId);
+        if (this.warnings.get(chatId) == null) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        if (this.warnings.get(chatId).get(userId) == null) {
+            this.warnings.get(chatId).put(userId, new HashMap<>());
+        }
+
+        this.warnings.get(warning.getChatId()).get(warning.getUserId()).remove(warning.getId());
     }
 
     // Найти пользователя по ID
-    public Warning findById(long chatId, long warningId) {
+    public Warning findById(long chatId, long userId, long warningId) {
         if (this.warnings == null) {
             this.warnings = new HashMap<>();
         }
 
-        Warning warning = this.warnings.get(chatId).get(warningId);
-        logger.debug(String.format("Warning by id(%s) is find. %s", warningId, warning.toString()));
+        if (this.warnings.get(chatId) == null) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        if (this.warnings.get(chatId).get(userId) == null) {
+            this.warnings.get(chatId).put(userId, new HashMap<>());
+        }
+
+        Warning warning = this.warnings.get(chatId).get(userId).get(warningId);
+        logger.debug(String.format("Warning by id(%s), user by id(%s) in chat by id(%s) is find. %s",
+                warningId, userId, chatId, warning.toString()));
         return warning;
     }
 
     // Существует ли пользователь
-    public boolean existsById(long chatId, long warningId) {
+    public boolean existsById(long chatId, long userId, long warningId) {
         if (this.warnings == null) {
             this.warnings = new HashMap<>();
         }
 
-        return this.warnings.get(warningId) != null;
+        if (this.warnings.get(chatId) == null) {
+            this.warnings.get(chatId).put(userId, new HashMap<>());
+        }
+
+        return this.warnings.get(chatId).get(userId).get(warningId) != null;
     }
 }

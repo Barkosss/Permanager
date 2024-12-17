@@ -69,9 +69,9 @@ public class RemWarnCommand implements BaseCommand {
         long userId = ((Message)user.getValue(getCommandName(), "user")).from().id();
         long index = (long) user.getValue(getCommandName(), "index");
 
-        // TODO: Переделать нахождение WarningRepository
-        if (interactionTelegram.existsWarningById(interaction.getChatId(), index)) {
-            interactionTelegram.removeWarning(interaction.getChatId(), index);
+
+        if (interactionTelegram.existsWarningById(interaction.getChatId(), userId, index)) {
+            interactionTelegram.removeWarning(interaction.getChatId(), userId, index);
             output.output(interaction.setLanguageValue("..."));
             user.clearExpected(getCommandName());
         } else {
