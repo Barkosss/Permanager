@@ -166,11 +166,14 @@ public class SettingsCommand implements BaseCommand {
         try {
             Optional<TimeZone> validTimeZone = validate.isValidTimeZone(timezone);
             if (validTimeZone.isPresent()) {
-                logger.info(String.format("User by id(%s) change the timezone (%s)", user.getUserId(), validTimeZone.get()));
+                logger.info(String.format("User by id(%s) change the timezone (%s)",
+                        user.getUserId(), validTimeZone.get()));
                 user.setTimeZone(validTimeZone.get());
                 output.output(interaction.setLanguageValue("settings.timezone.complete"));
+
             } else {
-                logger.info(String.format("User by id(%s) not change (error) the language (%s)", user.getUserId(), timezone));
+                logger.info(String.format("User by id(%s) not change (error) the language (%s)",
+                        user.getUserId(), timezone));
                 output.output(interaction.setLanguageValue("settings.timezone.error.invalidTimezone"));
             }
         } catch (Exception err) {
