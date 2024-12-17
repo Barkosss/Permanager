@@ -22,8 +22,10 @@ public class Warning {
     // Длительность
     LocalDate duration;
 
-    public Warning(long id) {
-        this.id = id;
+    public Warning(long chatId, long userId, long moderatorId) {
+        this.chatId = chatId;
+        this.userId = userId;
+        this.moderatorId = moderatorId;
     }
 
     public long getId() {
