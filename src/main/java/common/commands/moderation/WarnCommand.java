@@ -3,6 +3,7 @@ package common.commands.moderation;
 import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChat;
+import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -11,11 +12,14 @@ import common.models.Permissions;
 import common.models.User;
 import common.models.Warning;
 import common.utils.LoggerHandler;
+import common.utils.ValidateService;
 
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 public class WarnCommand implements BaseCommand {
+    ValidateService validate = new ValidateService();
     OutputHandler output = new OutputHandler();
     LoggerHandler logger = new LoggerHandler();
 
@@ -32,13 +36,43 @@ public class WarnCommand implements BaseCommand {
     @Override
     public void parseArgs(Interaction interaction, User user) {
         List<String> arguments = interaction.getArguments();
+        InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
 
         if (arguments.isEmpty()) {
             return;
         }
 
-        // Парсинг длительности предупреждения и причины
+        Optional<Integer> validUserId = validate.isValidInteger(arguments.getFirst());
+        if (validUserId.isPresent()) {
+            user.setExcepted(getCommandName(), "user")
+                    .setValue(interactionTelegram.telegramBot
+                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get())));
+            arguments = arguments.subList(1, arguments.size());
+        } else if (interactionTelegram.getContentReply() != null) {
+            user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply().from());
+        }
 
+        if (arguments.isEmpty()) {
+            return;
+        }
+
+        Optional<LocalDate> validDate = validate.isValidDate(String.format("%s %s",
+                arguments.getFirst(), arguments.get(1)));
+        Optional<LocalDate> validTime = validate.isValidTime(arguments.getFirst());
+
+        if (validDate.isPresent()) {
+            user.setExcepted(getCommandName(), "duration").setValue(validDate.get());
+            arguments = arguments.subList(1, arguments.size());
+        } else if (validTime.isPresent()) {
+            user.setExcepted(getCommandName(), "duration").setValue(validTime.get());
+            arguments = arguments.subList(1, arguments.size());
+        }
+
+        if (arguments.isEmpty()) {
+            return;
+        }
+
+        user.setExcepted(getCommandName(), "reason").setValue(String.join(" ", arguments));
     }
 
     @Override
@@ -138,7 +172,7 @@ public class WarnCommand implements BaseCommand {
             output.output(interaction.setLanguageValue("warn.complete",
                     List.of(targetMember.username(), String.valueOf(warning.getId()))));
         } catch (Exception err) {
-            logger.error("...");
+            logger.error(String.format("Something error in Warn command: %s", err));
             output.output(interaction.setLanguageValue("system.error.something"));
 
         } finally {
