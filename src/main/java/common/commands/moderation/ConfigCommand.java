@@ -162,6 +162,7 @@ public class ConfigCommand implements BaseCommand {
 
             case "moderation commands": {
                 // Настройка команд
+                configModerationCommand(interaction, user);
                 break;
             }
 
@@ -204,6 +205,10 @@ public class ConfigCommand implements BaseCommand {
     }
 
     public void configDefaultLimits(InteractionTelegram interaction, User user) {
+
+    }
+
+    public void configModerationCommand(InteractionTelegram interaction, User user) {
 
     }
 
