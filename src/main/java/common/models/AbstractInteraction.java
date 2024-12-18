@@ -221,7 +221,7 @@ public abstract class AbstractInteraction implements Interaction {
         if (jsonHandler.check(languagePath, languageKey)) {
             return (String) jsonHandler.read(languagePath, languageKey);
         }
-        return null;
+        return languageKey;
     }
 
     public String getLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException {
@@ -230,7 +230,7 @@ public abstract class AbstractInteraction implements Interaction {
 
         String message = getLanguageValue(languageKey);
         if (message == null) {
-            return "";
+            return languageKey;
         }
         List<String> findReplace = parseReplace(message);
 
