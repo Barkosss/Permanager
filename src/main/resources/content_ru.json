@@ -119,7 +119,7 @@
         "warning": "#%WARNINGID%:",
         "reason": "Причина: %REASON%",
         "duration": "Длительность: %DURATION%",
-        "moderator": "Модератор: @%USERNAME",
+        "moderator": "Модератор: @%USERNAME%",
         "createdAt": "Дата выдачи: %CREATEDAT%",
         "complete": "Список предупреждений у @%USERNAME%",
         "empty": "Список предупреждений у @%USERNAME% пуст",
