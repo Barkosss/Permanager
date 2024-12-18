@@ -116,10 +116,13 @@
     },
     "warns": {
         "listWarns": "Список активных предупреждений у @%USERNAME%",
-        "reason": "Причина",
-        "duration": "Длительность",
-        "moderator": "Модератор",
-        "createdAt": "Дата выдачи",
+        "warning": "#%WARNINGID%:",
+        "reason": "Причина: %REASON%",
+        "duration": "Длительность: %DURATION%",
+        "moderator": "Модератор: @%USERNAME",
+        "createdAt": "Дата выдачи: %CREATEDAT%",
+        "complete": "Список предупреждений у @%USERNAME%",
+        "empty": "Список предупреждений у @%USERNAME% пуст",
         "warnsNotFound": "У @%USERNAME% отсутствуют предупреждения"
     },
     "warn": {
