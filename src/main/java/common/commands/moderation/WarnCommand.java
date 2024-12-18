@@ -1,6 +1,7 @@
 package common.commands.moderation;
 
 import com.pengrad.telegrambot.model.ChatFullInfo;
+import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
@@ -42,13 +43,18 @@ public class WarnCommand implements BaseCommand {
             return;
         }
 
-        Optional<Integer> validUserId = validate.isValidInteger(arguments.getFirst());
+        Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
-            user.setExcepted(getCommandName(), "user")
-                    .setValue(interactionTelegram.telegramBot
-                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
-                            .chatMember().user());
-            arguments = arguments.subList(1, arguments.size());
+            ChatMember targetMember = interactionTelegram.telegramBot
+                    .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
+                    .chatMember();
+
+            if (targetMember != null) {
+                user.setExcepted(getCommandName(), "user")
+                        .setValue(targetMember.user());
+                arguments = arguments.subList(1, arguments.size());
+            }
+
         } else if (interactionTelegram.getContentReply() != null) {
             Message contentReply = interactionTelegram.getContentReply();
             if (!contentReply.from().isBot() && contentReply.from().id() != interaction.getUserId()) {
@@ -166,7 +172,7 @@ public class WarnCommand implements BaseCommand {
             return;
         }
 
-        com.pengrad.telegrambot.model.User targetMember = ((Message) user.getValue(getCommandName(), "user")).from();
+        com.pengrad.telegrambot.model.User targetMember = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"));
         User targetUser = interactionTelegram.findUserById(targetMember.id());
         Warning warning = new Warning(interaction.getChatId(), targetMember.id(), interaction.getUserId());
         warning.setId(targetUser.getWarnings(interaction.getChatId()).size() + 1);

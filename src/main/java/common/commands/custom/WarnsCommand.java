@@ -93,10 +93,10 @@ public class WarnsCommand implements BaseCommand {
                 .execute(new GetChatMember(interaction.getChatId(), targetUserId)).chatMember().user();
         com.pengrad.telegrambot.model.User moderatorMember;
         StringBuilder message = new StringBuilder();
-        String warnReason;
-        String warnDuration;
+        String warnReason, warnDuration, warnCreatedAt;
         try {
-            Map<Long, Warning> warnings = user.getWarnings(interaction.getChatId());
+            Map<Long, Warning> warnings = interactionTelegram.findUserById(targetUserId)
+                    .getWarnings(interaction.getChatId());
 
             // Если список предупреждений пуст
             if (warnings.isEmpty()) {
@@ -104,18 +104,21 @@ public class WarnsCommand implements BaseCommand {
                         List.of(targetMember.username())));
             } else {
                 message = new StringBuilder(interaction.getLanguageValue("warns.complete",
-                        List.of(targetMember.username())));
+                        List.of(targetMember.username()))).append("\n");
             }
 
             for (Warning warning : warnings.values()) {
                 moderatorMember = interactionTelegram.telegramBot
                         .execute(new GetChatMember(interaction.getChatId(), warning.getModeratorId()))
                         .chatMember().user();
-                warnReason = warning.getReason();
-                warnDuration = String.valueOf(warning.getDuration());
+                warnReason = (!warning.getReason().startsWith("/skip")) ? warning.getReason()
+                        : interaction.getLanguageValue("system.undefined");
+                warnDuration = (warning.getDuration() != null) ? String.valueOf(warning.getDuration())
+                        : interaction.getLanguageValue("system.undefined");
+                warnCreatedAt = String.valueOf(warning.getCreatedAt());
 
-                message.append(interaction.getLanguageValue("warnings.warning",
-                        List.of(String.valueOf(warning.getId()))));
+                message.append(interaction.getLanguageValue("warns.warning",
+                        List.of(String.valueOf(warning.getId())))).append("\n");
 
                 // Указана ли причина -> Вывести
                 if (!warnReason.isEmpty()) {
@@ -125,16 +128,16 @@ public class WarnsCommand implements BaseCommand {
                 // Указана ли длительность -> Вывести
                 if (!warnDuration.isEmpty()) {
                     message.append(interaction.getLanguageValue("warns.duration",
-                            List.of())).append("\n");
+                            List.of(warnDuration))).append("\n");
                 }
 
                 // Модератор, который выдал предупреждение
                 message.append(interaction.getLanguageValue("warns.moderator",
-                        List.of(moderatorMember.username())));
+                        List.of(moderatorMember.username()))).append("\n");
 
                 // Дата создания напоминания
                 message.append(interaction.getLanguageValue("warns.createdAt",
-                        List.of(warnDuration)));
+                        List.of(warnCreatedAt))).append("\n");
 
                 message.append("\n");
             }
