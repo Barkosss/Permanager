@@ -30,7 +30,7 @@ public class WarnCommand implements BaseCommand {
 
     @Override
     public String getCommandDescription() {
-        return "";
+        return "Выдать пользователю предупреждение";
     }
 
     @Override
@@ -46,7 +46,7 @@ public class WarnCommand implements BaseCommand {
         if (validUserId.isPresent()) {
             user.setExcepted(getCommandName(), "user")
                     .setValue(interactionTelegram.telegramBot
-                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get())));
+                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember().user());
             arguments = arguments.subList(1, arguments.size());
         } else if (interactionTelegram.getContentReply() != null) {
             user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply().from());

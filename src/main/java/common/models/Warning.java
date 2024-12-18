@@ -22,10 +22,14 @@ public class Warning {
     // Длительность
     LocalDate duration;
 
+    // Дата выдачи предупреждения
+    LocalDate createdAt;
+
     public Warning(long chatId, long userId, long moderatorId) {
         this.chatId = chatId;
         this.userId = userId;
         this.moderatorId = moderatorId;
+        this.createdAt = LocalDate.now();
     }
 
     public long getId() {
@@ -80,6 +84,10 @@ public class Warning {
     public Warning setDuration(LocalDate duration) {
         this.duration = duration;
         return this;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
     public String toString() {

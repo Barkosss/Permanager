@@ -85,19 +85,16 @@ public class WarnsCommand implements BaseCommand {
                 warnReason = warning.getReason();
                 warnDuration = warning.getDuration();
 
-                message.append(interaction.getLanguageValue("warns.warn", List.of(
-                        String.valueOf(warning.getId()),
-                        String.valueOf(warning.getModeratorId())
-                )));
+                message.append(String.format("#%d: %s", warning.getId(), warning.getCreatedAt()));
 
                 // Указана ли причина
                 if (warnReason != null) {
-                    message.append(interaction.getLanguageValue("warns.warnReason", List.of(warnReason)));
+                    message.append(interaction.getLanguageValue("warns.reason", List.of(warnReason)));
                 }
 
                 // Указана ли длительность
                 if (warnDuration != null) {
-                    message.append(interaction.getLanguageValue("warns.warnDuration", List.of(
+                    message.append(interaction.getLanguageValue("warns.duration", List.of(
                             String.valueOf(warnDuration)
                     )));
                 }
