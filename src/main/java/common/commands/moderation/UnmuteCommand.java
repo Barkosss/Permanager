@@ -1,8 +1,9 @@
 package common.commands.moderation;
 
+import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.ChatPermissions;
 import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.request.GetChatMemberCount;
+import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.RestrictChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
@@ -11,6 +12,8 @@ import common.models.InteractionTelegram;
 import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
+
+import java.util.List;
 
 public class UnmuteCommand implements BaseCommand {
     LoggerHandler logger = new LoggerHandler();
@@ -27,24 +30,33 @@ public class UnmuteCommand implements BaseCommand {
     }
 
     @Override
-    public void parseArgs(Interaction interaction, User user) {}
+    public void parseArgs(Interaction interaction, User user) {
+        List<String> arguments = interaction.getArguments();
+
+        if (arguments.isEmpty()) {
+            return;
+        }
+
+
+    }
 
     @Override
     public void run(Interaction interaction) {
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
-            output.output(interaction.setMessage("This command is not available for the console"));
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandConsole"));
             return;
         }
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.UNMUTE)) {
-            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
+                == ChatFullInfo.Type.Private) {
+            output.output(interaction.setLanguageValue("system.error.system.error.notAvailableCommandPrivateChat"));
             return;
         }
 
-        if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
-            output.output(interaction.setMessage("This command is not available for private chat"));
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.UNMUTE)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }
 
