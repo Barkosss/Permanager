@@ -1,5 +1,7 @@
 package common.commands.moderation;
 
+import com.pengrad.telegrambot.model.ChatMember;
+import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -68,13 +70,17 @@ public class ResetWarnsCommand implements BaseCommand {
                 && user.isExceptedKey(getCommandName(), "userId")) {
             logger.info("...");
             user.setExcepted(getCommandName(), "accepted");
-            output.output(interaction.setLanguageValue(""));
+            long userId = (long) user.getValue(getCommandName(), "userId");
+            String username = interactionTelegram.telegramBot
+                            .execute(new GetChatMember(interaction.getChatId(), userId)).chatMember().user().username();
+            output.output(interaction.setLanguageValue("resetWarns.confirmUser",
+                    List.of(username)));
             return;
         } else if (!user.isExceptedKey(getCommandName(), "accepted")
                 && !user.isExceptedKey(getCommandName(), "userId")) {
             logger.info("...");
             user.setExcepted(getCommandName(), "accepted");
-            output.output(interaction.setLanguageValue("..."));
+            output.output(interaction.setLanguageValue("resetWarns.confirmAll"));
             return;
         }
 
@@ -82,24 +88,38 @@ public class ResetWarnsCommand implements BaseCommand {
 
             case "y":
             case "yes": {
-                logger.info("");
+                logger.info("...");
+                StringBuilder message = new StringBuilder();
 
                 // Если надо сбросить предупреждения у конкретного пользователя
                 if (user.isExceptedKey(getCommandName(), "userId")) {
-                    output.output(interaction.setLanguageValue("..."));
-                    interactionTelegram.resetWarnings(interaction.getChatId(),
-                            (long) user.getValue(getCommandName(), "userId"));
+                    long userId = (long) user.getValue(getCommandName(), "userId");
+                    ChatMember chatMember = interactionTelegram.telegramBot
+                            .execute(new GetChatMember(interaction.getChatId(), userId)).chatMember();
+                    try {
+                        message.append(interaction.getLanguageValue("resetWarns.resetUser",
+                                List.of(chatMember.user().username())));
+                        interactionTelegram.resetWarnings(interaction.getChatId(), userId);
+                    } catch (Exception err) {
+                        // ...
+                    }
                 } else { // Если надо сбросить предупреждения у всех участников
-                    output.output(interaction.setLanguageValue("..."));
-                    interactionTelegram.resetWarnings(interaction.getChatId());
+                    try {
+                        message.append(interaction.getLanguageValue("resetWarns.resetAll"));
+                        interactionTelegram.resetWarnings(interaction.getChatId());
+                    } catch (Exception err) {
+                        // ...
+                    }
                 }
+
+                output.output(interaction.setMessage(String.valueOf(message)));
                 break;
             }
 
             case "n":
             case "no": {
-                logger.info("");
-                output.output(interaction.setLanguageValue(""));
+                logger.info("...");
+                output.output(interaction.setLanguageValue("resetWarns.cancel"));
                 break;
             }
         }

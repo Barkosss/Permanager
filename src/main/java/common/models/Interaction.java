@@ -89,7 +89,7 @@ public interface Interaction {
 
     Interaction setLanguageValue(String languageKey);
 
-    Interaction setLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException;
+    Interaction setLanguageValue(String languageKey, List<String> replaces);
 
     String getLanguageValue(String languageKey);
 
