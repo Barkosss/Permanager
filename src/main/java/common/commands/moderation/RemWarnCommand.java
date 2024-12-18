@@ -1,7 +1,8 @@
 package common.commands.moderation;
 
+import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.request.GetChatMemberCount;
+import com.pengrad.telegrambot.request.GetChat;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
@@ -22,7 +23,7 @@ public class RemWarnCommand implements BaseCommand {
 
     @Override
     public String getCommandDescription() {
-        return "";
+        return "Снять предупреждение с пользователя";
     }
 
     @Override
@@ -41,7 +42,8 @@ public class RemWarnCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
 
-        if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
+        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
+                == ChatFullInfo.Type.Private) {
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
@@ -54,29 +56,29 @@ public class RemWarnCommand implements BaseCommand {
         parseArgs(interactionTelegram, user);
 
         if (interactionTelegram.getContentReply() == null) {
-            logger.info("");
+            logger.info("Remwarn command request user arguments");
             output.output(interaction.setLanguageValue("remwarn.replyMessage"));
         }
         user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply());
 
         if (!user.isExceptedKey(getCommandName(), "index")) {
-            logger.info("");
+            logger.info("Remwarn command request index arguments");
             user.setExcepted(getCommandName(), "index", InputExpectation.UserInputType.INTEGER);
             output.output(interaction.setLanguageValue("remwarn.index"));
             return;
         }
 
-        long userId = ((Message)user.getValue(getCommandName(), "user")).from().id();
+        long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
         long index = (long) user.getValue(getCommandName(), "index");
 
 
         if (interactionTelegram.existsWarningById(interaction.getChatId(), userId, index)) {
             interactionTelegram.removeWarning(interaction.getChatId(), userId, index);
-            output.output(interaction.setLanguageValue("..."));
+            output.output(interaction.setLanguageValue("remwarn.complete"));
             user.clearExpected(getCommandName());
         } else {
             user.setExcepted(getCommandName(), "index");
-            output.output(interaction.setLanguageValue("..."));
+            output.output(interaction.setLanguageValue("remwarn.index"));
         }
     }
 }
