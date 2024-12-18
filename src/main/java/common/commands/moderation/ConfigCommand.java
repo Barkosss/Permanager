@@ -48,6 +48,19 @@ public class ConfigCommand implements BaseCommand {
 
         switch ((String) user.getValue(getCommandName(), "section")) {
             case "dashboard": {
+                // Dashboard...
+                user.setExcepted(getCommandName(), "dashboardAction").setValue(String.join(" ", arguments));
+                break;
+            }
+
+            case "group": {
+                // Group...
+                user.setExcepted(getCommandName(), "dashboardAction").setValue(String.join(" ", arguments));
+                break;
+            }
+
+            case "user": {
+                // User...
                 user.setExcepted(getCommandName(), "dashboardAction").setValue(String.join(" ", arguments));
                 break;
             }
@@ -100,17 +113,17 @@ public class ConfigCommand implements BaseCommand {
         switch (((String) user.getValue(getCommandName(), "section")).toLowerCase()) {
             case "dashboard": {
                 logger.debug("Run method \"dashboard\" in config command");
-                dashboard(interaction, user);
+                dashboard(interactionTelegram, user);
                 break;
             }
             case "user": {
                 logger.debug("Run method \"user\" in config command");
-                user(interaction, user);
+                user(interactionTelegram, user);
                 break;
             }
             case "group": {
                 logger.debug("Run method \"group\" in config command");
-                group(interaction, user);
+                group(interactionTelegram, user);
                 break;
             }
 
@@ -124,7 +137,7 @@ public class ConfigCommand implements BaseCommand {
         }
     }
 
-    private void dashboard(Interaction interaction, User user) {
+    private void dashboard(InteractionTelegram interaction, User user) {
 
         if (!user.isExceptedKey(getCommandName(), "dashboardAction")) {
             user.setExcepted(getCommandName(), "dashboardAction");
@@ -136,12 +149,14 @@ public class ConfigCommand implements BaseCommand {
         String action = ((String) user.getValue(getCommandName(), "dashboardAction")).toLowerCase().trim();
         switch (action) {
             case "default right access": {
+                // Настройка стандартных прав доступа
                 configDefaultRightAccess(interaction, user);
                 break;
             }
 
             case "default limits": {
                 // Настройка стандартных ограничений
+                configDefaultLimits(interaction, user);
                 break;
             }
 
@@ -188,12 +203,16 @@ public class ConfigCommand implements BaseCommand {
         }
     }
 
-    private void user(Interaction interaction, User user) {
+    public void configDefaultLimits(InteractionTelegram interaction, User user) {
+
+    }
+
+    private void user(InteractionTelegram interaction, User user) {
         output.output(interaction.setMessage("Settings of user"));
         user.clearExpected(getCommandName());
     }
 
-    private void group(Interaction interaction, User user) {
+    private void group(InteractionTelegram interaction, User user) {
         output.output(interaction.setMessage("Settings of group"));
         user.clearExpected(getCommandName());
     }
