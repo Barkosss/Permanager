@@ -26,7 +26,7 @@ public class WarningRepository {
         }
 
         long warningId = warning.getId();
-        if (this.warnings.containsKey(warningId)) {
+        if (this.warnings.get(warning.getChatId()).containsKey(warningId)) {
             return null;
         }
         logger.debug(String.format("Warning by id(%s) is create", warningId));

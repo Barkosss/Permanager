@@ -50,7 +50,10 @@ public class WarnCommand implements BaseCommand {
                             .chatMember().user());
             arguments = arguments.subList(1, arguments.size());
         } else if (interactionTelegram.getContentReply() != null) {
-            user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply().from());
+            Message contentReply = interactionTelegram.getContentReply();
+            if (!contentReply.from().isBot() && contentReply.from().id() != interaction.getUserId()) {
+                user.setExcepted(getCommandName(), "user").setValue(contentReply.from());
+            }
         }
 
         if (arguments.isEmpty()) {
@@ -121,7 +124,8 @@ public class WarnCommand implements BaseCommand {
 
             // Если пользователь это бот или взаимодействующий
             if (content.from().isBot() || content.from().id() == interaction.getUserId()) {
-                user.clearExpected(getCommandName(), "user");
+                user.setExcepted(getCommandName(), "user");
+                output.output(interaction.setLanguageValue("warn.replyMessage"));
                 return;
             }
 
@@ -144,8 +148,18 @@ public class WarnCommand implements BaseCommand {
             return;
         }
 
+
+        String userDuration = (String) user.getValue(getCommandName(), "duration");
+        Optional<LocalDate> validDate = validate.isValidDate(userDuration);
+        if (!userDuration.equals("/skip") && validDate.isEmpty()) {
+            user.setExcepted(getCommandName(), "duration");
+            logger.info("Warn command requested a duration argument");
+            output.output(interactionTelegram.setLanguageValue("warn.duration"));
+            return;
+        }
+
         // Если указано прошлое время
-        if (((LocalDate) user.getValue(getCommandName(), "duration")).isBefore(LocalDate.now())) {
+        if (!userDuration.equals("/skip") && validDate.get().isBefore(LocalDate.now())) {
             user.setExcepted(getCommandName(), "duration");
             logger.info("Warn command requested a duration argument");
             output.output(interactionTelegram.setLanguageValue("warn.duration"));
@@ -153,8 +167,9 @@ public class WarnCommand implements BaseCommand {
         }
 
         com.pengrad.telegrambot.model.User targetMember = ((Message) user.getValue(getCommandName(), "user")).from();
+        User targetUser = interactionTelegram.findUserById(targetMember.id());
         Warning warning = new Warning(interaction.getChatId(), targetMember.id(), interaction.getUserId());
-        warning.setId(user.getWarnings(interaction.getChatId()).size());
+        warning.setId(targetUser.getWarnings(interaction.getChatId()).size() + 1);
 
         // Если указали причину
         if (user.isExceptedKey(getCommandName(), "reason")) {
@@ -162,11 +177,12 @@ public class WarnCommand implements BaseCommand {
         }
 
         // Если указали длительность
-        if (user.isExceptedKey(getCommandName(), "duration")) {
+        if (user.isExceptedKey(getCommandName(), "duration")
+                && !user.getValue(getCommandName(), "duration").equals("/skip")) {
             warning.setDuration((LocalDate) user.getValue(getCommandName(), "duration"));
         }
 
-        user.addWarning(warning);
+        targetUser.addWarning(warning);
         try {
             logger.info(String.format("Moderator by id(%s) give warn #%s for user by id(%s) in chat by id(%s)",
                     interaction.getUserId(), warning.getId(), targetMember.id(), interaction.getChatId()));

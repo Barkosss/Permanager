@@ -11,7 +11,6 @@ import common.models.Warning;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,20 +42,36 @@ public class WarnsCommand implements BaseCommand {
         }
 
         // Если аргумент не пустой - Смотрим по Id первым аргументом
-        Optional<Integer> validInteger = validate.isValidInteger(arguments.getFirst());
-        if (validInteger.isPresent()) {
+        Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
+        if (validUserId.isPresent()) {
+            logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
             GetChatMemberResponse chatMember = interactionTelegram.telegramBot.execute(
-                    new GetChatMember(interaction.getChatId(), validInteger.get()));
+                    new GetChatMember(interaction.getChatId(), validUserId.get()));
             // Если такой пользователь есть в чате
-            if (chatMember != null) {
+            if (chatMember != null && chatMember.chatMember() != null) {
+                logger.debug(String.format("User by id(%s) not found in chat by id(%s)",
+                        validUserId.get(), interaction.getChatId()));
                 user.setExcepted(getCommandName(), "userId").setValue(chatMember.chatMember().user().id());
                 return;
+            } else { // Если пользователь не найден
+                user.setExcepted(getCommandName(), "userId").setValue(interaction.getUserId());
             }
+
+        } else if (interactionTelegram.getContentReply() != null) {
+            logger.debug("...");
+            user.setExcepted(getCommandName(), "userId")
+                    .setValue(interactionTelegram.getContentReply().from().id());
+
+        } else {
+            logger.debug("...");
+            user.setExcepted(getCommandName(), "userId").setValue(interaction.getUserId());
         }
 
         // Если есть ответное сообщение - смотрим у кого-то (И первый аргумент пустой или некорректный)
         if (interactionTelegram.getContentReply() != null) {
             long userId = interactionTelegram.getContentReply().from().id();
+            logger.debug(String.format("User by id(%s) save to check warns in chat by id(%s)",
+                    userId, interaction.getChatId()));
             user.setExcepted(getCommandName(), "userId").setValue(userId);
         }
     }
@@ -68,42 +83,60 @@ public class WarnsCommand implements BaseCommand {
             return;
         }
 
+        InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
 
         // Получаем userId целевого пользователя
         long targetUserId = (long) user.getValue(getCommandName(), "userId");
+        com.pengrad.telegrambot.model.User targetMember = interactionTelegram.telegramBot
+                .execute(new GetChatMember(interaction.getChatId(), targetUserId)).chatMember().user();
+        com.pengrad.telegrambot.model.User moderatorMember;
         StringBuilder message = new StringBuilder();
         String warnReason;
-        LocalDate warnDuration;
+        String warnDuration;
         try {
-            message = new StringBuilder(interaction.getLanguageValue("warns.complete",
-                    List.of(String.valueOf(targetUserId))));
-
             Map<Long, Warning> warnings = user.getWarnings(interaction.getChatId());
-            for (Warning warning : warnings.values()) {
-                warnReason = warning.getReason();
-                warnDuration = warning.getDuration();
 
-                message.append(String.format("#%d: %s", warning.getId(), warning.getCreatedAt()));
-
-                // Указана ли причина
-                if (warnReason != null) {
-                    message.append(interaction.getLanguageValue("warns.reason", List.of(warnReason)));
-                }
-
-                // Указана ли длительность
-                if (warnDuration != null) {
-                    message.append(interaction.getLanguageValue("warns.duration", List.of(
-                            String.valueOf(warnDuration)
-                    )));
-                }
-
-                message.append("\n\n");
+            // Если список предупреждений пуст
+            if (warnings.isEmpty()) {
+                message.append(interaction.getLanguageValue("warns.empty",
+                        List.of(targetMember.username())));
+            } else {
+                message = new StringBuilder(interaction.getLanguageValue("warns.complete",
+                        List.of(targetMember.username())));
             }
 
-            if (warnings.isEmpty()) {
-                message.append(interaction.getLanguageValue("warns.empty"));
+            for (Warning warning : warnings.values()) {
+                moderatorMember = interactionTelegram.telegramBot
+                        .execute(new GetChatMember(interaction.getChatId(), warning.getModeratorId()))
+                        .chatMember().user();
+                warnReason = warning.getReason();
+                warnDuration = String.valueOf(warning.getDuration());
+
+                message.append(interaction.getLanguageValue("warnings.warning",
+                        List.of(String.valueOf(warning.getId()))));
+
+                // Указана ли причина -> Вывести
+                if (!warnReason.isEmpty()) {
+                    message.append(interaction.getLanguageValue("warns.reason", List.of(warnReason))).append("\n");
+                }
+
+                // Указана ли длительность -> Вывести
+                if (!warnDuration.isEmpty()) {
+                    message.append(interaction.getLanguageValue("warns.duration",
+                            List.of())).append("\n");
+                }
+
+                // Модератор, который выдал предупреждение
+                message.append(interaction.getLanguageValue("warns.moderator",
+                        List.of(moderatorMember.username())));
+
+                // Дата создания напоминания
+                message.append(interaction.getLanguageValue("warns.createdAt",
+                        List.of(warnDuration)));
+
+                message.append("\n");
             }
 
         } catch (Exception err) {
