@@ -13,7 +13,7 @@ import java.time.ZoneId;
 public class ValidateService {
 
     /**
-     * Валидация числа и конвертация строки в число
+     * Валидация числа и конвертация строки в число (Integer)
      *
      * @param strInteger Строка с числом
      * @return Integer
@@ -21,6 +21,20 @@ public class ValidateService {
     public Optional<Integer> isValidInteger(String strInteger) {
         try {
             return Optional.of(Integer.parseInt(strInteger));
+        } catch (Exception err) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Валидация числа и конвертация строки в число (Long)
+     *
+     * @param strLong Строка с числом
+     * @return Integer
+     */
+    public Optional<Long> isValidLong(String strLong) {
+        try {
+            return Optional.of(Long.parseLong(strLong));
         } catch (Exception err) {
             return Optional.empty();
         }
