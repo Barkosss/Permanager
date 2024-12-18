@@ -90,6 +90,14 @@ public class User {
     }
 
     public Object getValue(String commandName, String key) {
+        if (!this.userInputExpectation.getExpectedInputs().containsKey(commandName)) {
+            return null;
+        }
+
+        if (!this.userInputExpectation.getExpectedInputs().get(commandName).containsKey(key)) {
+            return null;
+        }
+
         return this.userInputExpectation.getExpectedInputs().get(commandName).get(key);
     }
 

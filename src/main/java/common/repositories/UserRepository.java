@@ -27,7 +27,7 @@ public class UserRepository {
 
         try {
             User user = new User(userId);
-            logger.debug("User by id(" + userId + ") is create in chat by id(" + chatId + ")");
+            logger.debug(String.format("User by id(%s) is create in chat by id(%s)", userId, chatId));
             this.users.get(chatId).put(userId, user);
             return user;
         } catch (Exception err) {
