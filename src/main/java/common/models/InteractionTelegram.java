@@ -69,6 +69,14 @@ public class InteractionTelegram extends AbstractInteraction {
         }
     }
 
+    public void resetWarnings(long chatId) {
+        super.warningRepository.reset(chatId);
+    }
+
+    public void resetWarnings(long chatId, long userId) {
+        super.warningRepository.reset(chatId, userId);
+    }
+
     @Override
     public String toString() {
 

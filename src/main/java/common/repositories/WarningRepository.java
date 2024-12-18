@@ -43,15 +43,43 @@ public class WarningRepository {
             this.warnings = new HashMap<>();
         }
 
-        if (this.warnings.get(chatId) == null) {
+        if (!this.warnings.containsKey(chatId)) {
             this.warnings.put(chatId, new HashMap<>());
         }
 
-        if (this.warnings.get(chatId).get(userId) == null) {
+        if (!this.warnings.get(chatId).containsKey(userId)) {
             this.warnings.get(chatId).put(userId, new HashMap<>());
         }
 
         this.warnings.get(warning.getChatId()).get(warning.getUserId()).remove(warning.getId());
+    }
+
+    public void reset(long chatId) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        this.warnings.remove(chatId);
+    }
+
+    public void reset(long chatId, long userId) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        if (!this.warnings.get(chatId).containsKey(userId)) {
+            this.warnings.get(chatId).put(userId, new HashMap<>());
+        }
+
+        this.warnings.get(chatId).remove(userId);
     }
 
     // Найти пользователя по ID
@@ -60,11 +88,11 @@ public class WarningRepository {
             this.warnings = new HashMap<>();
         }
 
-        if (this.warnings.get(chatId) == null) {
+        if (!this.warnings.containsKey(chatId)) {
             this.warnings.put(chatId, new HashMap<>());
         }
 
-        if (this.warnings.get(chatId).get(userId) == null) {
+        if (!this.warnings.get(chatId).containsKey(userId)) {
             this.warnings.get(chatId).put(userId, new HashMap<>());
         }
 
