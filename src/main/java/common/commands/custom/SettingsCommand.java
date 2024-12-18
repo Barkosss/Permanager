@@ -101,7 +101,6 @@ public class SettingsCommand implements BaseCommand {
             } catch (Exception err) {
                 logger.error("Something error (run): " + err);
                 output.output(interaction.setLanguageValue("system.error.something"));
-            } finally {
                 user.clearExpected(getCommandName());
             }
             return;
@@ -123,7 +122,7 @@ public class SettingsCommand implements BaseCommand {
             default: {
                 logger.info("Settings command again requested a section argument");
                 output.output(interaction.setLanguageValue("settings.error.sectionNotFound"));
-                user.clearExpected(getCommandName(), "section");
+                user.setExcepted(getCommandName(), "section");
                 break;
             }
         }
