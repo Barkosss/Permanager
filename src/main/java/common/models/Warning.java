@@ -91,13 +91,13 @@ public class Warning {
     }
 
     public String toString() {
-        return String.format("Warning({" +
-                "id=%s" +
-                "userId=%s" +
-                "chatId=%s" +
-                "moderationId=%s" +
-                "reason=%s" +
-                "duration=%s" +
-                "})", id, userId, chatId, moderatorId, reason, duration);
+        return String.format("Warning({"
+                + "id=%s"
+                + "userId=%s"
+                + "chatId=%s"
+                + "moderationId=%s"
+                + "reason=%s"
+                + "duration=%s"
+                + "})", id, userId, chatId, moderatorId, reason, duration);
     }
 }

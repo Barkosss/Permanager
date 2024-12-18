@@ -46,7 +46,8 @@ public class WarnCommand implements BaseCommand {
         if (validUserId.isPresent()) {
             user.setExcepted(getCommandName(), "user")
                     .setValue(interactionTelegram.telegramBot
-                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember().user());
+                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
+                            .chatMember().user());
             arguments = arguments.subList(1, arguments.size());
         } else if (interactionTelegram.getContentReply() != null) {
             user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply().from());

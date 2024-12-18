@@ -49,7 +49,8 @@ public class BanCommand implements BaseCommand {
         if (validUserId.isPresent()) {
             user.setExcepted(getCommandName(), "user")
                     .setValue(interactionTelegram.telegramBot
-                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember().user());
+                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
+                            .chatMember().user());
             arguments = arguments.subList(1, arguments.size());
 
         } else if (interactionTelegram.getContentReply() != null) {
@@ -112,7 +113,8 @@ public class BanCommand implements BaseCommand {
             } else if (validUserId.isPresent()) {
                 user.setExcepted(getCommandName(), "user")
                         .setValue(interactionTelegram.telegramBot
-                                .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember().user());
+                                .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
+                                .chatMember().user());
             } else {
                 user.setExcepted(getCommandName(), "user", InputExpectation.UserInputType.INTEGER);
                 logger.info("Ban command requested a userId arguments");

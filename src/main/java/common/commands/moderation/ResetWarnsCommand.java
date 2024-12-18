@@ -93,12 +93,14 @@ public class ResetWarnsCommand implements BaseCommand {
                     output.output(interaction.setLanguageValue("..."));
                     interactionTelegram.resetWarnings(interaction.getChatId());
                 }
+                break;
             }
 
             case "n":
             case "no": {
                 logger.info("");
                 output.output(interaction.setLanguageValue(""));
+                break;
             }
         }
         user.clearExpected(getCommandName());
