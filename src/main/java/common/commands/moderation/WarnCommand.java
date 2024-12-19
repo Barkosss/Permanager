@@ -172,7 +172,8 @@ public class WarnCommand implements BaseCommand {
             return;
         }
 
-        com.pengrad.telegrambot.model.User targetMember = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"));
+        com.pengrad.telegrambot.model.User targetMember
+                = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"));
         User targetUser = interactionTelegram.findUserById(targetMember.id());
         Warning warning = new Warning(interaction.getChatId(), targetMember.id(), interaction.getUserId());
         warning.setId(targetUser.getWarnings(interaction.getChatId()).size() + 1);
