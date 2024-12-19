@@ -1,7 +1,6 @@
 package common.models;
 
 import common.exceptions.MemberNotFoundException;
-import common.exceptions.WrongArgumentsException;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
@@ -224,7 +223,7 @@ public abstract class AbstractInteraction implements Interaction {
         return languageKey;
     }
 
-    public String getLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException {
+    public String getLanguageValue(String languageKey, List<String> replaces) {
         ValidateService validate = new ValidateService();
         LoggerHandler logger = new LoggerHandler();
 
@@ -235,7 +234,7 @@ public abstract class AbstractInteraction implements Interaction {
         List<String> findReplace = parseReplace(message);
 
         if (replaces.size() < findReplace.size()) {
-            throw new WrongArgumentsException();
+            findReplace = findReplace.subList(0, replaces.size());
         }
 
         int indexReplace = 0;
@@ -247,9 +246,7 @@ public abstract class AbstractInteraction implements Interaction {
                     message = message.replaceFirst(word, replaces.get(indexReplace));
                     indexReplace++;
                 } else {
-                    // ОШИБКА
                     logger.error("Replace message expected number");
-                    throw new WrongArgumentsException();
                 }
             } else if (word.charAt(1) == 'd') { // Если дата
                 Optional<LocalDate> isLocalDate = validate.isValidDate(replaces.get(indexReplace));
@@ -258,9 +255,7 @@ public abstract class AbstractInteraction implements Interaction {
                     message = message.replaceFirst(word, replaces.get(indexReplace));
                     indexReplace++;
                 } else {
-                    // ОШИБКА
                     logger.error("Replace message expected LocalDate");
-                    throw new WrongArgumentsException();
                 }
             } else { // Другие типы
                 message = message.replaceFirst(word, replaces.get(indexReplace));

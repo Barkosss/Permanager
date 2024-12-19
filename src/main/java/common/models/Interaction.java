@@ -93,5 +93,5 @@ public interface Interaction {
 
     String getLanguageValue(String languageKey);
 
-    String getLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException;
+    String getLanguageValue(String languageKey, List<String> replaces);
 }
