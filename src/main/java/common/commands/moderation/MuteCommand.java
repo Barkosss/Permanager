@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.ChatPermissions;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChat;
+import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.RestrictChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
@@ -36,22 +37,46 @@ public class MuteCommand implements BaseCommand {
     @Override
     public void parseArgs(Interaction interaction, User user) {
         List<String> arguments = interaction.getArguments();
+        InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
 
         // Проверка на наличие аргументов
         if (arguments.isEmpty()) {
             return;
         }
 
+        Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
+        if (validUserId.isPresent()) {
+            logger.debug("...");
+            user.setExcepted(getCommandName(), "user")
+                    .setValue(interactionTelegram.telegramBot
+                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember().user());
+            arguments = arguments.subList(1, arguments.size());
+        }
+
+        if (arguments.isEmpty()) {
+            return;
+        }
+
+        Optional<LocalDate> validDate = validate.isValidDate(String.format("%s, %s",
+                arguments.getFirst(), arguments.get(1)));
+        Optional<LocalDate> validTime = validate.isValidTime(arguments.getFirst());
         // Получаем длительность мута
-        Optional<LocalDate> durationDate = validate.isValidDate(arguments.get(arguments.size() - 2)
-                + " " + arguments.getLast());
-        durationDate.ifPresent(localDate -> user.setExcepted(getCommandName(), "duration").setValue(localDate));
+        if (validDate.isPresent()) {
+            logger.debug("...");
+            user.setExcepted(getCommandName(), "duration").setValue(validDate.get());
+            arguments = arguments.subList(2, arguments.size());
+        } else if (validTime.isPresent()) {
+            logger.debug("...");
+            user.setExcepted(getCommandName(), "duration").setValue(validTime.get());
+            arguments = arguments.subList(1, arguments.size());
+        }
+
+        if (arguments.isEmpty()) {
+            return;
+        }
 
         // Получаем причину мута
-        if (arguments.size() > 1) {
-            user.setExcepted(getCommandName(), "reason").setValue(String.join(" ",
-                    arguments.subList(0, arguments.size() - 1)));
-        }
+        user.setExcepted(getCommandName(), "reason").setValue(String.join(" ", arguments));
     }
 
     @Override
@@ -94,6 +119,7 @@ public class MuteCommand implements BaseCommand {
             return;
         }
 
+        // Получаем пользователя из ответного сообщения
         if (interactionTelegram.getContentReply() != null && !user.isExceptedKey(getCommandName(), "user")) {
             Message content = interactionTelegram.getContentReply();
 
@@ -148,6 +174,7 @@ public class MuteCommand implements BaseCommand {
             interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), targetMemberId,
                     new ChatPermissions().canSendMessages(false)));
             interactionTelegram.findServerById(interaction.getChatId()).addUserMute(targetUser);
+            // TODO: Переработать duration
             LocalDate duration = (LocalDate) user.getValue(getCommandName(), "duration");
             String reason = (String) user.getValue(getCommandName(), "reason");
             String muteDuration = (!(String.valueOf(duration)).startsWith("/skip")) ? String.valueOf(duration)
