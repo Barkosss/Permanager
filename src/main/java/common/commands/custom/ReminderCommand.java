@@ -352,7 +352,7 @@ public class ReminderCommand implements BaseCommand {
                 message.append("#").append(reminder.getId()).append(": ").append(reminder.getContent()).append("\n");
             }
         } else {
-            message.append("Reminders not found");
+            message.append(interaction.getLanguageValue("reminder.list.empty"));
         }
 
         output.output(interaction.setMessage(String.valueOf(message)));
