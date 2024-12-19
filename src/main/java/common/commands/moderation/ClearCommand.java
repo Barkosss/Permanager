@@ -8,6 +8,7 @@ import com.pengrad.telegrambot.request.GetUpdates;
 import com.pengrad.telegrambot.response.GetUpdatesResponse;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
+import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.Permissions;
@@ -83,7 +84,7 @@ public class ClearCommand implements BaseCommand {
 
         // Получаем количество удаляемых сообщений
         if (!user.isExceptedKey(getCommandName(), "countMessages")) {
-            user.setExcepted(getCommandName(), "countMessages");
+            user.setExcepted(getCommandName(), "countMessages", InputExpectation.UserInputType.INTEGER);
             logger.info("Clear command requested a counter argument");
             output.output(interactionTelegram.setMessage("Enter count messages for delete"));
             return;
@@ -113,7 +114,6 @@ public class ClearCommand implements BaseCommand {
         for (int index = 0; index < messagesIds.size(); index++) {
             arrayMessagesIds[index] = messagesIds.get(index);
         }
-        System.out.println(messagesIds);
 
         interactionTelegram.telegramBot.execute(new DeleteMessages(interaction.getChatId(), arrayMessagesIds));
     }
