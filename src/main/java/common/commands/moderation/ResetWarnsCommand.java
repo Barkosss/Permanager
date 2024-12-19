@@ -26,7 +26,7 @@ public class ResetWarnsCommand implements BaseCommand {
 
     @Override
     public String getCommandDescription() {
-        return "";
+        return "Сбросить предупреждения";
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ResetWarnsCommand implements BaseCommand {
 
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
-            logger.debug("...");
+            logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
             user.setExcepted(getCommandName(), "userId").setValue(validUserId.get());
         }
 
@@ -69,7 +69,8 @@ public class ResetWarnsCommand implements BaseCommand {
 
         if (!user.isExceptedKey(getCommandName(), "accepted")
                 && user.isExceptedKey(getCommandName(), "userId")) {
-            logger.info("...");
+            logger.info(String.format("Remove all warnings from user by id(%s) in chat by id(%s)",
+                    user.getUserId(), interaction.getChatId()));
             user.setExcepted(getCommandName(), "accepted");
             long userId = (long) user.getValue(getCommandName(), "userId");
             String username = interactionTelegram.telegramBot
@@ -79,7 +80,8 @@ public class ResetWarnsCommand implements BaseCommand {
             return;
         } else if (!user.isExceptedKey(getCommandName(), "accepted")
                 && !user.isExceptedKey(getCommandName(), "userId")) {
-            logger.info("...");
+            logger.info(String.format("Remove all warnings in chat by id(%s)",
+                    interaction.getChatId()));
             user.setExcepted(getCommandName(), "accepted");
             output.output(interaction.setLanguageValue("resetWarns.confirmAll"));
             return;
@@ -89,7 +91,7 @@ public class ResetWarnsCommand implements BaseCommand {
 
             case "y":
             case "yes": {
-                logger.info("...");
+                logger.info("Reset all warnings is accept");
                 StringBuilder message = new StringBuilder();
 
                 // Если надо сбросить предупреждения у конкретного пользователя
@@ -104,14 +106,18 @@ public class ResetWarnsCommand implements BaseCommand {
                         targetUser.resetWarnings(interaction.getChatId());
                         interactionTelegram.resetWarnings(interaction.getChatId(), userId);
                     } catch (Exception err) {
-                        // ...
+                        logger.error(String.format("Error in command(%s): %s",
+                                getCommandName(), err));
+                        output.output(interaction.setLanguageValue("system.error.something"));
                     }
                 } else { // Если надо сбросить предупреждения у всех участников
                     try {
                         message.append(interaction.getLanguageValue("resetWarns.resetAll"));
                         interactionTelegram.resetWarnings(interactionTelegram, interaction.getChatId());
                     } catch (Exception err) {
-                        // ...
+                        logger.error(String.format("Error in command(%s): %s",
+                                getCommandName(), err));
+                        output.output(interaction.setLanguageValue("system.error.something"));
                     }
                 }
 
@@ -121,7 +127,7 @@ public class ResetWarnsCommand implements BaseCommand {
 
             case "n":
             case "no": {
-                logger.info("...");
+                logger.info("Reset all warnings is cancel");
                 output.output(interaction.setLanguageValue("resetWarns.cancel"));
                 break;
             }

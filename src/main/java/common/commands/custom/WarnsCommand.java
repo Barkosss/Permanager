@@ -58,12 +58,12 @@ public class WarnsCommand implements BaseCommand {
             }
 
         } else if (interactionTelegram.getContentReply() != null) {
-            logger.debug("...");
+            logger.debug("Get user from reply message for remove warning");
             user.setExcepted(getCommandName(), "userId")
                     .setValue(interactionTelegram.getContentReply().from().id());
 
         } else {
-            logger.debug("...");
+            logger.debug("Get user id from caller of the command");
             user.setExcepted(getCommandName(), "userId").setValue(interaction.getUserId());
         }
 

@@ -106,11 +106,13 @@ public class WarnCommand implements BaseCommand {
 
         if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.WARN)) {
             try {
+                logger.debug(String.format("User by id(%s) don't has permissions (WARN) in chat by id(%s",
+                        user.getUserId(), interaction.getChatId()));
                 output.output(interaction.setLanguageValue("system.error.accessDenied", List.of(
                         interactionTelegram.getUsername()
                 )));
             } catch (Exception err) {
-                logger.error("...");
+                logger.error(String.format("Error in command (%s): %s", getCommandName(), err));
                 output.output(interaction.setLanguageValue("system.error.accessDenied"));
             }
             return;

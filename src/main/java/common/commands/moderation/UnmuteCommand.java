@@ -45,7 +45,7 @@ public class UnmuteCommand implements BaseCommand {
 
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
-            logger.debug("...");
+            logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
             user.setExcepted(getCommandName(), "user")
                     .setValue(interactionTelegram.telegramBot
                             .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
@@ -77,7 +77,7 @@ public class UnmuteCommand implements BaseCommand {
                         interactionTelegram.getUsername()
                 )));
             } catch (Exception err) {
-                logger.error("...");
+                logger.error(String.format("Error in command (%s): %s", getCommandName(), err));
                 output.output(interaction.setLanguageValue("system.error.accessDenied"));
             }
             return;

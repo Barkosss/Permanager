@@ -44,17 +44,17 @@ public class RemWarnCommand implements BaseCommand {
 
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
-            logger.debug("...");
+            logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
             ChatMember chatMember = interactionTelegram.telegramBot
                     .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember();
 
             if (chatMember != null) {
-                logger.debug("...");
+                logger.debug(String.format("ChatMember is null (userId=%s)", validUserId.get()));
                 user.setExcepted(getCommandName(), "user").setValue(chatMember.user());
                 arguments = arguments.subList(1, arguments.size());
             }
         } else if (interactionTelegram.getContentReply() != null) {
-            logger.debug("...");
+            logger.debug("Get user from reply message for remove warning");
             Message content = interactionTelegram.getContentReply();
             user.setExcepted(getCommandName(), "user").setValue(content.from());
         }
@@ -65,7 +65,7 @@ public class RemWarnCommand implements BaseCommand {
 
         Optional<Integer> validIndex = validate.isValidInteger(arguments.getFirst());
         if (validIndex.isPresent()) {
-            logger.debug("...");
+            logger.debug(String.format("Index warning (%s) is valid", validIndex.get()));
             user.setExcepted(getCommandName(), "index").setValue(validIndex.get());
         }
     }
@@ -106,7 +106,8 @@ public class RemWarnCommand implements BaseCommand {
 
             // Если пользователь это бот или взаимодействующий
             if (content.from().isBot() || content.from().id() == interaction.getUserId()) {
-                logger.debug("...");
+                logger.debug(String.format("User by id(%s) is bot or caller of the command (%s)",
+                        content.from().id(), getCommandName()));
                 user.setExcepted(getCommandName(), "user");
                 output.output(interaction.setLanguageValue("remWarn.replyMessage"));
                 return;
@@ -129,16 +130,15 @@ public class RemWarnCommand implements BaseCommand {
         int index = (int) user.getValue(getCommandName(), "index");
 
 
-        // TODO: Не находит предупреждение
         if (interactionTelegram.existsWarningById(interaction.getChatId(), targetMemberId, index)) {
             targetUser.removeWarning(interaction.getChatId(), index);
             interactionTelegram.removeWarning(interaction.getChatId(), targetMemberId, index);
-            logger.info("...");
+            logger.info(String.format("Removing a warning by id(%s) from a user by id(%s)", index, targetMemberId));
             output.output(interaction.setLanguageValue("remWarn.complete",
                     List.of(targetMember.username(), String.valueOf(index))));
             user.clearExpected(getCommandName());
         } else {
-            logger.info("...");
+            logger.info("RemWarn command request index arguments");
             user.setExcepted(getCommandName(), "index", InputExpectation.UserInputType.INTEGER);
             output.output(interaction.setLanguageValue("remWarn.index"));
         }
