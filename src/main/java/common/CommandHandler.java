@@ -17,6 +17,7 @@ import common.repositories.WarningRepository;
 import common.utils.LoggerHandler;
 import common.utils.SystemService;
 import common.utils.ValidateService;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.time.LocalDate;
@@ -93,15 +94,7 @@ public class CommandHandler {
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
             // Поток для Telegram
-            Thread threadTelegram = new Thread(() ->
-                    inputTelegram.read(interaction
-                                    .setUserRepository(userRepository)
-                                    .setServerRepository(serverRepository)
-                                    .setReminderRepository(reminderRepository)
-                                    .setWarningRepository(warningRepository),
-                            this)
-            );
-            threadTelegram.setName("Thread-TELEGRAM-1");
+            Thread threadTelegram = getThreadTelegram(interaction);
             threadTelegram.start();
             logger.info("SYSTEM: Telegram is launch", true);
         }
@@ -112,18 +105,38 @@ public class CommandHandler {
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
             userRepository.create(0, 0L);
             // Поток для Console
-            Thread threadConsole = new Thread(() ->
-                    inputConsole.listener(new InteractionConsole()
-                            .setChatId(0)
-                            .setUserRepository(userRepository)
-                            .setReminderRepository(reminderRepository), this)
-            );
-            threadConsole.setName("Thread-CONSOLE-2");
+            Thread threadConsole = getThreadConsole();
             threadConsole.start();
             logger.info("SYSTEM: Console is launch", true);
         }
 
         System.out.println("Program is launch");
+    }
+
+    @NotNull
+    private Thread getThreadTelegram(Interaction interaction) {
+        Thread threadTelegram = new Thread(() ->
+                inputTelegram.read(interaction
+                                .setUserRepository(userRepository)
+                                .setServerRepository(serverRepository)
+                                .setReminderRepository(reminderRepository)
+                                .setWarningRepository(warningRepository),
+                        this)
+        );
+        threadTelegram.setName("Thread-TELEGRAM-1");
+        return threadTelegram;
+    }
+
+    @NotNull
+    private Thread getThreadConsole() {
+        Thread threadConsole = new Thread(() ->
+                inputConsole.listener(new InteractionConsole()
+                        .setChatId(0)
+                        .setUserRepository(userRepository)
+                        .setReminderRepository(reminderRepository), this)
+        );
+        threadConsole.setName("Thread-CONSOLE-1");
+        return threadConsole;
     }
 
     // Вызов команды
