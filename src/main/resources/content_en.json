@@ -102,7 +102,8 @@
         "replyMessage": "Call the command with a response to the message of the user you want to ban",
         "userId": "Specify the User Id of the user, or use the /cancel command and call the command again, but with a response to the message of the user you want to block",
         "reason": "Specify the reason for the block (If you do not want to specify, enter /skip)",
-        "duration": "Specify the duration of the lock (If you want an indefinite one, then enter /skip)"
+        "duration": "Specify the duration of the lock (If you want an indefinite one, then enter /skip)",
+        "complete": "The user has been successfully blocked!"
     },
     "unban": {
         "replyMessage": "Call the command with a response to the message of the user you want to unban",

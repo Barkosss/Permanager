@@ -67,12 +67,20 @@ public class Server {
 
     // Добавить пользователя в список забаненных
     public Server addUserBan(User user) {
+        if (this.bans == null) {
+            this.bans = new HashMap<>();
+        }
+
         bans.put(user.userId, user);
         return this;
     }
 
     // Удалить пользователя из списка забаненных
     public Server removeUserBan(User user) {
+        if (this.bans == null) {
+            this.bans = new HashMap<>();
+        }
+
         bans.remove(user.userId);
         return this;
     }

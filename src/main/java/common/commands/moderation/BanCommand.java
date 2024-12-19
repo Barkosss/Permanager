@@ -144,7 +144,6 @@ public class BanCommand implements BaseCommand {
         try {
             long userId = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user")).id();
             interactionTelegram.telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
-            interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
             logger.info(String.format("User by id(%s) in chat by id(%s) has been banned",
                     userId, interaction.getChatId()));
 
