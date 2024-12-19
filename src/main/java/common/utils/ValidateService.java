@@ -29,8 +29,8 @@ public class ValidateService {
     /**
      * Валидация числа и конвертация строки в число (Long)
      *
-     * @param strLong Строка с числом
-     * @return Integer
+     * @param strLong Строка с числом (Long)
+     * @return Long
      */
     public Optional<Long> isValidLong(String strLong) {
         try {
@@ -66,7 +66,7 @@ public class ValidateService {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
                 return Optional.of(LocalDate.parse(strLocalDate, formatter));
             } catch (Exception err) {
-                // ...
+                // The exception is ignored for a specific reason
             }
         }
         return Optional.empty();
@@ -74,9 +74,12 @@ public class ValidateService {
 
 
     /**
+     * Валидация времени и конвертация строки на время
      *
+     * @param strLocalTime Строка со временем
+     * @return LocalDate
      */
-    public Optional<LocalDate> isValidTime(String strLocalDate) {
+    public Optional<LocalDate> isValidTime(String strLocalTime) {
         String[] patterns = {
             "HH:mm dd.MM.yyyy",
             "HH:mm:ss dd.MM.yyyy",
@@ -93,7 +96,7 @@ public class ValidateService {
         for (String pattern : patterns) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-                return Optional.of(LocalDate.parse(strLocalDate, formatter));
+                return Optional.of(LocalDate.parse(strLocalTime, formatter));
             } catch (Exception err) {
                 break;
             }
@@ -103,7 +106,10 @@ public class ValidateService {
 
 
     /**
+     * Валидация часового пояса и конвертация строки в объект
      *
+     * @param strTimeZone Строка с часовым поясом
+     * @return TimeZone
      */
     public Optional<TimeZone> isValidTimeZone(String strTimeZone) {
         try {
