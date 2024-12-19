@@ -8,7 +8,6 @@ import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 public class Main {
 
