@@ -1,38 +1,23 @@
 package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
-import common.exceptions.MemberNotFoundException;
-import common.repositories.UserRepository;
+import com.pengrad.telegrambot.model.LinkPreviewOptions;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class InteractionTelegram implements Interaction {
+public class InteractionTelegram extends AbstractInteraction {
 
     public TelegramBot telegramBot;
 
     public long timestampBotStart;
 
-    // Платформа: Terminal, Telegram, Discord
-    Platform platform;
-
-    // Для Telegram - Chat ID, для Discord - User ID
-    long userId;
-
-    // Полное сообщение
-    String message;
-
     // Объект сообщения (Для Telegram)
     SendMessage sendMessage;
-
-    // Выводить в одну строку или нет
-    boolean inline;
-
-    // Массив аргументов в сообщении (разделитель - пробел)
-    List<String> arguments;
-
-    // ...
-    UserRepository userRepository;
 
 
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
@@ -41,40 +26,32 @@ public class InteractionTelegram implements Interaction {
         this.platform = Platform.TELEGRAM;
     }
 
-    public Interaction setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-        return this;
-    }
-
-    public User getUser(long userId) {
-        try {
-            return userRepository.findById(userId);
-        } catch (MemberNotFoundException err) {
-            return null;
-        }
-
-    }
-
-    public Platform getPlatform() {
-        return platform;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public Interaction setUserId(long userId) {
-        this.userId = userId;
+    public Interaction setChatId(long chatId) {
+        this.chatId = chatId;
         createSendMessage();
         return this;
     }
 
-    public String getMessage() {
-        return message;
+    public String getUsername() {
+        return super.content.username();
     }
 
     public Interaction setMessage(String message) {
-        this.message = message;
+        super.message = message;
+        createSendMessage();
+        return this;
+    }
+
+    @Override
+    public Interaction setLanguageValue(String languageKey) {
+        super.setLanguageValue(languageKey);
+        createSendMessage();
+        return this;
+    }
+
+    @Override
+    public Interaction setLanguageValue(String languageKey, List<String> replaces) {
+        super.setLanguageValue(languageKey, replaces);
         createSendMessage();
         return this;
     }
@@ -83,43 +60,37 @@ public class InteractionTelegram implements Interaction {
         return sendMessage;
     }
 
-    public boolean getInline() {
-        return inline;
+    public Message getContentReply() {
+        try {
+            return content.reply();
+
+        } catch (Exception err) {
+            return null;
+        }
     }
 
-    public Interaction setInline(boolean inline) {
-        this.inline = inline;
-        return this;
+    public void resetWarnings(InteractionTelegram interactionTelegram, long chatId) {
+        super.warningRepository.reset(interactionTelegram, chatId);
     }
 
-    public List<String> getArguments() {
-        return arguments;
-    }
-
-    public Interaction setArguments(List<String> arguments) {
-        this.arguments = arguments;
-        return this;
+    public void resetWarnings(long chatId, long userId) {
+        super.warningRepository.reset(chatId, userId);
     }
 
     @Override
     public String toString() {
 
-        return "InteractionConsole({"
-                + "Token=" + telegramBot
-                + "\nTIMESTAMP_BOT_START=" + timestampBotStart
-                + "\nPlatform=" + platform
-                + "\nuserId=" + userId
-                + "\nMessage=" + message
-                + "\nInline=" + inline
-                + "\narguments=" + arguments
-                + "})";
+        return String.format("InteractionTelegram({"
+                        + "Token=%s; TIMESTAMP_BOT_START=%s; Platform=%s;"
+                        + "userId=%s; chatId=%s; Message=%s; Inline=%s; arguments=%s})",
+                telegramBot, timestampBotStart, platform, userId, chatId, message, inline, arguments);
     }
 
     private void createSendMessage() {
-        if (this.userId == 0 || this.message == null) {
+        if (this.chatId == 0 || this.message == null) {
             return;
         }
 
-        this.sendMessage = new SendMessage(userId, message);
+        this.sendMessage = new SendMessage(chatId, message);
     }
 }

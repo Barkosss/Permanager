@@ -1,12 +1,24 @@
 package common.models;
 
+import java.util.List;
+
 /**
+ * Объект участника-модератора у пользователя. Объект хранит в себе:
+ * user id: long ()
+ * chat id: long ()
+ * permissions: Permissions ()
+ * restrictions: Restrictions ()
+ * priority: int ()
+ * statusSyncGroup: boolean ()
  *
  */
 public class Member {
 
     // Id пользователя (Telegram ID или Discord ID)
     long id;
+
+    // Id чата
+    long chatId;
 
     // Список разрешений
     Permissions permissions;
@@ -20,8 +32,8 @@ public class Member {
     // Синхронизация с группой (Для обновления прав доступа)
     boolean statusSyncGroup;
 
-    // Объект с информацией об ожидаемых данных
-    InputExpectation userInputExpectation;
+    // К какой группе присоединён пользователь
+    Group group;
 
     // Выключить участника
     boolean disabled;
@@ -50,8 +62,9 @@ public class Member {
     }
 
     // Назначить статус синхронизации
-    public void setStatusSyncGroup(boolean statusSyncGroup) {
+    public Member setStatusSyncGroup(boolean statusSyncGroup) {
         this.statusSyncGroup = statusSyncGroup;
+        return this;
     }
 
     // Получить приоритет пользователя
@@ -60,8 +73,9 @@ public class Member {
     }
 
     // Назначить приоритет пользователю
-    public void setPriority(int priority) {
+    public Member setPriority(int priority) {
         this.priority = priority;
+        return this;
     }
 
     // Получить разрешения пользователя
@@ -70,8 +84,14 @@ public class Member {
     }
 
     // Назначить разрешения пользователю
-    public void setPermissions(Permissions permissions) {
+    public Member setPermissions(Permissions permissions) {
         this.permissions = permissions;
+        return this;
+    }
+
+    public Member setPermission(Permissions.Permission permission, boolean permissionStatus) {
+        this.permissions.setPermission(permission, permissionStatus);
+        return this;
     }
 
     // Получить статус активности
@@ -80,15 +100,8 @@ public class Member {
     }
 
     // Изменить статус активности
-    public void setDisabled(boolean disabled) {
+    public Member setDisabled(boolean disabled) {
         this.disabled = disabled;
-    }
-
-    // Получить список ожидаемых входных данных
-    public InputExpectation getUserInputExpectation() {
-        if (userInputExpectation == null) {
-            userInputExpectation = new InputExpectation();
-        }
-        return userInputExpectation;
+        return this;
     }
 }
