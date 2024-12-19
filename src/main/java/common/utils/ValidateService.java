@@ -65,9 +65,7 @@ public class ValidateService {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
                 return Optional.of(LocalDate.parse(strLocalDate, formatter));
-            } catch (Exception err) {
-                // ...
-            }
+            } catch (Exception _) {}
         }
         return Optional.empty();
     }

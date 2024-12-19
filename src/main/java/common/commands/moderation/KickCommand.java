@@ -1,14 +1,12 @@
 package common.commands.moderation;
 
 import com.pengrad.telegrambot.model.ChatFullInfo;
-import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.BanChatMember;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.UnbanChatMember;
 import com.pengrad.telegrambot.response.GetChatMemberResponse;
 import common.commands.BaseCommand;
-import common.exceptions.WrongArgumentsException;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
@@ -45,13 +43,14 @@ public class KickCommand implements BaseCommand {
         }
 
         logger.info("Start of user validation in the chat by id(" + arguments.getFirst() + ")");
-        Optional<Integer> validateUserId = validate.isValidInteger(arguments.getFirst());
-        GetChatMemberResponse member = interactionTelegram.telegramBot
-                .execute(new GetChatMember(interaction.getChatId(), validateUserId.get()));
-        // ...
-        if (member != null) {
-            user.setExcepted(getCommandName(), "user").setValue(member);
-            logger.info("Validation of the user by id(s" + arguments.getFirst() + ") has been completed");
+        Optional<Long> validateUserId = validate.isValidLong(arguments.getFirst());
+        if (validateUserId.isPresent()) {
+            GetChatMemberResponse member = interactionTelegram.telegramBot
+                    .execute(new GetChatMember(interaction.getChatId(), validateUserId.get()));
+            if (member != null) {
+                user.setExcepted(getCommandName(), "user").setValue(member.chatMember().user());
+                logger.info("Validation of the user by id(s" + arguments.getFirst() + ") has been completed");
+            }
         }
 
         logger.info("Starting to save information about the reply message");
@@ -126,7 +125,8 @@ public class KickCommand implements BaseCommand {
             interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been kicked");
 
-            String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
+            String username = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"))
+                    .username();
             String reason = (String) user.getValue(getCommandName(), "reason");
             if (!reason.equals("/skip")) {
                 output.output(interactionTelegram.setLanguageValue("kick.complete", List.of(username)));

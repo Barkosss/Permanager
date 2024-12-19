@@ -45,7 +45,7 @@ public class BanCommand implements BaseCommand {
             return;
         }
 
-        Optional<Integer> validUserId = validate.isValidInteger(arguments.getFirst());
+        Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
             user.setExcepted(getCommandName(), "user")
                     .setValue(interactionTelegram.telegramBot
@@ -61,16 +61,18 @@ public class BanCommand implements BaseCommand {
             return;
         }
 
-        Optional<LocalDate> validDate = validate.isValidDate(String.format("%s %s",
-                arguments.getFirst(), arguments.get(1)));
-        Optional<LocalDate> validTime = validate.isValidTime(arguments.getFirst());
+        if (arguments.size() > 1) {
+            Optional<LocalDate> validDate = validate.isValidDate(String.format("%s %s",
+                    arguments.getFirst(), arguments.get(1)));
+            Optional<LocalDate> validTime = validate.isValidTime(arguments.getFirst());
 
-        if (validDate.isPresent()) {
-            user.setExcepted(getCommandName(), "duration").setValue(validDate.get());
-            arguments = arguments.subList(2, arguments.size());
-        } else if (validTime.isPresent()) {
-            user.setExcepted(getCommandName(), "duration").setValue(validTime.get());
-            arguments = arguments.subList(1, arguments.size());
+            if (validDate.isPresent()) {
+                user.setExcepted(getCommandName(), "duration").setValue(validDate.get());
+                arguments = arguments.subList(2, arguments.size());
+            } else if (validTime.isPresent()) {
+                user.setExcepted(getCommandName(), "duration").setValue(validTime.get());
+                arguments = arguments.subList(1, arguments.size());
+            }
         }
 
         if (arguments.isEmpty()) {
@@ -105,7 +107,7 @@ public class BanCommand implements BaseCommand {
         }
 
         if (!user.isExceptedKey(getCommandName(), "user")) {
-            Optional<Integer> validUserId = validate.isValidInteger(interaction.getArguments().getFirst());
+            Optional<Long> validUserId = validate.isValidLong(interaction.getArguments().getFirst());
 
             if (interactionTelegram.getContentReply() != null) {
                 user.setExcepted(getCommandName(), "user")
@@ -140,13 +142,14 @@ public class BanCommand implements BaseCommand {
         }
 
         try {
-            long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
+            long userId = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user")).id();
             interactionTelegram.telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
             interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
             logger.info(String.format("User by id(%s) in chat by id(%s) has been banned",
                     userId, interaction.getChatId()));
 
-            String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
+            String username = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"))
+                    .username();
             interactionTelegram.findServerById(interaction.getChatId()).addUserBan(user);
             output.output(interaction.setLanguageValue("ban.complete",
                     List.of(username, (String) user.getValue(getCommandName(), "duration"),

@@ -36,19 +36,19 @@ public abstract class AbstractInteraction implements Interaction {
     // Массив аргументов в сообщении (разделитель - пробел)
     List<String> arguments;
 
-    // ...
+    // Хранилище пользователей
     UserRepository userRepository;
 
-    // ...
+    // Хранилище серверов/чатов
     ServerRepository serverRepository;
 
-    // ...
+    // Хранилище напоминание
     ReminderRepository reminderRepository;
 
-    // ...
+    // Хранилище предупреждений
     WarningRepository warningRepository;
 
-    // ...
+    // Содержимое от Telegram Updates
     Content content;
 
     // Языковой код
