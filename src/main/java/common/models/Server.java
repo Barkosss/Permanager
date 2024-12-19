@@ -1,5 +1,6 @@
 package common.models;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,6 +84,10 @@ public class Server {
 
     // Добавить пользователя в список замьюченных
     public Server addUserMute(User user) {
+        if (this.mutes == null) {
+            this.mutes = new HashMap<>();
+        }
+
         mutes.put(user.userId, user);
         return this;
     }

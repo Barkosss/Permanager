@@ -15,7 +15,6 @@ import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,31 +51,6 @@ public class MuteCommand implements BaseCommand {
                             .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember().user());
             arguments = arguments.subList(1, arguments.size());
         }
-
-        if (arguments.isEmpty()) {
-            return;
-        }
-
-        Optional<LocalDate> validDate = validate.isValidDate(String.format("%s, %s",
-                arguments.getFirst(), arguments.get(1)));
-        Optional<LocalDate> validTime = validate.isValidTime(arguments.getFirst());
-        // Получаем длительность мута
-        if (validDate.isPresent()) {
-            logger.debug("...");
-            user.setExcepted(getCommandName(), "duration").setValue(validDate.get());
-            arguments = arguments.subList(2, arguments.size());
-        } else if (validTime.isPresent()) {
-            logger.debug("...");
-            user.setExcepted(getCommandName(), "duration").setValue(validTime.get());
-            arguments = arguments.subList(1, arguments.size());
-        }
-
-        if (arguments.isEmpty()) {
-            return;
-        }
-
-        // Получаем причину мута
-        user.setExcepted(getCommandName(), "reason").setValue(String.join(" ", arguments));
     }
 
     @Override
@@ -133,40 +107,6 @@ public class MuteCommand implements BaseCommand {
             user.setExcepted(getCommandName(), "user").setValue(content.from());
         }
 
-        // Получаем причину блокировки
-        if (!user.isExceptedKey(getCommandName(), "reason")) {
-            user.setExcepted(getCommandName(), "reason");
-            logger.info("Mute command requested a reason argument");
-            output.output(interactionTelegram.setLanguageValue("mute.reason"));
-            return;
-        }
-
-        // Получаем длительность блокировки
-        if (!user.isExceptedKey(getCommandName(), "duration")) {
-            user.setExcepted(getCommandName(), "duration");
-            logger.info("Mute command requested a duration argument");
-            output.output(interactionTelegram.setLanguageValue("mute.duration"));
-            return;
-        }
-
-        String userDuration = (String) user.getValue(getCommandName(), "duration");
-        Optional<LocalDate> validDate = validate.isValidDate(userDuration);
-        if (!userDuration.equals("/skip") && validDate.isEmpty()) {
-            user.setExcepted(getCommandName(), "duration");
-            logger.info("Mute command requested a duration argument");
-            output.output(interactionTelegram.setLanguageValue("mute.duration"));
-            return;
-        }
-
-        // Если указано прошлое время
-        if (!userDuration.equals("/skip") && validDate.get().isBefore(LocalDate.now())) {
-            user.setExcepted(getCommandName(), "duration");
-            logger.info("Mute command requested a duration argument");
-            output.output(interactionTelegram.setLanguageValue("mute.duration"));
-            return;
-        }
-
-        // TODO: [ERROR]	[19-12-2024 07:40:41]	Mute command: java.lang.NullPointerException: Cannot invoke "java.util.Map.put(Object, Object)" because "this.mutes" is null
         try {
             com.pengrad.telegrambot.model.User targetMember
                     = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"));
@@ -175,20 +115,11 @@ public class MuteCommand implements BaseCommand {
             interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), targetMemberId,
                     new ChatPermissions().canSendMessages(false)));
             interactionTelegram.findServerById(interaction.getChatId()).addUserMute(targetUser);
-            // TODO: Переработать duration
-            LocalDate duration = (LocalDate) user.getValue(getCommandName(), "duration");
-            String reason = (String) user.getValue(getCommandName(), "reason");
-            String muteDuration = (!(String.valueOf(duration)).startsWith("/skip")) ? String.valueOf(duration)
-                    : (interaction.getLanguageValue("system.undefined"));
-            String muteReason = (!reason.startsWith("/skip")) ? (reason)
-                    : (interaction.getLanguageValue("system.undefined"));
             logger.info(String.format("User by id(%s) in chat by id(%s) has been muted",
                     targetMemberId, interaction.getChatId()));
             String username = targetMember.username();
             output.output(interactionTelegram.setLanguageValue("mute.complete", List.of(
-                    username,
-                    muteDuration,
-                    muteReason
+                    username
             )));
         } catch (Exception err) {
             output.output(interaction.setLanguageValue("system.error.something"));
