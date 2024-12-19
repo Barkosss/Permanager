@@ -93,7 +93,9 @@ public class WarnsCommand implements BaseCommand {
                 .execute(new GetChatMember(interaction.getChatId(), targetUserId)).chatMember().user();
         com.pengrad.telegrambot.model.User moderatorMember;
         StringBuilder message = new StringBuilder();
-        String warnReason, warnDuration, warnCreatedAt;
+        String warnReason;
+        String warnDuration;
+        String warnCreatedAt;
         try {
             Map<Long, Warning> warnings = interactionTelegram.findUserById(targetUserId)
                     .getWarnings(interaction.getChatId());
@@ -122,7 +124,8 @@ public class WarnsCommand implements BaseCommand {
 
                 // Указана ли причина -> Вывести
                 if (!warnReason.isEmpty()) {
-                    message.append(interaction.getLanguageValue("warns.reason", List.of(warnReason))).append("\n");
+                    message.append(interaction.getLanguageValue("warns.reason",
+                            List.of(warnReason))).append("\n");
                 }
 
                 // Указана ли длительность -> Вывести
