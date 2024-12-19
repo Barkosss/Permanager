@@ -189,7 +189,7 @@ public class WarnCommand implements BaseCommand {
             warning.setDuration((LocalDate) user.getValue(getCommandName(), "duration"));
         }
 
-        targetUser.addWarning(warning);
+        targetUser.addWarning(interactionTelegram.createWarning(warning));
         try {
             logger.info(String.format("Moderator by id(%s) give warn #%s for user by id(%s) in chat by id(%s)",
                     interaction.getUserId(), warning.getId(), targetMember.id(), interaction.getChatId()));

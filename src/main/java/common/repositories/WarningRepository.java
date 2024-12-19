@@ -1,9 +1,11 @@
 package common.repositories;
 
+import common.models.InteractionTelegram;
 import common.models.Warning;
 import common.utils.LoggerHandler;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class WarningRepository {
@@ -26,8 +28,8 @@ public class WarningRepository {
         }
 
         long warningId = warning.getId();
-        if (this.warnings.get(warning.getChatId()).containsKey(warningId)) {
-            return null;
+        if (!this.warnings.get(warning.getChatId()).containsKey(warning.getUserId())) {
+            this.warnings.get(warning.getChatId()).put(warning.getUserId(), new HashMap<>());
         }
         logger.debug(String.format("Warning by id(%s) is create", warningId));
         this.warnings.get(warning.getChatId()).get(warning.getUserId()).put(warningId, warning);
@@ -54,13 +56,17 @@ public class WarningRepository {
         this.warnings.get(warning.getChatId()).get(warning.getUserId()).remove(warning.getId());
     }
 
-    public void reset(long chatId) {
+    public void reset(InteractionTelegram interactionTelegram, long chatId) {
         if (this.warnings == null) {
             this.warnings = new HashMap<>();
         }
 
         if (!this.warnings.containsKey(chatId)) {
             this.warnings.put(chatId, new HashMap<>());
+        }
+
+        for (Long userId : this.warnings.get(chatId).keySet()) {
+            interactionTelegram.findUserById(userId).resetWarnings(chatId);
         }
 
         this.warnings.remove(chatId);
@@ -108,10 +114,14 @@ public class WarningRepository {
             this.warnings = new HashMap<>();
         }
 
-        if (this.warnings.get(chatId) == null) {
+        if (!this.warnings.containsKey(chatId)) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        if (!this.warnings.get(chatId).containsKey(userId)) {
             this.warnings.get(chatId).put(userId, new HashMap<>());
         }
 
-        return this.warnings.get(chatId).get(userId).get(warningId) != null;
+        return this.warnings.get(chatId).get(userId).containsKey(warningId);
     }
 }

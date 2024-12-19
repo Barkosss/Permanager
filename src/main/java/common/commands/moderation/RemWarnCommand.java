@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
 import com.pengrad.telegrambot.model.ChatFullInfo;
+import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChat;
+import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
@@ -11,10 +13,15 @@ import common.models.InteractionTelegram;
 import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
+import common.utils.ValidateService;
+
+import java.util.List;
+import java.util.Optional;
 
 public class RemWarnCommand implements BaseCommand {
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
+    ValidateService validate = new ValidateService();
 
     @Override
     public String getCommandName() {
@@ -28,7 +35,39 @@ public class RemWarnCommand implements BaseCommand {
 
     @Override
     public void parseArgs(Interaction interaction, User user) {
+        List<String> arguments = interaction.getArguments();
+        InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
 
+        if (arguments.isEmpty()) {
+            return;
+        }
+
+        Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
+        if (validUserId.isPresent()) {
+            logger.debug("...");
+            ChatMember chatMember = interactionTelegram.telegramBot
+                    .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember();
+
+            if (chatMember != null) {
+                logger.debug("...");
+                user.setExcepted(getCommandName(), "user").setValue(chatMember.user());
+                arguments = arguments.subList(1, arguments.size());
+            }
+        } else if (interactionTelegram.getContentReply() != null) {
+            logger.debug("...");
+            Message content = interactionTelegram.getContentReply();
+            user.setExcepted(getCommandName(), "user").setValue(content.from());
+        }
+
+        if (arguments.isEmpty()) {
+            return;
+        }
+
+        Optional<Integer> validIndex = validate.isValidInteger(arguments.getFirst());
+        if (validIndex.isPresent()) {
+            logger.debug("...");
+            user.setExcepted(getCommandName(), "index").setValue(validIndex.get());
+        }
     }
 
     @Override
@@ -55,30 +94,53 @@ public class RemWarnCommand implements BaseCommand {
 
         parseArgs(interactionTelegram, user);
 
-        if (interactionTelegram.getContentReply() == null) {
-            logger.info("Remwarn command request user arguments");
-            output.output(interaction.setLanguageValue("remwarn.replyMessage"));
-        }
-        user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply());
-
-        if (!user.isExceptedKey(getCommandName(), "index")) {
-            logger.info("Remwarn command request index arguments");
-            user.setExcepted(getCommandName(), "index", InputExpectation.UserInputType.INTEGER);
-            output.output(interaction.setLanguageValue("remwarn.index"));
+        // Получаем пользователя
+        if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
+            logger.info("RemWarn command requested a user argument");
+            output.output(interactionTelegram.setLanguageValue("remWarn.replyMessage"));
             return;
         }
 
-        long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
-        long index = (long) user.getValue(getCommandName(), "index");
+        if (interactionTelegram.getContentReply() != null && !user.isExceptedKey(getCommandName(), "user")) {
+            Message content = interactionTelegram.getContentReply();
+
+            // Если пользователь это бот или взаимодействующий
+            if (content.from().isBot() || content.from().id() == interaction.getUserId()) {
+                logger.debug("...");
+                user.setExcepted(getCommandName(), "user");
+                output.output(interaction.setLanguageValue("remWarn.replyMessage"));
+                return;
+            }
+
+            user.setExcepted(getCommandName(), "user").setValue(content.from());
+        }
+
+        if (!user.isExceptedKey(getCommandName(), "index")) {
+            logger.info("RemWarn command request index arguments");
+            user.setExcepted(getCommandName(), "index", InputExpectation.UserInputType.INTEGER);
+            output.output(interaction.setLanguageValue("remWarn.index"));
+            return;
+        }
+
+        com.pengrad.telegrambot.model.User targetMember
+                = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"));
+        long targetMemberId = targetMember.id();
+        User targetUser = interactionTelegram.findUserById(targetMemberId);
+        int index = (int) user.getValue(getCommandName(), "index");
 
 
-        if (interactionTelegram.existsWarningById(interaction.getChatId(), userId, index)) {
-            interactionTelegram.removeWarning(interaction.getChatId(), userId, index);
-            output.output(interaction.setLanguageValue("remwarn.complete"));
+        // TODO: Не находит предупреждение
+        if (interactionTelegram.existsWarningById(interaction.getChatId(), targetMemberId, index)) {
+            targetUser.removeWarning(interaction.getChatId(), index);
+            interactionTelegram.removeWarning(interaction.getChatId(), targetMemberId, index);
+            logger.info("...");
+            output.output(interaction.setLanguageValue("remWarn.complete",
+                    List.of(targetMember.username(), String.valueOf(index))));
             user.clearExpected(getCommandName());
         } else {
-            user.setExcepted(getCommandName(), "index");
-            output.output(interaction.setLanguageValue("remwarn.index"));
+            logger.info("...");
+            user.setExcepted(getCommandName(), "index", InputExpectation.UserInputType.INTEGER);
+            output.output(interaction.setLanguageValue("remWarn.index"));
         }
     }
 }

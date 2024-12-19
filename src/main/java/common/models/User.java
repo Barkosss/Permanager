@@ -248,6 +248,34 @@ public class User {
         return this;
     }
 
+    public void removeWarning(long chatId, int index) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        if (!this.warnings.get(chatId).containsKey(Long.parseLong(String.valueOf(index)))) {
+            return;
+        }
+
+        this.warnings.get(chatId).remove(Long.parseLong(String.valueOf(index)));
+    }
+
+    public void resetWarnings(long chatId) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            return;
+        }
+
+        this.warnings.get(chatId).clear();
+    }
+
     public Map<Long, Warning> getWarnings(long chatId) {
         if (this.warnings == null) {
             this.warnings = new HashMap<>();

@@ -37,9 +37,10 @@ public class ResetWarnsCommand implements BaseCommand {
             return;
         }
 
-        Optional<Integer> validUserId = validate.isValidInteger(arguments.getFirst());
+        Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
-            user.setExcepted(getCommandName(), "userId").setValue(validUserId);
+            logger.debug("...");
+            user.setExcepted(getCommandName(), "userId").setValue(validUserId.get());
         }
 
         if (arguments.isEmpty()) {
@@ -99,6 +100,8 @@ public class ResetWarnsCommand implements BaseCommand {
                     try {
                         message.append(interaction.getLanguageValue("resetWarns.resetUser",
                                 List.of(chatMember.user().username())));
+                        User targetUser = interactionTelegram.findUserById(userId);
+                        targetUser.resetWarnings(interaction.getChatId());
                         interactionTelegram.resetWarnings(interaction.getChatId(), userId);
                     } catch (Exception err) {
                         // ...
@@ -106,7 +109,7 @@ public class ResetWarnsCommand implements BaseCommand {
                 } else { // Если надо сбросить предупреждения у всех участников
                     try {
                         message.append(interaction.getLanguageValue("resetWarns.resetAll"));
-                        interactionTelegram.resetWarnings(interaction.getChatId());
+                        interactionTelegram.resetWarnings(interactionTelegram, interaction.getChatId());
                     } catch (Exception err) {
                         // ...
                     }
