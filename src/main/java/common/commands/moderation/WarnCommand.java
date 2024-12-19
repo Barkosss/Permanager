@@ -110,13 +110,13 @@ public class WarnCommand implements BaseCommand {
                         interactionTelegram.getUsername()
                 )));
             } catch (Exception err) {
-                logger.error("");
+                logger.error("...");
                 output.output(interaction.setLanguageValue("system.error.accessDenied"));
             }
             return;
         }
 
-        parseArgs(interaction, user);
+        parseArgs(interactionTelegram, user);
 
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
@@ -135,7 +135,7 @@ public class WarnCommand implements BaseCommand {
                 return;
             }
 
-            user.setExcepted(getCommandName(), "user").setValue(content);
+            user.setExcepted(getCommandName(), "user").setValue(content.from());
         }
 
         // Получаем причину блокировки
