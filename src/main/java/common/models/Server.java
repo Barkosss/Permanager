@@ -1,5 +1,6 @@
 package common.models;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,12 +67,20 @@ public class Server {
 
     // Добавить пользователя в список забаненных
     public Server addUserBan(User user) {
+        if (this.bans == null) {
+            this.bans = new HashMap<>();
+        }
+
         bans.put(user.userId, user);
         return this;
     }
 
     // Удалить пользователя из списка забаненных
     public Server removeUserBan(User user) {
+        if (this.bans == null) {
+            this.bans = new HashMap<>();
+        }
+
         bans.remove(user.userId);
         return this;
     }
@@ -83,6 +92,10 @@ public class Server {
 
     // Добавить пользователя в список замьюченных
     public Server addUserMute(User user) {
+        if (this.mutes == null) {
+            this.mutes = new HashMap<>();
+        }
+
         mutes.put(user.userId, user);
         return this;
     }

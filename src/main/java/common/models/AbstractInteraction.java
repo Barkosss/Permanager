@@ -1,13 +1,13 @@
 package common.models;
 
 import common.exceptions.MemberNotFoundException;
-import common.exceptions.WrongArgumentsException;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.repositories.WarningRepository;
 import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
-import common.utils.Validate;
+import common.utils.ValidateService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -36,32 +36,43 @@ public abstract class AbstractInteraction implements Interaction {
     // Массив аргументов в сообщении (разделитель - пробел)
     List<String> arguments;
 
-    // ...
+    // Хранилище пользователей
     UserRepository userRepository;
 
-    // ...
+    // Хранилище серверов/чатов
     ServerRepository serverRepository;
 
-    // ...
+    // Хранилище напоминание
     ReminderRepository reminderRepository;
 
-    // ...
+    // Хранилище предупреждений
+    WarningRepository warningRepository;
+
+    // Содержимое от Telegram Updates
     Content content;
 
     // Языковой код
     Language languageCode;
-
-    public UserRepository getUserRepository() {
-        return userRepository;
-    }
 
     public Interaction setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
         return this;
     }
 
-    public ServerRepository getServerRepository() {
-        return serverRepository;
+    public User createUser(long chatId, long userId) {
+        return this.userRepository.create(chatId, userId);
+    }
+
+    public User findUserById(long userId) {
+        try {
+            return this.userRepository.findById(chatId, userId);
+        } catch (MemberNotFoundException err) {
+            return createUser(chatId, userId);
+        }
+    }
+
+    public boolean existsUserById(long chatId, long userId) {
+        return this.userRepository.existsById(chatId, userId);
     }
 
     public Interaction setServerRepository(ServerRepository serverRepository) {
@@ -69,15 +80,62 @@ public abstract class AbstractInteraction implements Interaction {
         return this;
     }
 
-    @Override
+    public Server createServer(Server server) {
+        return this.serverRepository.create(server);
+    }
+
+    public boolean existsServerById(long chatId) {
+        return this.serverRepository.existsById(chatId);
+    }
+
+    public Server findServerById(long chatId) {
+        return this.serverRepository.findById(chatId);
+    }
+
+    public void removeServer(long chatId) {
+        this.serverRepository.remove(chatId);
+    }
+
     public Interaction setReminderRepository(ReminderRepository reminderRepository) {
         this.reminderRepository = reminderRepository;
         return this;
     }
 
-    @Override
-    public ReminderRepository getReminderRepository() {
-        return reminderRepository;
+    public Reminder createReminder(Reminder reminder) {
+        return reminderRepository.create(reminder);
+    }
+
+    public boolean existsReminderByTimestamp(long reminderId) {
+        return this.reminderRepository.existsByTimestamp(reminderId);
+    }
+
+    public List<Reminder> findReminderByTimestamp(long timestamp) {
+        return this.reminderRepository.findByTimestamp(timestamp);
+    }
+
+    public void removeReminder(long timestamp) {
+        this.reminderRepository.remove(timestamp);
+    }
+
+    public Interaction setWarningRepository(WarningRepository warningRepository) {
+        this.warningRepository = warningRepository;
+        return this;
+    }
+
+    public Warning createWarning(Warning warning) {
+        return this.warningRepository.create(warning);
+    }
+
+    public boolean existsWarningById(long chatId, long userId, long warningId) {
+        return this.warningRepository.existsById(chatId, userId, warningId);
+    }
+
+    public Warning findWarningById(long chatId, long userId, long warningId) {
+        return this.warningRepository.findById(chatId, userId, warningId);
+    }
+
+    public void removeWarning(long chatId, long userId, long warningId) {
+        this.warningRepository.remove(findWarningById(chatId, userId, warningId));
     }
 
     public User getUser(long userId) {
@@ -151,32 +209,32 @@ public abstract class AbstractInteraction implements Interaction {
             this.message = getLanguageValue(languageKey, replaces);
         } catch (Exception err) {
             LoggerHandler logger = new LoggerHandler();
-            logger.error("");
+            logger.error("Incorrect number of arguments to replace (setLanguageValue: String, List<>)");
         }
         return this;
     }
 
     public String getLanguageValue(String languageKey) {
         JSONHandler jsonHandler = new JSONHandler();
-        String languagePath = String.format("content_%s.json", languageCode.getLang());
+        String languagePath = String.format("content_%s.json", getUser(userId).getLanguage().getLang());
         if (jsonHandler.check(languagePath, languageKey)) {
             return (String) jsonHandler.read(languagePath, languageKey);
         }
-        return null;
+        return languageKey;
     }
 
-    public String getLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException {
-        Validate validate = new Validate();
+    public String getLanguageValue(String languageKey, List<String> replaces) {
+        ValidateService validate = new ValidateService();
         LoggerHandler logger = new LoggerHandler();
 
         String message = getLanguageValue(languageKey);
         if (message == null) {
-            return null;
+            return languageKey;
         }
         List<String> findReplace = parseReplace(message);
 
-        if (replaces.size() != findReplace.size()) {
-            throw new WrongArgumentsException();
+        if (replaces.size() < findReplace.size()) {
+            findReplace = findReplace.subList(0, replaces.size());
         }
 
         int indexReplace = 0;
@@ -188,9 +246,7 @@ public abstract class AbstractInteraction implements Interaction {
                     message = message.replaceFirst(word, replaces.get(indexReplace));
                     indexReplace++;
                 } else {
-                    // ОШИБКА
                     logger.error("Replace message expected number");
-                    throw new WrongArgumentsException();
                 }
             } else if (word.charAt(1) == 'd') { // Если дата
                 Optional<LocalDate> isLocalDate = validate.isValidDate(replaces.get(indexReplace));
@@ -199,9 +255,7 @@ public abstract class AbstractInteraction implements Interaction {
                     message = message.replaceFirst(word, replaces.get(indexReplace));
                     indexReplace++;
                 } else {
-                    // ОШИБКА
                     logger.error("Replace message expected LocalDate");
-                    throw new WrongArgumentsException();
                 }
             } else { // Другие типы
                 message = message.replaceFirst(word, replaces.get(indexReplace));

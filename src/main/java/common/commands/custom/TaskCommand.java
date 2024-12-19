@@ -6,14 +6,14 @@ import common.models.Interaction;
 import common.models.Task;
 import common.models.User;
 import common.utils.LoggerHandler;
-import common.utils.Validate;
+import common.utils.ValidateService;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public class TaskCommand implements BaseCommand {
-    Validate validate = new Validate();
+    ValidateService validate = new ValidateService();
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
 

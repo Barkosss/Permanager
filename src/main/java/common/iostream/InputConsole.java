@@ -38,12 +38,13 @@ public class InputConsole {
 
             commandHandler.launchCommand(interaction, List.of(
                     new Content(
+                            "Console",
                             0L, // Идентификатор пользователя
                             null, // Информация о чате
                             null, // Информация об ответном сообщении
                             userInputMessage, // Содержимое сообщения
                             System.currentTimeMillis() / 1000, // Время отправки, пользователем, сообщения
-                            Interaction.Language.ENGLISH,
+                            interaction.getUser(interaction.getUserId()).getLanguage(),
                             List.of(userInputMessage.split(" ")), // Аргументы сообщения
                             Interaction.Platform.CONSOLE // Платформа, с которой пришёл контент
                     )

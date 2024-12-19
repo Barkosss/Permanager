@@ -14,7 +14,7 @@ public class Warning {
     long chatId;
 
     // Идентификатор модератора
-    long moderationId;
+    long moderatorId;
 
     // Причина
     String reason;
@@ -22,8 +22,14 @@ public class Warning {
     // Длительность
     LocalDate duration;
 
-    public Warning(long id) {
-        this.id = id;
+    // Дата выдачи предупреждения
+    LocalDate createdAt;
+
+    public Warning(long chatId, long userId, long moderatorId) {
+        this.chatId = chatId;
+        this.userId = userId;
+        this.moderatorId = moderatorId;
+        this.createdAt = LocalDate.now();
     }
 
     public long getId() {
@@ -53,12 +59,12 @@ public class Warning {
         return this;
     }
 
-    public long getModerationId() {
-        return moderationId;
+    public long getModeratorId() {
+        return moderatorId;
     }
 
-    public Warning setModerationId(long moderationId) {
-        this.moderationId = moderationId;
+    public Warning setModeratorId(long moderatorId) {
+        this.moderatorId = moderatorId;
         return this;
     }
 
@@ -78,5 +84,20 @@ public class Warning {
     public Warning setDuration(LocalDate duration) {
         this.duration = duration;
         return this;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public String toString() {
+        return String.format("Warning({"
+                + "id=%s"
+                + "userId=%s"
+                + "chatId=%s"
+                + "moderationId=%s"
+                + "reason=%s"
+                + "duration=%s"
+                + "})", id, userId, chatId, moderatorId, reason, duration);
     }
 }

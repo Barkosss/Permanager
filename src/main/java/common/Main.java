@@ -8,14 +8,10 @@ import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 public class Main {
 
-    public static List<String> arguments;
-
     public static void main(String[] args) {
-        arguments = List.of(args);
         LoggerHandler logger = new LoggerHandler();
         JSONHandler jsonHandler = new JSONHandler();
         logger.debug("----------------");

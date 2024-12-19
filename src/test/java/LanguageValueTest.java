@@ -1,4 +1,3 @@
-import common.exceptions.WrongArgumentsException;
 import common.models.Interaction;
 import common.models.InteractionConsole;
 import org.junit.jupiter.api.DisplayName;
@@ -15,12 +14,7 @@ public class LanguageValueTest {
     public void testLanguageValueStringPositive() {
         InteractionConsole interaction = new InteractionConsole();
         interaction.setLanguageCode(Interaction.Language.RUSSIAN);
-        String checkMessage;
-        try {
-            checkMessage = interaction.getLanguageValue("test.string", List.of("Тестовая строка"));
-        } catch (WrongArgumentsException err) {
-            checkMessage = "Undefined";
-        }
+        String checkMessage = interaction.getLanguageValue("test.string", List.of("Тестовая строка"));
 
         assertEquals("Это сообщение \"Тестовая строка\" для проверки метода (Строка)", checkMessage);
     }
@@ -30,12 +24,7 @@ public class LanguageValueTest {
     public void testLanguageValueLongStringPositive() {
         InteractionConsole interaction = new InteractionConsole();
         interaction.setLanguageCode(Interaction.Language.RUSSIAN);
-        String checkMessage;
-        try {
-            checkMessage = interaction.getLanguageValue("test.longString", List.of("Проверка длинных слов"));
-        } catch (WrongArgumentsException err) {
-            checkMessage = "Undefined";
-        }
+        String checkMessage = interaction.getLanguageValue("test.longString", List.of("Проверка длинных слов"));
 
         assertEquals("Это сообщение \"Проверка длинных слов\" для проверки поиска длинных (Строка)", checkMessage);
     }
@@ -44,14 +33,9 @@ public class LanguageValueTest {
     public void testLanguageValueStringsPositive() {
         InteractionConsole interaction = new InteractionConsole();
         interaction.setLanguageCode(Interaction.Language.RUSSIAN);
-        String checkMessage;
-        try {
-            checkMessage = interaction.getLanguageValue("test.strings", List.of("Тестовая строка #1",
-                    "Тестовая строка #2",
-                    "Тестовая строка #3"));
-        } catch (WrongArgumentsException err) {
-            checkMessage = "Undefined";
-        }
+        String checkMessage = interaction.getLanguageValue("test.strings", List.of("Тестовая строка #1",
+                "Тестовая строка #2",
+                "Тестовая строка #3"));
 
         assertEquals("Это сообщение \"Тестовая строка #1\" \"Тестовая строка #2\" "
                 + "\"Тестовая строка #3\" для проверки метода (Строка)", checkMessage);
@@ -61,12 +45,7 @@ public class LanguageValueTest {
     public void testLanguageValueIntegerPositive() {
         InteractionConsole interaction = new InteractionConsole();
         interaction.setLanguageCode(Interaction.Language.RUSSIAN);
-        String checkMessage;
-        try {
-            checkMessage = interaction.getLanguageValue("test.int", List.of("1"));
-        } catch (WrongArgumentsException err) {
-            checkMessage = "Undefined";
-        }
+        String checkMessage = interaction.getLanguageValue("test.int", List.of("1"));
 
         assertEquals("Это сообщение \"1\" для проверки метода (Число)", checkMessage);
     }
@@ -75,12 +54,7 @@ public class LanguageValueTest {
     public void testLanguageValueIntegerNegative() {
         InteractionConsole interaction = new InteractionConsole();
         interaction.setLanguageCode(Interaction.Language.RUSSIAN);
-        String checkMessage;
-        try {
-            checkMessage = interaction.getLanguageValue("test.int", List.of("1a"));
-        } catch (WrongArgumentsException err) {
-            checkMessage = "Undefined";
-        }
+        String checkMessage = interaction.getLanguageValue("test.int", List.of("1a"));
 
         assertNotEquals("Это сообщение \"1\" для проверки метода (Число)", checkMessage);
     }
@@ -89,12 +63,7 @@ public class LanguageValueTest {
     public void testLanguageValueLocalDatePositive() {
         InteractionConsole interaction = new InteractionConsole();
         interaction.setLanguageCode(Interaction.Language.RUSSIAN);
-        String checkMessage;
-        try {
-            checkMessage = interaction.getLanguageValue("test.date", List.of("29.11.2024 12:50"));
-        } catch (WrongArgumentsException err) {
-            checkMessage = "Undefined";
-        }
+        String checkMessage = interaction.getLanguageValue("test.date", List.of("29.11.2024 12:50"));
 
         assertEquals("Это сообщение \"29.11.2024 12:50\" для проверки метода (Дата)", checkMessage);
     }
@@ -103,12 +72,7 @@ public class LanguageValueTest {
     public void testLanguageValueLocalDateNegative() {
         InteractionConsole interaction = new InteractionConsole();
         interaction.setLanguageCode(Interaction.Language.RUSSIAN);
-        String checkMessage;
-        try {
-            checkMessage = interaction.getLanguageValue("test.date", List.of("Local Date"));
-        } catch (WrongArgumentsException err) {
-            checkMessage = "Undefined";
-        }
+        String checkMessage = interaction.getLanguageValue("test.date", List.of("Local Date"));
 
         assertNotEquals("Это сообщение \"29.11.2024 12:50\" для проверки метода (Дата)", checkMessage);
     }

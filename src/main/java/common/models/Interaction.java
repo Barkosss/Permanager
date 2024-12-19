@@ -4,6 +4,7 @@ import common.exceptions.WrongArgumentsException;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.repositories.WarningRepository;
 
 import java.util.List;
 
@@ -27,19 +28,36 @@ public interface Interaction {
         public String getLang() {
             return lang;
         }
-    }
 
-    UserRepository getUserRepository();
+        public static Language getLanguage(String userLang) {
+            for (Language lang : Language.values()) {
+                if (lang.lang.equalsIgnoreCase(userLang)) {
+                    return lang;
+                }
+            }
+            return null;
+        }
+    }
 
     Interaction setUserRepository(UserRepository userRepository);
 
-    ServerRepository getServerRepository();
+    User createUser(long chatId, long userId);
+
+    User findUserById(long userId);
+
+    boolean existsUserById(long chatId, long userId);
 
     Interaction setServerRepository(ServerRepository serverRepository);
 
+    Server createServer(Server server);
+
+    Server findServerById(long chatId);
+
     Interaction setReminderRepository(ReminderRepository reminderRepository);
 
-    ReminderRepository getReminderRepository();
+    Reminder createReminder(Reminder reminder);
+
+    Interaction setWarningRepository(WarningRepository warningRepository);
 
     User getUser(long userId);
 
@@ -71,9 +89,9 @@ public interface Interaction {
 
     Interaction setLanguageValue(String languageKey);
 
-    Interaction setLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException;
+    Interaction setLanguageValue(String languageKey, List<String> replaces);
 
     String getLanguageValue(String languageKey);
 
-    String getLanguageValue(String languageKey, List<String> replaces) throws WrongArgumentsException;
+    String getLanguageValue(String languageKey, List<String> replaces);
 }

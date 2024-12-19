@@ -1,4 +1,5 @@
-import common.utils.Validate;
+import common.models.TimeZone;
+import common.utils.ValidateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class ValidateTest {
-    Validate validate = new Validate();
+public class ValidateServiceTest {
+    ValidateService validate = new ValidateService();
 
     @Test
     public void testIsValidIntegerPositive() {
@@ -98,5 +99,41 @@ public class ValidateTest {
         Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
 
         assertTrue(parseDate.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Positively, because there is a time zone Europe/Moscow")
+    public void firstTestIsValidTimeZonePositive() {
+        String stringTimeZone = "Europe/Moscow";
+
+        Optional<TimeZone> parseTimeZone = validate.isValidTimeZone(stringTimeZone);
+        assertTrue(parseTimeZone.isPresent());
+    }
+
+    @Test
+    @DisplayName("Positively, because the string will be formatted according to the desired format")
+    public void secondTestIsValidTimeZonePositive() {
+        String stringTimeZone = "europe/moscow";
+
+        Optional<TimeZone> parseTimeZone = validate.isValidTimeZone(stringTimeZone);
+        assertTrue(parseTimeZone.isPresent());
+    }
+
+    @Test
+    @DisplayName("Positively, because the string will be formatted according to the desired format")
+    public void thirdTestIsValidTimeZonePositive() {
+        String stringTimeZone = "eUrope/moScow";
+
+        Optional<TimeZone> parseTimeZone = validate.isValidTimeZone(stringTimeZone);
+        assertTrue(parseTimeZone.isPresent());
+    }
+
+    @Test
+    @DisplayName("Negatively, since there is no such time zone")
+    public void fourthTestIsValidTimeZoneNegative() {
+        String stringTimeZone = "Europe/Polish";
+
+        Optional<TimeZone> parseTimeZone = validate.isValidTimeZone(stringTimeZone);
+        assertFalse(parseTimeZone.isPresent());
     }
 }

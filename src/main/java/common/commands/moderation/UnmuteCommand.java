@@ -1,8 +1,10 @@
 package common.commands.moderation;
 
+import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.ChatPermissions;
 import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.request.GetChatMemberCount;
+import com.pengrad.telegrambot.request.GetChat;
+import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.RestrictChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
@@ -11,10 +13,15 @@ import common.models.InteractionTelegram;
 import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
+import common.utils.ValidateService;
+
+import java.util.List;
+import java.util.Optional;
 
 public class UnmuteCommand implements BaseCommand {
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
+    ValidateService validate = new ValidateService();
 
     @Override
     public String getCommandName() {
@@ -27,47 +34,92 @@ public class UnmuteCommand implements BaseCommand {
     }
 
     @Override
-    public void parseArgs(Interaction interaction, User user) {}
+    public void parseArgs(Interaction interaction, User user) {
+        List<String> arguments = interaction.getArguments();
+        InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
+
+        // Проверка на наличие аргументов
+        if (arguments.isEmpty()) {
+            return;
+        }
+
+        Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
+        if (validUserId.isPresent()) {
+            logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
+            user.setExcepted(getCommandName(), "user")
+                    .setValue(interactionTelegram.telegramBot
+                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
+                            .chatMember().user());
+        }
+    }
 
     @Override
     public void run(Interaction interaction) {
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
-            output.output(interaction.setMessage("This command is not available for the console"));
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandConsole"));
             return;
         }
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.UNMUTE)) {
-            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+        // Проверяем на приватность чата
+        if (interactionTelegram.telegramBot
+                .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
+            logger.info(String.format("User by id(%d) use command \"%s\" in Chat by id(%d)",
+                    interaction.getUserId(), getCommandName(), interaction.getChatId()));
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
 
-        if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
-            output.output(interaction.setMessage("This command is not available for private chat"));
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.MUTE)) {
+            try {
+                output.output(interaction.setLanguageValue("system.error.accessDenied", List.of(
+                        interactionTelegram.getUsername()
+                )));
+            } catch (Exception err) {
+                logger.error(String.format("Error in command (%s): %s", getCommandName(), err));
+                output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            }
             return;
         }
+
+        // Парсинг аргументов
+        parseArgs(interactionTelegram, user);
 
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
-            logger.info("Unmute command requested a user argument");
-            output.output(interactionTelegram.setMessage("Reply message target user with command /unmute"));
+            logger.info("Mute command requested a user argument");
+            output.output(interactionTelegram.setLanguageValue("mute.replyMessage"));
             return;
         }
 
+        // Получаем пользователя из ответного сообщения
         if (interactionTelegram.getContentReply() != null && !user.isExceptedKey(getCommandName(), "user")) {
-            // Валидация пользователя...
-            user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply());
+            Message content = interactionTelegram.getContentReply();
+
+            // Если пользователь это бот или взаимодействующий
+            if (content.from().isBot() || content.from().id() == interaction.getUserId()) {
+                user.setExcepted(getCommandName(), "user");
+                output.output(interaction.setLanguageValue("warn.replyMessage"));
+                return;
+            }
+
+            user.setExcepted(getCommandName(), "user").setValue(content.from());
         }
 
         try {
-            long userId = ((Message) user.getValue(getCommandName(), "user")).from().id();
-            interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), userId,
+            com.pengrad.telegrambot.model.User targetMember
+                    = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"));
+            long targetMemberId = targetMember.id();
+            interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), targetMemberId,
                     new ChatPermissions().canSendMessages(true)));
-            interactionTelegram.getServerRepository().findById(interaction.getChatId()).removeUserMute(user);
-            logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been unmuted");
-            String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
-            output.output(interactionTelegram.setMessage("The user @" + username + " has been unmuted"));
+            User targetUser = interactionTelegram.findUserById(targetMemberId);
+            interactionTelegram.findServerById(interaction.getChatId()).removeUserMute(targetUser);
+            logger.info(String.format("User by id(%s) in chat by id(%s) has been unmuted",
+                    targetMemberId,
+                    interaction.getChatId()));
+            output.output(interactionTelegram.setLanguageValue("unmute.complete",
+                    List.of(targetMember.username())));
         } catch (Exception err) {
             output.output(interaction.setMessage("Something went wrong... :("));
             logger.error("Unmute command: " + err);
