@@ -51,6 +51,7 @@
             "complete": "The time zone has been successfully set"
         },
         "error": {
+            "invalidTimezone": "Incorrect time zone",
             "sectionNotFound": "The section was not found"
         }
     },
