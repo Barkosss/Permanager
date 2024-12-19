@@ -166,6 +166,7 @@ public class MuteCommand implements BaseCommand {
             return;
         }
 
+        // TODO: [ERROR]	[19-12-2024 07:40:41]	Mute command: java.lang.NullPointerException: Cannot invoke "java.util.Map.put(Object, Object)" because "this.mutes" is null
         try {
             com.pengrad.telegrambot.model.User targetMember
                     = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"));
