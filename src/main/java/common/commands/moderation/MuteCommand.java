@@ -48,8 +48,8 @@ public class MuteCommand implements BaseCommand {
             logger.debug("...");
             user.setExcepted(getCommandName(), "user")
                     .setValue(interactionTelegram.telegramBot
-                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember().user());
-            arguments = arguments.subList(1, arguments.size());
+                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
+                            .chatMember().user());
         }
     }
 
