@@ -169,9 +169,9 @@ public class InputTelegram {
             // Создать обработчик исключений
         }, err -> {
             if (err.response() != null) {
-                logger.error(String.format("Telegram updates listener (Bad response): %s", err));
+                logger.fatal(String.format("Telegram updates listener (Bad response): %s", err));
             } else {
-                logger.error(String.format("Telegram updates listener (Network): %s", err));
+                logger.fatal(String.format("Telegram updates listener (Network): %s", err));
             }
         });
     }
