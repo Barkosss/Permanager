@@ -16,14 +16,18 @@
         }
     },
     "test": {
-        "string": "Это сообщение \"%MESSAGE%`\" для проверки метода (Строка)",
-        "strings": "Это сообщение \"%MESSAGE%`\" \"%MESSAGE%`\" \"%MESSAGE%`\" для проверки метода (Строка)",
-        "int": "Это сообщение \"%iINTEGER%`\" для проверки метода (Число)",
-        "date": "Это сообщение \"%dDATE%`\" для проверки метода (Дата)",
-        "longString": "Это сообщение \"%TEST_VARIABLE%`\" для проверки поиска длинных (Строка)"
+        "string": "This is the \"%MESSAGE%\" message for checking the method (String)",
+        "strings": "This is the \"%MESSAGE%\" \"%MESSAGE%\" \"%MESSAGE%\" message for checking the method (Strings)",
+        "int": "This is the \"%iINTEGER%\" message for checking the method (Number)",
+        "date": "This is the \"%dDATE%\" message for checking the method (Date)",
+        "longString": "This is the \"%LONG_MESSAGE%\" message for checking the method (Long String)"
     },
     "start": {
         "message": "Hello! \nI am **Permanager**, your assistant for flexible access rights management in Telegram channels and Discord servers.\nMy goal is to simplify the lives of administrators by providing convenient tools for setting up rights to moderation teams without having to rely on the standard Telegram or Discord roles.\n\n With my help , you can:\n✅ Assign rights to teams in a new way, not limited to standard roles.\n Create custom rights groups for users.\n Simplify moderation management by making it as transparent and convenient as possible.\n\n\uD83C\uDF89 Let's get started!\n\uD83D\uDCCB **Basic commands**:\n\n`/config` — Configure the global parameters of the bot on the server.\n`/reminder` — Managing reminders\n`/cancel` — Canceling the execution of the current command\n`/help` — Show a list of all available commands and their description.\n\nIf you have any questions, just use /help.\nLet's start simplifying your work together! \uD83D\uDE80"
+    },
+    "help": {
+        "commandHelp": "\uD83D\uDCCC _ Write /help [command name] to get more information_",
+        "manualNotFound": "*There is no description*"
     },
     "config": {
         "start": {
@@ -123,7 +127,7 @@
         "complete": "The user @%USERNAME% has been successfully loaded"
     },
     "unmute": {
-        "replyMessage": "Вызовите команду с ответом на сообщение пользователя, которого хотите размьютить",
+        "replyMessage": "Call the command with a response to the message of the user you want to soften",
         "reason": "Specify the reason (If you don't want to specify it, enter /skip)",
         "complete": "User @%USERNAME% has been successfully uploaded"
     },
@@ -158,7 +162,7 @@
         "confirmAll": "Are you sure you want to reset the warnings to all users? (yes, no)",
         "resetUser": "All warnings have been reset for @%USERNAME%",
         "resetAll": "All warnings have been reset for all users",
-        "cancel": "Вы отменили сброс предупреждения",
+        "cancel": "You canceled the warning reset",
         "error": {
             "warnsNotFound": "User @%USERNAME% has no reminders"
         }
