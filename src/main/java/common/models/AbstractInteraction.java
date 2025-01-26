@@ -1,5 +1,6 @@
 package common.models;
 
+import common.commands.BaseCommand;
 import common.exceptions.MemberNotFoundException;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
@@ -9,6 +10,7 @@ import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -216,6 +218,20 @@ public abstract class AbstractInteraction implements Interaction {
 
     public String getLanguageValue(String languageKey) {
         JSONHandler jsonHandler = new JSONHandler();
+        String commandName = "";
+        try {
+            StackTraceElement stack = new Exception().getStackTrace()[1];
+            BaseCommand method = (BaseCommand) Class.forName(stack.getClassName()).getConstructor().newInstance();
+            commandName = method.getCommandName();
+
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException |
+                 InvocationTargetException ignored) {
+        }
+
+        if (languageKey.startsWith(".")) {
+            languageKey = commandName + languageKey;
+        }
+
         String languagePath = String.format("content_%s.json", getUser(userId).getLanguage().getLang());
         if (jsonHandler.check(languagePath, languageKey)) {
             return (String) jsonHandler.read(languagePath, languageKey);
