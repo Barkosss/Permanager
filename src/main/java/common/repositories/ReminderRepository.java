@@ -4,6 +4,8 @@ import common.models.Reminder;
 import common.utils.LoggerHandler;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -18,18 +20,16 @@ public class ReminderRepository {
 
     // Создать напоминание в памяти
     public Reminder create(Reminder reminder) {
+        long timestamp = reminder.getTimestamp();
         if (reminders == null) {
             reminders = new TreeMap<>();
         }
-        
-        long reminderId = reminder.getId();
-        LocalDate sendAt = reminder.getSendAt();
 
-        if (reminders.containsKey(reminderId)) {
-            reminders.get(reminderId).add(reminder);
-            return reminder;
+        if (!reminders.containsKey(timestamp)) {
+            reminders.put(timestamp, new ArrayList<>());
         }
-        reminders.put(reminderId, List.of(reminder));
+
+        reminders.get(timestamp).add(reminder);
         return reminder;
     }
 

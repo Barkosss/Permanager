@@ -39,21 +39,61 @@ public class SystemService {
         logger.info("SYSTEM: MuteHandler is launch", true);
     }
 
-    private void checkOldReminder(Interaction interaction) {
-
-    }
-
-    public void reminderHandler(Interaction interaction) {
+    private void reminderHandler(Interaction interaction) {
+        StringBuilder message = new StringBuilder();
         long timestamp = System.currentTimeMillis() / 1000;
         List<Reminder> reminders;
 
-        checkOldReminder(interaction);
+        while (true) {
+            try {
+                if (reminderRepository.existsByTimestamp(timestamp)) {
+                    reminders = reminderRepository.findByTimestamp(timestamp);
+
+                    // Берём на секунду будущие напоминания
+                    if (reminderRepository.existsByTimestamp(timestamp + 1)) {
+                        reminders.addAll(reminderRepository.findByTimestamp(timestamp + 1));
+                    }
+
+                    // Берём на две секунды будущие напоминания
+                    if (reminderRepository.existsByTimestamp(timestamp + 2)) {
+                        reminders.addAll(reminderRepository.findByTimestamp(timestamp + 2));
+                    }
+
+                    for (Reminder reminder : reminders) {
+                        message.append(interaction.getLanguageValue("reminder.send.reminder"));
+                        message.append(interaction.getLanguageValue("reminder.send.content", List.of(
+                                reminder.getContent()
+                        )));
+                        message.append(interaction.getLanguageValue("reminder.send.createdAt", List.of(
+                                reminder.getCreatedAt().toString()
+                        )));
+
+                        if (reminder.getPlatform() == Interaction.Platform.TELEGRAM) {
+                            output.output(((InteractionTelegram) interaction).setChatId(reminder.getChatId())
+                                    .setMessage(message.toString()));
+                        } else {
+                            output.output(interaction.setMessage(message.toString()));
+                        }
+
+                        message = new StringBuilder();
+                    }
+                }
+
+            } catch (Exception err) {
+                logger.fatal("Reminder handler (Send reminder): " + err);
+            }
+        }
+    }
+
+    /*public void reminderHandler(Interaction interaction) {
+        long timestamp = System.currentTimeMillis() / 1000;
+        List<Reminder> reminders;
 
         while (true) {
             try {
                 // Проверка на наличие напоминаний на текущее время
                 if (reminderRepository.existsByTimestamp(timestamp)) {
-                    reminders =  reminderRepository.findByTimestamp(timestamp);
+                    reminders = reminderRepository.findByTimestamp(timestamp);
 
                     // Берём на секунду будущие напоминания
                     if (reminderRepository.existsByTimestamp(timestamp + 1)) {
@@ -85,7 +125,7 @@ public class SystemService {
                 logger.error(String.format("ReminderHandler: %s", err));
             }
         }
-    }
+    }*/
 
     public void banHandler(Interaction interaction) {
 

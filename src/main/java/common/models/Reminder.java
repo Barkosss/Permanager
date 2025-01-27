@@ -22,6 +22,9 @@ public class Reminder {
     // Дата, когда надо отправить напоминание
     LocalDate sendAt;
 
+    // Таймстамп
+    long timestamp;
+
     // Платформа, откуда было создано напоминание
     Interaction.Platform platform;
 
@@ -77,6 +80,17 @@ public class Reminder {
     // Назначить новое дату отправки
     public Reminder setSendAt(LocalDate sendAt) {
         this.sendAt = sendAt;
+        return this;
+    }
+
+    // ...
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    // ...
+    public Reminder setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
         return this;
     }
 
