@@ -1,7 +1,6 @@
 package common.models;
 
 import common.commands.BaseCommand;
-import common.exceptions.MemberNotFoundException;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
@@ -11,7 +10,7 @@ import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
 import java.lang.reflect.InvocationTargetException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,16 +60,16 @@ public abstract class AbstractInteraction implements Interaction {
         return this;
     }
 
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
+
     public User createUser(long chatId, long userId) {
         return this.userRepository.create(chatId, userId);
     }
 
     public User findUserById(long userId) {
-        try {
-            return this.userRepository.findById(chatId, userId);
-        } catch (MemberNotFoundException err) {
-            return createUser(chatId, userId);
-        }
+        return this.userRepository.findById(chatId, userId);
     }
 
     public boolean existsUserById(long chatId, long userId) {
@@ -80,6 +79,10 @@ public abstract class AbstractInteraction implements Interaction {
     public Interaction setServerRepository(ServerRepository serverRepository) {
         this.serverRepository = serverRepository;
         return this;
+    }
+
+    public ServerRepository getServerRepository() {
+        return serverRepository;
     }
 
     public Server createServer(Server server) {
@@ -103,6 +106,10 @@ public abstract class AbstractInteraction implements Interaction {
         return this;
     }
 
+    public ReminderRepository getReminderRepository() {
+        return reminderRepository;
+    }
+
     public Reminder createReminder(Reminder reminder) {
         return reminderRepository.create(reminder);
     }
@@ -124,6 +131,10 @@ public abstract class AbstractInteraction implements Interaction {
         return this;
     }
 
+    public WarningRepository getWarningRepository() {
+        return warningRepository;
+    }
+
     public Warning createWarning(Warning warning) {
         return this.warningRepository.create(warning);
     }
@@ -141,11 +152,7 @@ public abstract class AbstractInteraction implements Interaction {
     }
 
     public User getUser(long userId) {
-        try {
-            return userRepository.findById(chatId, userId);
-        } catch (MemberNotFoundException err) {
-            return null;
-        }
+        return userRepository.findById(chatId, userId);
     }
 
     public Platform getPlatform() {
@@ -224,8 +231,8 @@ public abstract class AbstractInteraction implements Interaction {
             BaseCommand method = (BaseCommand) Class.forName(stack.getClassName()).getConstructor().newInstance();
             commandName = method.getCommandName();
 
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException |
-                 InvocationTargetException ignored) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException
+                 | InvocationTargetException ignored) {
         }
 
         if (languageKey.startsWith(".")) {
@@ -265,13 +272,13 @@ public abstract class AbstractInteraction implements Interaction {
                     logger.error("Replace message expected number");
                 }
             } else if (word.charAt(1) == 'd') { // Если дата
-                Optional<LocalDate> isLocalDate = validate.isValidDate(replaces.get(indexReplace));
+                Optional<LocalDateTime> isLocalDate = validate.isValidDate(replaces.get(indexReplace));
 
                 if (isLocalDate.isPresent()) {
                     message = message.replaceFirst(word, replaces.get(indexReplace));
                     indexReplace++;
                 } else {
-                    logger.error("Replace message expected LocalDate");
+                    logger.error("Replace message expected LocalDateTime");
                 }
             } else { // Другие типы
                 message = message.replaceFirst(word, replaces.get(indexReplace));
