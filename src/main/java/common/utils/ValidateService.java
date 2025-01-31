@@ -2,10 +2,10 @@ package common.utils;
 
 import common.models.TimeZone;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.time.ZoneId;
 
 /**
  * Валидация: Проверка строки на необходимое значение
@@ -45,26 +45,26 @@ public class ValidateService {
      * Валидация даты и конвертация строки в дату
      *
      * @param strLocalDate Строка с датой
-     * @return LocalDate
+     * @return LocalDateTime
      */
-    public Optional<LocalDate> isValidDate(String strLocalDate) {
+    public Optional<LocalDateTime> isValidDate(String strLocalDate) {
 
         String[] patterns = {
-            "HH:mm dd.MM.yyyy",
-            "HH:mm:ss dd.MM.yyyy",
-            "HH:mm dd.MM.yy",
-            "HH:mm:ss dd.MM.yy",
-            "dd.MM.yyyy HH:mm",
-            "dd.MM.yyyy HH:mm:ss",
-            "dd.MM.yy HH:mm",
-            "dd.MM.yy HH:mm:ss"
+                "HH:mm dd.MM.yyyy",
+                "HH:mm:ss dd.MM.yyyy",
+                "HH:mm dd.MM.yy",
+                "HH:mm:ss dd.MM.yy",
+                "dd.MM.yyyy HH:mm",
+                "dd.MM.yyyy HH:mm:ss",
+                "dd.MM.yy HH:mm",
+                "dd.MM.yy HH:mm:ss"
         };
 
         // Проходимся по каждому форматы дат
         for (String pattern : patterns) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-                return Optional.of(LocalDate.parse(strLocalDate, formatter));
+                return Optional.of(LocalDateTime.parse(strLocalDate, formatter));
             } catch (Exception err) {
                 // The exception is ignored for a specific reason
             }
@@ -77,26 +77,26 @@ public class ValidateService {
      * Валидация времени и конвертация строки на время
      *
      * @param strLocalTime Строка со временем
-     * @return LocalDate
+     * @return LocalDateTime
      */
-    public Optional<LocalDate> isValidTime(String strLocalTime) {
+    public Optional<LocalDateTime> isValidTime(String strLocalTime) {
         String[] patterns = {
-            "HH:mm dd.MM.yyyy",
-            "HH:mm:ss dd.MM.yyyy",
-            "HH:mm:ss dd.MM.yyyy",
-            "HH:mm dd.MM.yy",
-            "HH:mm:ss dd.MM.yy",
-            "dd.MM.yyyy HH:mm",
-            "dd.MM.yyyy HH:mm:ss",
-            "dd.MM.yy HH:mm",
-            "dd.MM.yy HH:mm:ss"
+                "HH:mm dd.MM.yyyy",
+                "HH:mm:ss dd.MM.yyyy",
+                "HH:mm:ss dd.MM.yyyy",
+                "HH:mm dd.MM.yy",
+                "HH:mm:ss dd.MM.yy",
+                "dd.MM.yyyy HH:mm",
+                "dd.MM.yyyy HH:mm:ss",
+                "dd.MM.yy HH:mm",
+                "dd.MM.yy HH:mm:ss"
         };
 
         // Проходимся по каждому форматы дат
         for (String pattern : patterns) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-                return Optional.of(LocalDate.parse(strLocalTime, formatter));
+                return Optional.of(LocalDateTime.parse(strLocalTime, formatter));
             } catch (Exception err) {
                 break;
             }
