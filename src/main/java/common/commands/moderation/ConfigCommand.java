@@ -7,15 +7,17 @@ import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.Permissions;
+import common.models.Restrictions;
 import common.models.Server;
 import common.models.User;
 import common.utils.LoggerHandler;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ConfigCommand implements BaseCommand {
-    OutputHandler output = new OutputHandler();
-    LoggerHandler logger = new LoggerHandler();
+    private final OutputHandler output = new OutputHandler();
+    private final LoggerHandler logger = new LoggerHandler();
 
     @Override
     public String getCommandName() {
@@ -177,27 +179,32 @@ public class ConfigCommand implements BaseCommand {
     }
 
     // Настройка стандартных прав доступа
-    private void configDefaultRightAccess(Interaction interaction, User user) {
+    private void configDefaultRightAccess(InteractionTelegram interaction, User user) {
         Server server = interaction.findServerById(interaction.getChatId());
-        String defaultRightAccess = "config.dashboard.defaultRightAccess";
+        String defaultRightAccess = ".dashboard.defaultRightAccess";
         Permissions serverDefaultPermissions = server.getDefaultPermissions();
         try {
-            String message = interaction.getLanguageValue(defaultRightAccess + ".title") + "\n\n"
-                    + interaction.getLanguageValue(defaultRightAccess + ".description") + "\n"
+            String message = interaction.getLanguageValue(defaultRightAccess + ".title")
+                    + "\n\n"
+                    + interaction.getLanguageValue(defaultRightAccess + ".description")
+                    + "\n"
                     + interaction.getLanguageValue(defaultRightAccess + ".permissions",
-                    List.of(
-                            interaction.getLanguageValue("system." + serverDefaultPermissions.getCanBan()),
-                            interaction.getLanguageValue("system." + serverDefaultPermissions.getCanUnban()),
-                            interaction.getLanguageValue("system." + serverDefaultPermissions.getCanKick()),
-                            interaction.getLanguageValue("system." + serverDefaultPermissions.getCanMute()),
-                            interaction.getLanguageValue("system." + serverDefaultPermissions.getCanUnMute()),
-                            interaction.getLanguageValue("system." + serverDefaultPermissions.getCanWarn()),
-                            interaction.getLanguageValue("system." + serverDefaultPermissions.getCanRemWarn()),
-                            interaction.getLanguageValue("system." + serverDefaultPermissions.getCanResetWarn()),
-                            interaction.getLanguageValue("system." + serverDefaultPermissions.getCanClear())
-                    ));
+                            Stream.of(
+                                            serverDefaultPermissions.getCanBan(),
+                                            serverDefaultPermissions.getCanUnban(),
+                                            serverDefaultPermissions.getCanKick(),
+                                            serverDefaultPermissions.getCanMute(),
+                                            serverDefaultPermissions.getCanUnMute(),
+                                            serverDefaultPermissions.getCanWarn(),
+                                            serverDefaultPermissions.getCanRemWarn(),
+                                            serverDefaultPermissions.getCanResetWarn(),
+                                            serverDefaultPermissions.getCanClear()
+                                    ).map(permission -> interaction.getLanguageValue("system." + permission))
+                                    .toList()
+                    );
 
             output.output(interaction.setMessage(message));
+
         } catch (Exception err) {
             logger.error("Default right access (Config) an error occurred: " + err);
             output.output(interaction.setLanguageValue("system.error.something"));
@@ -205,7 +212,20 @@ public class ConfigCommand implements BaseCommand {
     }
 
     public void configDefaultLimits(InteractionTelegram interaction, User user) {
+        Server server = interaction.findServerById(interaction.getChatId());
+        String defaultLimits = ".dashboard.defaultLimits";
+        Restrictions serverDefaultLimits = server.getDefaultRestrictions();
 
+        try {
+            String message = "";
+
+
+            output.output(interaction.setMessage(message));
+
+        } catch (Exception err) {
+            logger.error("");
+            output.output(interaction.setLanguageValue("system.error.something"));
+        }
     }
 
     public void configModerationCommand(InteractionTelegram interaction, User user) {
