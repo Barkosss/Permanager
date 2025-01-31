@@ -65,10 +65,10 @@
             "againAction": "There is no such action. Try again (Actions: create, edit, remove, list)"
         },
         "send": {
-            "message": "Your reminder",
-            "createdAt": "Created",
-            "editAt": "Last edit",
-            "content": "Content"
+            "reminder": "Reminder",
+            "content": "Your reminder: \n```\n%MESSAGE%\n```\n",
+            "createdAt": "Date of creation: %DATE%",
+            "editAt": "Date of last edit: %EDIT_DATE%"
         },
         "create": {
             "date": "Specify the date on which you want to send the reminder (Format: dd.mm.yyyy hh:mm or hh:mm)",

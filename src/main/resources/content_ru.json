@@ -66,7 +66,7 @@
         },
         "send": {
             "reminder": "Напоминание",
-            "message": "Ваше напоминание: \n```\n%MESSAGE%\n```\n",
+            "content": "Ваше напоминание: \n```\n%MESSAGE%\n```\n",
             "createdAt": "Дата создания: %DATE%",
             "editAt": "Дата последнего редактирования: %EDIT_DATE%"
         },
