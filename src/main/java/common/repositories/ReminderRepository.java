@@ -3,7 +3,10 @@ package common.repositories;
 import common.models.Reminder;
 import common.utils.LoggerHandler;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +23,7 @@ public class ReminderRepository {
 
     // Создать напоминание в памяти
     public Reminder create(Reminder reminder) {
-        long timestamp = reminder.getTimestamp();
+        long timestamp = Timestamp.valueOf(reminder.getCreatedAt()).getTime() / 1000;
         if (reminders == null) {
             reminders = new TreeMap<>();
         }

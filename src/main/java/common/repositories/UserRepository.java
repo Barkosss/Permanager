@@ -37,7 +37,7 @@ public class UserRepository {
     }
 
     // Найти пользователя по ID
-    public User findById(long chatId, long userId) throws MemberNotFoundException {
+    public User findById(long chatId, long userId) {
         if (!users.containsKey(chatId)) {
             users.put(chatId, new HashMap<>());
         }
