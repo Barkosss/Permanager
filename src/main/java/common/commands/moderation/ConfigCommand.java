@@ -223,27 +223,26 @@ public class ConfigCommand implements BaseCommand {
                     + "\n"
                     + interaction.getLanguageValue(defaultLimits + ".restrictions",
                     Stream.of(
-                        serverDefaultLimits.getLimitKick(),
-                        serverDefaultLimits.getLimitBan(),
-                        serverDefaultLimits.getLimitUnban(),
-                        serverDefaultLimits.getLimitMute(),
-                        serverDefaultLimits.getLimitUnMute(),
-                        serverDefaultLimits.getLimitWarn(),
-                        serverDefaultLimits.getLimitRemWarn(),
-                        serverDefaultLimits.getLimitResetWarn(),
-                        serverDefaultLimits.getLimitClear(),
-                        serverDefaultLimits.getLimitGiveTempRole()
-
-                    ).map(restriction -> interaction.getLanguageValue("system.restrictions." + restriction.amountUses)
-                            + interaction.getLanguageValue("system.restrictions." + restriction.timestampPeriod))
-                    .toList()
-            );
+                            serverDefaultLimits.getLimitKick(),
+                            serverDefaultLimits.getLimitBan(),
+                            serverDefaultLimits.getLimitUnban(),
+                            serverDefaultLimits.getLimitMute(),
+                            serverDefaultLimits.getLimitUnMute(),
+                            serverDefaultLimits.getLimitWarn(),
+                            serverDefaultLimits.getLimitRemWarn(),
+                            serverDefaultLimits.getLimitResetWarn(),
+                            serverDefaultLimits.getLimitClear(),
+                            serverDefaultLimits.getLimitGiveTempRole()
+                    ).flatMap(limit -> Stream.of(
+                            String.valueOf(limit.amountUses),
+                            String.valueOf(limit.timestampPeriod)
+                    )).toList());
 
 
             output.output(interaction.setMessage(message));
 
         } catch (Exception err) {
-            logger.error("");
+            logger.error("...");
             output.output(interaction.setLanguageValue("system.error.something"));
         }
     }

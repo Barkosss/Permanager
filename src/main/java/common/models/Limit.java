@@ -5,7 +5,7 @@ public class Limit {
     // Количество использований
     public int amountUses;
 
-    // Кулдан
+    // Кулдан (В секундах)
     public int timestampPeriod;
 
     // Конструктор лимита
