@@ -20,7 +20,7 @@ import common.utils.ValidateService;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +90,10 @@ public class CommandHandler {
 
     // Запуск программы
     public void launch(Interaction interaction, LaunchPlatform platform) {
+        interaction.setUserRepository(userRepository)
+                .setServerRepository(serverRepository)
+                .setReminderRepository(reminderRepository)
+                .setWarningRepository(warningRepository);
 
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
@@ -221,8 +225,8 @@ public class CommandHandler {
                         InputExpectation.UserInputType inputType = user.getInputType();
                         switch (inputType) {
                             case DATE: { // Проверка на дату
-                                Optional<LocalDate> validDate = validate.isValidDate(message);
-                                Optional<LocalDate> validTime = validate.isValidTime(message);
+                                Optional<LocalDateTime> validDate = validate.isValidDate(message);
+                                Optional<LocalDateTime> validTime = validate.isValidTime(message);
 
                                 if (validDate.isPresent()) {
                                     user.setValue(validDate.get());
