@@ -3,34 +3,34 @@ package common.models;
 public class Restrictions {
 
     // Ограничение на использование команды кик
-    public Limit limitKick;
+    private Limit limitKick;
 
     // Ограничение на использование команды бан
-    public Limit limitBan;
+    private Limit limitBan;
 
     // Ограничение на использование команды для разбана
-    public Limit limitUnban;
+    private Limit limitUnban;
 
     // Ограничение на использование команды мут
-    public Limit limitMute;
+    private Limit limitMute;
 
     // Ограничение на использование команды снятия мута
-    public Limit limitUnMute;
+    private Limit limitUnMute;
 
     // Ограничение на использование команды выдачу предупреждения
-    public Limit limitWarn;
+    private Limit limitWarn;
 
     // Ограничение на использование команды снятия предупреждения
-    public Limit limitRemWarn;
+    private Limit limitRemWarn;
 
     // Ограничение на использование команды сброса предупреждений
-    public Limit limitResetWarn;
+    private Limit limitResetWarn;
 
     // Ограничение на использование команды очищать сообщение(-я) в чате
-    public Limit limitClear;
+    private Limit limitClear;
 
     // Ограничение на использование команды выдавать временную роль
-    public Limit limitGiveTempRole;
+    private Limit limitGiveTempRole;
 
 
     // Получить ограничения на kick

@@ -189,21 +189,21 @@ public class ConfigCommand implements BaseCommand {
                     + interaction.getLanguageValue(defaultRightAccess + ".description")
                     + "\n"
                     + interaction.getLanguageValue(defaultRightAccess + ".permissions",
-                            Stream.of(
-                                            serverDefaultPermissions.getCanBan(),
-                                            serverDefaultPermissions.getCanUnban(),
-                                            serverDefaultPermissions.getCanKick(),
-                                            serverDefaultPermissions.getCanMute(),
-                                            serverDefaultPermissions.getCanUnMute(),
-                                            serverDefaultPermissions.getCanWarn(),
-                                            serverDefaultPermissions.getCanRemWarn(),
-                                            serverDefaultPermissions.getCanResetWarn(),
-                                            serverDefaultPermissions.getCanClear()
-                                    ).map(permission -> interaction.getLanguageValue("system." + permission))
-                                    .toList()
-                    );
+                    Stream.of(
+                                    serverDefaultPermissions.getCanBan(),
+                                    serverDefaultPermissions.getCanUnban(),
+                                    serverDefaultPermissions.getCanKick(),
+                                    serverDefaultPermissions.getCanMute(),
+                                    serverDefaultPermissions.getCanUnMute(),
+                                    serverDefaultPermissions.getCanWarn(),
+                                    serverDefaultPermissions.getCanRemWarn(),
+                                    serverDefaultPermissions.getCanResetWarn(),
+                                    serverDefaultPermissions.getCanClear()
+                            ).map(permission -> interaction.getLanguageValue("system." + permission))
+                            .toList()
+            );
 
-            output.output(interaction.setMessage(message));
+            output.output(interaction.setMessage(String.valueOf(message)));
 
         } catch (Exception err) {
             logger.error("Default right access (Config) an error occurred: " + err);
@@ -217,7 +217,27 @@ public class ConfigCommand implements BaseCommand {
         Restrictions serverDefaultLimits = server.getDefaultRestrictions();
 
         try {
-            String message = "";
+            String message = interaction.getLanguageValue(defaultLimits + ".title")
+                    + "\n\n"
+                    + interaction.getLanguageValue(defaultLimits + ".description")
+                    + "\n"
+                    + interaction.getLanguageValue(defaultLimits + ".restrictions",
+                    Stream.of(
+                        serverDefaultLimits.getLimitKick(),
+                        serverDefaultLimits.getLimitBan(),
+                        serverDefaultLimits.getLimitUnban(),
+                        serverDefaultLimits.getLimitMute(),
+                        serverDefaultLimits.getLimitUnMute(),
+                        serverDefaultLimits.getLimitWarn(),
+                        serverDefaultLimits.getLimitRemWarn(),
+                        serverDefaultLimits.getLimitResetWarn(),
+                        serverDefaultLimits.getLimitClear(),
+                        serverDefaultLimits.getLimitGiveTempRole()
+
+                    ).map(restriction -> interaction.getLanguageValue("system.restrictions." + restriction.amountUses)
+                            + interaction.getLanguageValue("system.restrictions." + restriction.timestampPeriod))
+                    .toList()
+            );
 
 
             output.output(interaction.setMessage(message));
