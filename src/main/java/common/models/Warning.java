@@ -1,6 +1,6 @@
 package common.models;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Warning {
 
@@ -20,16 +20,16 @@ public class Warning {
     String reason;
 
     // Длительность
-    LocalDate duration;
+    LocalDateTime duration;
 
     // Дата выдачи предупреждения
-    LocalDate createdAt;
+    LocalDateTime createdAt;
 
     public Warning(long chatId, long userId, long moderatorId) {
         this.chatId = chatId;
         this.userId = userId;
         this.moderatorId = moderatorId;
-        this.createdAt = LocalDate.now();
+        this.createdAt = LocalDateTime.now();
     }
 
     public long getId() {
@@ -77,16 +77,16 @@ public class Warning {
         return this;
     }
 
-    public LocalDate getDuration() {
+    public LocalDateTime getDuration() {
         return duration;
     }
 
-    public Warning setDuration(LocalDate duration) {
+    public Warning setDuration(LocalDateTime duration) {
         this.duration = duration;
         return this;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 

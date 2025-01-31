@@ -18,8 +18,11 @@ public class Server {
     // Стандартные права доступа
     Permissions defaultPermissions;
 
+    // Стандартные ограничения
+    Restrictions defaultRestrictions;
+
     // Список забаненных пользователей
-    Map<Long, User> bans;
+    Map<Long, List<User>> bans;
 
     // Список замьюченных пользователей
     Map<Long, User> mutes;
@@ -56,12 +59,24 @@ public class Server {
     }
 
     // Установить список стандартных прав доступа
-    public void setDefaultPermissions(Permissions defaultPermissions) {
+    public Server setDefaultPermissions(Permissions defaultPermissions) {
         this.defaultPermissions = defaultPermissions;
+        return this;
+    }
+
+    // Получение списка стандартных ограничений
+    public Restrictions getDefaultRestrictions() {
+        return defaultRestrictions;
+    }
+
+    // Установить список стандартных ограничений
+    public Server setDefaultRestrictions(Restrictions defaultRestrictions) {
+        this.defaultRestrictions = defaultRestrictions;
+        return this;
     }
 
     // Получить список забаненных пользователей
-    public Map<Long, User> getBans() {
+    public Map<Long, List<User>> getBans() {
         return bans;
     }
 
@@ -71,7 +86,7 @@ public class Server {
             this.bans = new HashMap<>();
         }
 
-        bans.put(user.userId, user);
+        bans.put(user.userId, List.of(user));
         return this;
     }
 

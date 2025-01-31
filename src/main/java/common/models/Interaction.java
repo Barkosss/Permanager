@@ -41,6 +41,8 @@ public interface Interaction {
 
     Interaction setUserRepository(UserRepository userRepository);
 
+    UserRepository getUserRepository();
+
     User createUser(long chatId, long userId);
 
     User findUserById(long userId);
@@ -49,15 +51,21 @@ public interface Interaction {
 
     Interaction setServerRepository(ServerRepository serverRepository);
 
+    ServerRepository getServerRepository();
+
     Server createServer(Server server);
 
     Server findServerById(long chatId);
 
     Interaction setReminderRepository(ReminderRepository reminderRepository);
 
+    ReminderRepository getReminderRepository();
+
     Reminder createReminder(Reminder reminder);
 
     Interaction setWarningRepository(WarningRepository warningRepository);
+
+    WarningRepository getWarningRepository();
 
     User getUser(long userId);
 
