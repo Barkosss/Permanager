@@ -8,7 +8,7 @@ import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,12 +49,12 @@ public class TaskCommand implements BaseCommand {
             case "edit": {
                 user.setExcepted(getCommandName(), "action").setValue(firstArg);
                 if (arguments.size() >= 2) {
-                    Optional<LocalDate> date = validate.isValidDate(arguments.get(arguments.size() - 2)
+                    Optional<LocalDateTime> date = validate.isValidDate(arguments.get(arguments.size() - 2)
                             + " " + arguments.getLast());
-                    Optional<LocalDate> time = validate.isValidTime(arguments.getLast());
+                    Optional<LocalDateTime> time = validate.isValidTime(arguments.getLast());
                     arguments.subList(0, arguments.size() - 2);
                 } else if (!arguments.isEmpty()) {
-                    Optional<LocalDate> time = validate.isValidTime(arguments.getFirst());
+                    Optional<LocalDateTime> time = validate.isValidTime(arguments.getFirst());
                     if (time.isPresent()) {
                         user.setExcepted(getCommandName(), "duration").setValue(time);
                     }
@@ -89,7 +89,6 @@ public class TaskCommand implements BaseCommand {
             }
             case "list": {
                 user.setExcepted(getCommandName(), "action").setValue(firstArg);
-                return;
             }
         }
     }

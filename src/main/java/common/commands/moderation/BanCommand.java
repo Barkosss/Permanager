@@ -14,7 +14,7 @@ import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,9 +60,9 @@ public class BanCommand implements BaseCommand {
         }
 
         if (arguments.size() > 1) {
-            Optional<LocalDate> validDate = validate.isValidDate(String.format("%s %s",
+            Optional<LocalDateTime> validDate = validate.isValidDate(String.format("%s %s",
                     arguments.getFirst(), arguments.get(1)));
-            Optional<LocalDate> validTime = validate.isValidTime(arguments.getFirst());
+            Optional<LocalDateTime> validTime = validate.isValidTime(arguments.getFirst());
 
             if (validDate.isPresent()) {
                 user.setExcepted(getCommandName(), "duration").setValue(validDate.get());

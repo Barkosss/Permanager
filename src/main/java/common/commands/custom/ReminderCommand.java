@@ -10,7 +10,7 @@ import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -80,8 +80,8 @@ public class ReminderCommand implements BaseCommand {
         }
 
         // ---- Ищем время в аргументах ----
-        Optional<LocalDate> localDate = Optional.empty();
-        Optional<LocalDate> localTime = Optional.empty();
+        Optional<LocalDateTime> localDate = Optional.empty();
+        Optional<LocalDateTime> localTime = Optional.empty();
 
         if (arguments.size() >= 2) {
             localDate = validate.isValidDate(String.format("%s %s", arguments.getFirst(),
@@ -189,13 +189,13 @@ public class ReminderCommand implements BaseCommand {
             return;
         }
 
-        LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "date");
+        LocalDateTime sendAt = (LocalDateTime) user.getValue(getCommandName(), "date");
         // Проверка на корректность даты
-        if (sendAt.isBefore(LocalDate.now()) || sendAt.isAfter(sendAt.plusYears(5))) {
-            user.setExcepted(getCommandName(), "date");
+        if (sendAt.isBefore(LocalDateTime.now()) || sendAt.isAfter(sendAt.plusYears(5))) {
+            user.clearExpected(getCommandName(), "date");
             logger.info("Reminder command again requested a date argument for create");
             // Пользователь указал время в прошлом
-            if (sendAt.isBefore(LocalDate.now())) {
+            if (sendAt.isBefore(LocalDateTime.now())) {
                 output.output(interaction.setLanguageValue("reminder.create.error.futureDate").setInline(true));
             } else { // Пользователь создал напоминание более чем на 5 лет в будущее
                 output.output(interaction.setLanguageValue("reminder.create.error.limitDate").setInline(true));
@@ -217,7 +217,7 @@ public class ReminderCommand implements BaseCommand {
         String context = (String) user.getValue(getCommandName(), "context");
 
         Reminder reminder = new Reminder(reminderId, chatId, userId, context,
-                null, sendAt, interaction.getPlatform());
+                LocalDateTime.now(), sendAt, interaction.getPlatform());
         interaction.createReminder(reminder);
         user.addReminder(reminder);
 
@@ -258,13 +258,13 @@ public class ReminderCommand implements BaseCommand {
         }
 
         if (user.getValue(getCommandName(), "newDate") != "/skip") {
-            LocalDate sendAt = (LocalDate) user.getValue(getCommandName(), "newDate");
+            LocalDateTime sendAt = (LocalDateTime) user.getValue(getCommandName(), "newDate");
             // Проверка на корректность даты
-            if (sendAt.isBefore(LocalDate.now()) || sendAt.isAfter(sendAt.plusYears(5))) {
+            if (sendAt.isBefore(LocalDateTime.now()) || sendAt.isAfter(sendAt.plusYears(5))) {
                 user.setExcepted(getCommandName(), "newDate");
                 logger.info("Reminder command again requested a date argument for edit");
                 // Пользователь указал время в прошлом
-                if (sendAt.isBefore(LocalDate.now())) {
+                if (sendAt.isBefore(LocalDateTime.now())) {
                     output.output(interaction.setLanguageValue("reminder.edit.error.futureDate").setInline(true));
                 } else { // Пользователь создал напоминание более чем на 5 лет в будущее
                     output.output(interaction.setLanguageValue("reminder.edit.error.limitDate").setInline(true));
@@ -293,7 +293,7 @@ public class ReminderCommand implements BaseCommand {
 
         // Изменяем время отправки, если такое имеется
         if (!Objects.equals(newLocalDate, reminder.getSendAt()) && !Objects.equals(newLocalDate, "/skip")) {
-            reminder.setSendAt((LocalDate) newLocalDate);
+            reminder.setSendAt((LocalDateTime) newLocalDate);
         }
 
         user.getReminders(interaction.getChatId()).put(reminderId, reminder);

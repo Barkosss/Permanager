@@ -15,7 +15,7 @@ import common.models.Warning;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,9 +66,9 @@ public class WarnCommand implements BaseCommand {
             return;
         }
 
-        Optional<LocalDate> validDate = validate.isValidDate(String.format("%s %s",
+        Optional<LocalDateTime> validDate = validate.isValidDate(String.format("%s %s",
                 arguments.getFirst(), arguments.get(1)));
-        Optional<LocalDate> validTime = validate.isValidTime(arguments.getFirst());
+        Optional<LocalDateTime> validTime = validate.isValidTime(arguments.getFirst());
 
         if (validDate.isPresent()) {
             user.setExcepted(getCommandName(), "duration").setValue(validDate.get());
@@ -158,7 +158,7 @@ public class WarnCommand implements BaseCommand {
 
 
         String userDuration = (String) user.getValue(getCommandName(), "duration");
-        Optional<LocalDate> validDate = validate.isValidDate(userDuration);
+        Optional<LocalDateTime> validDate = validate.isValidDate(userDuration);
         if (!userDuration.equals("/skip") && validDate.isEmpty()) {
             user.setExcepted(getCommandName(), "duration");
             logger.info("Warn command requested a duration argument");
@@ -167,7 +167,7 @@ public class WarnCommand implements BaseCommand {
         }
 
         // Если указано прошлое время
-        if (!userDuration.equals("/skip") && validDate.get().isBefore(LocalDate.now())) {
+        if (!userDuration.equals("/skip") && validDate.get().isBefore(LocalDateTime.now())) {
             user.setExcepted(getCommandName(), "duration");
             logger.info("Warn command requested a duration argument");
             output.output(interactionTelegram.setLanguageValue("warn.duration"));
@@ -188,7 +188,7 @@ public class WarnCommand implements BaseCommand {
         // Если указали длительность
         if (user.isExceptedKey(getCommandName(), "duration")
                 && !user.getValue(getCommandName(), "duration").equals("/skip")) {
-            warning.setDuration((LocalDate) user.getValue(getCommandName(), "duration"));
+            warning.setDuration((LocalDateTime) user.getValue(getCommandName(), "duration"));
         }
 
         targetUser.addWarning(interactionTelegram.createWarning(warning));
