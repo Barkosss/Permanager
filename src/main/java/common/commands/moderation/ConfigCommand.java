@@ -351,7 +351,7 @@ public class ConfigCommand implements BaseCommand {
                                     restrictionsTargetMember.getLimitGiveTempRole()
                             ).flatMap(limit -> Stream.of(
                                     ((limit.amountUses != 0) ? (String.valueOf(limit.amountUses)) : (undefined)),
-                                    ((limit.timestampPeriod != 0) ? (String.valueOf(limit.timestampPeriod)) : (undefined))
+                                    (limit.timestampPeriod != 0 ? (String.valueOf(limit.timestampPeriod)) : (undefined))
                             )).toList()),
                     interaction.getLanguageValue(userEditLimits + ".request"));
 
@@ -578,7 +578,7 @@ public class ConfigCommand implements BaseCommand {
                                     restrictions.getLimitGiveTempRole()
                             ).flatMap(limit -> Stream.of(
                                     ((limit.amountUses != 0) ? (String.valueOf(limit.amountUses)) : (undefined)),
-                                    ((limit.timestampPeriod != 0) ? (String.valueOf(limit.timestampPeriod)) : (undefined))
+                                    (limit.timestampPeriod != 0 ? (String.valueOf(limit.timestampPeriod)) : (undefined))
                             )).toList()),
                     interaction.getLanguageValue(groupLimits + ".request"));
 
