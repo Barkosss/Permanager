@@ -368,7 +368,7 @@ public class ConfigCommand implements BaseCommand {
         Server server = interaction.findServerById(interaction.getChatId());
 
         if (!user.isExceptedKey(getCommandName(), "userId")) {
-            user.setExcepted(getCommandName(), "userId");
+            user.setExcepted(getCommandName(), "userId", InputExpectation.UserInputType.LONG);
             output.output(interaction.setLanguageValue(".user.removeUser.requestUser"));
             logger.info("Config command requested a group name");
             return;
@@ -378,7 +378,7 @@ public class ConfigCommand implements BaseCommand {
         Member member = server.getMember(userId);
 
         if (!server.hasMember(userId) && member.getPriority() == 0) {
-            user.setExcepted(getCommandName(), "userId");
+            user.setExcepted(getCommandName(), "userId", InputExpectation.UserInputType.LONG);
             output.output(interaction.setLanguageValue(".user.removeUser.requestUser"));
             logger.info("Config command requested a group name");
             return;
@@ -408,7 +408,7 @@ public class ConfigCommand implements BaseCommand {
         Member member = server.getMember(userId);
 
         if (!server.hasMember(userId) && member.getPriority() == 0) {
-            user.setExcepted(getCommandName(), "userId");
+            user.setExcepted(getCommandName(), "userId", InputExpectation.UserInputType.LONG);
             output.output(interaction.setLanguageValue(".user.editPriority.requestUser"));
             logger.info("Config command requested a group name");
             return;
@@ -604,7 +604,7 @@ public class ConfigCommand implements BaseCommand {
         String groupName = (String) user.getValue(getCommandName(), "groupName");
 
         if (!server.hasGroup(groupName)) {
-            user.setExcepted(getCommandName(), "userId");
+            user.setExcepted(getCommandName(), "groupName");
             output.output(interaction.setLanguageValue(".group.editPriority.requestUser"));
             logger.info("Config command requested a group name");
             return;
