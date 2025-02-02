@@ -15,7 +15,9 @@ import common.models.Server;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
+import kotlin.Pair;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -559,36 +561,42 @@ public class ConfigCommand implements BaseCommand {
         Restrictions restrictions = group.getRestrictions();
         String groupLimits = ".group.editLimits";
 
-        try {
-            String undefined = interaction.getLanguageValue("system.undefined");
-            String message = String.format("%s\n\n%s\n%s\n\n%s",
-                    interaction.getLanguageValue(groupLimits + ".title"),
-                    interaction.getLanguageValue(groupLimits + ".description"),
-                    interaction.getLanguageValue(groupLimits + ".restrictions",
-                            Stream.of(
-                                    restrictions.getLimitKick(),
-                                    restrictions.getLimitBan(),
-                                    restrictions.getLimitUnban(),
-                                    restrictions.getLimitMute(),
-                                    restrictions.getLimitUnMute(),
-                                    restrictions.getLimitWarn(),
-                                    restrictions.getLimitRemWarn(),
-                                    restrictions.getLimitResetWarn(),
-                                    restrictions.getLimitClear(),
-                                    restrictions.getLimitGiveTempRole()
-                            ).flatMap(limit -> Stream.of(
-                                    ((limit.amountUses != 0) ? (String.valueOf(limit.amountUses)) : (undefined)),
-                                    (limit.timestampPeriod != 0 ? (String.valueOf(limit.timestampPeriod)) : (undefined))
-                            )).toList()),
-                    interaction.getLanguageValue(groupLimits + ".request"));
+        if (!user.isExceptedKey(getCommandName(), "groupEditLimits")) {
+            try {
+                String undefined = interaction.getLanguageValue("system.undefined");
+                String message = String.format("%s\n\n%s\n%s\n\n%s",
+                        interaction.getLanguageValue(groupLimits + ".title"),
+                        interaction.getLanguageValue(groupLimits + ".description"),
+                        interaction.getLanguageValue(groupLimits + ".restrictions",
+                                Stream.of(
+                                        restrictions.getLimitKick(),
+                                        restrictions.getLimitBan(),
+                                        restrictions.getLimitUnban(),
+                                        restrictions.getLimitMute(),
+                                        restrictions.getLimitUnMute(),
+                                        restrictions.getLimitWarn(),
+                                        restrictions.getLimitRemWarn(),
+                                        restrictions.getLimitResetWarn(),
+                                        restrictions.getLimitClear(),
+                                        restrictions.getLimitGiveTempRole()
+                                ).flatMap(limit -> Stream.of(
+                                        ((limit.amountUses != 0) ? (String.valueOf(limit.amountUses)) : (undefined)),
+                                        (limit.timestampPeriod != 0 ? (String.valueOf(limit.timestampPeriod)) : (undefined))
+                                )).toList()),
+                        interaction.getLanguageValue(groupLimits + ".request"));
 
-            user.setExcepted(getCommandName(), "groupEditLimits");
-            output.output(interaction.setMessage(message));
+                user.setExcepted(getCommandName(), "groupEditLimits");
+                output.output(interaction.setMessage(message));
 
-        } catch (Exception err) {
-            logger.error("Config Default Limits: " + err);
-            output.output(interaction.setLanguageValue("system.error.something"));
+            } catch (Exception err) {
+                logger.error("Config Default Limits: " + err);
+                output.output(interaction.setLanguageValue("system.error.something"));
+            } finally {
+                return;
+            }
         }
+
+
     }
 
     private void configGroupEditPriority(InteractionTelegram interaction, User user) {
