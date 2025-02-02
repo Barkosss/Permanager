@@ -35,11 +35,30 @@
             "againSection": "Try again. Enter section (dashboard, user, group)"
         },
         "dashboard": {
-            "start": "*Control Panel*:\n\n- Setting up standard access rights\n*Standard access rights that will be granted to new moderators or a group*\n\n-Setting up standard restrictions\n*Standard restrictions that will be issued to new moderators or a group*\n\n- Setting up moderation teams\n*Enable or disable moderation commands.****IMPORTANT*: this section does not *hide* commands, but does not give access to work with them*",
+            "start": "*Control Panel*:\n\n- Setting up standard access rights\n*Standard access rights that will be granted to new moderators or a group*\n\n-Setting up standard restrictions\n*Standard restrictions that will be issued to new moderators or a group*\n\n- Setting up moderation teams\n*Enable or disable moderation commands. IMPORTANT*: this section does not *hide* commands, but does not give access to work with them",
             "defaultRightAccess": {
                 "title": "**Setting up standard access rights**",
                 "description": "`\uD83D\uDFE2 | Access to the command is available`\n`\uD83D\uDD34 | There is no access to the command`\n\n*Set up access rights correctly*. These permissions will be granted to newly added moderators who are not in the group, and will also be granted to newly created groups:",
                 "permissions": "*Ban* - `%BAN%`\n*Unban* - `%UNBAN%`\n*Kick* - `%KICK%`\n*Mute* - `%MUTE%`\n*Unmute* - `%UNMUTE%`\n*Warn* - `%WARN%`\n*Remwarn* - `%REMWARN%`\n*Resetwarns* - `%RESETWARNS%`\n*Clear* - `%CLEAR%`"
+            },
+            "defaultLimits": {
+                "title": "*Setting standard limits*",
+                "description": "*Set up the restrictions correctly*. These restrictions will be set for newly added moderators who are not in the group, and they will also be issued to newly created groups:\n",
+                "restrictions": "Commands restrictions:\n\n- Kick:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Ban:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Unban:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Mute:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Unmute:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Warn:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Remwarn:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Resetwarm:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Clear:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Temprole:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%"
+            },
+            "moderationCommands": {
+                "title": "*Setting up moderation commands*",
+                "description": "*Set up the restrictions correctly*. These restrictions do not hide the commands, but make them inaccessible to all users and moderators:\n",
+                "commands": "The status of the commands:\n- *Kick*: `%STATUS%`\n- *Ban*: `%STATUS%`\n- *Unban*: `%STATUS%`\n- *Mute*: `%STATUS%`\n- *Unmute*: `%STATUS%`\n- *Warn*: `%STATUS%`\n- *Remwarn*: `%STATUS%`\n- *Resetwarm*: `%STATUS%`\n- *Clear*: `%STATUS%`\n- *Temprole*: `%STATUS%`"
+            }
+        },
+        "user": {
+            "start": "",
+            "editLimits": {
+
+            },
+            "editPriority": {
+
             }
         }
     },
