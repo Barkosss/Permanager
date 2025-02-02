@@ -32,6 +32,19 @@ public class Restrictions {
     // Ограничение на использование команды выдавать временную роль
     private Limit limitGiveTempRole;
 
+    // Пустой конструктор
+    public Restrictions() {
+        this.limitKick = new Limit();
+        this.limitBan = new Limit();
+        this.limitUnban = new Limit();
+        this.limitMute = new Limit();
+        this.limitUnMute = new Limit();
+        this.limitWarn = new Limit();
+        this.limitRemWarn = new Limit();
+        this.limitResetWarn = new Limit();
+        this.limitClear = new Limit();
+        this.limitGiveTempRole = new Limit();
+    }
 
     // Получить ограничения на kick
     public Limit getLimitKick() {

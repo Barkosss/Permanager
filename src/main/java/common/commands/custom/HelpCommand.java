@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class HelpCommand implements BaseCommand {
-    Map<String, String> methods;
+    public Map<String, String> methods;
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
     JSONHandler jsonHandler = new JSONHandler();

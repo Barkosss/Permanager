@@ -224,6 +224,7 @@ public class CommandHandler {
                     } else {
                         InputExpectation.UserInputType inputType = user.getInputType();
                         switch (inputType) {
+
                             case DATE: { // Проверка на дату
                                 Optional<LocalDateTime> validDate = validate.isValidDate(message);
                                 Optional<LocalDateTime> validTime = validate.isValidTime(message);
@@ -235,12 +236,21 @@ public class CommandHandler {
                                 }
                                 break;
                             }
-                            case INTEGER: { // Проверка на число
+
+                            case INTEGER: { // Проверка на число (Integer)
                                 Optional<Integer> validInteger = validate.isValidInteger(message);
 
                                 validInteger.ifPresent(user::setValue);
                                 break;
                             }
+
+                            case LONG: { // Проверка на число (Long)
+                                Optional<Long> validInteger = validate.isValidLong(message);
+
+                                validInteger.ifPresent(user::setValue);
+                                break;
+                            }
+
                             default: { // Строка или любой другой тип
                                 user.setValue(message);
                                 break;

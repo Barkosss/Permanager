@@ -1,6 +1,7 @@
 package common.models;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Объект участника-модератора у пользователя. Объект хранит в себе:
@@ -15,28 +16,28 @@ import java.util.List;
 public class Member {
 
     // Id пользователя (Telegram ID или Discord ID)
-    long id;
+    private long id;
 
     // Id чата
-    long chatId;
+    private long chatId;
 
     // Список разрешений
-    Permissions permissions;
+    private Permissions permissions;
 
     // Список ограничений
-    Restrictions restrictions;
+    private Restrictions restrictions;
 
-    // Приоритет пользователя (Совпадает с приоритетностью группы, иначе она -1)
-    int priority;
+    // Приоритет пользователя (Совпадает с приоритетностью группы, иначе она -1. Приоритет 0 - Владелец)
+    private int priority;
 
     // Синхронизация с группой (Для обновления прав доступа)
-    boolean statusSyncGroup;
+    private boolean statusSyncGroup;
 
     // К какой группе присоединён пользователь
-    Group group;
+    private Group group;
 
     // Выключить участника
-    boolean disabled;
+    private boolean disabled;
 
     // Конструктор пользователя
     public Member(long id, int priority, boolean statusSyncGroup, Permissions permissions) {
@@ -91,6 +92,17 @@ public class Member {
 
     public Member setPermission(Permissions.Permission permission, boolean permissionStatus) {
         this.permissions.setPermission(permission, permissionStatus);
+        return this;
+    }
+
+    // Получить ограничения пользователя
+    public Restrictions getRestrictions() {
+        return restrictions;
+    }
+
+    // Назначить ограничения пользователю
+    public Member setRestrictions(Restrictions restrictions) {
+        this.restrictions = restrictions;
         return this;
     }
 

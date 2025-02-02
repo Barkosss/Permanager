@@ -232,7 +232,13 @@ public abstract class AbstractInteraction implements Interaction {
             commandName = method.getCommandName();
 
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException
-                 | InvocationTargetException ignored) {
+                 | InvocationTargetException err) {
+            try {
+                StackTraceElement stack = new Exception().getStackTrace()[2];
+                BaseCommand method = (BaseCommand) Class.forName(stack.getClassName()).getConstructor().newInstance();
+                commandName = method.getCommandName();
+            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException
+                     | InvocationTargetException ignored) {}
         }
 
         if (languageKey.startsWith(".")) {

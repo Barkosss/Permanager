@@ -217,7 +217,7 @@ public class User {
             return false;
         }
 
-        return member.permissions.canPermission(permission);
+        return member.getPermissions().canPermission(permission);
     }
 
     public User setPermission(long chatId, Permissions.Permission permission, boolean permissionStatus) {
