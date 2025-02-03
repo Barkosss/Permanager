@@ -2,6 +2,7 @@ package common.commands.custom;
 
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
+import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.Task;
 import common.models.User;
@@ -43,34 +44,21 @@ public class TaskCommand implements BaseCommand {
         arguments = arguments.subList(1, arguments.size() - 1);
         switch (firstArg) {
             case "create": {
-                // if(arguments.size() >= )
+                user.setExcepted(getCommandName(), "action").setValue(firstArg);
+                if (arguments.size() >= 1) {
+                    user.setExcepted(getCommandName(), "title").setValue(arguments.getFirst());
+                    arguments = arguments.subList(1, arguments.size() - 1);
+                }
+                if (arguments.size() >= 2) {
+                    Optional<LocalDate> dedLine = validate.isValidDate(arguments.getFirst());
+                    arguments = arguments.subList(1, arguments.size() - 1);
+                    if (dedLine.isPresent()) {
+                        user.setExcepted(getCommandName(), "duration").setValue(dedLine);
+                    }
+                }
                 break;
             }
             case "edit": {
-                user.setExcepted(getCommandName(), "action").setValue(firstArg);
-                if (arguments.size() >= 2) {
-                    Optional<LocalDate> date = validate.isValidDate(arguments.get(arguments.size() - 2)
-                            + " " + arguments.getLast());
-                    Optional<LocalDate> time = validate.isValidTime(arguments.getLast());
-                    arguments.subList(0, arguments.size() - 2);
-                } else if (!arguments.isEmpty()) {
-                    Optional<LocalDate> time = validate.isValidTime(arguments.getFirst());
-                    if (time.isPresent()) {
-                        user.setExcepted(getCommandName(), "duration").setValue(time);
-                    }
-                    user.setExcepted(getCommandName(), "duration");
-                } else {
-                    user.setExcepted(getCommandName(), "title");
-                    user.setExcepted(getCommandName(), "description");
-                    user.setExcepted(getCommandName(), "duration");
-                    return;
-                }
-                if (!arguments.isEmpty()) {
-                    user.setExcepted(getCommandName(), "title").setValue(String.join(" ", arguments));
-                } else {
-                    user.setExcepted(getCommandName(), "title");
-                }
-                break;
             }
             case "remove": {
                 user.setExcepted(getCommandName(), "action").setValue(firstArg);
@@ -139,22 +127,25 @@ public class TaskCommand implements BaseCommand {
         logger.debug("Create task is start");
         if (!user.isExceptedKey(getCommandName(), "title")) {
             user.setExcepted(getCommandName(), "title");
-            output.output(interaction.setMessage("Enter the title:"));
+            output.output(interaction.setMessage("Enter the title:").setInline(true));
             logger.debug("Task command requested a title");
+            return;
         }
         if (!user.isExceptedKey(getCommandName(), "duration")) {
             user.setExcepted(getCommandName(), "duration");
-            output.output(interaction.setMessage("Enter the duration or \"-\" if you don't need duration:"));
+            output.output(interaction.setMessage("Enter the duration or \"/skip\" if you don't need duration:").setInline(true));
             logger.debug("Task command requested a duration");
+            return;
         }
         if (!user.isExceptedKey(getCommandName(), "description")) {
             user.setExcepted(getCommandName(), "description");
-            output.output(interaction.setMessage("Enter the description or \"/skip\" if you don't need description:"));
-            logger.debug("Task command requested a description");
+            output.output(interaction.setMessage("Enter the description or \"/skip\" if you don't need description:").setInline(true));
+            logger.trace("Task command requested a description");
+            return;
         }
 
         String title = (String) user.getValue(getCommandName(), "title");
-        String description = (String) user.getValue(getCommandName(), "description");
+        String description = (String) user.getValue(getCommandName(), "description"); //нижний регистр и убрать пробелы в начале и конце
 
         if (description.equals("/skip")) {
             description = "";
@@ -162,35 +153,42 @@ public class TaskCommand implements BaseCommand {
 
         user.addTask(new Task(interaction.getUserId(), interaction.getChatId(), title, description));
         user.clearExpected(getCommandName());
+
+        output.output(interaction.setMessage("Task is created."));
     }
 
     public void remove(Interaction interaction, User user) {
-        logger.debug("Remove task is start");
+        logger.trace("Remove task is start");
         if (!user.isExceptedKey(getCommandName(), "taskIndex")) {
-            user.setExcepted(getCommandName(), "taskIndex");
+            user.setExcepted(getCommandName(), "taskIndex", InputExpectation.UserInputType.INTEGER);
             output.output(interaction.setMessage("Enter the taskIndex:"));
             logger.debug("Task command requested a taskIndex");
+            return;
         }
-        long taskId = (long) user.getValue(getCommandName(), "taskIndex");
+        System.out.println(user.getValue(getCommandName(), "taskIndex"));
+        long taskId = (Long) user.getValue(getCommandName(), "taskIndex");
         user.getTasks(interaction.getChatId()).remove(taskId);
     }
 
     public void edit(Interaction interaction, User user) {
-        logger.debug("Remove task is start");
+        logger.trace("Edit task is start");
         if (!user.isExceptedKey(getCommandName(), "taskIndex")) {
             user.setExcepted(getCommandName(), "taskIndex");
             output.output(interaction.setMessage("Enter the taskIndex:"));
             logger.debug("Task command requested a taskIndex");
+            return;
         }
         if (!user.isExceptedKey(getCommandName(), "duration")) {
             user.setExcepted(getCommandName(), "duration");
             output.output(interaction.setMessage("Enter the duration or \"/skip\" if you don't need duration:"));
             logger.debug("Task command requested a duration");
+            return;
         }
         if (!user.isExceptedKey(getCommandName(), "description")) {
             user.setExcepted(getCommandName(), "description");
             output.output(interaction.setMessage("Enter the description or \"/skip\" if you don't need description:"));
             logger.debug("Task command requested a description");
+            return;
         }
 
         String title = (String) user.getValue(getCommandName(), "title");
@@ -202,9 +200,33 @@ public class TaskCommand implements BaseCommand {
         long taskId = (long) user.getValue(getCommandName(), "taskIndex");
         Task editedTask = user.getTasks(interaction.getChatId()).get(taskId);
         user.getTasks(interaction.getChatId()).remove(taskId);
+
+        String newTitle = (String) user.getValue(getCommandName(), "title");
+        if (!newTitle.equals("/skip")) {
+            editedTask.setTitle(newTitle);
+        }
+
+        if (!user.getValue(getCommandName(), "duration").equals("/skip")) {
+            Optional<LocalDate> newDuration = validate.isValidDate((String) user.getValue(getCommandName(), "duration"));
+            if (newDuration.isEmpty()) {
+                output.output(interaction.setMessage(
+                        "An incorrect date was entered, specify the date in the format: "
+                                + "DD.MM.YYYY or \"/skip\" if you don't need duration"));
+                return;
+            }
+            editedTask.setDeadLine(newDuration.get());
+        }
+
+        user.getTasks(editedTask.chatId).put(editedTask.chatId, editedTask);
     }
 
     public void list(Interaction interaction, User user) {
-        return;
+        if (user.getTasks(interaction.getChatId()).isEmpty()) {
+            output.output(interaction.setMessage("You don't have tasks. If you need create task, enter: \"/task create\""));
+            return;
+        }
+        for (long key : user.getTasks(interaction.getChatId()).keySet()) {
+            user.getTasks(interaction.getChatId()).get(key).printTask(output, interaction);
+        }
     }
 }

@@ -29,7 +29,7 @@ public class User {
     // Список напоминаний
     Map<Long, Map<Long, Reminder>> reminders;
 
-    // Список задач
+    // <chatID: <taskID: task>>
     Map<Long, Map<Long, Task>> tasks;
 
     // Список предупреждений
@@ -140,6 +140,12 @@ public class User {
         }
         if (!this.tasks.containsKey(task.getChatId())) {
             this.tasks.put(task.getChatId(), new HashMap<>());
+        } else {
+            long taskId = 0;
+            while (this.tasks.get(task.getChatId()).containsKey(taskId)){
+                taskId++;
+            }
+            task.setId(taskId);
         }
         this.tasks.get(task.getChatId()).put(task.getId(), task);
         return this;
