@@ -4,6 +4,7 @@ import common.iostream.OutputHandler;
 import org.hibernate.result.Output;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Task {
@@ -24,7 +25,7 @@ public class Task {
     public String description;
 
     // Плановое время завершения задачи
-    public LocalDate deadLine;
+    public LocalDateTime deadLine;
 
     // Время создания задачи
     public LocalDateTime createdAt;
@@ -108,12 +109,12 @@ public class Task {
     }
 
     // Получить время окончания задачи
-    public LocalDate getDeadLine() {
+    public LocalDateTime getDeadLine() {
         return deadLine;
     }
 
     // Назначить время окончания задачи
-    public void setDeadLine(LocalDate deadLine) {
+    public void setDeadLine(LocalDateTime deadLine) {
         this.deadLine = deadLine;
     }
 

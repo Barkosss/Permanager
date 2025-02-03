@@ -227,7 +227,7 @@ public class CommandHandler {
 
                             case DATE: { // Проверка на дату
                                 Optional<LocalDateTime> validDate = validate.isValidDate(message);
-                                Optional<LocalDateTime> validTime = validate.isValidTime(message);
+                                Optional<LocalDateTime> validTime = validate.isValidDate(message);
 
                                 if (validDate.isPresent()) {
                                     user.setValue(validDate.get());
