@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Валидация: Проверка строки на необходимое значение
@@ -50,14 +52,14 @@ public class ValidateService {
     public Optional<LocalDateTime> isValidDate(String strLocalDate) {
 
         String[] patterns = {
-            "HH:mm dd.MM.yyyy",
-            "HH:mm:ss dd.MM.yyyy",
-            "HH:mm dd.MM.yy",
-            "HH:mm:ss dd.MM.yy",
-            "dd.MM.yyyy HH:mm",
-            "dd.MM.yyyy HH:mm:ss",
-            "dd.MM.yy HH:mm",
-            "dd.MM.yy HH:mm:ss"
+                "HH:mm dd.MM.yyyy",
+                "HH:mm:ss dd.MM.yyyy",
+                "HH:mm dd.MM.yy",
+                "HH:mm:ss dd.MM.yy",
+                "dd.MM.yyyy HH:mm",
+                "dd.MM.yyyy HH:mm:ss",
+                "dd.MM.yy HH:mm",
+                "dd.MM.yy HH:mm:ss"
         };
 
         // Проходимся по каждому форматы дат
@@ -81,15 +83,15 @@ public class ValidateService {
      */
     public Optional<LocalDateTime> isValidTime(String strLocalTime) {
         String[] patterns = {
-            "HH:mm dd.MM.yyyy",
-            "HH:mm:ss dd.MM.yyyy",
-            "HH:mm:ss dd.MM.yyyy",
-            "HH:mm dd.MM.yy",
-            "HH:mm:ss dd.MM.yy",
-            "dd.MM.yyyy HH:mm",
-            "dd.MM.yyyy HH:mm:ss",
-            "dd.MM.yy HH:mm",
-            "dd.MM.yy HH:mm:ss"
+                "HH:mm dd.MM.yyyy",
+                "HH:mm:ss dd.MM.yyyy",
+                "HH:mm:ss dd.MM.yyyy",
+                "HH:mm dd.MM.yy",
+                "HH:mm:ss dd.MM.yy",
+                "dd.MM.yyyy HH:mm",
+                "dd.MM.yyyy HH:mm:ss",
+                "dd.MM.yy HH:mm",
+                "dd.MM.yy HH:mm:ss"
         };
 
         // Проходимся по каждому форматы дат
@@ -106,6 +108,57 @@ public class ValidateService {
 
 
     /**
+     * @param strDuration Строка длительности
+     * @return Возвращает Optional<LocalDateTime>
+     */
+    public Optional<LocalDateTime> isValidDuration(String strDuration) {
+        Pattern timePattern = Pattern.compile("(\\d+)(" + getMatchDesignations() + ")");
+
+        if (strDuration.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Matcher matcher = timePattern.matcher(strDuration);
+        LocalDateTime result = LocalDateTime.now();
+        boolean found = false;
+
+        while (matcher.find()) {
+            found = true;
+
+            int value = Integer.parseInt(matcher.group(1));
+            String unit = matcher.group(2);
+
+            result = switch (unit) {
+                case "s" -> result.plusSeconds(value);
+                case "m" -> result.plusMinutes(value);
+                case "h" -> result.plusHours(value);
+                case "d" -> result.plusDays(value);
+                case "w" -> result.plusWeeks(value);
+                case "mo" -> result.plusMonths(value);
+                case "y" -> result.plusYears(value);
+                default -> result;
+            };
+        }
+
+        return found ? Optional.of(result) : Optional.empty();
+    }
+
+    private final String[] designations = new String[]{
+            "s",
+            "m",
+            "h",
+            "d",
+            "w",
+            "mo",
+            "y"
+    };
+
+    private String getMatchDesignations() {
+        return String.join("|", designations);
+    }
+
+
+    /**
      * Валидация часового пояса и конвертация строки в объект
      *
      * @param strTimeZone Строка с часовым поясом
@@ -118,6 +171,7 @@ public class ValidateService {
             return Optional.empty();
         }
     }
+
 
     private String formatterTimeZone(String timeZone) {
         if (!timeZone.contains("/")) {

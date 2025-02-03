@@ -15,9 +15,8 @@ import common.models.Server;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
-import kotlin.Pair;
 
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -591,12 +590,43 @@ public class ConfigCommand implements BaseCommand {
             } catch (Exception err) {
                 logger.error("Config Default Limits: " + err);
                 output.output(interaction.setLanguageValue("system.error.something"));
-            } finally {
-                return;
             }
+
+            return;
         }
 
+        List<String> arguments = interaction.getArguments();
+        if (arguments.size() % 3 != 0) {
+            output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectSize"));
+            logger.info("");
+            return;
+        }
 
+        String commandName, duration; int countUses;
+        for (int index = 0; index < arguments.size(); index += 3) {
+            commandName = arguments.get(index);
+
+
+            Optional<Integer> argCountUses = validate.isValidInteger(arguments.get(index + 1));
+            if (argCountUses.isPresent()) {
+                countUses = argCountUses.get();
+            } else {
+                output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectCountUses"));
+                logger.info("");
+                return;
+            }
+
+            duration = arguments.get(index + 2);
+            Optional<LocalDateTime> validDuration = validate.isValidDuration(duration);
+
+            if (validDuration.isEmpty()) {
+                output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectDuration"));
+                logger.info("");
+                return;
+            }
+
+
+        }
     }
 
     private void configGroupEditPriority(InteractionTelegram interaction, User user) {
