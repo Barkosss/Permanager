@@ -1,6 +1,9 @@
 package common.models;
 
-import java.time.LocalDateTime;
+import common.iostream.OutputHandler;
+import org.hibernate.result.Output;
+
+import java.time.LocalDate;
 import java.util.List;
 
 public class Task {
@@ -20,11 +23,8 @@ public class Task {
     // Описание задачи
     public String description;
 
-    // Плановое время начала задачи
-    public LocalDateTime timeStart;
-
     // Плановое время завершения задачи
-    public LocalDateTime timeEnd;
+    public LocalDate deadLine;
 
     // Время создания задачи
     public LocalDateTime createdAt;
@@ -107,24 +107,14 @@ public class Task {
         this.description = description;
     }
 
-    // Получить время начала задачи
-    public LocalDateTime getTimeStart() {
-        return timeStart;
-    }
-
-    // Назначить время начала задачи
-    public void setTimeStart(LocalDateTime timeStart) {
-        this.timeStart = timeStart;
-    }
-
     // Получить время окончания задачи
-    public LocalDateTime getTimeEnd() {
-        return timeEnd;
+    public LocalDate getDeadLine() {
+        return deadLine;
     }
 
     // Назначить время окончания задачи
-    public void setTimeEnd(LocalDateTime timeEnd) {
-        this.timeEnd = timeEnd;
+    public void setDeadLine(LocalDate deadLine) {
+        this.deadLine = deadLine;
     }
 
     // Получить дату создания
@@ -195,5 +185,12 @@ public class Task {
     // Ответить выполнение задачи (или отменить выполнение)
     public void setCompleted(boolean completed) {
         isCompleted = completed;
+    }
+
+    public void printTask(OutputHandler output, Interaction interaction){
+        output.output(interaction.setMessage("Task " + id + ":\n"
+                                                + "Title: " + title + "\n"
+                                                + "Description: " + description + "\n"
+                                                + "Dedline: " + deadLine + "\n"));
     }
 }
