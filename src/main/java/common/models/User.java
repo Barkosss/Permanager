@@ -231,11 +231,8 @@ public class User {
             moderators = new HashMap<>();
         }
 
-        Member member = moderators.get(chatId);
-        if (member == null) {
-            member = new Member(userId, -1, true, new Permissions());
-            moderators.put(chatId, member);
-        }
+        Member member = moderators.computeIfAbsent(chatId,
+                k -> new Member(userId, -1, true, new Permissions()));
 
         member.setPermission(permission, permissionStatus);
         return this;
