@@ -1,33 +1,55 @@
 package common.models;
 
+import common.commands.custom.HelpCommand;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Server {
 
     // ID Discord сервера или Telegram беседы (Общее название - Сервер)
-    long id;
+    private long id;
+
+    // ID владельца
+    private long ownerId;
 
     // Список модераторов/администраторов сервера (Общее название - администраторы)
-    List<Member> members;
+    private Map<Long, Member> members;
 
     // Список групп
-    List<Group> groups;
+    private Map<String, Group> groups;
 
     // Стандартные права доступа
-    Permissions defaultPermissions;
+    private Permissions defaultPermissions;
+
+    // Стандартные ограничения
+    private Restrictions defaultRestrictions;
+
+    // Состояние модерационных команд
+    private Map<String, Boolean> moderationCommands;
 
     // Список забаненных пользователей
-    Map<Long, User> bans;
+    private Map<Long, List<User>> bans;
 
     // Список замьюченных пользователей
-    Map<Long, User> mutes;
+    private Map<Long, User> mutes;
 
-    public Server(long id, List<Member> members, Permissions defaultPermissions) {
+    public Server(long id, Map<Long, Member> members, Permissions defaultPermissions) {
         this.id = id;
         this.members = members;
         this.defaultPermissions = defaultPermissions;
+        this.moderationCommands = initModerationCommands();
+    }
+
+    // Инициализация moderationCommands
+    private Map<String, Boolean> initModerationCommands() {
+        HelpCommand helpCommand = new HelpCommand();
+
+        return helpCommand.methods.keySet()
+                .stream()
+                .collect(Collectors.toMap(commandName -> commandName, commandName -> true));
     }
 
     // Получение ID сервера
@@ -41,13 +63,76 @@ public class Server {
     }
 
     // Получение список администраторов
-    public List<Member> getMembers() {
+    public Map<Long, Member> getMembers() {
         return members;
     }
 
+    // Получить пользователя по ID
+    public Member getMember(long id) {
+        return members.get(id);
+    }
+
+    // Проверить наличие модератора по ID
+    public boolean hasMember(long id) {
+        return members.containsKey(id);
+    }
+
     // Установить список администраторов
-    public void setMembers(List<Member> members) {
+    public void setMembers(Map<Long, Member> members) {
         this.members = members;
+    }
+
+    // Добавить нового модератора
+    public Server addModerator(Member member) {
+        this.members.put(member.getId(), member);
+        return this;
+    }
+
+    // Убрать пользователя из модераторов
+    public boolean removeModerator(long moderatorId) {
+        try {
+            this.members.remove(moderatorId);
+            return true;
+        } catch (Exception err) {
+            return false;
+        }
+    }
+
+    // Получить все группы
+    public Map<String, Group> getGroups() {
+        return groups;
+    }
+
+    // Получить группу по названию
+    public Group getGroup(String name) {
+        return groups.get(name);
+    }
+
+    // Проверить наличие группы по названию
+    public boolean hasGroup(String name) {
+        return groups.containsKey(name);
+    }
+
+    // Установить новый набор групп
+    public Server setGroups(Map<String, Group> groups) {
+        this.groups = groups;
+        return this;
+    }
+
+    // Добавить новую группу
+    public Server addGroup(Group group) {
+        this.groups.put(group.getName(), group);
+        return this;
+    }
+
+    // Удалить группу
+    public boolean removeGroup(String name) {
+        try {
+            this.groups.remove(name);
+            return true;
+        } catch (Exception err) {
+            return false;
+        }
     }
 
     // Получение список стандартных прав доступа
@@ -56,12 +141,38 @@ public class Server {
     }
 
     // Установить список стандартных прав доступа
-    public void setDefaultPermissions(Permissions defaultPermissions) {
+    public Server setDefaultPermissions(Permissions defaultPermissions) {
         this.defaultPermissions = defaultPermissions;
+        return this;
+    }
+
+    // Получение списка стандартных ограничений
+    public Restrictions getDefaultRestrictions() {
+        if (defaultRestrictions == null) {
+            defaultRestrictions = new Restrictions();
+        }
+        return defaultRestrictions;
+    }
+
+    // Установить список стандартных ограничений
+    public Server setDefaultRestrictions(Restrictions defaultRestrictions) {
+        this.defaultRestrictions = defaultRestrictions;
+        return this;
+    }
+
+    // Получить список модерационных команд
+    public Map<String, Boolean> getModerationCommands() {
+        return moderationCommands;
+    }
+
+    // Установить список модерационных команд
+    public Server setModerationCommands(Map<String, Boolean> moderationCommands) {
+        this.moderationCommands = moderationCommands;
+        return this;
     }
 
     // Получить список забаненных пользователей
-    public Map<Long, User> getBans() {
+    public Map<Long, List<User>> getBans() {
         return bans;
     }
 
@@ -71,7 +182,7 @@ public class Server {
             this.bans = new HashMap<>();
         }
 
-        bans.put(user.userId, user);
+        bans.put(user.userId, List.of(user));
         return this;
     }
 

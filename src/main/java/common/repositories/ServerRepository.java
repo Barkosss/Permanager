@@ -4,6 +4,8 @@ import common.models.Permissions;
 import common.models.Server;
 import common.utils.LoggerHandler;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -34,6 +36,11 @@ public class ServerRepository {
         }
         logger.error(String.format("Server by id(%s) is not found. Try create server by id(%s)", serverId, serverId));
         return create(new Server(serverId, null, new Permissions()));
+    }
+
+    // Получить список всех серверов
+    public List<Server> getAll() {
+        return new ArrayList<>(servers.values());
     }
 
     // Существует ли сервер

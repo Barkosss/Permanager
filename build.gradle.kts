@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.postgresql:postgresql:42.6.0")
+    implementation("org.postgresql:postgresql:42.7.2")
     testImplementation(platform("org.junit:junit-bom:5.10.0")) // Тесты
     testImplementation("org.junit.jupiter:junit-jupiter") // Тесты
     implementation("org.reflections:reflections:0.10.2") // Reflections (Для получения классов с пакетов)

@@ -43,7 +43,6 @@ public class Main {
             interaction = new InteractionTelegram(bot, new Timestamp(System.currentTimeMillis() / 1000).getTime());
         }
 
-        logger.debug("Test debug info", true);
         // Вызываем взаимодействие с нужной платформой
         commandHandler.launch(interaction, platform);
     }

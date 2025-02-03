@@ -3,7 +3,7 @@ import common.utils.ValidateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -35,8 +35,8 @@ public class ValidateServiceTest {
     public void firstTestIsValidDatePositive() {
         String stringDate = "23:22 10.09.2022";
 
-        LocalDate correctDate = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("H:mm dd.MM.yyyy"));
-        Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
+        LocalDateTime correctDate = LocalDateTime.parse(stringDate, DateTimeFormatter.ofPattern("H:mm dd.MM.yyyy"));
+        Optional<LocalDateTime> parseDate = validate.isValidDate(stringDate);
 
         assertTrue(parseDate.isPresent());
         assertEquals(correctDate, parseDate.get());
@@ -46,7 +46,7 @@ public class ValidateServiceTest {
     public void secondTestIsValidDatePositive() {
         String stringDate = "09:54:20 3.10.2024";
 
-        Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
+        Optional<LocalDateTime> parseDate = validate.isValidDate(stringDate);
 
         assertTrue(parseDate.isEmpty());
     }
@@ -54,8 +54,8 @@ public class ValidateServiceTest {
     @Test
     public void thirdTestIsValidDatePositive() {
         String stringDate = "20:14 03.10.20";
-        LocalDate correctDate = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("H:mm dd.MM.yy"));
-        Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
+        LocalDateTime correctDate = LocalDateTime.parse(stringDate, DateTimeFormatter.ofPattern("H:mm dd.MM.yy"));
+        Optional<LocalDateTime> parseDate = validate.isValidDate(stringDate);
 
         assertTrue(parseDate.isPresent());
         assertEquals(correctDate, parseDate.get());
@@ -66,7 +66,7 @@ public class ValidateServiceTest {
     public void fourthTestIsValidDateNegative() {
         String stringDate = "14:10:21 1.12.21";
 
-        Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
+        Optional<LocalDateTime> parseDate = validate.isValidDate(stringDate);
 
         assertTrue(parseDate.isEmpty());
     }
@@ -76,7 +76,7 @@ public class ValidateServiceTest {
     public void fifthTestIsValidDateNegative() {
         String stringDate = "25:12 12.06.2023";
 
-        Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
+        Optional<LocalDateTime> parseDate = validate.isValidDate(stringDate);
 
         assertTrue(parseDate.isEmpty());
     }
@@ -86,7 +86,7 @@ public class ValidateServiceTest {
     public void sixthTestIsValidDateNegative() {
         String stringDate = "21:12 12/06/2023";
 
-        Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
+        Optional<LocalDateTime> parseDate = validate.isValidDate(stringDate);
 
         assertTrue(parseDate.isEmpty());
     }
@@ -96,7 +96,7 @@ public class ValidateServiceTest {
     public void seventhTestIsValidDateNegative() {
         String stringDate = "21:12.15 12/06/2023";
 
-        Optional<LocalDate> parseDate = validate.isValidDate(stringDate);
+        Optional<LocalDateTime> parseDate = validate.isValidDate(stringDate);
 
         assertTrue(parseDate.isEmpty());
     }

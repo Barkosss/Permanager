@@ -1,7 +1,8 @@
 package common.commands.moderation;
 
+import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.request.GetChatMember;
+import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.UnbanChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
@@ -10,6 +11,8 @@ import common.models.InteractionTelegram;
 import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
+
+import java.util.List;
 
 public class UnbanCommand implements BaseCommand {
     LoggerHandler logger = new LoggerHandler();
@@ -26,7 +29,8 @@ public class UnbanCommand implements BaseCommand {
     }
 
     @Override
-    public void parseArgs(Interaction interaction, User user) {}
+    public void parseArgs(Interaction interaction, User user) {
+    }
 
     @Override
     public void run(Interaction interaction) {
@@ -37,8 +41,15 @@ public class UnbanCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
+        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
+                == ChatFullInfo.Type.Private) {
+            output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
+            return;
+        }
+
         if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.UNBAN)) {
-            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            output.output(interaction.setLanguageValue("system.error.accessDenied",
+                    List.of(interactionTelegram.getUsername())));
             return;
         }
 

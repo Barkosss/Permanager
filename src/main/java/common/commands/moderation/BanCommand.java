@@ -1,11 +1,9 @@
 package common.commands.moderation;
 
 import com.pengrad.telegrambot.model.ChatFullInfo;
-import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.BanChatMember;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
-import com.pengrad.telegrambot.request.UnbanChatMember;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
@@ -16,7 +14,7 @@ import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,9 +60,9 @@ public class BanCommand implements BaseCommand {
         }
 
         if (arguments.size() > 1) {
-            Optional<LocalDate> validDate = validate.isValidDate(String.format("%s %s",
+            Optional<LocalDateTime> validDate = validate.isValidDate(String.format("%s %s",
                     arguments.getFirst(), arguments.get(1)));
-            Optional<LocalDate> validTime = validate.isValidTime(arguments.getFirst());
+            Optional<LocalDateTime> validTime = validate.isValidTime(arguments.getFirst());
 
             if (validDate.isPresent()) {
                 user.setExcepted(getCommandName(), "duration").setValue(validDate.get());
@@ -92,19 +90,20 @@ public class BanCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.BAN)) {
-            output.output(interaction.setLanguageValue("system.error.accessDenied"));
-            return;
-        }
-
-        // Парсинг аргументов
-        parseArgs(interactionTelegram, user);
-
         if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
                 == ChatFullInfo.Type.Private) {
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
+
+        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.BAN)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied",
+                    List.of(interactionTelegram.getUsername())));
+            return;
+        }
+
+        // Парсинг аргументов
+        parseArgs(interactionTelegram, user);
 
         if (!user.isExceptedKey(getCommandName(), "user")) {
             Optional<Long> validUserId = validate.isValidLong(interaction.getArguments().getFirst());

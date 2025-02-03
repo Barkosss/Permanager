@@ -8,7 +8,8 @@ public class InputExpectation {
     public enum UserInputType {
         STRING,
         DATE,
-        INTEGER
+        INTEGER,
+        LONG
     }
 
     // Название команды, ожидающая ввод

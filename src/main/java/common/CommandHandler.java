@@ -17,9 +17,10 @@ import common.repositories.WarningRepository;
 import common.utils.LoggerHandler;
 import common.utils.SystemService;
 import common.utils.ValidateService;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,19 +90,15 @@ public class CommandHandler {
 
     // Запуск программы
     public void launch(Interaction interaction, LaunchPlatform platform) {
+        interaction.setUserRepository(userRepository)
+                .setServerRepository(serverRepository)
+                .setReminderRepository(reminderRepository)
+                .setWarningRepository(warningRepository);
 
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
             // Поток для Telegram
-            Thread threadTelegram = new Thread(() ->
-                    inputTelegram.read(interaction
-                                    .setUserRepository(userRepository)
-                                    .setServerRepository(serverRepository)
-                                    .setReminderRepository(reminderRepository)
-                                    .setWarningRepository(warningRepository),
-                            this)
-            );
-            threadTelegram.setName("Thread-TELEGRAM-1");
+            Thread threadTelegram = getThreadTelegram(interaction);
             threadTelegram.start();
             logger.info("SYSTEM: Telegram is launch", true);
         }
@@ -112,18 +109,38 @@ public class CommandHandler {
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
             userRepository.create(0, 0L);
             // Поток для Console
-            Thread threadConsole = new Thread(() ->
-                    inputConsole.listener(new InteractionConsole()
-                            .setChatId(0)
-                            .setUserRepository(userRepository)
-                            .setReminderRepository(reminderRepository), this)
-            );
-            threadConsole.setName("Thread-CONSOLE-2");
+            Thread threadConsole = getThreadConsole();
             threadConsole.start();
             logger.info("SYSTEM: Console is launch", true);
         }
 
         System.out.println("Program is launch");
+    }
+
+    @NotNull
+    private Thread getThreadTelegram(Interaction interaction) {
+        Thread threadTelegram = new Thread(() ->
+                inputTelegram.read(interaction
+                                .setUserRepository(userRepository)
+                                .setServerRepository(serverRepository)
+                                .setReminderRepository(reminderRepository)
+                                .setWarningRepository(warningRepository),
+                        this)
+        );
+        threadTelegram.setName("Thread-TELEGRAM-1");
+        return threadTelegram;
+    }
+
+    @NotNull
+    private Thread getThreadConsole() {
+        Thread threadConsole = new Thread(() ->
+                inputConsole.listener(new InteractionConsole()
+                        .setChatId(0)
+                        .setUserRepository(userRepository)
+                        .setReminderRepository(reminderRepository), this)
+        );
+        threadConsole.setName("Thread-CONSOLE-1");
+        return threadConsole;
     }
 
     // Вызов команды
@@ -207,9 +224,10 @@ public class CommandHandler {
                     } else {
                         InputExpectation.UserInputType inputType = user.getInputType();
                         switch (inputType) {
+
                             case DATE: { // Проверка на дату
-                                Optional<LocalDate> validDate = validate.isValidDate(message);
-                                Optional<LocalDate> validTime = validate.isValidTime(message);
+                                Optional<LocalDateTime> validDate = validate.isValidDate(message);
+                                Optional<LocalDateTime> validTime = validate.isValidTime(message);
 
                                 if (validDate.isPresent()) {
                                     user.setValue(validDate.get());
@@ -218,12 +236,21 @@ public class CommandHandler {
                                 }
                                 break;
                             }
-                            case INTEGER: { // Проверка на число
+
+                            case INTEGER: { // Проверка на число (Integer)
                                 Optional<Integer> validInteger = validate.isValidInteger(message);
 
                                 validInteger.ifPresent(user::setValue);
                                 break;
                             }
+
+                            case LONG: { // Проверка на число (Long)
+                                Optional<Long> validInteger = validate.isValidLong(message);
+
+                                validInteger.ifPresent(user::setValue);
+                                break;
+                            }
+
                             default: { // Строка или любой другой тип
                                 user.setValue(message);
                                 break;

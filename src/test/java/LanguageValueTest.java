@@ -26,7 +26,8 @@ public class LanguageValueTest {
         interaction.setLanguageCode(Interaction.Language.RUSSIAN);
         String checkMessage = interaction.getLanguageValue("test.longString", List.of("Проверка длинных слов"));
 
-        assertEquals("Это сообщение \"Проверка длинных слов\" для проверки поиска длинных (Строка)", checkMessage);
+        assertEquals("Это сообщение \"Проверка длинных слов\" для проверки поиска длинных (Длинная строка)",
+                checkMessage);
     }
 
     @Test
