@@ -9,6 +9,7 @@ import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +51,7 @@ public class TaskCommand implements BaseCommand {
                     arguments = arguments.subList(1, arguments.size() - 1);
                 }
                 if (arguments.size() >= 2) {
-                    Optional<LocalDate> dedLine = validate.isValidDate(arguments.getFirst());
+                    Optional<LocalDateTime> dedLine = validate.isValidDate(arguments.getFirst());
                     arguments = arguments.subList(1, arguments.size() - 1);
                     if (dedLine.isPresent()) {
                         user.setExcepted(getCommandName(), "duration").setValue(dedLine);
@@ -206,7 +207,7 @@ public class TaskCommand implements BaseCommand {
         }
 
         if (!user.getValue(getCommandName(), "duration").equals("/skip")) {
-            Optional<LocalDate> newDuration = validate.isValidDate((String) user.getValue(getCommandName(), "duration"));
+            Optional<LocalDateTime> newDuration = validate.isValidDate((String) user.getValue(getCommandName(), "duration"));
             if (newDuration.isEmpty()) {
                 output.output(interaction.setMessage(
                         "An incorrect date was entered, specify the date in the format: "
