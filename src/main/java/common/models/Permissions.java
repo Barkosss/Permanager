@@ -68,6 +68,11 @@ public class Permissions {
     }
 
     public boolean canPermission(Permission permission) {
+
+        if (this.canConfig) {
+            return true;
+        }
+
         return switch (permission) {
             case KICK -> this.canKick;
             case BAN -> this.canBan;
@@ -80,6 +85,21 @@ public class Permissions {
             case CLEAR -> this.canClear;
             case CONFIG -> this.canConfig;
         };
+    }
+
+    public void setPermission(Permission permission, boolean permissionStatus) {
+        switch (permission) {
+            case KICK -> this.canKick = permissionStatus;
+            case BAN -> this.canBan = permissionStatus;
+            case UNBAN -> this.canUnban = permissionStatus;
+            case MUTE -> this.canMute = permissionStatus;
+            case UNMUTE -> this.canUnMute = permissionStatus;
+            case WARN -> this.canWarn = permissionStatus;
+            case REMWARN -> this.canRemWarn = permissionStatus;
+            case RESETWARNS -> this.canResetWarn = permissionStatus;
+            case CLEAR -> this.canClear = permissionStatus;
+            case CONFIG -> this.canConfig = permissionStatus;
+        }
     }
 
     // Получить, имеет ли пользователь доступ к kick

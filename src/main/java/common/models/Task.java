@@ -27,7 +27,7 @@ public class Task {
     public LocalDate deadLine;
 
     // Время создания задачи
-    public LocalDate createdAt;
+    public LocalDateTime createdAt;
 
     // Состояние, напомнить ли о задаче в плановое время начала
     public boolean isNeedRemind;
@@ -118,12 +118,12 @@ public class Task {
     }
 
     // Получить дату создания
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     // Назначить дату создания
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

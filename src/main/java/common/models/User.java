@@ -1,7 +1,5 @@
 package common.models;
 
-import common.repositories.WarningRepository;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -16,6 +14,12 @@ public class User {
 
     // Идентификатор пользователя
     long userId;
+
+    // Часовой пояс пользователя
+    TimeZone timeZone;
+
+    // Язык пользователя
+    Interaction.Language language;
 
     // Объект с информацией ожидаемых ответов
     InputExpectation userInputExpectation = new InputExpectation();
@@ -33,7 +37,7 @@ public class User {
     Map<Long, Map<Long, Task>> tasks;
 
     // Список предупреждений
-    Map<Server, WarningRepository> warnings = new HashMap<>();
+    Map<Long, Map<Long, Warning>> warnings = new HashMap<>();
 
     public User(long userId) {
         this.userId = userId;
@@ -41,6 +45,27 @@ public class User {
 
     public long getUserId() {
         return userId;
+    }
+
+    public User setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
+        return this;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    public User setLanguage(Interaction.Language language) {
+        this.language = language;
+        return this;
+    }
+
+    public Interaction.Language getLanguage() {
+        if (language == null) {
+            this.language = Interaction.Language.ENGLISH;
+        }
+        return language;
     }
 
     public InputStatus getInputStatus() {
@@ -65,6 +90,14 @@ public class User {
     }
 
     public Object getValue(String commandName, String key) {
+        if (!this.userInputExpectation.getExpectedInputs().containsKey(commandName)) {
+            return null;
+        }
+
+        if (!this.userInputExpectation.getExpectedInputs().get(commandName).containsKey(key)) {
+            return null;
+        }
+
         return this.userInputExpectation.getExpectedInputs().get(commandName).get(key);
     }
 
@@ -94,6 +127,13 @@ public class User {
     public void clearExpected(String commandName) {
         this.inputStatus = InputStatus.COMPLETED;
         this.userInputExpectation.getExpectedInputs().remove(commandName);
+    }
+
+    public void clearExpected(String commandName, String valueKey) {
+        this.inputStatus = InputStatus.COMPLETED;
+        if (this.userInputExpectation.getExpectedInputs().containsKey(commandName)) {
+            this.userInputExpectation.getExpectedInputs().get(commandName).remove(valueKey);
+        }
     }
 
     public User addReminder(Reminder reminder) {
@@ -173,12 +213,152 @@ public class User {
     }
 
     public boolean hasPermission(long chatId, Permissions.Permission permission) {
+        if (moderators == null) {
+            moderators = new HashMap<>();
+        }
+
         Member member = moderators.get(chatId);
 
         if (member == null) {
             return false;
         }
 
-        return member.permissions.canPermission(permission);
+        return member.getPermissions().canPermission(permission);
+    }
+
+    public User setPermission(long chatId, Permissions.Permission permission, boolean permissionStatus) {
+        if (moderators == null) {
+            moderators = new HashMap<>();
+        }
+
+        Member member = moderators.get(chatId);
+        if (member == null) {
+            member = new Member(userId, -1, true, new Permissions());
+            moderators.put(chatId, member);
+        }
+
+        member.setPermission(permission, permissionStatus);
+        return this;
+    }
+
+    public User addWarning(Warning warning) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(warning.getChatId())) {
+            this.warnings.put(warning.getChatId(), new HashMap<>());
+        }
+
+        this.warnings.get(warning.getChatId()).put(warning.getId(), warning);
+        return this;
+    }
+
+    public void removeWarning(long chatId, int index) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        if (!this.warnings.get(chatId).containsKey(Long.parseLong(String.valueOf(index)))) {
+            return;
+        }
+
+        this.warnings.get(chatId).remove(Long.parseLong(String.valueOf(index)));
+    }
+
+    public void resetWarnings(long chatId) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            return;
+        }
+
+        this.warnings.get(chatId).clear();
+    }
+
+    public Map<Long, Warning> getWarnings(long chatId) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        return this.warnings.get(chatId);
+    }
+
+    public User setPermission(long chatId, Permissions.Permission permission, boolean permissionStatus) {
+        if (moderators == null) {
+            moderators = new HashMap<>();
+        }
+
+        Member member = moderators.get(chatId);
+        if (member == null) {
+            member = new Member(userId, -1, true, new Permissions());
+            moderators.put(chatId, member);
+        }
+
+        member.setPermission(permission, permissionStatus);
+        return this;
+    }
+
+    public User addWarning(Warning warning) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(warning.getChatId())) {
+            this.warnings.put(warning.getChatId(), new HashMap<>());
+        }
+
+        this.warnings.get(warning.getChatId()).put(warning.getId(), warning);
+        return this;
+    }
+
+    public void removeWarning(long chatId, int index) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        if (!this.warnings.get(chatId).containsKey(Long.parseLong(String.valueOf(index)))) {
+            return;
+        }
+
+        this.warnings.get(chatId).remove(Long.parseLong(String.valueOf(index)));
+    }
+
+    public void resetWarnings(long chatId) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            return;
+        }
+
+        this.warnings.get(chatId).clear();
+    }
+
+    public Map<Long, Warning> getWarnings(long chatId) {
+        if (this.warnings == null) {
+            this.warnings = new HashMap<>();
+        }
+
+        if (!this.warnings.containsKey(chatId)) {
+            this.warnings.put(chatId, new HashMap<>());
+        }
+
+        return this.warnings.get(chatId);
     }
 }

@@ -3,6 +3,12 @@ package common.models;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.model.LinkPreviewOptions;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class InteractionTelegram extends AbstractInteraction {
 
@@ -26,8 +32,26 @@ public class InteractionTelegram extends AbstractInteraction {
         return this;
     }
 
+    public String getUsername() {
+        return super.content.username();
+    }
+
     public Interaction setMessage(String message) {
-        this.message = message;
+        super.message = message;
+        createSendMessage();
+        return this;
+    }
+
+    @Override
+    public Interaction setLanguageValue(String languageKey) {
+        super.setLanguageValue(languageKey);
+        createSendMessage();
+        return this;
+    }
+
+    @Override
+    public Interaction setLanguageValue(String languageKey, List<String> replaces) {
+        super.setLanguageValue(languageKey, replaces);
         createSendMessage();
         return this;
     }
@@ -45,12 +69,20 @@ public class InteractionTelegram extends AbstractInteraction {
         }
     }
 
+    public void resetWarnings(InteractionTelegram interactionTelegram, long chatId) {
+        super.warningRepository.reset(interactionTelegram, chatId);
+    }
+
+    public void resetWarnings(long chatId, long userId) {
+        super.warningRepository.reset(chatId, userId);
+    }
+
     @Override
     public String toString() {
 
         return String.format("InteractionTelegram({"
-            + "Token=%s; TIMESTAMP_BOT_START=%s; Platform=%s;"
-                + "userId=%s; chatId=%s; Message=%s; Inline=%s; arguments=%s})",
+                        + "Token=%s; TIMESTAMP_BOT_START=%s; Platform=%s;"
+                        + "userId=%s; chatId=%s; Message=%s; Inline=%s; arguments=%s})",
                 telegramBot, timestampBotStart, platform, userId, chatId, message, inline, arguments);
     }
 

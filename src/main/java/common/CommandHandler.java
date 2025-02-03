@@ -13,12 +13,14 @@ import common.models.User;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.repositories.WarningRepository;
 import common.utils.LoggerHandler;
 import common.utils.SystemService;
-import common.utils.Validate;
+import common.utils.ValidateService;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +30,7 @@ import java.util.Set;
 
 public class CommandHandler {
     LoggerHandler logger = new LoggerHandler();
-    Validate validate = new Validate();
+    ValidateService validate = new ValidateService();
 
     public enum LaunchPlatform {
         TELEGRAM,
@@ -43,6 +45,7 @@ public class CommandHandler {
     UserRepository userRepository = new UserRepository();
     ServerRepository serverRepository = new ServerRepository();
     ReminderRepository reminderRepository = new ReminderRepository();
+    WarningRepository warningRepository = new WarningRepository();
 
     InputTelegram inputTelegram = new InputTelegram();
     InputConsole inputConsole = new InputConsole();
@@ -87,59 +90,57 @@ public class CommandHandler {
 
     // Запуск программы
     public void launch(Interaction interaction, LaunchPlatform platform) {
+        interaction.setUserRepository(userRepository)
+                .setServerRepository(serverRepository)
+                .setReminderRepository(reminderRepository)
+                .setWarningRepository(warningRepository);
 
         // Проверка, что Platform это Telegram или ALL
         if (platform == LaunchPlatform.TELEGRAM || platform == LaunchPlatform.ALL) {
             // Поток для Telegram
-            Thread threadTelegram = new Thread(() ->
-                    inputTelegram.read(interaction.setUserRepository(userRepository)
-                            .setServerRepository(serverRepository)
-                            .setReminderRepository(reminderRepository), this)
-            );
-            threadTelegram.setName(String.format("Thread-%s-1", interaction.getPlatform().name()));
+            Thread threadTelegram = getThreadTelegram(interaction);
             threadTelegram.start();
             logger.info("SYSTEM: Telegram is launch", true);
         }
 
-        // Поток для системы напоминаний
-        Thread threadReminder = new Thread(() ->
-                new SystemService().reminderHandler(interaction)
-        );
-        threadReminder.setName("Thread-Reminder");
-        threadReminder.start();
-        logger.info("SYSTEM: ReminderHandler is launch", true);
-
-        // Поток для системы банов
-        Thread threadBan = new Thread(() ->
-                new SystemService().banHandler(interaction)
-        );
-        threadBan.setName("Thread-Ban");
-        threadBan.start();
-        logger.info("SYSTEM: BanHandler is launch", true);
-
-        // Поток для системы мьютов
-        Thread threadMute = new Thread(() ->
-                new SystemService().muteHandler(interaction)
-        );
-        threadMute.setName("Thread-Mute");
-        threadMute.start();
-        logger.info("SYSTEM: MuteHandler is launch", true);
+        new SystemService(interaction);
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
             userRepository.create(0, 0L);
             // Поток для Console
-            Thread threadConsole = new Thread(() ->
-                    inputConsole.listener(new InteractionConsole()
-                            .setChatId(0)
-                            .setUserRepository(userRepository)
-                            .setServerRepository(serverRepository)
-                            .setReminderRepository(reminderRepository), this)
-            );
-            threadConsole.setName(String.format("Thread-%s-2", interaction.getPlatform().name()));
+            Thread threadConsole = getThreadConsole();
             threadConsole.start();
             logger.info("SYSTEM: Console is launch", true);
         }
+
+        System.out.println("Program is launch");
+    }
+
+    @NotNull
+    private Thread getThreadTelegram(Interaction interaction) {
+        Thread threadTelegram = new Thread(() ->
+                inputTelegram.read(interaction
+                                .setUserRepository(userRepository)
+                                .setServerRepository(serverRepository)
+                                .setReminderRepository(reminderRepository)
+                                .setWarningRepository(warningRepository),
+                        this)
+        );
+        threadTelegram.setName("Thread-TELEGRAM-1");
+        return threadTelegram;
+    }
+
+    @NotNull
+    private Thread getThreadConsole() {
+        Thread threadConsole = new Thread(() ->
+                inputConsole.listener(new InteractionConsole()
+                        .setChatId(0)
+                        .setUserRepository(userRepository)
+                        .setReminderRepository(reminderRepository), this)
+        );
+        threadConsole.setName("Thread-CONSOLE-1");
+        return threadConsole;
     }
 
     // Вызов команды
@@ -154,9 +155,9 @@ public class CommandHandler {
                 continue;
             }
 
-            // сли пользователь отсутствует в памяти
-            if (!interaction.getUserRepository().existsById(content.chat().id(), content.userId())) {
-                interaction.getUserRepository().create(content.chat().id(), content.userId());
+            // Если пользователь отсутствует в памяти
+            if (!interaction.existsUserById(content.chat().id(), content.userId())) {
+                interaction.createUser(content.chat().id(), content.userId());
             }
 
             String message = content.message();
@@ -168,8 +169,6 @@ public class CommandHandler {
                 commandName = commandName.substring(0, commandName.lastIndexOf("@"));
             }
 
-
-            System.out.println("Debug: " + interaction.getUser(content.userId()) + " | " + content.userId());
             // Проверка, что это команда
             if (message.startsWith("/") && message.charAt(1) != ' '
                     && interaction.getUser(content.userId()).getInputStatus() == User.InputStatus.COMPLETED) {
@@ -220,28 +219,42 @@ public class CommandHandler {
                     logger.debug(String.format("Get exception value: chatId=%d, userId=%d, message=%s",
                             interaction.getChatId(), interaction.getUserId(), message));
 
-                    InputExpectation.UserInputType inputType = user.getInputType();
-                    switch (inputType) {
-                        case DATE: { // Проверка на дату
-                            Optional<LocalDate> validDate = validate.isValidDate(message);
-                            Optional<LocalDate> validTime = validate.isValidTime(message);
+                    if (message.equals("/skip")) {
+                        user.setValue(message);
+                    } else {
+                        InputExpectation.UserInputType inputType = user.getInputType();
+                        switch (inputType) {
 
-                            if (validDate.isPresent()) {
-                                user.setValue(validDate.get());
-                            } else {
-                                validTime.ifPresent(user::setValue);
+                            case DATE: { // Проверка на дату
+                                Optional<LocalDateTime> validDate = validate.isValidDate(message);
+                                Optional<LocalDateTime> validTime = validate.isValidTime(message);
+
+                                if (validDate.isPresent()) {
+                                    user.setValue(validDate.get());
+                                } else {
+                                    validTime.ifPresent(user::setValue);
+                                }
+                                break;
                             }
-                            break;
-                        }
-                        case INTEGER: { // Проверка на число
-                            Optional<Integer> validInteger = validate.isValidInteger(message);
 
-                            validInteger.ifPresent(user::setValue);
-                            break;
-                        }
-                        default: { // Строка или любой другой тип
-                            user.setValue(message);
-                            break;
+                            case INTEGER: { // Проверка на число (Integer)
+                                Optional<Integer> validInteger = validate.isValidInteger(message);
+
+                                validInteger.ifPresent(user::setValue);
+                                break;
+                            }
+
+                            case LONG: { // Проверка на число (Long)
+                                Optional<Long> validInteger = validate.isValidLong(message);
+
+                                validInteger.ifPresent(user::setValue);
+                                break;
+                            }
+
+                            default: { // Строка или любой другой тип
+                                user.setValue(message);
+                                break;
+                            }
                         }
                     }
                     baseCommandClasses.get(interaction.getUser(interaction.getUserId()).getCommandException())

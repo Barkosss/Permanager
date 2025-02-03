@@ -1,12 +1,189 @@
 {
+    "system": {
+        "disable": "Disable",
+        "enable": "Enable",
+        "off": "Off",
+        "on": "On",
+        "undefined": "Not specified",
+        "true": "\uD83D\uDFE2 | Access is available",
+        "false": "\uD83D\uDD34 | Access is not available",
+        "error": {
+            "notAvailableCommandConsole": "This command is not available from the Console",
+            "notAvailableCommandPrivateChat": "This command is not available in private chat",
+            "commandNotFound": "The command \"%COMMAND_NAME%`\" was not found",
+            "accessDenied": "@%USERNAME%, you don't have enough rights to use the command",
+            "something": "An unknown error has occurred"
+        }
+    },
+    "test": {
+        "string": "This is the \"%MESSAGE%\" message for checking the method (String)",
+        "strings": "This is the \"%MESSAGE%\" \"%MESSAGE%\" \"%MESSAGE%\" message for checking the method (Strings)",
+        "int": "This is the \"%iINTEGER%\" message for checking the method (Number)",
+        "date": "This is the \"%dDATE%\" message for checking the method (Date)",
+        "longString": "This is the \"%LONG_MESSAGE%\" message for checking the method (Long String)"
+    },
     "start": {
-        "message": "Hello"
+        "message": "Hello! \nI am **Permanager**, your assistant for flexible access rights management in Telegram channels and Discord servers.\nMy goal is to simplify the lives of administrators by providing convenient tools for setting up rights to moderation teams without having to rely on the standard Telegram or Discord roles.\n\n With my help , you can:\n✅ Assign rights to teams in a new way, not limited to standard roles.\n Create custom rights groups for users.\n Simplify moderation management by making it as transparent and convenient as possible.\n\n\uD83C\uDF89 Let's get started!\n\uD83D\uDCCB **Basic commands**:\n\n`/config` — Configure the global parameters of the bot on the server.\n`/reminder` — Managing reminders\n`/cancel` — Canceling the execution of the current command\n`/help` — Show a list of all available commands and their description.\n\nIf you have any questions, just use /help.\nLet's start simplifying your work together! \uD83D\uDE80"
+    },
+    "help": {
+        "commandHelp": "\uD83D\uDCCC _ Write /help [command name] to get more information_",
+        "manualNotFound": "*There is no description*"
     },
     "config": {
         "start": {
             "section": "Enter section (dashboard, user, group)",
             "againSection": "Try again. Enter section (dashboard, user, group)"
         },
-        "dashboard": "Dashboard:\n\n- Настройка стандартных прав доступа\n*Стандартные права доступа, которые будут выдавать новым модераторам или группе*\n\n-Настройка стандартных ограничений\n*Стандартные ограничения, которые будут выдавать новым модераторам или группе*\n\n- Настройка модерационных команд\n*Включить или выключить модерационные команды.* ***ВАЖНО**: данный раздел не **скрывает** команды, а не даёт работать с ними*"
+        "dashboard": {
+            "start": "*Control Panel*:\n\n- Setting up standard access rights\n*Standard access rights that will be granted to new moderators or a group*\n\n-Setting up standard restrictions\n*Standard restrictions that will be issued to new moderators or a group*\n\n- Setting up moderation teams\n*Enable or disable moderation commands. IMPORTANT*: this section does not *hide* commands, but does not give access to work with them",
+            "defaultRightAccess": {
+                "title": "**Setting up standard access rights**",
+                "description": "`\uD83D\uDFE2 | Access to the command is available`\n`\uD83D\uDD34 | There is no access to the command`\n\n*Set up access rights correctly*. These permissions will be granted to newly added moderators who are not in the group, and will also be granted to newly created groups:",
+                "permissions": "*Ban* - `%BAN%`\n*Unban* - `%UNBAN%`\n*Kick* - `%KICK%`\n*Mute* - `%MUTE%`\n*Unmute* - `%UNMUTE%`\n*Warn* - `%WARN%`\n*Remwarn* - `%REMWARN%`\n*Resetwarns* - `%RESETWARNS%`\n*Clear* - `%CLEAR%`"
+            },
+            "defaultLimits": {
+                "title": "*Setting standard limits*",
+                "description": "*Set up the restrictions correctly*. These restrictions will be set for newly added moderators who are not in the group, and they will also be issued to newly created groups:\n",
+                "restrictions": "Commands restrictions:\n\n- Kick:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Ban:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Unban:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Mute:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Unmute:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Warn:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Remwarn:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Resetwarm:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Clear:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%\n\n- Temprole:\n\t- Amount of uses: %USES_COUNT%\n\t- During: %PERIOD_TIMESTAMP%"
+            },
+            "moderationCommands": {
+                "title": "*Setting up moderation commands*",
+                "description": "*Set up the restrictions correctly*. These restrictions do not hide the commands, but make them inaccessible to all users and moderators:\n",
+                "commands": "The status of the commands:\n- *Kick*: `%STATUS%`\n- *Ban*: `%STATUS%`\n- *Unban*: `%STATUS%`\n- *Mute*: `%STATUS%`\n- *Unmute*: `%STATUS%`\n- *Warn*: `%STATUS%`\n- *Remwarn*: `%STATUS%`\n- *Resetwarm*: `%STATUS%`\n- *Clear*: `%STATUS%`\n- *Temprole*: `%STATUS%`"
+            }
+        },
+        "user": {
+            "start": "",
+            "editLimits": {
+
+            },
+            "editPriority": {
+
+            }
+        }
+    },
+    "settings": {
+        "start": "...\n\nCurrent language: `%LANGUAGE%`\nYour time zone: `%TIMEZONE%`",
+        "request": "Specify the section (language, timezone)",
+        "language": {
+            "request": "Specify the language (ru, en)",
+            "complete": "The language has been successfully switched"
+        },
+        "timezone": {
+            "request": "Specify [time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) (For example, Europe/Moscow)",
+            "complete": "The time zone has been successfully set"
+        },
+        "error": {
+            "invalidTimezone": "Incorrect time zone",
+            "sectionNotFound": "The section was not found"
+        }
+    },
+    "reminder": {
+        "start": {
+            "action": "Specify one of the actions (Actions: create, edit, remove, list)",
+            "againAction": "There is no such action. Try again (Actions: create, edit, remove, list)"
+        },
+        "send": {
+            "reminder": "Reminder",
+            "content": "Your reminder: \n```\n%MESSAGE%\n```\n",
+            "createdAt": "Date of creation: %DATE%",
+            "editAt": "Date of last edit: %EDIT_DATE%"
+        },
+        "create": {
+            "date": "Specify the date on which you want to send the reminder (Format: dd.mm.yyyy hh:mm or hh:mm)",
+            "content": "Specify the contents of the reminder",
+            "error": {
+                "invalidDate": "Incorrect time format (Format: dd.mm.yyyy hh:mm or hh:mm). For example, on 3.12.2024 12:40 or 12:40",
+                "futureDate": "The reminder time should not be in the past",
+                "limitDate": "You cannot create a reminder for a date older than 5 years"
+            },
+            "complete": "Reminder #%iINDEX% has been successfully created!"
+        },
+        "edit": {
+            "index": "Specify the reminder ID",
+            "newDate": "Specify the new time to send the reminder (If not required, specify /skip)",
+            "newContent": "Specify the new reminder content (If not required, specify /skip)",
+            "error": {
+                "invalidIndex": "There is no reminder with this ID",
+                "invalidDate": "Incorrect time format (Format: dd.mm.yyyy hh:mm or hh:mm). For example, on 3.12.2024 12:40 or 12:40",
+                "futureDate": "The reminder time should not be in the past",
+                "limitDate": "You cannot create a reminder for a date older than 5 years"
+            },
+            "complete": "Reminder #%iINDEX% has been successfully edited!"
+        },
+        "remove": {
+            "index": "Specify the reminder ID",
+            "error": {
+                "invalidIndex": "There is no reminder with this ID"
+            },
+            "complete": "Reminder #%iINDEX% has been successfully delete!"
+        },
+        "list": {
+            "empty": "The reminder list is empty"
+        }
+    },
+    "ban": {
+        "replyMessage": "Call the command with a response to the message of the user you want to ban",
+        "userId": "Specify the User Id of the user, or use the /cancel command and call the command again, but with a response to the message of the user you want to block",
+        "reason": "Specify the reason for the block (If you do not want to specify, enter /skip)",
+        "duration": "Specify the duration of the lock (If you want an indefinite one, then enter /skip)",
+        "complete": "The user has been successfully blocked!"
+    },
+    "unban": {
+        "replyMessage": "Call the command with a response to the message of the user you want to unban",
+        "complete": "User @%USERNAME% has been successfully unblocked"
+    },
+    "kick": {
+        "replyMessage": "Call the command with a response to the message of the user you want to expel",
+        "reason": "Specify the reason (If you don't want to specify it, enter /skip)",
+        "complete": "User @%USERNAME% has been successfully kicked out",
+        "completeWithReason": "The user @%USERNAME% was successfully kicked out for the reason:ly %REASON%"
+    },
+    "mute": {
+        "replyMessage": "Call the command with a response to the message of the user you want to entice",
+        "reason": "Specify the reason (If you don't want to specify it, enter /skip)",
+        "duration": "Specify the duration of the lock (If you want an indefinite one, then enter /skip)",
+        "complete": "The user @%USERNAME% has been successfully loaded"
+    },
+    "unmute": {
+        "replyMessage": "Call the command with a response to the message of the user you want to soften",
+        "reason": "Specify the reason (If you don't want to specify it, enter /skip)",
+        "complete": "User @%USERNAME% has been successfully uploaded"
+    },
+    "warns": {
+        "listWarns": "List of active warnings at @%USERNAME%",
+        "reason": "Reason",
+        "duration": "Duration",
+        "moderator": "Moderator",
+        "warnsNotFound": "@%USERNAME% has no warnings"
+    },
+    "warn": {
+        "replyMessage": "Call the command with a response to the message of the user to whom you want to issue a warning",
+        "reason": "Specify the reason (If you do not want to specify, then enter /skip)",
+        "duration": "Specify the duration of the warning (If you want an indefinite one, then enter /skip)",
+        "complete": "User @%USERNAME% received a warning #%iWARN_ID%",
+        "error": {
+            "highPriority": "The moderation priority of @%USERNAME% is higher than yours",
+            "userNotFound": "User @%USERNAME% not found"
+        }
+    },
+    "remWarn": {
+        "replyMessage": "Call the command with a response to the message of the user to whom you want to remove the warning",
+        "index": "Specify the warning index that you want to remove",
+        "complete": "The user @%USERNAME% has successfully cleared the warning #%iINDEX%",
+        "error": {
+            "invalidIndex": "A warning with such an identifier does not exist"
+        }
+    },
+    "resetWarns": {
+        "replyMessage": "Call the command with a response to the message of the user to whom you want to remove the warning",
+        "confirmUser": "Are you sure you want to check the warnings from @%USERNAME%? (yes, no)",
+        "confirmAll": "Are you sure you want to reset the warnings to all users? (yes, no)",
+        "resetUser": "All warnings have been reset for @%USERNAME%",
+        "resetAll": "All warnings have been reset for all users",
+        "cancel": "You canceled the warning reset",
+        "error": {
+            "warnsNotFound": "User @%USERNAME% has no reminders"
+        }
     }
 }

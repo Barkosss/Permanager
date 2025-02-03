@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class HelpCommand implements BaseCommand {
-    Map<String, String> methods;
+    public Map<String, String> methods;
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
     JSONHandler jsonHandler = new JSONHandler();
@@ -34,7 +34,7 @@ public class HelpCommand implements BaseCommand {
             }
 
         } catch (Exception err) {
-            logger.error(String.format("Help constructors: %s", err));
+            logger.fatal(String.format("Help constructors: %s", err));
         }
     }
 
@@ -62,7 +62,8 @@ public class HelpCommand implements BaseCommand {
             user.setExcepted(getCommandName(), "commandName").setValue(commandName);
             return;
         }
-        user.setExcepted(getCommandName(), "commandName").setValue("");
+        user.setExcepted(getCommandName(), "commandName")
+                .setValue(interaction.getLanguageValue(".manualNotFound"));
     }
 
     // Вызвать основной методы команды
@@ -77,9 +78,10 @@ public class HelpCommand implements BaseCommand {
 
         if (isCommand) {
             manual(interaction, user);
-        } else {
-            help(interaction, user);
+            return;
         }
+
+        help(interaction, user);
     }
 
     public void help(Interaction interaction, User user) {
@@ -88,18 +90,20 @@ public class HelpCommand implements BaseCommand {
 
             // Вывести короткое название и описание команды
             for (String commandName : methods.keySet()) {
-                helpOutput.append(commandName).append(":\n|---\t")
-                        .append(methods.get(commandName)).append("\n");
+                helpOutput.append(String.format("/%s - %s\n", commandName, methods.get(commandName)));
             }
 
-            helpOutput.append("--------- HELP ---------\n");
+            helpOutput.append("--------- HELP ---------\n\n");
+            helpOutput.append(interaction.getLanguageValue(".commandHelp"));
+
             output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
 
         } catch (Exception err) {
             logger.error(String.format("Error (helpCommand, help): %s", err));
-        }
 
-        user.clearExpected(getCommandName());
+        } finally {
+            user.clearExpected(getCommandName());
+        }
     }
 
     public void manual(Interaction interaction, User user) {
@@ -119,9 +123,11 @@ public class HelpCommand implements BaseCommand {
             helpOutput.append("\n--------- HELP \"").append(commandName).append("\" ---------\n");
 
             output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
-            user.clearExpected(getCommandName());
         } catch (Exception err) {
             logger.error(String.format("Error (helpCommand, manual): %s", err));
+
+        } finally {
+            user.clearExpected(getCommandName());
         }
     }
 }

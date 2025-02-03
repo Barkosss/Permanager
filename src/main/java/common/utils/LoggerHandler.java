@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+
 public class LoggerHandler {
 
     // Объект файла
@@ -40,8 +41,8 @@ public class LoggerHandler {
             // Если не существует директории, то создать
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
-
             }
+
             this.logFile = new FileWriter(this.logFilePath, true);
         } catch (IOException e) {
             System.out.printf("File with name \"%s\" isn't open\n", logFileName);
@@ -71,44 +72,44 @@ public class LoggerHandler {
         writeLog(message, LoggerStatus.INFO);
     }
 
-    public void debug(String message) {
-        writeLog(message, LoggerStatus.DEBUG);
-    }
-
-    public void error(String message) {
-        writeLog(message, LoggerStatus.ERROR);
-    }
-
-    public void warning(String message) {
-        writeLog(message, LoggerStatus.WARNING);
-    }
-
-    public void trace(String message) {
-        writeLog(message, LoggerStatus.TRACE);
-    }
-
-    public void fatal(String message) {
-        writeLog(message, LoggerStatus.FATAL);
-    }
-
     public void info(String message, Boolean inConsole) {
         writeLog(message, LoggerStatus.INFO, inConsole);
+    }
+
+    public void debug(String message) {
+        writeLog(message, LoggerStatus.DEBUG);
     }
 
     public void debug(String message, Boolean inConsole) {
         writeLog(message, LoggerStatus.DEBUG, inConsole);
     }
 
+    public void error(String message) {
+        writeLog(message, LoggerStatus.ERROR);
+    }
+
     public void error(String message, Boolean inConsole) {
         writeLog(message, LoggerStatus.ERROR, inConsole);
+    }
+
+    public void warning(String message) {
+        writeLog(message, LoggerStatus.WARNING);
     }
 
     public void warning(String message, Boolean inConsole) {
         writeLog(message, LoggerStatus.WARNING, inConsole);
     }
 
+    public void trace(String message) {
+        writeLog(message, LoggerStatus.TRACE);
+    }
+
     public void trace(String message, Boolean inConsole) {
         writeLog(message, LoggerStatus.TRACE, inConsole);
+    }
+
+    public void fatal(String message) {
+        writeLog(message, LoggerStatus.FATAL);
     }
 
     public void fatal(String message, Boolean inConsole) {
