@@ -1,6 +1,7 @@
 package common.models;
 
 import common.commands.BaseCommand;
+import common.repositories.CommandRepository;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
@@ -37,6 +38,9 @@ public abstract class AbstractInteraction implements Interaction {
     // Массив аргументов в сообщении (разделитель - пробел)
     List<String> arguments;
 
+    // Хранилище команд бота
+    CommandRepository commandRepository;
+
     // Хранилище пользователей
     UserRepository userRepository;
 
@@ -54,6 +58,19 @@ public abstract class AbstractInteraction implements Interaction {
 
     // Языковой код
     Language languageCode;
+
+    public Interaction setCommandRepository(CommandRepository commandRepository) {
+         this.commandRepository = commandRepository;
+         return this;
+    }
+
+    public boolean hasCommand(String command) {
+        return this.commandRepository.hasCommand(command);
+    }
+
+    public BaseCommand getCommand(String command) {
+        return this.commandRepository.getCommand(command);
+    }
 
     public Interaction setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;

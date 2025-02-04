@@ -606,6 +606,11 @@ public class ConfigCommand implements BaseCommand {
         for (int index = 0; index < arguments.size(); index += 3) {
             commandName = arguments.get(index);
 
+            if (!interaction.hasCommand(commandName)) {
+                output.output(interaction.setLanguageValue(".group.editLimits.error.commandNotFound"));
+                logger.info("");
+                return;
+            }
 
             Optional<Integer> argCountUses = validate.isValidInteger(arguments.get(index + 1));
             if (argCountUses.isPresent()) {
@@ -625,8 +630,10 @@ public class ConfigCommand implements BaseCommand {
                 return;
             }
 
-
+            // ...
         }
+
+        // ...
     }
 
     private void configGroupEditPriority(InteractionTelegram interaction, User user) {

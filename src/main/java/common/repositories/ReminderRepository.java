@@ -4,18 +4,14 @@ import common.models.Reminder;
 import common.utils.LoggerHandler;
 
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class ReminderRepository {
-    LoggerHandler logger = new LoggerHandler();
-    Map<Long, List<Reminder>> reminders;
+    private final LoggerHandler logger = new LoggerHandler();
+    private Map<Long, List<Reminder>> reminders;
 
     public ReminderRepository() {
         this.reminders = new TreeMap<>();
