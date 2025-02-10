@@ -258,14 +258,33 @@ public class CommandHandler {
                                 break;
                             }
 
+                            case USER: { // Сохраняем объект пользователя
+                                user.setValue(content.tgUser());
+                                break;
+                            }
+
+                            case CHATMEMBER: { // Сохраняем объект участника
+                                user.setValue(content.tgChatMember());
+                                break;
+                            }
+
+                            case MESSAGE: { // Сохраняем объект сообщения
+                                user.setValue(content.tgMessage());
+                                break;
+                            }
+
+                            case REPLY: { // Сохраняем объект ответного сообщения
+                                user.setValue(content.tgMessage().replyToMessage());
+                            }
+
                             default: { // Строка или любой другой тип
                                 user.setValue(message);
                                 break;
                             }
                         }
                     }
-                    baseCommandClasses.get(interaction.getUser(interaction.getUserId()).getCommandException())
-                            .run(interaction);
+                    baseCommandClasses.get(interaction.getUser(interaction.getUserId())
+                                    .getCommandException()).run(interaction);
                 }
             }
         }

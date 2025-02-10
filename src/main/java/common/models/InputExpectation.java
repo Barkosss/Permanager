@@ -9,7 +9,11 @@ public class InputExpectation {
         STRING,
         DATE,
         INTEGER,
-        LONG
+        LONG,
+        USER,
+        CHATMEMBER,
+        REPLY,
+        MESSAGE
     }
 
     // Название команды, ожидающая ввод
