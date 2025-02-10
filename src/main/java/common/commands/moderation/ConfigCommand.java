@@ -3,11 +3,13 @@ package common.commands.moderation;
 import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.request.GetChat;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Group;
 import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.models.Limit;
 import common.models.Member;
 import common.models.Permissions;
 import common.models.Restrictions;
@@ -100,11 +102,11 @@ public class ConfigCommand implements BaseCommand {
 
 
         logger.debug(String.format("Checking the user's access rights (%s) by id(%s) in the chat by id(%s)",
-                Permissions.Permission.CONFIG.getPermission(), user.getUserId(), interaction.getChatId()));
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.CONFIG)) {
+                ModerationCommand.CONFIG.getCommandName(), user.getUserId(), interaction.getChatId()));
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.CONFIG)) {
             try {
                 logger.info(String.format("The user by id(%s) doesn't have access rights (%s) in chat by id(%s)",
-                        user.getUserId(), Permissions.Permission.CONFIG.getPermission(), interaction.getChatId()));
+                        user.getUserId(), ModerationCommand.CONFIG.getCommandName(), interaction.getChatId()));
                 output.output(interaction.setLanguageValue("system.error.accessDenied",
                         List.of(((InteractionTelegram) interaction).getUsername())));
             } catch (Exception err) {
@@ -242,10 +244,14 @@ public class ConfigCommand implements BaseCommand {
                             serverDefaultLimits.getLimitResetWarn(),
                             serverDefaultLimits.getLimitClear(),
                             serverDefaultLimits.getLimitGiveTempRole()
-                    ).flatMap(limit -> Stream.of(
-                            ((limit.amountUses != 0) ? (String.valueOf(limit.amountUses)) : (undefined)),
-                            ((limit.timestampPeriod != 0) ? (String.valueOf(limit.timestampPeriod)) : (undefined))
-                    )).toList());
+                    ).flatMap(limit -> {
+                        long amountUses = limit.amountUses;
+                        long timestampPeriod = limit.timestampPeriod;
+                        return Stream.of(
+                                (amountUses != 0 ? (String.valueOf(amountUses)) : (undefined)),
+                                (timestampPeriod != 0 ? (String.valueOf(timestampPeriod)) : (undefined))
+                        );
+                    }).toList());
 
             output.output(interaction.setMessage(message));
 
@@ -578,10 +584,14 @@ public class ConfigCommand implements BaseCommand {
                                         restrictions.getLimitResetWarn(),
                                         restrictions.getLimitClear(),
                                         restrictions.getLimitGiveTempRole()
-                                ).flatMap(limit -> Stream.of(
-                                        ((limit.amountUses != 0) ? (String.valueOf(limit.amountUses)) : (undefined)),
-                                        (limit.timestampPeriod != 0 ? (String.valueOf(limit.timestampPeriod)) : (undefined))
-                                )).toList()),
+                                ).flatMap(limit -> {
+                                    long amountUses = limit.amountUses;
+                                    long timestampPeriod = limit.timestampPeriod;
+                                    return Stream.of(
+                                            (amountUses != 0 ? (String.valueOf(amountUses)) : (undefined)),
+                                            (timestampPeriod != 0 ? (String.valueOf(timestampPeriod)) : (undefined))
+                                    );
+                                }).toList()),
                         interaction.getLanguageValue(groupLimits + ".request"));
 
                 user.setExcepted(getCommandName(), "groupEditLimits");
@@ -602,7 +612,8 @@ public class ConfigCommand implements BaseCommand {
             return;
         }
 
-        String commandName, duration; int countUses;
+        String commandName, duration;
+        int countUses;
         for (int index = 0; index < arguments.size(); index += 3) {
             commandName = arguments.get(index);
 
@@ -630,11 +641,20 @@ public class ConfigCommand implements BaseCommand {
                 return;
             }
 
+            long timestampPeriod = 0;
             /*
             Парсинг каждой строки. Формат
             [Название команды] [Количество использований | 0] [Длительность ограничения | 0 (или пусто)]
             Одна строка - одна команда
             */
+            Limit limit = new Limit(countUses, timestampPeriod);
+            Optional<ModerationCommand> enumCommand = ModerationCommand.ALL.getCommand(commandName);
+            if (enumCommand.isEmpty()) {
+                output.output(interaction.setLanguageValue("..."));
+                return;
+            }
+
+            group.setRestrictions(new Restrictions().setLimit(enumCommand.get(), limit));
         }
     }
 

@@ -7,11 +7,11 @@ import com.pengrad.telegrambot.request.GetChatMemberCount;
 import com.pengrad.telegrambot.request.GetUpdates;
 import com.pengrad.telegrambot.response.GetUpdatesResponse;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
@@ -61,7 +61,7 @@ public class ClearCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.CLEAR)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.CLEAR)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }

@@ -3,10 +3,10 @@ package common.commands.moderation;
 import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
@@ -59,7 +59,7 @@ public class ResetWarnsCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.RESETWARNS)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.RESETWARNS)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }
@@ -74,7 +74,7 @@ public class ResetWarnsCommand implements BaseCommand {
             user.setExcepted(getCommandName(), "accepted");
             long userId = (long) user.getValue(getCommandName(), "userId");
             String username = interactionTelegram.telegramBot
-                            .execute(new GetChatMember(interaction.getChatId(), userId)).chatMember().user().username();
+                    .execute(new GetChatMember(interaction.getChatId(), userId)).chatMember().user().username();
             output.output(interaction.setLanguageValue("resetWarns.confirmUser",
                     List.of(username)));
             return;

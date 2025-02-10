@@ -7,10 +7,10 @@ import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.UnbanChatMember;
 import com.pengrad.telegrambot.response.GetChatMemberResponse;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
@@ -86,10 +86,10 @@ public class KickCommand implements BaseCommand {
         }
 
         logger.debug(String.format("Checking the user's access rights (%s) by id(%s) in the chat by id(%s)",
-                Permissions.Permission.KICK.getPermission(), user.getUserId(), interaction.getChatId()));
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.KICK)) {
+                ModerationCommand.KICK.getCommandName(), user.getUserId(), interaction.getChatId()));
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.KICK)) {
             logger.info(String.format("The user by id(%s) doesn't have access rights (%s) in chat by id(%s)",
-                    user.getUserId(), Permissions.Permission.KICK.getPermission(), interaction.getChatId()));
+                    user.getUserId(), ModerationCommand.KICK.getCommandName(), interaction.getChatId()));
             output.output(interaction.setLanguageValue("system.error.accessDenied",
                     List.of(((InteractionTelegram) interaction).getUsername())));
             return;

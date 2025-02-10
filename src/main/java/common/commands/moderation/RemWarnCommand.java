@@ -6,11 +6,11 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
@@ -87,7 +87,7 @@ public class RemWarnCommand implements BaseCommand {
             return;
         }
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.REMWARN)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.REMWARN)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }

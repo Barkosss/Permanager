@@ -6,10 +6,10 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.models.Warning;
 import common.utils.LoggerHandler;
@@ -104,7 +104,7 @@ public class WarnCommand implements BaseCommand {
             return;
         }
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.WARN)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.WARN)) {
             try {
                 logger.debug(String.format("User by id(%s) don't has permissions (WARN) in chat by id(%s",
                         user.getUserId(), interaction.getChatId()));

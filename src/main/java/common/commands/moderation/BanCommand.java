@@ -5,11 +5,11 @@ import com.pengrad.telegrambot.request.BanChatMember;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
@@ -96,7 +96,7 @@ public class BanCommand implements BaseCommand {
             return;
         }
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.BAN)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.BAN)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied",
                     List.of(interactionTelegram.getUsername())));
             return;

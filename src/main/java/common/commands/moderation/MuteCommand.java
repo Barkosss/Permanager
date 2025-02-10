@@ -7,10 +7,10 @@ import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.RestrictChatMember;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
@@ -71,7 +71,7 @@ public class MuteCommand implements BaseCommand {
             return;
         }
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.MUTE)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.MUTE)) {
             try {
                 output.output(interaction.setLanguageValue("system.error.accessDenied", List.of(
                         interactionTelegram.getUsername()
