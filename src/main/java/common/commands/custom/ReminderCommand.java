@@ -87,7 +87,7 @@ public class ReminderCommand implements BaseCommand {
             localDate = validate.isValidDate(String.format("%s %s", arguments.getFirst(),
                     arguments.get(1)));
         } else {
-            localTime = validate.isValidTime(arguments.getFirst());
+            localTime = validate.isValidDate(arguments.getFirst());
         }
 
         // Если указано время (дата и время)

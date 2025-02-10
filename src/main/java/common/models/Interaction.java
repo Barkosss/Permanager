@@ -1,6 +1,7 @@
 package common.models;
 
-import common.exceptions.WrongArgumentsException;
+import common.commands.BaseCommand;
+import common.repositories.CommandRepository;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
@@ -38,6 +39,12 @@ public interface Interaction {
             return null;
         }
     }
+
+    Interaction setCommandRepository(CommandRepository commandRepository);
+
+    boolean hasCommand(String command);
+
+    BaseCommand getCommand(String command);
 
     Interaction setUserRepository(UserRepository userRepository);
 

@@ -1,12 +1,14 @@
 package common.models;
 
 import com.pengrad.telegrambot.model.Chat;
+import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.Message;
 
 import java.util.List;
 
 public record Content(String username, long userId, Chat chat, Message reply, String message, long createdAt,
-                      Interaction.Language language, List<String> arguments, Interaction.Platform platform) {
+                      Interaction.Language language, List<String> arguments, Interaction.Platform platform,
+                      Message tgMessage, com.pengrad.telegrambot.model.User tgUser, ChatMember tgChatMember) {
 
 
     public String toString() {

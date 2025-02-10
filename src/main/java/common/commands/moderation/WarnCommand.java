@@ -68,7 +68,7 @@ public class WarnCommand implements BaseCommand {
 
         Optional<LocalDateTime> validDate = validate.isValidDate(String.format("%s %s",
                 arguments.getFirst(), arguments.get(1)));
-        Optional<LocalDateTime> validTime = validate.isValidTime(arguments.getFirst());
+        Optional<LocalDateTime> validTime = validate.isValidDate(arguments.getFirst());
 
         if (validDate.isPresent()) {
             user.setExcepted(getCommandName(), "duration").setValue(validDate.get());

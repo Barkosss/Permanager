@@ -10,6 +10,7 @@ import common.models.Interaction;
 import common.models.InteractionConsole;
 import common.models.InteractionTelegram;
 import common.models.User;
+import common.repositories.CommandRepository;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
@@ -46,6 +47,7 @@ public class CommandHandler {
     ServerRepository serverRepository = new ServerRepository();
     ReminderRepository reminderRepository = new ReminderRepository();
     WarningRepository warningRepository = new WarningRepository();
+    CommandRepository commandRepository;
 
     InputTelegram inputTelegram = new InputTelegram();
     InputConsole inputConsole = new InputConsole();
@@ -83,6 +85,8 @@ public class CommandHandler {
                 }
             }
 
+            commandRepository = new CommandRepository(baseCommandClasses);
+
         } catch (Exception err) {
             logger.error(String.format("Command loader: %s", err));
         }
@@ -90,7 +94,8 @@ public class CommandHandler {
 
     // Запуск программы
     public void launch(Interaction interaction, LaunchPlatform platform) {
-        interaction.setUserRepository(userRepository)
+        interaction.setCommandRepository(commandRepository)
+                .setUserRepository(userRepository)
                 .setServerRepository(serverRepository)
                 .setReminderRepository(reminderRepository)
                 .setWarningRepository(warningRepository);
@@ -121,6 +126,7 @@ public class CommandHandler {
     private Thread getThreadTelegram(Interaction interaction) {
         Thread threadTelegram = new Thread(() ->
                 inputTelegram.read(interaction
+                                .setCommandRepository(commandRepository)
                                 .setUserRepository(userRepository)
                                 .setServerRepository(serverRepository)
                                 .setReminderRepository(reminderRepository)
@@ -136,6 +142,7 @@ public class CommandHandler {
         Thread threadConsole = new Thread(() ->
                 inputConsole.listener(new InteractionConsole()
                         .setChatId(0)
+                        .setCommandRepository(commandRepository)
                         .setUserRepository(userRepository)
                         .setReminderRepository(reminderRepository), this)
         );
@@ -227,7 +234,7 @@ public class CommandHandler {
 
                             case DATE: { // Проверка на дату
                                 Optional<LocalDateTime> validDate = validate.isValidDate(message);
-                                Optional<LocalDateTime> validTime = validate.isValidTime(message);
+                                Optional<LocalDateTime> validTime = validate.isValidDate(message);
 
                                 if (validDate.isPresent()) {
                                     user.setValue(validDate.get());
@@ -251,14 +258,33 @@ public class CommandHandler {
                                 break;
                             }
 
+                            case USER: { // Сохраняем объект пользователя
+                                user.setValue(content.tgUser());
+                                break;
+                            }
+
+                            case CHATMEMBER: { // Сохраняем объект участника
+                                user.setValue(content.tgChatMember());
+                                break;
+                            }
+
+                            case MESSAGE: { // Сохраняем объект сообщения
+                                user.setValue(content.tgMessage());
+                                break;
+                            }
+
+                            case REPLY: { // Сохраняем объект ответного сообщения
+                                user.setValue(content.tgMessage().replyToMessage());
+                            }
+
                             default: { // Строка или любой другой тип
                                 user.setValue(message);
                                 break;
                             }
                         }
                     }
-                    baseCommandClasses.get(interaction.getUser(interaction.getUserId()).getCommandException())
-                            .run(interaction);
+                    baseCommandClasses.get(interaction.getUser(interaction.getUserId())
+                                    .getCommandException()).run(interaction);
                 }
             }
         }

@@ -606,26 +606,35 @@ public class ConfigCommand implements BaseCommand {
         for (int index = 0; index < arguments.size(); index += 3) {
             commandName = arguments.get(index);
 
-
-            Optional<Integer> argCountUses = validate.isValidInteger(arguments.get(index + 1));
-            if (argCountUses.isPresent()) {
-                countUses = argCountUses.get();
-            } else {
-                output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectCountUses"));
+            // Проверка, существует команда с таким названием
+            if (!interaction.hasCommand(commandName)) {
+                output.output(interaction.setLanguageValue(".group.editLimits.error.commandNotFound"));
                 logger.info("");
                 return;
             }
 
-            duration = arguments.get(index + 2);
-            Optional<LocalDateTime> validDuration = validate.isValidDuration(duration);
+            // Проверка на валидность количества использований
+            Optional<Integer> argCountUses = validate.isValidInteger(arguments.get(index + 1));
+            if (argCountUses.isEmpty() || argCountUses.get() < 0) {
+                output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectCountUses"));
+                logger.info("");
+                return;
+            }
+            countUses = argCountUses.get();
 
-            if (validDuration.isEmpty()) {
+            // Проверка на валидность длительности ограничения
+            Optional<LocalDateTime> validDuration = validate.isValidDuration(arguments.get(index + 2));
+            if (validDuration.isEmpty() || validDuration.get().isBefore(LocalDateTime.now())) {
                 output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectDuration"));
                 logger.info("");
                 return;
             }
 
-
+            /*
+            Парсинг каждой строки. Формат
+            [Название команды] [Количество использований | 0] [Длительность ограничения | 0 (или пусто)]
+            Одна строка - одна команда
+            */
         }
     }
 

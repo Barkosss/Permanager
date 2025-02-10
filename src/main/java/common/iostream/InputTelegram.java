@@ -2,11 +2,9 @@ package common.iostream;
 
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Chat;
-import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.ChatMemberUpdated;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatAdministrators;
 import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.response.GetChatAdministratorsResponse;
@@ -156,7 +154,10 @@ public class InputTelegram {
                         update.message().date(), // Время отправки, пользователем, сообщения
                         interaction.getUser(interaction.getUserId()).getLanguage(),
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
-                        Interaction.Platform.TELEGRAM // Платформа, с которой пришёл контент
+                        Interaction.Platform.TELEGRAM, // Платформа, с которой пришёл контент
+                        update.message(), // Объект сообщения
+                        update.chatMember().from(), // Объект пользователя
+                        update.chatMember().newChatMember() // Объект участника
                 ));
                 logger.debug(String.format("Add new content: %s", contents.getLast()));
             }

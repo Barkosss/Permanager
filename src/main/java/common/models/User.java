@@ -231,79 +231,8 @@ public class User {
             moderators = new HashMap<>();
         }
 
-        Member member = moderators.get(chatId);
-        if (member == null) {
-            member = new Member(userId, -1, true, new Permissions());
-            moderators.put(chatId, member);
-        }
-
-        member.setPermission(permission, permissionStatus);
-        return this;
-    }
-
-    public User addWarning(Warning warning) {
-        if (this.warnings == null) {
-            this.warnings = new HashMap<>();
-        }
-
-        if (!this.warnings.containsKey(warning.getChatId())) {
-            this.warnings.put(warning.getChatId(), new HashMap<>());
-        }
-
-        this.warnings.get(warning.getChatId()).put(warning.getId(), warning);
-        return this;
-    }
-
-    public void removeWarning(long chatId, int index) {
-        if (this.warnings == null) {
-            this.warnings = new HashMap<>();
-        }
-
-        if (!this.warnings.containsKey(chatId)) {
-            this.warnings.put(chatId, new HashMap<>());
-        }
-
-        if (!this.warnings.get(chatId).containsKey(Long.parseLong(String.valueOf(index)))) {
-            return;
-        }
-
-        this.warnings.get(chatId).remove(Long.parseLong(String.valueOf(index)));
-    }
-
-    public void resetWarnings(long chatId) {
-        if (this.warnings == null) {
-            this.warnings = new HashMap<>();
-        }
-
-        if (!this.warnings.containsKey(chatId)) {
-            return;
-        }
-
-        this.warnings.get(chatId).clear();
-    }
-
-    public Map<Long, Warning> getWarnings(long chatId) {
-        if (this.warnings == null) {
-            this.warnings = new HashMap<>();
-        }
-
-        if (!this.warnings.containsKey(chatId)) {
-            this.warnings.put(chatId, new HashMap<>());
-        }
-
-        return this.warnings.get(chatId);
-    }
-
-    public User setPermission(long chatId, Permissions.Permission permission, boolean permissionStatus) {
-        if (moderators == null) {
-            moderators = new HashMap<>();
-        }
-
-        Member member = moderators.get(chatId);
-        if (member == null) {
-            member = new Member(userId, -1, true, new Permissions());
-            moderators.put(chatId, member);
-        }
+        Member member = moderators.computeIfAbsent(chatId,
+                k -> new Member(userId, -1, true, new Permissions()));
 
         member.setPermission(permission, permissionStatus);
         return this;
