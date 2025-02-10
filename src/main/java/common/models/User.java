@@ -1,5 +1,7 @@
 package common.models;
 
+import common.enums.ModerationCommand;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -212,7 +214,7 @@ public class User {
         return this.tasks.get(chatId);
     }
 
-    public boolean hasPermission(long chatId, Permissions.Permission permission) {
+    public boolean hasPermission(long chatId, ModerationCommand permission) {
         if (moderators == null) {
             moderators = new HashMap<>();
         }
@@ -226,7 +228,7 @@ public class User {
         return member.getPermissions().canPermission(permission);
     }
 
-    public User setPermission(long chatId, Permissions.Permission permission, boolean permissionStatus) {
+    public User setPermission(long chatId, ModerationCommand permission, boolean permissionStatus) {
         if (moderators == null) {
             moderators = new HashMap<>();
         }

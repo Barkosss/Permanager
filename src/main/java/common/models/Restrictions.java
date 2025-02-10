@@ -1,5 +1,7 @@
 package common.models;
 
+import common.enums.ModerationCommand;
+
 public class Restrictions {
 
     // Ограничение на использование команды кик
@@ -44,6 +46,21 @@ public class Restrictions {
         this.limitResetWarn = new Limit();
         this.limitClear = new Limit();
         this.limitGiveTempRole = new Limit();
+    }
+
+    public Restrictions setLimit(ModerationCommand moderationCommand, Limit limit) {
+        switch (moderationCommand) {
+            case KICK -> this.limitKick = limit;
+            case BAN -> this.limitBan = limit;
+            case UNBAN -> this.limitUnban = limit;
+            case MUTE -> this.limitMute = limit;
+            case UNMUTE -> this.limitUnMute = limit;
+            case WARN -> this.limitWarn = limit;
+            case REMWARN -> this.limitRemWarn = limit;
+            case RESETWARNS -> this.limitResetWarn = limit;
+            case CLEAR -> this.limitClear = limit;
+        }
+        return this;
     }
 
     // Получить ограничения на kick

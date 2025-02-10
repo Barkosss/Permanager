@@ -1,29 +1,8 @@
 package common.models;
 
+import common.enums.ModerationCommand;
+
 public class Permissions {
-
-    public enum Permission {
-        KICK("KICK"),
-        BAN("BAN"),
-        UNBAN("UNBAN"),
-        MUTE("MUTE"),
-        UNMUTE("UNMUTE"),
-        WARN("WARN"),
-        REMWARN("REMWARN"),
-        RESETWARNS("RESETWARNS"),
-        CLEAR("CLEAR"),
-        CONFIG("CONFIG");
-
-        final String permission;
-
-        Permission(String permission) {
-            this.permission = permission;
-        }
-
-        public String getPermission() {
-            return permission;
-        }
-    }
 
     // Имеет доступ к настройкам
     boolean canConfig;
@@ -67,7 +46,7 @@ public class Permissions {
         this.canClear = false;
     }
 
-    public boolean canPermission(Permission permission) {
+    public boolean canPermission(ModerationCommand permission) {
 
         if (this.canConfig) {
             return true;
@@ -87,7 +66,7 @@ public class Permissions {
         };
     }
 
-    public void setPermission(Permission permission, boolean permissionStatus) {
+    public void setPermission(ModerationCommand permission, boolean permissionStatus) {
         switch (permission) {
             case KICK -> this.canKick = permissionStatus;
             case BAN -> this.canBan = permissionStatus;
