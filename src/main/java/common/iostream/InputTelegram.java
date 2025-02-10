@@ -9,10 +9,10 @@ import com.pengrad.telegrambot.request.GetChatAdministrators;
 import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.response.GetChatAdministratorsResponse;
 import common.CommandHandler;
+import common.enums.ModerationCommand;
 import common.models.Content;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.utils.LoggerHandler;
 
 import java.util.ArrayList;
@@ -104,10 +104,10 @@ public class InputTelegram {
                     long creatorId = findChatCreator(interactionTelegram, chatId).user().id();
                     if (!interaction.existsUserById(chatId, creatorId)) {
                         interaction.createUser(chatId, findChatCreator(interactionTelegram, chatId).user().id())
-                                .setPermission(chatId, Permissions.Permission.CONFIG, true);
+                                .setPermission(chatId, ModerationCommand.CONFIG, true);
                     } else {
                         interaction.getUser(interaction.getUserId())
-                                .setPermission(chatId, Permissions.Permission.CONFIG, true);
+                                .setPermission(chatId, ModerationCommand.CONFIG, true);
                     }
                 }
 

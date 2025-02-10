@@ -46,7 +46,10 @@ public class InputConsole {
                             System.currentTimeMillis() / 1000, // Время отправки, пользователем, сообщения
                             interaction.getUser(interaction.getUserId()).getLanguage(),
                             List.of(userInputMessage.split(" ")), // Аргументы сообщения
-                            Interaction.Platform.CONSOLE // Платформа, с которой пришёл контент
+                            Interaction.Platform.CONSOLE, // Платформа, с которой пришёл контент
+                            null,
+                            null,
+                            null
                     )
                 )
             );
