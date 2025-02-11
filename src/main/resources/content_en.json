@@ -15,6 +15,25 @@
             "something": "An unknown error has occurred"
         }
     },
+    "commands": {
+        "event": "Управление мероприятиями",
+        "help": "Справочник по всем командам",
+        "reminder": "Управление напоминаниями",
+        "settings": "Пользовательские настройки",
+        "start": "Приветственное сообщение",
+        "task": "Управление задачами",
+        "warns": "Список предупреждений",
+        "ban": "Заблокировать пользователя",
+        "unban": "Разблокировать пользователя",
+        "clear": "Очистить сообщения",
+        "config": "Управление настройками бота на сервере или в беседе",
+        "kick": "Выгнать пользователя",
+        "mute": "Замьютить пользователя",
+        "unmute": "Размьютить пользователя",
+        "warn": "Выдать предупреждение",
+        "remwarn": "Снять предупреждения",
+        "resetwarns": "Сбросить предупреждения"
+    },
     "test": {
         "string": "This is the \"%MESSAGE%\" message for checking the method (String)",
         "strings": "This is the \"%MESSAGE%\" \"%MESSAGE%\" \"%MESSAGE%\" message for checking the method (Strings)",
