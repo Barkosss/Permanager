@@ -1,6 +1,7 @@
 package common.models;
 
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.repositories.CommandRepository;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
@@ -9,6 +10,7 @@ import common.repositories.WarningRepository;
 import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
+import org.springframework.boot.Banner;
 
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
@@ -68,8 +70,8 @@ public abstract class AbstractInteraction implements Interaction {
         return this.commandRepository.hasCommand(command);
     }
 
-    public BaseCommand getCommand(String command) {
-        return this.commandRepository.getCommand(command);
+    public Optional<ModerationCommand> getCommand(String command) {
+        return ModerationCommand.ALL.getCommand(command);
     }
 
     public Interaction setUserRepository(UserRepository userRepository) {
