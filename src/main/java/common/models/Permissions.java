@@ -62,7 +62,7 @@ public class Permissions {
             case REMWARN -> this.canRemWarn;
             case RESETWARNS -> this.canResetWarn;
             case CLEAR -> this.canClear;
-            case CONFIG -> this.canConfig;
+            default -> false;
         };
     }
 
