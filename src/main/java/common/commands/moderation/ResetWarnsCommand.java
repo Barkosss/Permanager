@@ -25,8 +25,8 @@ public class ResetWarnsCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Сбросить предупреждения";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override

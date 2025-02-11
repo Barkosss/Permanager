@@ -29,8 +29,8 @@ public class RemWarnCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Снять предупреждение с пользователя";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override

@@ -36,8 +36,8 @@ public class ConfigCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     public void parseArgs(Interaction interaction, User user) {
@@ -282,7 +282,7 @@ public class ConfigCommand implements BaseCommand {
             output.output(interaction.setMessage(message));
 
         } catch (Exception err) {
-            logger.error("");
+            logger.error("...");
             output.output(interaction.setLanguageValue("system.error.something"));
         }
 
@@ -609,7 +609,7 @@ public class ConfigCommand implements BaseCommand {
         List<String> arguments = interaction.getArguments();
         if (arguments.size() % 3 != 0) {
             output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectSize"));
-            logger.info("");
+            logger.info("...");
             return;
         }
 

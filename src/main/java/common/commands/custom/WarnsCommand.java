@@ -26,8 +26,8 @@ public class WarnsCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Посмотреть список предупреждений";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override

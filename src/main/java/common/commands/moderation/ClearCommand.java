@@ -31,8 +31,8 @@ public class ClearCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override

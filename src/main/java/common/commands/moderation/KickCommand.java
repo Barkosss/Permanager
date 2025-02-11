@@ -28,8 +28,8 @@ public class KickCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Выгнать пользователя";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override

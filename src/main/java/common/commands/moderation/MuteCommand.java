@@ -29,8 +29,8 @@ public class MuteCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Запретить отправку сообщений пользователю";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override

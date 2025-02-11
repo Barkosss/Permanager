@@ -29,8 +29,8 @@ public class BanCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Блокировка пользователя";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override

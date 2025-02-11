@@ -15,8 +15,8 @@ public class TestCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Test command for debug";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override
