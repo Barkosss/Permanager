@@ -13,14 +13,15 @@ import common.enums.ModerationCommand;
 import common.models.Content;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
+import common.models.User;
 import common.utils.LoggerHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InputTelegram {
-    LoggerHandler logger = new LoggerHandler();
-    OutputHandler output = new OutputHandler();
+    private final LoggerHandler logger = new LoggerHandler();
+    private final OutputHandler output = new OutputHandler();
 
     // Проверка на добавление бота в чат
     private boolean isJoinChat(InteractionTelegram interactionTelegram, ChatMemberUpdated chatMember) {
@@ -75,8 +76,7 @@ public class InputTelegram {
     // Поиск владельца чата
     private ChatMember findChatCreator(InteractionTelegram interactionTelegram, long chatId) {
         // Найти владельца чата
-        GetChatAdministratorsResponse administrators = interactionTelegram.telegramBot
-                .execute(new GetChatAdministrators(chatId));
+        GetChatAdministratorsResponse administrators = interactionTelegram.execute(new GetChatAdministrators(chatId));
 
         for (ChatMember administrator : administrators.administrators()) {
             if (administrator.status().equals(ChatMember.Status.creator)) {
@@ -91,10 +91,11 @@ public class InputTelegram {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
         // Обработка всех изменений
-        interactionTelegram.telegramBot.setUpdatesListener(updates -> {
+        interactionTelegram.getTelegramBot().setUpdatesListener(updates -> {
             List<Content> contents = new ArrayList<>();
 
             Interaction.Language language;
+            User user;
             for (Update update : updates) {
                 ChatMemberUpdated chatMember = update.myChatMember();
 
@@ -144,6 +145,7 @@ public class InputTelegram {
                         && update.message().from().languageCode().equals("ru")) ? (Interaction.Language.RUSSIAN)
                         : (Interaction.Language.ENGLISH);
 
+                user = interaction.getUser(interaction.getUserId()).setLanguage(language);
 
                 contents.add(new Content(
                         update.message().from().username(), // Username пользователя
@@ -152,7 +154,7 @@ public class InputTelegram {
                         update.message().replyToMessage(), // Информация об ответном сообщении
                         update.message().text(), // Содержимое сообщения
                         update.message().date(), // Время отправки, пользователем, сообщения
-                        interaction.getUser(interaction.getUserId()).getLanguage(),
+                        user.getLanguage(), // Язык клиента
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM, // Платформа, с которой пришёл контент
                         update.message(), // Объект сообщения

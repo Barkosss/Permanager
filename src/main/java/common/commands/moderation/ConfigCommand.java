@@ -90,8 +90,7 @@ public class ConfigCommand implements BaseCommand {
         InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
 
         // Проверяем на приватность чата
-        if (interactionTelegram.telegramBot
-                .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
+        if (interactionTelegram.execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
             logger.info(String.format("User by id(%d) use command \"%s\" in Chat by id(%d)",
                     interaction.getUserId(), getCommandName(), interaction.getChatId()));
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));

@@ -21,6 +21,10 @@ public class InteractionTelegram extends AbstractInteraction {
         return telegramBot.execute(request);
     }
 
+    public TelegramBot getTelegramBot() {
+        return telegramBot;
+    }
+
     public long getTimestampBotStart() {
         return timestampBotStart;
     }
