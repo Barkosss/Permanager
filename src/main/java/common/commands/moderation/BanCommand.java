@@ -46,8 +46,7 @@ public class BanCommand implements BaseCommand {
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
             user.setExcepted(getCommandName(), "user")
-                    .setValue(interactionTelegram.telegramBot
-                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
+                    .setValue(interactionTelegram.execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
                             .chatMember().user());
             arguments = arguments.subList(1, arguments.size());
 
@@ -113,7 +112,7 @@ public class BanCommand implements BaseCommand {
                         .setValue(interactionTelegram.getContentReply().from());
             } else if (validUserId.isPresent()) {
                 user.setExcepted(getCommandName(), "user")
-                        .setValue(interactionTelegram.telegramBot
+                        .setValue(interactionTelegram
                                 .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
                                 .chatMember().user());
             } else {

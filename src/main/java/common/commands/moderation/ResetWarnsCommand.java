@@ -73,7 +73,7 @@ public class ResetWarnsCommand implements BaseCommand {
                     user.getUserId(), interaction.getChatId()));
             user.setExcepted(getCommandName(), "accepted");
             long userId = (long) user.getValue(getCommandName(), "userId");
-            String username = interactionTelegram.telegramBot
+            String username = interactionTelegram
                     .execute(new GetChatMember(interaction.getChatId(), userId)).chatMember().user().username();
             output.output(interaction.setLanguageValue("resetWarns.confirmUser",
                     List.of(username)));
@@ -97,7 +97,7 @@ public class ResetWarnsCommand implements BaseCommand {
                 // Если надо сбросить предупреждения у конкретного пользователя
                 if (user.isExceptedKey(getCommandName(), "userId")) {
                     long userId = (long) user.getValue(getCommandName(), "userId");
-                    ChatMember chatMember = interactionTelegram.telegramBot
+                    ChatMember chatMember = interactionTelegram
                             .execute(new GetChatMember(interaction.getChatId(), userId)).chatMember();
                     try {
                         message.append(interaction.getLanguageValue("resetWarns.resetUser",

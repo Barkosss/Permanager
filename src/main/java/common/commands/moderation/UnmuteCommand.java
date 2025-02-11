@@ -47,7 +47,7 @@ public class UnmuteCommand implements BaseCommand {
         if (validUserId.isPresent()) {
             logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
             user.setExcepted(getCommandName(), "user")
-                    .setValue(interactionTelegram.telegramBot
+                    .setValue(interactionTelegram
                             .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
                             .chatMember().user());
         }
@@ -63,7 +63,7 @@ public class UnmuteCommand implements BaseCommand {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
         // Проверяем на приватность чата
-        if (interactionTelegram.telegramBot
+        if (interactionTelegram
                 .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
             logger.info(String.format("User by id(%d) use command \"%s\" in Chat by id(%d)",
                     interaction.getUserId(), getCommandName(), interaction.getChatId()));

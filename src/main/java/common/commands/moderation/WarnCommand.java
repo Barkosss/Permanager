@@ -45,7 +45,7 @@ public class WarnCommand implements BaseCommand {
 
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
-            ChatMember targetMember = interactionTelegram.telegramBot
+            ChatMember targetMember = interactionTelegram
                     .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
                     .chatMember();
 
@@ -96,7 +96,7 @@ public class WarnCommand implements BaseCommand {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
         // Проверяем на приватность чата
-        if (interactionTelegram.telegramBot
+        if (interactionTelegram
                 .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
             logger.info(String.format("User by id(%d) use command \"%s\" in Chat by id(%d)",
                     interaction.getUserId(), getCommandName(), interaction.getChatId()));

@@ -89,7 +89,7 @@ public class WarnsCommand implements BaseCommand {
 
         // Получаем userId целевого пользователя
         long targetUserId = (long) user.getValue(getCommandName(), "userId");
-        com.pengrad.telegrambot.model.User targetMember = interactionTelegram.telegramBot
+        com.pengrad.telegrambot.model.User targetMember = interactionTelegram
                 .execute(new GetChatMember(interaction.getChatId(), targetUserId)).chatMember().user();
         com.pengrad.telegrambot.model.User moderatorMember;
         StringBuilder message = new StringBuilder();
@@ -110,7 +110,7 @@ public class WarnsCommand implements BaseCommand {
             }
 
             for (Warning warning : warnings.values()) {
-                moderatorMember = interactionTelegram.telegramBot
+                moderatorMember = interactionTelegram
                         .execute(new GetChatMember(interaction.getChatId(), warning.getModeratorId()))
                         .chatMember().user();
                 warnReason = (!warning.getReason().startsWith("/skip")) ? warning.getReason()

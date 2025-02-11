@@ -45,7 +45,7 @@ public class RemWarnCommand implements BaseCommand {
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
             logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
-            ChatMember chatMember = interactionTelegram.telegramBot
+            ChatMember chatMember = interactionTelegram
                     .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember();
 
             if (chatMember != null) {

@@ -45,7 +45,7 @@ public class KickCommand implements BaseCommand {
         logger.info("Start of user validation in the chat by id(" + arguments.getFirst() + ")");
         Optional<Long> validateUserId = validate.isValidLong(arguments.getFirst());
         if (validateUserId.isPresent()) {
-            GetChatMemberResponse member = interactionTelegram.telegramBot
+            GetChatMemberResponse member = interactionTelegram
                     .execute(new GetChatMember(interaction.getChatId(), validateUserId.get()));
             if (member != null) {
                 user.setExcepted(getCommandName(), "user").setValue(member.chatMember().user());
@@ -77,7 +77,7 @@ public class KickCommand implements BaseCommand {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
         // Проверяем на приватность чата
-        if (interactionTelegram.telegramBot
+        if (interactionTelegram
                 .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
             logger.info(String.format("User by id(%d) use command \"%s\" in Chat by id(%d)",
                     interaction.getUserId(), getCommandName(), interaction.getChatId()));
