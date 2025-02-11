@@ -121,8 +121,8 @@ public class KickCommand implements BaseCommand {
 
         try {
             long userId = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user")).id();
-            interactionTelegram.telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
-            interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
+            interactionTelegram.execute(new BanChatMember(interaction.getChatId(), userId));
+            interactionTelegram.execute(new UnbanChatMember(interaction.getChatId(), userId));
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been kicked");
 
             String username = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"))

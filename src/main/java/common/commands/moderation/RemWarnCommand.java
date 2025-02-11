@@ -81,7 +81,7 @@ public class RemWarnCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
 
-        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
+        if (interactionTelegram.execute(new GetChat(interaction.getChatId())).chat().type()
                 == ChatFullInfo.Type.Private) {
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;

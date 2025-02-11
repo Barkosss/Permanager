@@ -33,13 +33,13 @@ public class OutputHandler {
 
                     // Если не получилось отправить сообщение после парсинга стиля
                     if (!sendRequest.isOk()) {
-                        interactionTelegram.telegramBot.execute(new SendMessage(interaction.getChatId(),
+                        interactionTelegram.execute(new SendMessage(interaction.getChatId(),
                                 interaction.getMessage())
                                 .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true)));
                     }
 
                 } catch (Exception err) {
-                    interactionTelegram.telegramBot.execute(new SendMessage(interaction.getChatId(),
+                    interactionTelegram.execute(new SendMessage(interaction.getChatId(),
                             interaction.getLanguageValue("system.error.something")));
                     logger.error(String.format("I couldn't send a message in the chat by id(%s): %s",
                             interactionTelegram.getChatId(), err));

@@ -90,7 +90,7 @@ public class BanCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
+        if (interactionTelegram.execute(new GetChat(interaction.getChatId())).chat().type()
                 == ChatFullInfo.Type.Private) {
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
@@ -142,7 +142,7 @@ public class BanCommand implements BaseCommand {
 
         try {
             long userId = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user")).id();
-            interactionTelegram.telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
+            interactionTelegram.execute(new BanChatMember(interaction.getChatId(), userId));
             logger.info(String.format("User by id(%s) in chat by id(%s) has been banned",
                     userId, interaction.getChatId()));
 

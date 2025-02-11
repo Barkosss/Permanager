@@ -45,7 +45,7 @@ public class WarnsCommand implements BaseCommand {
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
             logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
-            GetChatMemberResponse chatMember = interactionTelegram.telegramBot.execute(
+            GetChatMemberResponse chatMember = interactionTelegram.execute(
                     new GetChatMember(interaction.getChatId(), validUserId.get()));
             // Если такой пользователь есть в чате
             if (chatMember != null && chatMember.chatMember() != null) {

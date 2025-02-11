@@ -111,7 +111,7 @@ public class UnmuteCommand implements BaseCommand {
             com.pengrad.telegrambot.model.User targetMember
                     = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"));
             long targetMemberId = targetMember.id();
-            interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), targetMemberId,
+            interactionTelegram.execute(new RestrictChatMember(interaction.getChatId(), targetMemberId,
                     new ChatPermissions().canSendMessages(true)));
             User targetUser = interactionTelegram.findUserById(targetMemberId);
             interactionTelegram.findServerById(interaction.getChatId()).removeUserMute(targetUser);

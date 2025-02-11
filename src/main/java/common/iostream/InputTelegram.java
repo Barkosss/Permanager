@@ -32,7 +32,7 @@ public class InputTelegram {
 
         // Проверка, что бот на самом деле есть в чате
         // Так как может прилететь старый ивент
-        ChatMember botInChat = interactionTelegram.telegramBot.execute(new GetChatMember(chatMember.chat().id(),
+        ChatMember botInChat = interactionTelegram.execute(new GetChatMember(chatMember.chat().id(),
                 chatMember.oldChatMember().user().id())).chatMember();
         if (botInChat == null) {
             return false;

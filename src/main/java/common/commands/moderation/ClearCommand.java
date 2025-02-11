@@ -69,7 +69,7 @@ public class ClearCommand implements BaseCommand {
         // Парсинг аргументов
         parseArgs(interactionTelegram, user);
 
-        if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
+        if (interactionTelegram.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
             output.output(interaction.setMessage("This command is not available for private chat"));
             return;
         }
@@ -91,7 +91,7 @@ public class ClearCommand implements BaseCommand {
         }
 
         GetUpdates getUpdates = new GetUpdates().limit(100);
-        GetUpdatesResponse updatesResponse = interactionTelegram.telegramBot.execute(getUpdates);
+        GetUpdatesResponse updatesResponse = interactionTelegram.execute(getUpdates);
         List<Update> updates = updatesResponse.updates();
 
         int maxCountMessages = (Integer) user.getValue(getCommandName(), "countMessages");
@@ -115,6 +115,6 @@ public class ClearCommand implements BaseCommand {
             arrayMessagesIds[index] = messagesIds.get(index);
         }
 
-        interactionTelegram.telegramBot.execute(new DeleteMessages(interaction.getChatId(), arrayMessagesIds));
+        interactionTelegram.execute(new DeleteMessages(interaction.getChatId(), arrayMessagesIds));
     }
 }

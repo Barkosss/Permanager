@@ -48,7 +48,7 @@ public class UnbanCommand implements BaseCommand {
         InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
 
         // Проверка на тип беседы
-        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
+        if (interactionTelegram.execute(new GetChat(interaction.getChatId())).chat().type()
                 == ChatFullInfo.Type.Private) {
             output.output(interaction.setLanguageValue("system.error."));
             return;
@@ -78,7 +78,7 @@ public class UnbanCommand implements BaseCommand {
             }
             long userId = userIdValid.get();
 
-            interactionTelegram.telegramBot.execute(new UnbanChatMember(interaction.getChatId(), userId));
+            interactionTelegram.execute(new UnbanChatMember(interaction.getChatId(), userId));
             interactionTelegram.findServerById(interaction.getChatId()).removeUserBan(user);
             logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been unbaned");
             String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
