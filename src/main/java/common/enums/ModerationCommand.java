@@ -1,6 +1,5 @@
 package common.enums;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -35,7 +34,7 @@ public enum ModerationCommand {
 
     public Optional<ModerationCommand> getCommand(String value) {
         ModerationCommand cmd = lookup.get(value.toUpperCase());
-        if (cmd == null) {
+        if (cmd == null || cmd == ALL) {
             return Optional.empty();
         }
         return Optional.of(cmd);
