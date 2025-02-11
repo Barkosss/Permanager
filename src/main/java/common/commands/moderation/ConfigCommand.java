@@ -19,6 +19,7 @@ import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -612,48 +613,32 @@ public class ConfigCommand implements BaseCommand {
             return;
         }
 
-        String commandName, duration;
-        int countUses;
         for (int index = 0; index < arguments.size(); index += 3) {
-            commandName = arguments.get(index);
 
-            // Проверка, существует команда с таким названием
-            if (!interaction.hasCommand(commandName)) {
-                output.output(interaction.setLanguageValue(".group.editLimits.error.commandNotFound"));
-                logger.info("");
+            Optional<ModerationCommand> enumCommand = interaction.getCommand(arguments.get(index));
+            if (enumCommand.isEmpty()) {
+                output.output(interaction.setLanguageValue(".group.editLimits.error.moderationCommandNotFound"));
+                logger.info("...");
                 return;
             }
 
             // Проверка на валидность количества использований
-            Optional<Integer> argCountUses = validate.isValidInteger(arguments.get(index + 1));
-            if (argCountUses.isEmpty() || argCountUses.get() < 0) {
+            Optional<Integer> countUses = validate.isValidInteger(arguments.get(index + 1));
+            if (countUses.isEmpty() || countUses.get() < 0) {
                 output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectCountUses"));
-                logger.info("");
+                logger.info("...");
                 return;
             }
-            countUses = argCountUses.get();
 
             // Проверка на валидность длительности ограничения
             Optional<LocalDateTime> validDuration = validate.isValidDuration(arguments.get(index + 2));
             if (validDuration.isEmpty() || validDuration.get().isBefore(LocalDateTime.now())) {
                 output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectDuration"));
-                logger.info("");
+                logger.info("...");
                 return;
             }
-
-            long timestampPeriod = 0;
-            /*
-            Парсинг каждой строки. Формат
-            [Название команды] [Количество использований | 0] [Длительность ограничения | 0 (или пусто)]
-            Одна строка - одна команда
-            */
-            Limit limit = new Limit(countUses, timestampPeriod);
-            Optional<ModerationCommand> enumCommand = ModerationCommand.ALL.getCommand(commandName);
-            if (enumCommand.isEmpty()) {
-                output.output(interaction.setLanguageValue("..."));
-                return;
-            }
-
+            long timestampPeriod = validDuration.get().atZone(ZoneId.systemDefault()).toEpochSecond();
+            Limit limit = new Limit(countUses.get(), timestampPeriod);
             group.setRestrictions(new Restrictions().setLimit(enumCommand.get(), limit));
         }
     }
