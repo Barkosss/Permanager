@@ -24,7 +24,7 @@ public interface BaseCommand {
      *
      * @return String
      */
-    String getCommandDescription();
+    String getCommandDescription(Interaction interaction);
 
     /**
      * Обработка аргументов, которые пользователь указал в сообщении
