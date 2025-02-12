@@ -2,6 +2,7 @@ package common.commands.moderation;
 
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.DeleteMessage;
 import com.pengrad.telegrambot.request.DeleteMessages;
 import com.pengrad.telegrambot.request.GetChatMemberCount;
 import com.pengrad.telegrambot.request.GetUpdates;
@@ -52,6 +53,46 @@ public class ClearCommand implements BaseCommand {
 
     @Override
     public void run(Interaction interaction) {
+
+        if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
+            output.output(interaction.setLanguageValue(""));
+            return;
+        }
+
+        User user = interaction.getUser(interaction.getUserId());
+        InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
+
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.CLEAR)) {
+            output.output(interaction.setLanguageValue("system.error.accessDenied"));
+            return;
+        }
+
+        // Парсинг аргументов
+        parseArgs(interactionTelegram, user);
+
+        // Получаем количество удаляемых сообщений
+        if (!user.isExceptedKey(getCommandName(), "countMessages")) {
+            user.setExcepted(getCommandName(), "countMessages", InputExpectation.UserInputType.INTEGER);
+            logger.info("Clear command requested a counter argument");
+            output.output(interactionTelegram.setMessage("Enter count messages for delete"));
+            return;
+        }
+
+        long chatId = interaction.getChatId();
+        int lastMessageId = (int) interactionTelegram.getChatId();
+        int countDeleteMessages = (int) user.getValue(getCommandName(), "countMessages");
+
+        int[] arrayMessagesId = new int[countDeleteMessages];
+        for (int index = 0; index < countDeleteMessages; index++) {
+            arrayMessagesId[index] = lastMessageId - index;
+        }
+
+        interactionTelegram.execute(new DeleteMessages(chatId, arrayMessagesId));
+        output.output(interactionTelegram.setLanguageValue(""));
+        user.clearExpected(getCommandName());
+    }
+
+    public void runOld(Interaction interaction) {
 
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
             output.output(interaction.setMessage("This command is not available for the console"));
