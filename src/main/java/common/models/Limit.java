@@ -39,4 +39,9 @@ public class Limit {
     public void setTimestampPeriod(long timestampPeriod) {
         this.timestampPeriod = timestampPeriod;
     }
+
+    // For Debug
+    public String getString() {
+        return String.format("Limit={amountUses=%d, timestampPeriod=%d}", amountUses, timestampPeriod);
+    }
 }
