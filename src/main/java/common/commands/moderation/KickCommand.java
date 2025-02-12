@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class KickCommand implements BaseCommand {
-    LoggerHandler logger = new LoggerHandler();
-    OutputHandler output = new OutputHandler();
-    ValidateService validate = new ValidateService();
+    private final LoggerHandler logger = new LoggerHandler();
+    private final OutputHandler output = new OutputHandler();
+    private final ValidateService validate = new ValidateService();
 
     @Override
     public String getCommandName() {
