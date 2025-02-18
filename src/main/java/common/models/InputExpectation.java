@@ -5,16 +5,14 @@ import java.util.Map;
 
 public class InputExpectation {
 
-    public enum UserInputType {
+    enum UserInputType {
+        INT,
         STRING,
         DATE,
-        INTEGER,
-        LONG,
-        USER,
-        CHATMEMBER,
-        REPLY,
-        MESSAGE
     }
+
+    // Какой тип ожидается от пользователя
+    UserInputType userInputType;
 
     // Название команды, ожидающая ввод
     String expectedCommandName;
@@ -22,33 +20,21 @@ public class InputExpectation {
     // Какое значение требуется (ключ Map)
     String expectedInputKey;
 
-    // Ожидаемый тип
-    UserInputType userInputType;
-
     // Map значений, которые указываются пользователем
-    Map<String, Map<String, Object>> expectedInputs;
+    Map<String, Map<String, String>> expectedInputs;
 
-    public void setExpected(String expectedCommandName, String expectedInputKey, UserInputType userInputType) {
-        if (this.expectedInputs == null) {
-            this.expectedInputs = new HashMap<>();
+    public void setExpected(String expectedCommandName, String expectedInputKey) {
+        if (!this.expectedInputs.containsKey(expectedCommandName)) {
+            expectedInputs.put(expectedCommandName, new HashMap<>());
         }
-
-        Map<String, Object> excepted = this.expectedInputs.get(expectedCommandName);
-        if (excepted == null) {
-            this.expectedInputs.put(expectedCommandName, new HashMap<>());
-            excepted = this.expectedInputs.get(expectedCommandName);
+        if (!this.expectedInputs.get(expectedCommandName).containsKey(expectedInputKey)) {
+            expectedInputs.get(expectedCommandName).put(expectedCommandName, null);
         }
-
-        if (excepted.containsKey(expectedInputKey)) {
-            excepted.put(expectedCommandName, null);
-        }
-
         this.expectedCommandName = expectedCommandName;
         this.expectedInputKey = expectedInputKey;
-        this.userInputType = userInputType;
     }
 
-    public Map<String, Map<String, Object>> getExpectedInputs() {
+    public Map<String, Map<String, String>> getExpectedInputs() {
         if (expectedInputs == null) {
             expectedInputs = new HashMap<>();
         }

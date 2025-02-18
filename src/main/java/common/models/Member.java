@@ -1,45 +1,30 @@
 package common.models;
 
-import common.enums.ModerationCommand;
-
-import java.util.List;
-import java.util.Map;
-
 /**
- * Объект участника-модератора у пользователя. Объект хранит в себе:
- * user id: long ()
- * chat id: long ()
- * permissions: Permissions ()
- * restrictions: Restrictions ()
- * priority: int ()
- * statusSyncGroup: boolean ()
  *
  */
 public class Member {
 
     // Id пользователя (Telegram ID или Discord ID)
-    private long id;
-
-    // Id чата
-    private long chatId;
+    long id;
 
     // Список разрешений
-    private Permissions permissions;
+    Permissions permissions;
 
     // Список ограничений
-    private Restrictions restrictions;
+    Restrictions restrictions;
 
-    // Приоритет пользователя (Совпадает с приоритетностью группы, иначе она -1. Приоритет 0 - Владелец)
-    private int priority;
+    // Приоритет пользователя (Совпадает с приоритетностью группы, иначе она -1)
+    int priority;
 
     // Синхронизация с группой (Для обновления прав доступа)
-    private boolean statusSyncGroup;
+    boolean statusSyncGroup;
 
-    // К какой группе присоединён пользователь
-    private Group group;
+    // Объект с информацией об ожидаемых данных
+    InputExpectation userInputExpectation;
 
     // Выключить участника
-    private boolean disabled;
+    boolean disabled;
 
     // Конструктор пользователя
     public Member(long id, int priority, boolean statusSyncGroup, Permissions permissions) {
@@ -65,9 +50,8 @@ public class Member {
     }
 
     // Назначить статус синхронизации
-    public Member setStatusSyncGroup(boolean statusSyncGroup) {
+    public void setStatusSyncGroup(boolean statusSyncGroup) {
         this.statusSyncGroup = statusSyncGroup;
-        return this;
     }
 
     // Получить приоритет пользователя
@@ -76,9 +60,8 @@ public class Member {
     }
 
     // Назначить приоритет пользователю
-    public Member setPriority(int priority) {
+    public void setPriority(int priority) {
         this.priority = priority;
-        return this;
     }
 
     // Получить разрешения пользователя
@@ -87,25 +70,8 @@ public class Member {
     }
 
     // Назначить разрешения пользователю
-    public Member setPermissions(Permissions permissions) {
+    public void setPermissions(Permissions permissions) {
         this.permissions = permissions;
-        return this;
-    }
-
-    public Member setPermission(ModerationCommand permission, boolean permissionStatus) {
-        this.permissions.setPermission(permission, permissionStatus);
-        return this;
-    }
-
-    // Получить ограничения пользователя
-    public Restrictions getRestrictions() {
-        return restrictions;
-    }
-
-    // Назначить ограничения пользователю
-    public Member setRestrictions(Restrictions restrictions) {
-        this.restrictions = restrictions;
-        return this;
     }
 
     // Получить статус активности
@@ -114,8 +80,15 @@ public class Member {
     }
 
     // Изменить статус активности
-    public Member setDisabled(boolean disabled) {
+    public void setDisabled(boolean disabled) {
         this.disabled = disabled;
-        return this;
+    }
+
+    // Получить список ожидаемых входных данных
+    public InputExpectation getUserInputExpectation() {
+        if (userInputExpectation == null) {
+            userInputExpectation = new InputExpectation();
+        }
+        return userInputExpectation;
     }
 }
