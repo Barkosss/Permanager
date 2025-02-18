@@ -1,6 +1,7 @@
 package common.models;
 
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.repositories.CommandRepository;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
@@ -8,6 +9,7 @@ import common.repositories.UserRepository;
 import common.repositories.WarningRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Interaction {
 
@@ -44,7 +46,7 @@ public interface Interaction {
 
     boolean hasCommand(String command);
 
-    BaseCommand getCommand(String command);
+    Optional<ModerationCommand> getCommand(String command);
 
     Interaction setUserRepository(UserRepository userRepository);
 

@@ -2,23 +2,32 @@ package common.models;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.model.LinkPreviewOptions;
+import com.pengrad.telegrambot.response.BaseResponse;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class InteractionTelegram extends AbstractInteraction {
 
-    public TelegramBot telegramBot;
+    private final TelegramBot telegramBot;
 
-    public long timestampBotStart;
+    private final long timestampBotStart;
 
     // Объект сообщения (Для Telegram)
     SendMessage sendMessage;
 
+    public <T extends BaseRequest<T, R>, R extends BaseResponse> R execute(BaseRequest<T, R> request) {
+        return telegramBot.execute(request);
+    }
+
+    public TelegramBot getTelegramBot() {
+        return telegramBot;
+    }
+
+    public long getTimestampBotStart() {
+        return timestampBotStart;
+    }
 
     public InteractionTelegram(TelegramBot telegramBot, long timestampBotStart) {
         this.telegramBot = telegramBot;

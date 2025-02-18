@@ -6,10 +6,10 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.models.Warning;
 import common.utils.LoggerHandler;
@@ -30,8 +30,8 @@ public class WarnCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Выдать пользователю предупреждение";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class WarnCommand implements BaseCommand {
 
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
-            ChatMember targetMember = interactionTelegram.telegramBot
+            ChatMember targetMember = interactionTelegram
                     .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
                     .chatMember();
 
@@ -96,7 +96,7 @@ public class WarnCommand implements BaseCommand {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
         // Проверяем на приватность чата
-        if (interactionTelegram.telegramBot
+        if (interactionTelegram
                 .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
             logger.info(String.format("User by id(%d) use command \"%s\" in Chat by id(%d)",
                     interaction.getUserId(), getCommandName(), interaction.getChatId()));
@@ -104,7 +104,7 @@ public class WarnCommand implements BaseCommand {
             return;
         }
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.WARN)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.WARN)) {
             try {
                 logger.debug(String.format("User by id(%s) don't has permissions (WARN) in chat by id(%s",
                         user.getUserId(), interaction.getChatId()));

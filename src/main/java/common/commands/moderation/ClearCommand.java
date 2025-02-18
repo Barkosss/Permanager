@@ -7,11 +7,11 @@ import com.pengrad.telegrambot.request.GetChatMemberCount;
 import com.pengrad.telegrambot.request.GetUpdates;
 import com.pengrad.telegrambot.response.GetUpdatesResponse;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
@@ -31,8 +31,8 @@ public class ClearCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override
@@ -54,33 +54,20 @@ public class ClearCommand implements BaseCommand {
     public void run(Interaction interaction) {
 
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
-            output.output(interaction.setMessage("This command is not available for the console"));
+            output.output(interaction.setLanguageValue(""));
             return;
         }
 
         User user = interaction.getUser(interaction.getUserId());
-        InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
+        InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.CLEAR)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.CLEAR)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }
 
         // Парсинг аргументов
         parseArgs(interactionTelegram, user);
-
-        if (interactionTelegram.telegramBot.execute(new GetChatMemberCount(interaction.getChatId())).count() <= 2) {
-            output.output(interaction.setMessage("This command is not available for private chat"));
-            return;
-        }
-
-        // Получаем пользователя
-        if (interactionTelegram.getContentReply() != null) {
-            user.setExcepted(getCommandName(), "user").setValue(interactionTelegram.getContentReply());
-        }
-
-        int countMessages = 0;
-        List<Integer> messagesIds = new ArrayList<>(List.of());
 
         // Получаем количество удаляемых сообщений
         if (!user.isExceptedKey(getCommandName(), "countMessages")) {
@@ -90,31 +77,17 @@ public class ClearCommand implements BaseCommand {
             return;
         }
 
-        GetUpdates getUpdates = new GetUpdates().limit(100);
-        GetUpdatesResponse updatesResponse = interactionTelegram.telegramBot.execute(getUpdates);
-        List<Update> updates = updatesResponse.updates();
+        long chatId = interaction.getChatId();
+        int lastMessageId = (int) interactionTelegram.getChatId();
+        int countDeleteMessages = (int) user.getValue(getCommandName(), "countMessages");
 
-        int maxCountMessages = (Integer) user.getValue(getCommandName(), "countMessages");
-        for (Update update : updates) {
-            Message message = update.message();
-
-            if (user.getValue(getCommandName(), "user") != null && message.from().id() == interaction.getUserId()) {
-                messagesIds.add(message.messageId());
-            } else if (user.getValue(getCommandName(), "user") == null) {
-                messagesIds.add(message.messageId());
-            }
-            countMessages++;
-
-            if (countMessages <= maxCountMessages) {
-                break;
-            }
+        int[] arrayMessagesId = new int[countDeleteMessages];
+        for (int index = 0; index < countDeleteMessages; index++) {
+            arrayMessagesId[index] = lastMessageId - index;
         }
 
-        int[] arrayMessagesIds = new int[messagesIds.size()];
-        for (int index = 0; index < messagesIds.size(); index++) {
-            arrayMessagesIds[index] = messagesIds.get(index);
-        }
-
-        interactionTelegram.telegramBot.execute(new DeleteMessages(interaction.getChatId(), arrayMessagesIds));
+        interactionTelegram.execute(new DeleteMessages(chatId, arrayMessagesId));
+        output.output(interactionTelegram.setLanguageValue(""));
+        user.clearExpected(getCommandName());
     }
 }

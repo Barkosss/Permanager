@@ -127,8 +127,7 @@ public class SystemService {
                         }
 
                         for (User user : bans.get(unbanTimestamp)) {
-                            interaction.telegramBot
-                                    .execute(new UnbanChatMember(server.getId(), user.getUserId()));
+                            interaction.execute(new UnbanChatMember(server.getId(), user.getUserId()));
                         }
                     }
                 }
@@ -160,9 +159,8 @@ public class SystemService {
                         }
 
                         for (User user : bans.get(unbanTimestamp)) {
-                            interaction.telegramBot
-                                    .execute(new RestrictChatMember(server.getId(), user.getUserId(),
-                                            new ChatPermissions().canSendMessages(true)));
+                            interaction.execute(new RestrictChatMember(server.getId(), user.getUserId(),
+                                    new ChatPermissions().canSendMessages(true)));
                         }
                     }
                 }

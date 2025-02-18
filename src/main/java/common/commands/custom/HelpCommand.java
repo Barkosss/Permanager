@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class HelpCommand implements BaseCommand {
-    public Map<String, String> methods;
+    public Map<String, BaseCommand> methods;
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
     JSONHandler jsonHandler = new JSONHandler();
@@ -30,7 +30,7 @@ public class HelpCommand implements BaseCommand {
             // Вывести короткое название и описание команды
             for (Class<? extends BaseCommand> subclass : subclasses) {
                 BaseCommand command = subclass.getConstructor().newInstance();
-                methods.put(command.getCommandName(), command.getCommandDescription());
+                methods.put(command.getCommandName(), command);
             }
 
         } catch (Exception err) {
@@ -44,8 +44,9 @@ public class HelpCommand implements BaseCommand {
     }
 
     // Получить описание команды
-    public String getCommandDescription() {
-        return "Справка по всем командам";
+    @Override
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override
@@ -90,7 +91,9 @@ public class HelpCommand implements BaseCommand {
 
             // Вывести короткое название и описание команды
             for (String commandName : methods.keySet()) {
-                helpOutput.append(String.format("/%s - %s\n", commandName, methods.get(commandName)));
+                helpOutput.append(String.format("/%s - %s\n",
+                        commandName,
+                        methods.get(commandName).getCommandDescription(interaction)));
             }
 
             helpOutput.append("--------- HELP ---------\n\n");

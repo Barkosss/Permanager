@@ -26,8 +26,8 @@ public class WarnsCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Посмотреть список предупреждений";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class WarnsCommand implements BaseCommand {
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
             logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
-            GetChatMemberResponse chatMember = interactionTelegram.telegramBot.execute(
+            GetChatMemberResponse chatMember = interactionTelegram.execute(
                     new GetChatMember(interaction.getChatId(), validUserId.get()));
             // Если такой пользователь есть в чате
             if (chatMember != null && chatMember.chatMember() != null) {
@@ -89,7 +89,7 @@ public class WarnsCommand implements BaseCommand {
 
         // Получаем userId целевого пользователя
         long targetUserId = (long) user.getValue(getCommandName(), "userId");
-        com.pengrad.telegrambot.model.User targetMember = interactionTelegram.telegramBot
+        com.pengrad.telegrambot.model.User targetMember = interactionTelegram
                 .execute(new GetChatMember(interaction.getChatId(), targetUserId)).chatMember().user();
         com.pengrad.telegrambot.model.User moderatorMember;
         StringBuilder message = new StringBuilder();
@@ -110,7 +110,7 @@ public class WarnsCommand implements BaseCommand {
             }
 
             for (Warning warning : warnings.values()) {
-                moderatorMember = interactionTelegram.telegramBot
+                moderatorMember = interactionTelegram
                         .execute(new GetChatMember(interaction.getChatId(), warning.getModeratorId()))
                         .chatMember().user();
                 warnReason = (!warning.getReason().startsWith("/skip")) ? warning.getReason()

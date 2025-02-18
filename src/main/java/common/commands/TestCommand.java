@@ -6,8 +6,8 @@ import common.models.User;
 import common.utils.LoggerHandler;
 
 public class TestCommand implements BaseCommand {
-    LoggerHandler logger = new LoggerHandler();
-    OutputHandler output = new OutputHandler();
+    private final LoggerHandler logger = new LoggerHandler();
+    private final OutputHandler output = new OutputHandler();
 
     @Override
     public String getCommandName() {
@@ -15,8 +15,8 @@ public class TestCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Test command for debug";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override

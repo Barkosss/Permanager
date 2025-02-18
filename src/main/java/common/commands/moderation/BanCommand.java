@@ -5,11 +5,11 @@ import com.pengrad.telegrambot.request.BanChatMember;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
@@ -29,8 +29,8 @@ public class BanCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Блокировка пользователя";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override
@@ -46,8 +46,7 @@ public class BanCommand implements BaseCommand {
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
             user.setExcepted(getCommandName(), "user")
-                    .setValue(interactionTelegram.telegramBot
-                            .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
+                    .setValue(interactionTelegram.execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
                             .chatMember().user());
             arguments = arguments.subList(1, arguments.size());
 
@@ -90,13 +89,13 @@ public class BanCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
-        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
+        if (interactionTelegram.execute(new GetChat(interaction.getChatId())).chat().type()
                 == ChatFullInfo.Type.Private) {
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.BAN)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.BAN)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied",
                     List.of(interactionTelegram.getUsername())));
             return;
@@ -113,7 +112,7 @@ public class BanCommand implements BaseCommand {
                         .setValue(interactionTelegram.getContentReply().from());
             } else if (validUserId.isPresent()) {
                 user.setExcepted(getCommandName(), "user")
-                        .setValue(interactionTelegram.telegramBot
+                        .setValue(interactionTelegram
                                 .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
                                 .chatMember().user());
             } else {
@@ -142,7 +141,7 @@ public class BanCommand implements BaseCommand {
 
         try {
             long userId = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user")).id();
-            interactionTelegram.telegramBot.execute(new BanChatMember(interaction.getChatId(), userId));
+            interactionTelegram.execute(new BanChatMember(interaction.getChatId(), userId));
             logger.info(String.format("User by id(%s) in chat by id(%s) has been banned",
                     userId, interaction.getChatId()));
 

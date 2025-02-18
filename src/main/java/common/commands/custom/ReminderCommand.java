@@ -28,8 +28,9 @@ public class ReminderCommand implements BaseCommand {
     }
 
     // Получить описание команды
-    public String getCommandDescription() {
-        return "Управление напоминаниями";
+    @Override
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override

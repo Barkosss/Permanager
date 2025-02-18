@@ -158,7 +158,7 @@ public class CommandHandler {
 
             // Если сообщение в Telegram было отправлено во время offline
             if (content.platform() == Interaction.Platform.TELEGRAM
-                    && content.createdAt() < ((InteractionTelegram) interaction).timestampBotStart) {
+                    && content.createdAt() < ((InteractionTelegram) interaction).getTimestampBotStart()) {
                 continue;
             }
 

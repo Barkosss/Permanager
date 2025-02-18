@@ -24,13 +24,13 @@ public interface BaseCommand {
      *
      * @return String
      */
-    String getCommandDescription();
+    String getCommandDescription(Interaction interaction);
 
     /**
      * Обработка аргументов, которые пользователь указал в сообщении
      *
      * @param interaction Object interaction
-     * @param user Object user
+     * @param user        Object user
      */
     void parseArgs(Interaction interaction, User user);
 

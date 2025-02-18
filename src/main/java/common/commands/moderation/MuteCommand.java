@@ -7,10 +7,10 @@ import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.RestrictChatMember;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
@@ -29,8 +29,8 @@ public class MuteCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Запретить отправку сообщений пользователю";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override
@@ -47,7 +47,7 @@ public class MuteCommand implements BaseCommand {
         if (validUserId.isPresent()) {
             logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
             user.setExcepted(getCommandName(), "user")
-                    .setValue(interactionTelegram.telegramBot
+                    .setValue(interactionTelegram
                             .execute(new GetChatMember(interaction.getChatId(), validUserId.get()))
                             .chatMember().user());
         }
@@ -63,7 +63,7 @@ public class MuteCommand implements BaseCommand {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
 
         // Проверяем на приватность чата
-        if (interactionTelegram.telegramBot
+        if (interactionTelegram
                 .execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
             logger.info(String.format("User by id(%d) use command \"%s\" in Chat by id(%d)",
                     interaction.getUserId(), getCommandName(), interaction.getChatId()));
@@ -71,7 +71,7 @@ public class MuteCommand implements BaseCommand {
             return;
         }
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.MUTE)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.MUTE)) {
             try {
                 output.output(interaction.setLanguageValue("system.error.accessDenied", List.of(
                         interactionTelegram.getUsername()
@@ -112,7 +112,7 @@ public class MuteCommand implements BaseCommand {
                     = ((com.pengrad.telegrambot.model.User) user.getValue(getCommandName(), "user"));
             long targetMemberId = targetMember.id();
             User targetUser = interactionTelegram.findUserById(targetMemberId);
-            interactionTelegram.telegramBot.execute(new RestrictChatMember(interaction.getChatId(), targetMemberId,
+            interactionTelegram.execute(new RestrictChatMember(interaction.getChatId(), targetMemberId,
                     new ChatPermissions().canSendMessages(false)));
             interactionTelegram.findServerById(interaction.getChatId()).addUserMute(targetUser);
             logger.info(String.format("User by id(%s) in chat by id(%s) has been muted",

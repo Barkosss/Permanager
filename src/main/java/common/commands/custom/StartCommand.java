@@ -14,8 +14,8 @@ public class StartCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "The command to receive a welcome message";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override

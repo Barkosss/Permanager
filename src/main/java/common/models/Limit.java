@@ -3,10 +3,10 @@ package common.models;
 public class Limit {
 
     // Количество использований
-    public int amountUses;
+    public long amountUses;
 
     // Кулдан (В секундах)
-    public int timestampPeriod;
+    public long timestampPeriod;
 
     // Пустой конструктор
     public Limit() {
@@ -15,28 +15,33 @@ public class Limit {
     }
 
     // Конструктор лимита
-    public Limit(int amountUses, int timestampPeriod) {
+    public Limit(long amountUses, long timestampPeriod) {
         this.amountUses = amountUses;
         this.timestampPeriod = timestampPeriod;
     }
 
     // Получить количество использований
-    public int getAmountUses() {
+    public long getAmountUses() {
         return amountUses;
     }
 
     // Назначить количество использований
-    public void setAmountUses(int amountUses) {
+    public void setAmountUses(long amountUses) {
         this.amountUses = amountUses;
     }
 
     // Получить кулдаун
-    public int getTimestampPeriod() {
+    public long getTimestampPeriod() {
         return timestampPeriod;
     }
 
     // Назначить кулдаун
-    public void setTimestampPeriod(int timestampPeriod) {
+    public void setTimestampPeriod(long timestampPeriod) {
         this.timestampPeriod = timestampPeriod;
+    }
+
+    // For Debug
+    public String getString() {
+        return String.format("Limit={amountUses=%d, timestampPeriod=%d}", amountUses, timestampPeriod);
     }
 }

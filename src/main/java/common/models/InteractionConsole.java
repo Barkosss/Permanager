@@ -18,10 +18,10 @@ public class InteractionConsole extends AbstractInteraction {
         return this;
     }
 
+    // For Debug
     @Override
     public String toString() {
-
-        return String.format("InteractionConsole({"
-                + "Platform=%s; Message=%s; Inline=%s; Arguments=%s})", platform, message, inline, arguments);
+        return String.format("InteractionConsole={Platform=%s; Message=%s; Inline=%s; Arguments=%s}",
+                platform, message, inline, message);
     }
 }

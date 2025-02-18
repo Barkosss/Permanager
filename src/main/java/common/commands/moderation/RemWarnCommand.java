@@ -6,11 +6,11 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
+import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
-import common.models.Permissions;
 import common.models.User;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
@@ -29,8 +29,8 @@ public class RemWarnCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Снять предупреждение с пользователя";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class RemWarnCommand implements BaseCommand {
         Optional<Long> validUserId = validate.isValidLong(arguments.getFirst());
         if (validUserId.isPresent()) {
             logger.debug(String.format("User by id(%s) is valid", validUserId.get()));
-            ChatMember chatMember = interactionTelegram.telegramBot
+            ChatMember chatMember = interactionTelegram
                     .execute(new GetChatMember(interaction.getChatId(), validUserId.get())).chatMember();
 
             if (chatMember != null) {
@@ -81,13 +81,13 @@ public class RemWarnCommand implements BaseCommand {
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
 
-        if (interactionTelegram.telegramBot.execute(new GetChat(interaction.getChatId())).chat().type()
+        if (interactionTelegram.execute(new GetChat(interaction.getChatId())).chat().type()
                 == ChatFullInfo.Type.Private) {
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
 
-        if (!user.hasPermission(interaction.getChatId(), Permissions.Permission.REMWARN)) {
+        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.REMWARN)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }

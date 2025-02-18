@@ -1,5 +1,7 @@
 package common.models;
 
+import common.enums.ModerationCommand;
+
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +92,7 @@ public class Member {
         return this;
     }
 
-    public Member setPermission(Permissions.Permission permission, boolean permissionStatus) {
+    public Member setPermission(ModerationCommand permission, boolean permissionStatus) {
         this.permissions.setPermission(permission, permissionStatus);
         return this;
     }
