@@ -1,6 +1,10 @@
 package common.models;
 
+import common.iostream.OutputHandler;
+import org.hibernate.result.Output;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Task {
@@ -8,20 +12,23 @@ public class Task {
     // Идентификатор задачи
     public long id;
 
+    // Идентификатор пользователя
+    public long userId;
+
+    // Идентификатор чата
+    public long chatId;
+
     // Название задачи
     public String title;
 
     // Описание задачи
     public String description;
 
-    // Плановое время начала задачи
-    public LocalDate timeStart;
-
     // Плановое время завершения задачи
-    public LocalDate timeEnd;
+    public LocalDateTime deadLine;
 
     // Время создания задачи
-    public LocalDate createdAt;
+    public LocalDateTime createdAt;
 
     // Состояние, напомнить ли о задаче в плановое время начала
     public boolean isNeedRemind;
@@ -41,8 +48,11 @@ public class Task {
     // Состояние, выполнена ли задача
     public boolean isCompleted;
 
+
     // Конструктор задачи
-    public Task(String title, String description) {
+    public Task(long userId, long chatId, String title, String description) {
+        this.chatId = chatId;
+        this.userId = userId;
         this.title = title;
         this.description = description;
         this.isCompleted = false;
@@ -56,6 +66,26 @@ public class Task {
     // Установить ID задачи
     public void setId(long id) {
         this.id = id;
+    }
+
+    // Получить user ID задачи
+    public long getUserId() {
+        return userId;
+    }
+
+    // Установить user ID задачи
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    // Получить chat ID задачи
+    public long getChatId() {
+        return chatId;
+    }
+
+    // Установить chat ID задачи
+    public void setChatId(long chatId) {
+        this.chatId = chatId;
     }
 
     // Получить заголовок
@@ -78,33 +108,23 @@ public class Task {
         this.description = description;
     }
 
-    // Получить время начала задачи
-    public LocalDate getTimeStart() {
-        return timeStart;
-    }
-
-    // Назначить время начала задачи
-    public void setTimeStart(LocalDate timeStart) {
-        this.timeStart = timeStart;
-    }
-
     // Получить время окончания задачи
-    public LocalDate getTimeEnd() {
-        return timeEnd;
+    public LocalDateTime getDeadLine() {
+        return deadLine;
     }
 
     // Назначить время окончания задачи
-    public void setTimeEnd(LocalDate timeEnd) {
-        this.timeEnd = timeEnd;
+    public void setDeadLine(LocalDateTime deadLine) {
+        this.deadLine = deadLine;
     }
 
     // Получить дату создания
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     // Назначить дату создания
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -166,5 +186,12 @@ public class Task {
     // Ответить выполнение задачи (или отменить выполнение)
     public void setCompleted(boolean completed) {
         isCompleted = completed;
+    }
+
+    public void printTask(OutputHandler output, Interaction interaction){
+        output.output(interaction.setMessage("Task " + id + ":\n"
+                                                + "Title: " + title + "\n"
+                                                + "Description: " + description + "\n"
+                                                + "Dedline: " + deadLine + "\n"));
     }
 }
