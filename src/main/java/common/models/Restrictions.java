@@ -1,165 +1,135 @@
 package common.models;
 
-import common.enums.ModerationCommand;
-
 public class Restrictions {
 
     // Ограничение на использование команды кик
-    private Limit limitKick;
+    public Limit canKick;
 
     // Ограничение на использование команды бан
-    private Limit limitBan;
+    public Limit canBan;
 
     // Ограничение на использование команды для разбана
-    private Limit limitUnban;
+    public Limit canUnban;
 
     // Ограничение на использование команды мут
-    private Limit limitMute;
+    public Limit canMute;
 
     // Ограничение на использование команды снятия мута
-    private Limit limitUnMute;
+    public Limit canUnMute;
 
     // Ограничение на использование команды выдачу предупреждения
-    private Limit limitWarn;
+    public Limit canWarn;
 
     // Ограничение на использование команды снятия предупреждения
-    private Limit limitRemWarn;
+    public Limit canRemWarn;
 
     // Ограничение на использование команды сброса предупреждений
-    private Limit limitResetWarn;
+    public Limit canResetWarn;
 
     // Ограничение на использование команды очищать сообщение(-я) в чате
-    private Limit limitClear;
+    public Limit canClear;
 
     // Ограничение на использование команды выдавать временную роль
-    private Limit limitGiveTempRole;
+    public Limit canGiveTempRole;
 
-    // Пустой конструктор
-    public Restrictions() {
-        this.limitKick = new Limit();
-        this.limitBan = new Limit();
-        this.limitUnban = new Limit();
-        this.limitMute = new Limit();
-        this.limitUnMute = new Limit();
-        this.limitWarn = new Limit();
-        this.limitRemWarn = new Limit();
-        this.limitResetWarn = new Limit();
-        this.limitClear = new Limit();
-        this.limitGiveTempRole = new Limit();
-    }
-
-    public Restrictions setLimit(ModerationCommand moderationCommand, Limit limit) {
-        switch (moderationCommand) {
-            case KICK -> this.limitKick = limit;
-            case BAN -> this.limitBan = limit;
-            case UNBAN -> this.limitUnban = limit;
-            case MUTE -> this.limitMute = limit;
-            case UNMUTE -> this.limitUnMute = limit;
-            case WARN -> this.limitWarn = limit;
-            case REMWARN -> this.limitRemWarn = limit;
-            case RESETWARNS -> this.limitResetWarn = limit;
-            case CLEAR -> this.limitClear = limit;
-        }
-        return this;
-    }
 
     // Получить ограничения на kick
-    public Limit getLimitKick() {
-        return limitKick;
+    public Limit getCanKick() {
+        return canKick;
     }
 
     // Назначить ограничения на kick
-    public void setLimitKick(Limit limitKick) {
-        this.limitKick = limitKick;
+    public void setCanKick(Limit canKick) {
+        this.canKick = canKick;
     }
 
     // Получить ограничения на ban
-    public Limit getLimitBan() {
-        return limitBan;
+    public Limit getCanBan() {
+        return canBan;
     }
 
     // Назначить ограничения на ban
-    public void setLimitBan(Limit limitBan) {
-        this.limitBan = limitBan;
+    public void setCanBan(Limit canBan) {
+        this.canBan = canBan;
     }
 
     // Получить ограничения на unban
-    public Limit getLimitUnban() {
-        return limitUnban;
+    public Limit getCanUnban() {
+        return canUnban;
     }
 
     // Назначить ограничения на unban
-    public void setLimitUnban(Limit limitUnban) {
-        this.limitUnban = limitUnban;
+    public void setCanUnban(Limit canUnban) {
+        this.canUnban = canUnban;
     }
 
     // Получить ограничения на mute
-    public Limit getLimitMute() {
-        return limitMute;
+    public Limit getCanMute() {
+        return canMute;
     }
 
     // Назначить ограничения на mute
-    public void setLimitMute(Limit limitMute) {
-        this.limitMute = limitMute;
+    public void setCanMute(Limit canMute) {
+        this.canMute = canMute;
     }
 
     // Получить ограничения на unmute
-    public Limit getLimitUnMute() {
-        return limitUnMute;
+    public Limit getCanUnMute() {
+        return canUnMute;
     }
 
     // Назначить ограничения на unmute
-    public void setLimitUnMute(Limit limitUnMute) {
-        this.limitUnMute = limitUnMute;
+    public void setCanUnMute(Limit canUnMute) {
+        this.canUnMute = canUnMute;
     }
 
     // Получить ограничения на warn
-    public Limit getLimitWarn() {
-        return limitWarn;
+    public Limit getCanWarn() {
+        return canWarn;
     }
 
     // Назначить ограничения на warn
-    public void setLimitWarn(Limit limitWarn) {
-        this.limitWarn = limitWarn;
+    public void setCanWarn(Limit canWarn) {
+        this.canWarn = canWarn;
     }
 
     // Получить ограничения на remwarn
-    public Limit getLimitRemWarn() {
-        return limitRemWarn;
+    public Limit getCanRemWarn() {
+        return canRemWarn;
     }
 
     // Назначить ограничения на remwarn
-    public void setLimitRemWarn(Limit limitRemWarn) {
-        this.limitRemWarn = limitRemWarn;
+    public void setCanRemWarn(Limit canRemWarn) {
+        this.canRemWarn = canRemWarn;
     }
 
     // Получить ограничения на resetwarn
-    public Limit getLimitResetWarn() {
-        return limitResetWarn;
+    public Limit getCanResetWarn() {
+        return canResetWarn;
     }
 
     // Назначить ограничения на resetwarn
-    public void setLimitResetWarn(Limit limitResetWarn) {
-        this.limitResetWarn = limitResetWarn;
+    public void setCanResetWarn(Limit canResetWarn) {
+        this.canResetWarn = canResetWarn;
     }
 
     // Получить ограничения на clear
-    public Limit getLimitClear() {
-        return limitClear;
+    public Limit getCanClear() {
+        return canClear;
     }
 
     // Назначить ограничения на clear
-    public void setLimitClear(Limit limitClear) {
-        this.limitClear = limitClear;
+    public void setCanClear(Limit canClear) {
+        this.canClear = canClear;
     }
 
     // Получить ограничения на temprole
-    public Limit getLimitGiveTempRole() {
-        return limitGiveTempRole;
+    public Limit getCanGiveTempRole() {
+        return canGiveTempRole;
     }
 
     // Назначить ограничения на temprole
-    public void setLimitGiveTempRole(Limit limitGiveTempRole) {
-        this.limitGiveTempRole = limitGiveTempRole;
+    public void setCanGiveTempRole(Limit canGiveTempRole) {
+        this.canGiveTempRole = canGiveTempRole;
     }
 }
