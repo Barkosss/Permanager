@@ -35,9 +35,6 @@ public class User {
     // Список напоминаний
     Map<Long, Map<Long, Reminder>> reminders;
 
-    // <chatID: <taskID: task>>
-    Map<Long, Map<Long, Task>> tasks;
-
     // Список предупреждений
     Map<Long, Map<Long, Warning>> warnings = new HashMap<>();
 
@@ -174,44 +171,6 @@ public class User {
         }
 
         return this.reminders.get(chatId);
-    }
-
-    public User addTask(Task task) {
-        if (this.tasks == null) {
-            this.tasks = new HashMap<>();
-        }
-        if (!this.tasks.containsKey(task.getChatId())) {
-            this.tasks.put(task.getChatId(), new HashMap<>());
-        } else {
-            long taskId = 0;
-            while (this.tasks.get(task.getChatId()).containsKey(taskId)){
-                taskId++;
-            }
-            task.setId(taskId);
-        }
-        this.tasks.get(task.getChatId()).put(task.getId(), task);
-        return this;
-    }
-
-    public User removeTask(Task task) {
-        if (this.tasks == null) {
-            this.tasks = new HashMap<>();
-        }
-        if (!this.tasks.containsKey(task.getChatId())) {
-            this.tasks.put(task.getChatId(), new HashMap<>());
-        }
-        this.tasks.get(task.getChatId()).remove(task.getId());
-        return this;
-    }
-
-    public Map<Long, Task> getTasks(long chatId) {
-        if (this.tasks == null) {
-            this.tasks = new HashMap<>();
-        }
-        if (!this.tasks.containsKey(chatId)) {
-            this.tasks.put(chatId, new HashMap<>());
-        }
-        return this.tasks.get(chatId);
     }
 
     public boolean hasPermission(long chatId, ModerationCommand permission) {
