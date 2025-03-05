@@ -1,12 +1,11 @@
 package common.commands;
 
-import common.iostream.Output;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.User;
 
 public class TestCommand implements BaseCommand {
-    Output output = new OutputHandler();
+    OutputHandler output = new OutputHandler();
 
     @Override
     public String getCommandName() {
@@ -14,8 +13,13 @@ public class TestCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "Test command for debug";
+    public String getCommandDescription(Interaction interaction) {
+        return "";
+    }
+
+    @Override
+    public void parseArgs(Interaction interaction, User user) {
+
     }
 
     @Override
@@ -34,8 +38,8 @@ public class TestCommand implements BaseCommand {
             return;
         }
 
-        String firstMessage = user.getValue(getCommandName(), "firstMessage");
-        String secondMessage = user.getValue(getCommandName(), "secondMessage");
+        String firstMessage = (String) user.getValue(getCommandName(), "firstMessage");
+        String secondMessage = (String) user.getValue(getCommandName(), "secondMessage");
 
         output.output(interaction.setMessage("First message: " + firstMessage).setInline(false));
         output.output(interaction.setMessage("Second message: " + secondMessage).setInline(false));
