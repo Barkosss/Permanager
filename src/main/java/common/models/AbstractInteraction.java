@@ -14,7 +14,6 @@ import common.utils.ValidateService;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -326,7 +325,6 @@ public abstract class AbstractInteraction implements Interaction {
         LoggerHandler logger = new LoggerHandler();
         try {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            System.out.println(Arrays.toString(stackTrace));
             if (depth < 0 || depth >= stackTrace.length) {
                 logger.debug("In an AbstractInteraction with getCommandNameFromStack, the depth is greater than stackTrace or the depth is less than zero");
                 return Optional.empty();
@@ -335,8 +333,10 @@ public abstract class AbstractInteraction implements Interaction {
             Class<?> commandClass = Class.forName(stack.getClassName());
             if (BaseCommand.class.isAssignableFrom(commandClass)) {
                 BaseCommand method = (BaseCommand) commandClass.getConstructor().newInstance();
+                logger.debug("(AbstractInteraction, getCommandNameFromStack) Method is find");
                 return Optional.of(method.getCommandName());
             }
+            logger.debug("(AbstractInteraction, getCommandNameFromStack) Method isn't find");
             return Optional.empty();
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException
                  | InvocationTargetException err) {
