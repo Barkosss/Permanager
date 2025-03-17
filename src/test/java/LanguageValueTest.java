@@ -13,7 +13,8 @@ public class LanguageValueTest {
     @Test
     public void testLanguageValueStringPositive() {
         InteractionConsole interaction = new InteractionConsole();
-        interaction.setLanguageCode(Interaction.Language.RUSSIAN);
+        interaction.createUser(0, 0);
+        interaction.getUser(0).setLanguage(Interaction.Language.RUSSIAN);
         String checkMessage = interaction.getLanguageValue("test.string", List.of("Тестовая строка"));
 
         assertEquals("Это сообщение \"Тестовая строка\" для проверки метода (Строка)", checkMessage);
@@ -23,7 +24,8 @@ public class LanguageValueTest {
     @DisplayName("Проверка на переменные в несколько слов")
     public void testLanguageValueLongStringPositive() {
         InteractionConsole interaction = new InteractionConsole();
-        interaction.setLanguageCode(Interaction.Language.RUSSIAN);
+        interaction.createUser(0, 0);
+        interaction.getUser(0).setLanguage(Interaction.Language.RUSSIAN);
         String checkMessage = interaction.getLanguageValue("test.longString", List.of("Проверка длинных слов"));
 
         assertEquals("Это сообщение \"Проверка длинных слов\" для проверки поиска длинных (Длинная строка)",
@@ -33,7 +35,8 @@ public class LanguageValueTest {
     @Test
     public void testLanguageValueStringsPositive() {
         InteractionConsole interaction = new InteractionConsole();
-        interaction.setLanguageCode(Interaction.Language.RUSSIAN);
+        interaction.createUser(0, 0);
+        interaction.getUser(0).setLanguage(Interaction.Language.RUSSIAN);
         String checkMessage = interaction.getLanguageValue("test.strings", List.of("Тестовая строка #1",
                 "Тестовая строка #2",
                 "Тестовая строка #3"));
@@ -45,7 +48,8 @@ public class LanguageValueTest {
     @Test
     public void testLanguageValueIntegerPositive() {
         InteractionConsole interaction = new InteractionConsole();
-        interaction.setLanguageCode(Interaction.Language.RUSSIAN);
+        interaction.createUser(0, 0);
+        interaction.getUser(0).setLanguage(Interaction.Language.RUSSIAN);
         String checkMessage = interaction.getLanguageValue("test.int", List.of("1"));
 
         assertEquals("Это сообщение \"1\" для проверки метода (Число)", checkMessage);
@@ -54,7 +58,8 @@ public class LanguageValueTest {
     @Test
     public void testLanguageValueIntegerNegative() {
         InteractionConsole interaction = new InteractionConsole();
-        interaction.setLanguageCode(Interaction.Language.RUSSIAN);
+        interaction.createUser(0, 0);
+        interaction.getUser(0).setLanguage(Interaction.Language.RUSSIAN);
         String checkMessage = interaction.getLanguageValue("test.int", List.of("1a"));
 
         assertNotEquals("Это сообщение \"1\" для проверки метода (Число)", checkMessage);
@@ -63,7 +68,8 @@ public class LanguageValueTest {
     @Test
     public void testLanguageValueLocalDatePositive() {
         InteractionConsole interaction = new InteractionConsole();
-        interaction.setLanguageCode(Interaction.Language.RUSSIAN);
+        interaction.createUser(0, 0);
+        interaction.getUser(0).setLanguage(Interaction.Language.RUSSIAN);
         String checkMessage = interaction.getLanguageValue("test.date", List.of("29.11.2024 12:50"));
 
         assertEquals("Это сообщение \"29.11.2024 12:50\" для проверки метода (Дата)", checkMessage);
@@ -72,7 +78,8 @@ public class LanguageValueTest {
     @Test
     public void testLanguageValueLocalDateNegative() {
         InteractionConsole interaction = new InteractionConsole();
-        interaction.setLanguageCode(Interaction.Language.RUSSIAN);
+        interaction.createUser(0, 0);
+        interaction.getUser(0).setLanguage(Interaction.Language.RUSSIAN);
         String checkMessage = interaction.getLanguageValue("test.date", List.of("Local Date"));
 
         assertNotEquals("Это сообщение \"29.11.2024 12:50\" для проверки метода (Дата)", checkMessage);
