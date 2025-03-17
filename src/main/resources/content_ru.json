@@ -10,7 +10,7 @@
         "error": {
             "notAvailableCommandConsole": "Данная команда недоступна из Консоли",
             "notAvailableCommandPrivateChat": "Данная команда недоступна в приватном чате",
-            "commandNotFound": "Команда \"%COMMAND_NAME%`\" не найдена",
+            "commandNotFound": "Команда \"%COMMAND_NAME%\" не найдена",
             "accessDenied": "@%USERNAME%, у Вас недостаточно прав для использование команды",
             "something": "Произошла неизвестная ошибка"
         }

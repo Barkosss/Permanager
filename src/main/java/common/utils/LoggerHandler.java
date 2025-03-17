@@ -13,6 +13,8 @@ import java.time.format.DateTimeFormatter;
 
 public class LoggerHandler {
 
+    private static boolean debugMode;
+
     // Объект файла
     FileWriter logFile;
 
@@ -49,6 +51,10 @@ public class LoggerHandler {
         }
     }
 
+    public void setDebugMode(boolean debugMode) {
+        LoggerHandler.debugMode = debugMode;
+    }
+
     public void writeLog(String message, LoggerStatus status) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
             String log = String.format("[%s]\t[%s]\t%s", status.getName(),
@@ -77,10 +83,12 @@ public class LoggerHandler {
     }
 
     public void debug(String message) {
+        if (!debugMode) return;
         writeLog(message, LoggerStatus.DEBUG);
     }
 
     public void debug(String message, Boolean inConsole) {
+        if (!debugMode) return;
         writeLog(message, LoggerStatus.DEBUG, inConsole);
     }
 

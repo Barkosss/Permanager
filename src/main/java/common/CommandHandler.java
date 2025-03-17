@@ -205,8 +205,8 @@ public class CommandHandler {
 
                 } else {
                     // Ошибка: Команда не найдена.
-                    output.output(interaction.setMessage(String.format("Error: Command \"%s\" is not found.",
-                            commandName)).setInline(false));
+                    output.output(interaction.setLanguageValue("system.error.commandNotFound", List.of(commandName)).setInline(false));
+                    return;
                 }
 
                 // Если что-то ожидаем от пользователя

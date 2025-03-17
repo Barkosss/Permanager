@@ -329,6 +329,7 @@ public abstract class AbstractInteraction implements Interaction {
                 logger.debug("In an AbstractInteraction with getCommandNameFromStack, the depth is greater than stackTrace or the depth is less than zero");
                 return Optional.empty();
             }
+            System.out.printf("stackTrace[depth]: %s | stackTrace[3]: %s | stackTrace[4]: %s%n", stackTrace[depth], stackTrace[3], stackTrace[4]);
             StackTraceElement stack = stackTrace[depth];
             Class<?> commandClass = Class.forName(stack.getClassName());
             if (BaseCommand.class.isAssignableFrom(commandClass)) {

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "Permanager"
-version = "2.0-SNAPSHOT"
+version = "1.3-BETA"
 
 repositories {
     mavenCentral()
