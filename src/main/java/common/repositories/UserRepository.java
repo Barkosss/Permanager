@@ -1,6 +1,7 @@
 package common.repositories;
 
 import common.models.User;
+import common.exceptions.MemberNotFoundException;
 import common.utils.LoggerHandler;
 
 import java.util.HashMap;

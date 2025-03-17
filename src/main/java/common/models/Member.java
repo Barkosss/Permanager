@@ -2,6 +2,9 @@ package common.models;
 
 import common.enums.ModerationCommand;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Объект участника-модератора у пользователя. Объект хранит в себе:
  * user id: long ()

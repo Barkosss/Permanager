@@ -5,6 +5,7 @@ import common.models.Warning;
 import common.utils.LoggerHandler;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class WarningRepository {
