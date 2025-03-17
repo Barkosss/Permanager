@@ -61,8 +61,8 @@ public abstract class AbstractInteraction implements Interaction {
     Language languageCode;
 
     public Interaction setCommandRepository(CommandRepository commandRepository) {
-         this.commandRepository = commandRepository;
-         return this;
+        this.commandRepository = commandRepository;
+        return this;
     }
 
     public boolean hasCommand(String command) {
@@ -244,19 +244,10 @@ public abstract class AbstractInteraction implements Interaction {
     public String getLanguageValue(String languageKey) {
         JSONHandler jsonHandler = new JSONHandler();
         String commandName = "";
-        try {
-            StackTraceElement stack = new Exception().getStackTrace()[1];
-            BaseCommand method = (BaseCommand) Class.forName(stack.getClassName()).getConstructor().newInstance();
-            commandName = method.getCommandName();
+        Optional<String> optionalCommandName = getCommandNameFromStack(2).or(() -> getCommandNameFromStack(3));
 
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException
-                 | InvocationTargetException err) {
-            try {
-                StackTraceElement stack = new Exception().getStackTrace()[2];
-                BaseCommand method = (BaseCommand) Class.forName(stack.getClassName()).getConstructor().newInstance();
-                commandName = method.getCommandName();
-            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException
-                     | InvocationTargetException ignored) {}
+        if (optionalCommandName.isPresent()) {
+            commandName = optionalCommandName.get();
         }
 
         if (languageKey.startsWith(".")) {
@@ -311,6 +302,21 @@ public abstract class AbstractInteraction implements Interaction {
         }
 
         return message;
+    }
+
+    private Optional<String> getCommandNameFromStack(int depth) {
+        try {
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            if (depth >= stackTrace.length) {
+                return Optional.empty();
+            }
+            StackTraceElement stack = stackTrace[depth];
+            BaseCommand method = (BaseCommand) Class.forName(stack.getClassName()).getConstructor().newInstance();
+            return Optional.of(method.getCommandName());
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException
+                 | InvocationTargetException e) {
+            return Optional.empty();
+        }
     }
 
     private List<String> parseReplace(String message) {

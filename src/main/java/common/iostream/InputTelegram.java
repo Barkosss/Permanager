@@ -147,6 +147,7 @@ public class InputTelegram {
 
                 user = interaction.getUser(interaction.getUserId()).setLanguage(language);
 
+                System.out.println(update.toString());
                 contents.add(new Content(
                         update.message().from().username(), // Username пользователя
                         update.message().from().id(), // Идентификатор пользователя
@@ -158,8 +159,8 @@ public class InputTelegram {
                         List.of(update.message().text().split(" ")), // Аргументы сообщения
                         Interaction.Platform.TELEGRAM, // Платформа, с которой пришёл контент
                         update.message(), // Объект сообщения
-                        update.chatMember().from(), // Объект пользователя
-                        update.chatMember().newChatMember() // Объект участника
+                        update.message().from(), // Объект пользователя
+                        update.chatMember() // Объект участника
                 ));
                 logger.debug(String.format("Add new content: %s", contents.getLast()));
             }
@@ -174,7 +175,12 @@ public class InputTelegram {
             if (err.response() != null) {
                 logger.fatal(String.format("Telegram updates listener (Bad response): %s", err));
             } else {
-                logger.fatal(String.format("Telegram updates listener (Network): %s", err));
+                logger.fatal(String.format("Telegram updates listener (Network): %s", err), true);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    logger.fatal(String.format("Thread is not sleep: %s", err), true);
+                }
             }
         });
     }
