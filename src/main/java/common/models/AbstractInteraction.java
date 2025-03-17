@@ -14,6 +14,7 @@ import common.utils.ValidateService;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -83,14 +84,26 @@ public abstract class AbstractInteraction implements Interaction {
     }
 
     public User createUser(long chatId, long userId) {
+        if (this.userRepository == null) {
+            this.userRepository = new UserRepository();
+        }
+
         return this.userRepository.create(chatId, userId);
     }
 
     public User findUserById(long userId) {
+        if (this.userRepository == null) {
+            this.userRepository = new UserRepository();
+        }
+
         return this.userRepository.findById(chatId, userId);
     }
 
     public boolean existsUserById(long chatId, long userId) {
+        if (this.userRepository == null) {
+            this.userRepository = new UserRepository();
+        }
+
         return this.userRepository.existsById(chatId, userId);
     }
 
@@ -170,6 +183,11 @@ public abstract class AbstractInteraction implements Interaction {
     }
 
     public User getUser(long userId) {
+        if (this.userRepository == null) {
+            this.userRepository = new UserRepository();
+            this.userRepository.create(chatId, userId);
+        }
+
         return userRepository.findById(chatId, userId);
     }
 
@@ -244,7 +262,7 @@ public abstract class AbstractInteraction implements Interaction {
     public String getLanguageValue(String languageKey) {
         JSONHandler jsonHandler = new JSONHandler();
         String commandName = "";
-        Optional<String> optionalCommandName = getCommandNameFromStack(2).or(() -> getCommandNameFromStack(3));
+        Optional<String> optionalCommandName = getCommandNameFromStack(4).or(() -> getCommandNameFromStack(2));
 
         if (optionalCommandName.isPresent()) {
             commandName = optionalCommandName.get();
@@ -305,16 +323,24 @@ public abstract class AbstractInteraction implements Interaction {
     }
 
     private Optional<String> getCommandNameFromStack(int depth) {
+        LoggerHandler logger = new LoggerHandler();
         try {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            if (depth >= stackTrace.length) {
+            System.out.println(Arrays.toString(stackTrace));
+            if (depth < 0 || depth >= stackTrace.length) {
+                logger.debug("In an AbstractInteraction with getCommandNameFromStack, the depth is greater than stackTrace or the depth is less than zero");
                 return Optional.empty();
             }
             StackTraceElement stack = stackTrace[depth];
-            BaseCommand method = (BaseCommand) Class.forName(stack.getClassName()).getConstructor().newInstance();
-            return Optional.of(method.getCommandName());
+            Class<?> commandClass = Class.forName(stack.getClassName());
+            if (BaseCommand.class.isAssignableFrom(commandClass)) {
+                BaseCommand method = (BaseCommand) commandClass.getConstructor().newInstance();
+                return Optional.of(method.getCommandName());
+            }
+            return Optional.empty();
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException
-                 | InvocationTargetException e) {
+                 | InvocationTargetException err) {
+            logger.error("Error (AbstractInteraction, getCommandNameFromStack): " + err);
             return Optional.empty();
         }
     }
