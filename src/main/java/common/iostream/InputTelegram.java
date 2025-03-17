@@ -147,7 +147,6 @@ public class InputTelegram {
 
                 user = interaction.getUser(interaction.getUserId()).setLanguage(language);
 
-                System.out.println(update.toString());
                 contents.add(new Content(
                         update.message().from().username(), // Username пользователя
                         update.message().from().id(), // Идентификатор пользователя
