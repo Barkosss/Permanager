@@ -8,7 +8,6 @@ import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 import org.reflections.Reflections;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +69,6 @@ public class HelpCommand implements BaseCommand {
 
     // Вызвать основной методы команды
     public void run(Interaction interaction) {
-        System.out.println("Start command: " + LocalDateTime.now());
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
 
@@ -119,7 +117,7 @@ public class HelpCommand implements BaseCommand {
                     String.format("manual.%s.%s", commandName, interaction.getLanguageCode().getLang()));
 
             if (manual.isEmpty()) {
-                manual = interaction.getLanguageValue("help.notFoundManual");
+                manual = interaction.getLanguageValue(".notFoundManual");
             }
 
             helpOutput = new StringBuilder("--------- HELP \"").append(commandName).append("\" ---------\n");
