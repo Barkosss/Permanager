@@ -8,8 +8,6 @@ import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.utils.LoggerHandler;
 
-import java.util.List;
-
 public class OutputHandler {
     LoggerHandler logger = new LoggerHandler();
 
