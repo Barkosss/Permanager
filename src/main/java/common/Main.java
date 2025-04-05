@@ -13,39 +13,45 @@ public class Main {
 
     public static void main(String[] args) {
         LoggerHandler logger = new LoggerHandler();
-        JSONHandler jsonHandler = new JSONHandler();
-        logger.info("----------------");
+        try {
+            JSONHandler jsonHandler = new JSONHandler();
+            logger.info("----------------");
 
-        logger.setDebugMode(args[2].toLowerCase().contains("debug"));
-
-        // Загрузка команд
-        CommandHandler commandHandler = new CommandHandler();
-
-        // Настройка взаимодействий и запуск программы
-        CommandHandler.LaunchPlatform platform = commandHandler.choosePlatform(args);
-        Interaction interaction = new InteractionConsole();
-
-        if (platform == CommandHandler.LaunchPlatform.TELEGRAM || platform == CommandHandler.LaunchPlatform.ALL) {
-            TelegramBot bot = null;
-            try {
-                if (jsonHandler.check("config.json", "tokenTelegram")) {
-                    bot = new TelegramBot(String.valueOf(jsonHandler.read("config.json", "tokenTelegram")));
-                    logger.info("Telegram bot is start");
-                } else {
-                    logger.error("Telegram token isn't found", true);
-                    System.exit(404);
-                }
-
-            } catch (Exception err) {
-                logger.error(String.format("Telegram authorization: %s", err), true);
-                System.exit(511);
+            if (args.length > 2) {
+                logger.setDebugMode(args[2].toLowerCase().contains("debug"));
             }
 
-            // Сохраняем токен бота
-            interaction = new InteractionTelegram(bot, new Timestamp(System.currentTimeMillis() / 1000).getTime());
-        }
+            // Загрузка команд
+            CommandHandler commandHandler = new CommandHandler();
 
-        // Вызываем взаимодействие с нужной платформой
-        commandHandler.launch(interaction, platform);
+            // Настройка взаимодействий и запуск программы
+            CommandHandler.LaunchPlatform platform = commandHandler.choosePlatform(args);
+            Interaction interaction = new InteractionConsole();
+
+            if (platform == CommandHandler.LaunchPlatform.TELEGRAM || platform == CommandHandler.LaunchPlatform.ALL) {
+                TelegramBot bot = null;
+                try {
+                    if (jsonHandler.check("config.json", "tokenTelegram")) {
+                        bot = new TelegramBot(String.valueOf(jsonHandler.read("config.json", "tokenTelegram")));
+                        logger.info("Telegram bot is start");
+                    } else {
+                        logger.error("Telegram token isn't found", true);
+                        System.exit(404);
+                    }
+
+                } catch (Exception err) {
+                    logger.error(String.format("Telegram authorization: %s", err), true);
+                    System.exit(511);
+                }
+
+                // Сохраняем токен бота
+                interaction = new InteractionTelegram(bot, new Timestamp(System.currentTimeMillis() / 1000).getTime());
+            }
+
+            // Вызываем взаимодействие с нужной платформой
+            commandHandler.launch(interaction, platform);
+        } catch (Exception err) {
+            logger.fatal(String.format("Error with the Main class: %s", err), true);
+        }
     }
 }
