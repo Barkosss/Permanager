@@ -10,8 +10,8 @@ import java.util.Scanner;
 
 
 public class InputConsole {
-    public Scanner scanner = new Scanner(System.in);
-    public OutputHandler output = new OutputHandler();
+    private final Scanner scanner = new Scanner(System.in);
+    private final OutputHandler output = new OutputHandler();
 
     public String read() {
         return scanner.nextLine();
