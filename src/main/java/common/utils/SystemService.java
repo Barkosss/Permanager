@@ -17,10 +17,16 @@ import common.repositories.WarningRepository;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SystemService {
     OutputHandler output = new OutputHandler();
     LoggerHandler logger = new LoggerHandler();
+    
     UserRepository userRepository;
     ServerRepository serverRepository;
     ReminderRepository reminderRepository;
@@ -32,7 +38,6 @@ public class SystemService {
         reminderRepository = interaction.getReminderRepository();
         warningRepository = interaction.getWarningRepository();
 
-        long timestamp = System.currentTimeMillis() / 1000;
         // Поток для системы напоминаний
         Thread threadReminder = new Thread(() ->
                 reminderHandler(interaction)
@@ -59,116 +64,135 @@ public class SystemService {
     }
 
     private void reminderHandler(Interaction interaction) {
-        StringBuilder message;
+        AtomicReference<StringBuilder> message = new AtomicReference<>();
         long timestamp = System.currentTimeMillis() / 1000;
-        List<Reminder> reminders;
+        AtomicReference<List<Reminder>> reminders = new AtomicReference<>();
+        try (ScheduledExecutorService schedulerReminder = Executors.newSingleThreadScheduledExecutor()) {
 
-        while (true) {
             try {
-                if (reminderRepository.existsByTimestamp(timestamp)) {
-                    reminders = reminderRepository.findByTimestamp(timestamp);
 
-                    // Проходимся по всем напоминаниям
-                    for (Reminder reminder : reminders) {
-                        message = new StringBuilder();
-                        message.append(interaction.getLanguageValue("reminder.send.reminder")).append("\n");
-                        message.append(interaction.getLanguageValue("reminder.send.content", List.of(
-                                reminder.getContent()
-                        ))).append("\n");
-                        message.append(interaction.getLanguageValue("reminder.send.createdAt", List.of(
-                                reminder.getCreatedAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
-                        ))).append("\n");
+                schedulerReminder.scheduleAtFixedRate(() -> {
+                    try {
+                        if (reminderRepository.existsByTimestamp(timestamp)) {
+                            reminders.set(reminderRepository.findByTimestamp(timestamp));
 
-                        // Если имеется дата изменения сообщения
-                        if (reminder.getEditAt() != null) {
-                            message.append(interaction.getLanguageValue("reminder.send.editAt", List.of(
-                                    reminder.getEditAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
-                            ))).append("\n");
+                            // Проходимся по всем напоминаниям
+                            for (Reminder reminder : reminders.get()) {
+                                message.set(new StringBuilder());
+                                message.get().append(interaction.getLanguageValue("reminder.send.reminder")).append("\n");
+                                message.get().append(interaction.getLanguageValue("reminder.send.content", List.of(
+                                        reminder.getContent()
+                                ))).append("\n");
+                                message.get().append(interaction.getLanguageValue("reminder.send.createdAt", List.of(
+                                        reminder.getCreatedAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
+                                ))).append("\n");
+
+                                // Если имеется дата изменения сообщения
+                                if (reminder.getEditAt() != null) {
+                                    message.get().append(interaction.getLanguageValue("reminder.send.editAt", List.of(
+                                            reminder.getEditAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
+                                    ))).append("\n");
+                                }
+
+                                // Проверка на платформу
+                                if (reminder.getPlatform() == Interaction.Platform.TELEGRAM) {
+                                    output.output(((InteractionTelegram) interaction).setChatId(reminder.getChatId())
+                                            .setMessage(message.toString()));
+                                } else {
+                                    output.output(interaction.setMessage(message.toString()));
+                                }
+
+                                userRepository.findById(interaction.getChatId(), interaction.getUserId())
+                                        .removeReminder(reminder);
+                                reminderRepository.remove(timestamp/*, указать reminderID*/);
+                            }
                         }
 
-                        // Проверка на платформу
-                        if (reminder.getPlatform() == Interaction.Platform.TELEGRAM) {
-                            output.output(((InteractionTelegram) interaction).setChatId(reminder.getChatId())
-                                    .setMessage(message.toString()));
-                        } else {
-                            output.output(interaction.setMessage(message.toString()));
-                        }
-
-                        userRepository.findById(interaction.getChatId(), interaction.getUserId())
-                                .removeReminder(reminder);
-                        reminderRepository.remove(timestamp/*, указать reminderID*/);
+                    } catch (Exception err) {
+                        logger.fatal("Reminder handler (Send reminder): " + err);
                     }
-                }
-                Thread.sleep(60000);
-                timestamp = System.currentTimeMillis() / 1000;
-
+                }, 0, 1, TimeUnit.MINUTES);
             } catch (Exception err) {
-                logger.fatal("Reminder handler (Send reminder): " + err);
+                logger.fatal("Reminder handler: " + err);
+            } finally {
+                schedulerReminder.shutdown();
             }
         }
     }
 
     public void banHandler(InteractionTelegram interaction) {
-        long timestamp;
+        AtomicLong timestamp = new AtomicLong();
         List<Server> servers = serverRepository.getAll();
+        try (ScheduledExecutorService schedulerBan = Executors.newSingleThreadScheduledExecutor()) {
 
-        while (true) {
             try {
-                timestamp = System.currentTimeMillis() / 1000;
-                for (Server server : servers) {
-                    if (server.getBans().isEmpty()) {
-                        continue;
-                    }
+                schedulerBan.scheduleAtFixedRate(() -> {
+                    try {
+                        timestamp.set(System.currentTimeMillis() / 1000);
+                        for (Server server : servers) {
+                            if (server.getBans().isEmpty()) {
+                                continue;
+                            }
 
-                    Map<Long, List<User>> bans = server.getBans();
-                    for (long unbanTimestamp : bans.keySet()) {
-                        if (unbanTimestamp > timestamp) {
-                            continue;
+                            Map<Long, List<User>> bans = server.getBans();
+                            for (long unbanTimestamp : bans.keySet()) {
+                                if (unbanTimestamp > timestamp.get()) {
+                                    continue;
+                                }
+
+                                for (User user : bans.get(unbanTimestamp)) {
+                                    interaction.execute(new UnbanChatMember(server.getId(), user.getUserId()));
+                                }
+                            }
                         }
 
-                        for (User user : bans.get(unbanTimestamp)) {
-                            interaction.execute(new UnbanChatMember(server.getId(), user.getUserId()));
-                        }
+                    } catch (Exception err) {
+                        logger.fatal("Ban handler (Unban user): " + err);
                     }
-                }
-
-                Thread.sleep(60000);
-
+                }, 0, 1, TimeUnit.MINUTES);
             } catch (Exception err) {
-                logger.fatal("Ban handler (Unban user): " + err);
+                logger.fatal("Ban handler: " + err);
+            } finally {
+                schedulerBan.shutdown();
             }
         }
     }
 
     public void muteHandler(InteractionTelegram interaction) {
-        long timestamp;
+        AtomicLong timestamp = new AtomicLong();
         List<Server> servers = serverRepository.getAll();
+        try (ScheduledExecutorService schedulerMute = Executors.newSingleThreadScheduledExecutor()) {
 
-        while (true) {
             try {
-                timestamp = System.currentTimeMillis() / 1000;
-                for (Server server : servers) {
-                    if (server.getBans().isEmpty()) {
-                        continue;
-                    }
+                schedulerMute.scheduleAtFixedRate(() -> {
+                    try {
+                        timestamp.set(System.currentTimeMillis() / 1000);
+                        for (Server server : servers) {
+                            if (server.getBans().isEmpty()) {
+                                continue;
+                            }
 
-                    Map<Long, List<User>> bans = server.getBans();
-                    for (long unbanTimestamp : bans.keySet()) {
-                        if (unbanTimestamp > timestamp || unbanTimestamp == 0) {
-                            continue;
+                            Map<Long, List<User>> bans = server.getBans();
+                            for (long unbanTimestamp : bans.keySet()) {
+                                if (unbanTimestamp > timestamp.get() || unbanTimestamp == 0) {
+                                    continue;
+                                }
+
+                                for (User user : bans.get(unbanTimestamp)) {
+                                    interaction.execute(new RestrictChatMember(server.getId(), user.getUserId(),
+                                            new ChatPermissions().canSendMessages(true)));
+                                }
+                            }
                         }
 
-                        for (User user : bans.get(unbanTimestamp)) {
-                            interaction.execute(new RestrictChatMember(server.getId(), user.getUserId(),
-                                    new ChatPermissions().canSendMessages(true)));
-                        }
+                    } catch (Exception err) {
+                        logger.fatal("Ban handler (Unban user): " + err);
                     }
-                }
-
-                Thread.sleep(60000);
-
+                }, 0, 1, TimeUnit.MINUTES);
             } catch (Exception err) {
-                logger.fatal("Ban handler (Unban user): " + err);
+                logger.fatal("Ban handler: " + err);
+            } finally {
+                schedulerMute.shutdown();
             }
         }
     }
