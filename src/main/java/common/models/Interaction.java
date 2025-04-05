@@ -43,6 +43,8 @@ public interface Interaction {
 
     Interaction setCommandRepository(CommandRepository commandRepository);
 
+    CommandRepository getCommandRepository();
+
     boolean hasCommand(String command);
 
     Optional<ModerationCommand> getCommand(String command);
