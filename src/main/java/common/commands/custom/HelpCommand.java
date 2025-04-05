@@ -6,12 +6,9 @@ import common.models.Interaction;
 import common.models.User;
 import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
-import org.reflections.Reflections;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class HelpCommand implements BaseCommand {
     public Map<String, BaseCommand> methods;
@@ -19,24 +16,7 @@ public class HelpCommand implements BaseCommand {
     OutputHandler output = new OutputHandler();
     JSONHandler jsonHandler = new JSONHandler();
 
-    public HelpCommand() {
-        try {
-            this.methods = new HashMap<>();
-
-            // Получаем в Set все классы, которые имеют интерфейс BaseCommand и находятся в common.commands
-            Reflections reflections = new Reflections("common.commands");
-            Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
-
-            // Вывести короткое название и описание команды
-            for (Class<? extends BaseCommand> subclass : subclasses) {
-                BaseCommand command = subclass.getConstructor().newInstance();
-                methods.put(command.getCommandName(), command);
-            }
-
-        } catch (Exception err) {
-            logger.fatal(String.format("Help constructors: %s", err));
-        }
-    }
+    public HelpCommand() {}
 
     // Получить короткое название команды
     public String getCommandName() {
@@ -69,6 +49,8 @@ public class HelpCommand implements BaseCommand {
 
     // Вызвать основной методы команды
     public void run(Interaction interaction) {
+        this.methods = interaction.getCommandRepository().getCommands();
+
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
 
