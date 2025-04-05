@@ -65,6 +65,10 @@ public abstract class AbstractInteraction implements Interaction {
         return this;
     }
 
+    public CommandRepository getCommandRepository() {
+        return commandRepository;
+    }
+
     public boolean hasCommand(String command) {
         return this.commandRepository.hasCommand(command);
     }
