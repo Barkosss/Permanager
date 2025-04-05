@@ -102,9 +102,9 @@ public class InputTelegram {
                 long chatId = update.message().chat().id();
                 if (update.message().chat().type() != Chat.Type.Private) {
                     // Проверка на администратора канала
-                    long creatorId = findChatCreator(interactionTelegram, chatId).user().id();
-                    if (!interaction.existsUserById(chatId, creatorId)) {
-                        interaction.createUser(chatId, findChatCreator(interactionTelegram, chatId).user().id())
+                    ChatMember creator = findChatCreator(interactionTelegram, chatId);
+                    if (creator != null && !interaction.existsUserById(chatId, creator.user().id())) {
+                        interaction.createUser(chatId, creator.user().id())
                                 .setPermission(chatId, ModerationCommand.CONFIG, true);
                     } else {
                         interaction.getUser(interaction.getUserId())
@@ -116,13 +116,13 @@ public class InputTelegram {
                 // Проверка, добавили ли бота в беседу
                 if (chatMember != null && isJoinChat(interactionTelegram, chatMember)) {
                     ChatMember creator = findChatCreator(interactionTelegram, chatId);
+                    String creatorUsername = (creator == null) ? ("Undefined") : (creator.user().username());
 
                     output.output(interactionTelegram
                             .setChatId(chatId)
                             .setMessage(String.format(
-                                    "Вы добавили меня в чат: %d. Воспользуйтесь командой /start для ознакомления."
-                                            + "Создатель: @%s",
-                                    chatId, creator.user().username()
+                                    "Вы добавили меня в чат: %d. Воспользуйтесь командой /start для ознакомления.\n"
+                                            + "Создатель: @%s", chatId, creatorUsername
                             )));
 
 
