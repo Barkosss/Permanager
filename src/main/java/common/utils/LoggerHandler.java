@@ -10,6 +10,16 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Как выбирать уровень?
+
+ * Обычная успешная работа? — INFO
+ * Неправильный вход пользователя? — WARN
+ * Сломалась важная операция (но не всё приложение)? — ERROR
+ * Приложение не может работать дальше? — FATAL
+ * Тебе нужно отследить, что пошло не так? — DEBUG
+ * Хочешь следить за каждым шагом метода? — TRACE
+ */
 
 public class LoggerHandler {
 
