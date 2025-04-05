@@ -5,7 +5,7 @@ public class Limit {
     // Количество использований
     public long amountUses;
 
-    // Кулдан (В секундах)
+    // Время восстановления (В секундах)
     public long timestampPeriod;
 
     // Пустой конструктор
