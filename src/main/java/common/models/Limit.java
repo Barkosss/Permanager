@@ -30,12 +30,12 @@ public class Limit {
         this.amountUses = amountUses;
     }
 
-    // Получить кулдаун
+    // Получить время перезарядки
     public long getTimestampPeriod() {
         return timestampPeriod;
     }
 
-    // Назначить кулдаун
+    // Назначить время перезарядки
     public void setTimestampPeriod(long timestampPeriod) {
         this.timestampPeriod = timestampPeriod;
     }
