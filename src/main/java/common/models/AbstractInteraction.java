@@ -261,7 +261,7 @@ public abstract class AbstractInteraction implements Interaction {
     public String getLanguageValue(String languageKey) {
         JSONHandler jsonHandler = new JSONHandler();
         String commandName = "";
-        Optional<String> optionalCommandName = getCommandNameFromStack(4).or(() -> getCommandNameFromStack(2));
+        Optional<String> optionalCommandName = getCommandNameFromStack(3).or(() -> getCommandNameFromStack(4));
 
         if (optionalCommandName.isPresent()) {
             commandName = optionalCommandName.get();
@@ -329,7 +329,6 @@ public abstract class AbstractInteraction implements Interaction {
                 logger.debug("In an AbstractInteraction with getCommandNameFromStack, the depth is greater than stackTrace or the depth is less than zero");
                 return Optional.empty();
             }
-            System.out.printf("stackTrace[depth]: %s | stackTrace[3]: %s | stackTrace[4]: %s%n", stackTrace[depth], stackTrace[3], stackTrace[4]);
             StackTraceElement stack = stackTrace[depth];
             Class<?> commandClass = Class.forName(stack.getClassName());
             if (BaseCommand.class.isAssignableFrom(commandClass)) {
