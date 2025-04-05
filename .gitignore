@@ -4,5 +4,6 @@ build
 *.jar
 gradlew
 gradlew.bat
-/src/main/resources/config.json4
+/src/main/resources/config.json
+/src/main/resources/logs
 /out
