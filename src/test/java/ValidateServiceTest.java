@@ -122,7 +122,7 @@ public class ValidateServiceTest {
     @Test
     @DisplayName("Positively, because the string will be formatted according to the desired format")
     public void thirdTestIsValidTimeZonePositive() {
-        String stringTimeZone = "eUrope/moScow";
+        String stringTimeZone = "Europe/moScow";
 
         Optional<TimeZone> parseTimeZone = validate.isValidTimeZone(stringTimeZone);
         assertTrue(parseTimeZone.isPresent());
