@@ -34,6 +34,9 @@ public class OutputHandler {
                         interactionTelegram.execute(new SendMessage(interaction.getChatId(),
                                 interaction.getMessage())
                                 .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true)));
+                        logger.debug(String.format("The message was sent to the chat by id(%s) without formatting", interactionTelegram.getChatId()));
+                    } else {
+                        logger.debug(String.format("The message was sent to the chat by id(%s) with formatting", interactionTelegram.getChatId()));
                     }
 
                 } catch (Exception err) {
@@ -49,8 +52,10 @@ public class OutputHandler {
                 boolean inline = interaction.getInline();
                 if (inline) {
                     System.out.print(interaction.getMessage());
+                    logger.debug(String.format("Console output (inline): %s", interaction.getMessage()));
                 } else {
                     System.out.println(interaction.getMessage());
+                    logger.debug(String.format("Console output (newline): %s", interaction.getMessage()));
                 }
                 break;
             }
