@@ -17,10 +17,12 @@ public class UserRepository {
     // Создать пользователя в памяти
     public User create(long chatId, long userId) {
         if (!users.containsKey(chatId)) {
+            logger.debug(String.format("[create] Chat by id (%s) is add in users (Map<>)", chatId));
             users.put(chatId, new HashMap<>());
         }
 
         if (users.get(chatId).containsKey(userId)) {
+            logger.debug(String.format("User by id(%s) is found in chat by id(%s)", userId, chatId));
             return users.get(chatId).get(userId);
         }
 
@@ -38,6 +40,7 @@ public class UserRepository {
     // Найти пользователя по ID
     public User findById(long chatId, long userId) {
         if (!users.containsKey(chatId)) {
+            logger.debug(String.format("[findById] Chat by id (%s) is add in users (Map<>)", chatId));
             users.put(chatId, new HashMap<>());
         }
 

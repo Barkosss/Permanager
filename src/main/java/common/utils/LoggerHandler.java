@@ -62,6 +62,7 @@ public class LoggerHandler {
     }
 
     public void setDebugMode(boolean debugMode) {
+        writeLog("Debug mode is enable", LoggerStatus.DEBUG);
         LoggerHandler.debugMode = debugMode;
     }
 

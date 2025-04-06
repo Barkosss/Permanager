@@ -50,6 +50,7 @@ public class HelpCommand implements BaseCommand {
     // Вызвать основной методы команды
     public void run(Interaction interaction) {
         this.methods = interaction.getCommandRepository().getCommands();
+        logger.debug("List of methods (classes, commandRepository) was received");
 
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
@@ -80,6 +81,7 @@ public class HelpCommand implements BaseCommand {
 
             helpOutput.append("--------- HELP ---------\n\n");
             helpOutput.append(interaction.getLanguageValue(".commandHelp"));
+            logger.debug("The reference material has been generated");
 
             output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
         } catch (Exception err) {

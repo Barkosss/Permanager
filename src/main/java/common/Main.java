@@ -15,10 +15,10 @@ public class Main {
         LoggerHandler logger = new LoggerHandler();
         try {
             JSONHandler jsonHandler = new JSONHandler();
-            logger.info("----------------");
+            logger.info("--------".repeat(2) + " BOT IS STARTED " + "--------".repeat(2));
 
-            if (args.length > 2) {
-                logger.setDebugMode(args[2].toLowerCase().contains("debug"));
+            if (args.length >= 2) {
+                logger.setDebugMode(args[1].toLowerCase().contains("debug"));
             }
 
             // Загрузка команд
