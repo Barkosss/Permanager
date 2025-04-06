@@ -56,17 +56,6 @@ public class Group {
         this.permissions = permissions;
     }
 
-    // Получить ограничения группы
-    public Restrictions getRestrictions() {
-        return restrictions;
-    }
-
-    // Назначить ограничения группы
-    public Group setRestrictions(Restrictions restrictions) {
-        this.restrictions = restrictions;
-        return this;
-    }
-
     // Получить список пользователей
     public List<Member> getMembers() {
         return members;
