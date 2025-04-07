@@ -1,6 +1,5 @@
 package common.models;
 
-import common.commands.custom.HelpCommand;
 import common.repositories.CommandRepository;
 
 import java.util.HashMap;
