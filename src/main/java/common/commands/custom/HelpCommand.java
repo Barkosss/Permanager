@@ -32,17 +32,21 @@ public class HelpCommand implements BaseCommand {
         List<String> arguments = interaction.getArguments();
 
         if (arguments.isEmpty()) {
+            logger.debug("No arguments passed for the help command");
             return;
         }
 
         String commandName = arguments.getFirst().toLowerCase();
+        logger.debug("Parsing arguments: " + commandName);
 
         if (jsonHandler.check("manual_ru.json", String.format("manual.%s", commandName))) {
             user.setExcepted(getCommandName(), "commandName").setValue(commandName);
+            logger.debug("Manual found for command: " + commandName);
             return;
         }
         user.setExcepted(getCommandName(), "commandName")
                 .setValue(interaction.getLanguageValue(".manualNotFound"));
+        logger.error("Manual not found for command: " + commandName);
     }
 
     // Вызвать основной методы команды
@@ -56,6 +60,7 @@ public class HelpCommand implements BaseCommand {
         boolean isCommand = false;
         if (!interaction.getArguments().isEmpty()) {
             isCommand = !((String) user.getValue(getCommandName(), "commandName")).isEmpty();
+            logger.debug("Is command requested: " + isCommand);
         }
 
         if (isCommand) {
@@ -82,11 +87,12 @@ public class HelpCommand implements BaseCommand {
             logger.debug("The reference material has been generated");
 
             output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
+            logger.debug("Help output sent to user");
         } catch (Exception err) {
-            logger.error(String.format("Error (helpCommand, help): %s", err));
-
+            logger.error("Error generating help output: " + err.getMessage());
         } finally {
             user.clearExpected(getCommandName());
+            logger.debug("Cleared expected value for user");
         }
     }
 
@@ -100,6 +106,7 @@ public class HelpCommand implements BaseCommand {
 
             if (manual.isEmpty()) {
                 manual = interaction.getLanguageValue(".notFoundManual");
+                logger.warning("Manual for command '" + commandName + "' is empty, showing default message.");
             }
 
             helpOutput = new StringBuilder("--------- HELP \"").append(commandName).append("\" ---------\n");
@@ -107,11 +114,12 @@ public class HelpCommand implements BaseCommand {
             helpOutput.append("\n--------- HELP \"").append(commandName).append("\" ---------\n");
 
             output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
+            logger.debug("Manual output sent to user for command: " + commandName);
         } catch (Exception err) {
-            logger.error(String.format("Error (helpCommand, manual): %s", err));
-
+            logger.error("Error generating manual for command: " + err.getMessage());
         } finally {
             user.clearExpected(getCommandName());
+            logger.debug("Cleared expected value for user after manual");
         }
     }
 }
