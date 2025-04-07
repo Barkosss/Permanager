@@ -85,6 +85,14 @@ public class LoggerHandler {
         writeLog(message, LoggerStatus.INFO);
     }
 
+    public void newLine() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
+            writer.newLine();  // Переход на новую строку
+        } catch (IOException err) {
+            System.out.printf("New line in log isn't write in \"%s\" file\n", logFileName);
+        }
+    }
+
     public void info(String message) {
         writeLog(message, LoggerStatus.INFO);
     }
@@ -121,10 +129,6 @@ public class LoggerHandler {
 
     public void trace(String message) {
         writeLog(message, LoggerStatus.TRACE);
-    }
-
-    public void trace(String message, Boolean inConsole) {
-        writeLog(message, LoggerStatus.TRACE, inConsole);
     }
 
     public void fatal(String message) {

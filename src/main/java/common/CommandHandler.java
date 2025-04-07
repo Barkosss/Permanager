@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class CommandHandler {
@@ -132,7 +135,11 @@ public class CommandHandler {
         }
 
         logger.info("System fully initialized.");
-        System.out.println("Program is launch");
+        try (ScheduledExecutorService schedulerDeleteMessage = Executors.newSingleThreadScheduledExecutor()) {
+            schedulerDeleteMessage.schedule(() -> System.out.println("Program is launch"), 5, TimeUnit.SECONDS);
+        } catch (Exception err) {
+            logger.error("Failed to schedule message program is launch: " + err.getMessage());
+        }
     }
 
     @NotNull

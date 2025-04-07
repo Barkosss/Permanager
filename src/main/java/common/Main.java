@@ -13,11 +13,11 @@ public class Main {
 
     public static void main(String[] args) {
         LoggerHandler logger = new LoggerHandler();
-        logger.debug("Main.main() started");
 
         try {
+            logger.newLine();
             JSONHandler jsonHandler = new JSONHandler();
-            logger.info("--------".repeat(2) + " BOT IS STARTED " + "--------".repeat(2));
+            logger.info("--------".repeat(3) + " BOT IS STARTED " + "--------".repeat(3));
 
             if (args.length >= 2) {
                 logger.debug("Checking args for debug mode: " + args[1]);
@@ -41,9 +41,7 @@ public class Main {
                 try {
                     logger.debug("Checking tokenTelegram in config.json");
                     if (jsonHandler.check("config.json", "tokenTelegram")) {
-                        String token = String.valueOf(jsonHandler.read("config.json", "tokenTelegram"));
-                        logger.debug("Token read successfully: " + token);
-                        bot = new TelegramBot(token);
+                        bot = new TelegramBot(String.valueOf(jsonHandler.read("config.json", "tokenTelegram")));
                         logger.info("Telegram bot is start");
                     } else {
                         logger.error("Telegram token isn't found", true);
