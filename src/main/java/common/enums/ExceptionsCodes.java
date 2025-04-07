@@ -26,6 +26,10 @@ public enum ExceptionsCodes {
      */
     COMMAND_NOT_FOUND(405),
     /**
+     * Неизвестная ошибка
+     */
+    UNKNOWN_ERROR (500),
+    /**
      * Разрешение не найдено
      */
     PERMISSIONS_NOT_FOUND(501);
