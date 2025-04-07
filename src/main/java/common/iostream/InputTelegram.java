@@ -97,6 +97,11 @@ public class InputTelegram {
             Interaction.Language language;
             User user;
             for (Update update : updates) {
+                if (update.message() == null) {
+                    System.out.println(update);
+                    continue;
+                }
+
                 ChatMemberUpdated chatMember = update.myChatMember();
 
                 long chatId = update.message().chat().id();
