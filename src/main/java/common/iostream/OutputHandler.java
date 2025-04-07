@@ -3,13 +3,16 @@ package common.iostream;
 import com.pengrad.telegrambot.model.LinkPreviewOptions;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.DeleteMessage;
-import com.pengrad.telegrambot.request.DeleteMessages;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.Server;
 import common.utils.LoggerHandler;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class OutputHandler {
     LoggerHandler logger = new LoggerHandler();
@@ -44,9 +47,17 @@ public class OutputHandler {
                         logger.debug(String.format("The message was sent to the chat by id(%s) with formatting", interactionTelegram.getChatId()));
                     }
 
+                    long durationDeleteSuccessfulMessage = server.getDurationDeleteSuccessfulMessage();
+                    //long durationDeleteErrorMessage = server.getDurationDeleteErrorMessage();
+
                     // Удаление успешное сообщение через время
-                    if (server.getDurationDeleteSuccessfulMessage() > 0) {
-                        interactionTelegram.execute(new DeleteMessage(interactionTelegram.getChatId(),messageId));
+                    if (durationDeleteSuccessfulMessage > 0) {
+                        System.out.println("Delete message");
+                        try (ScheduledExecutorService schedulerDeleteMessage = Executors.newSingleThreadScheduledExecutor()) {
+                            schedulerDeleteMessage.schedule(() -> {
+                                interactionTelegram.execute(new DeleteMessage(interactionTelegram.getChatId(), messageId));
+                            }, durationDeleteSuccessfulMessage, TimeUnit.SECONDS);
+                        }
                     }
 
                 } catch (Exception err) {
