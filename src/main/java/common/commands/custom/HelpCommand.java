@@ -3,6 +3,7 @@ package common.commands.custom;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
+import common.models.InteractionTelegram;
 import common.models.User;
 import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
@@ -15,8 +16,6 @@ public class HelpCommand implements BaseCommand {
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
     JSONHandler jsonHandler = new JSONHandler();
-
-    public HelpCommand() {}
 
     // Получить короткое название команды
     public String getCommandName() {
