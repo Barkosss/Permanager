@@ -1,5 +1,6 @@
 package common.iostream;
 
+import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.LinkPreviewOptions;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.DeleteMessage;
@@ -19,67 +20,83 @@ public class OutputHandler {
 
     public void output(Interaction interaction) {
         switch (interaction.getPlatform()) {
+            case TELEGRAM -> handlerTelegramOutput((InteractionTelegram) interaction);
+            case CONSOLE -> handlerConsoleOutput(interaction);
+        }
+    }
 
-            case TELEGRAM: {
-                InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
-                SendMessage sendMessage = interactionTelegram.getSendMessage();
+    public void handlerTelegramOutput(InteractionTelegram interaction) {
+        SendMessage sendMessage = interaction.getSendMessage();
 
-                // Если объект не создан, то принудительно выйти, то есть не отправить сообщение
-                if (sendMessage == null) {
-                    return;
-                }
+        // Если объект не создан, то принудительно выйти, то есть не отправить сообщение
+        if (sendMessage == null) {
+            logger.debug("SendMessage was null. Aborting output.");
+            return;
+        }
 
-                // Отправляем сообщение пользователю в Telegram
+        // Отправляем сообщение пользователю в Telegram
+        try {
+            sendMessage.parseMode(ParseMode.Markdown)
+                    .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true));
+
+            SendResponse sendRequest = interaction.execute(sendMessage);
+            Server server = interaction.findServerById(interaction.getChatId());
+
+            // Если не получилось отправить сообщение после парсинга стиля
+            if (!sendRequest.isOk()) {
+                SendMessage request = new SendMessage(interaction.getChatId(), interaction.getMessage())
+                        .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true));
+                interaction.execute(request);
+                logger.debug(String.format("The message was sent to the chat by id(%s) without formatting",
+                        interaction.getChatId()));
+            } else {
+                logger.debug(String.format("The message was sent to the chat by id(%s) with formatting",
+                        interaction.getChatId()));
+            }
+
+            int messageId = (sendRequest.message() != null) ? (sendRequest.message().messageId()) : -1;
+
+            // Удалить сообщение через время
+            if (messageId != -1) {
+                scheduleMessageDeleter(interaction.getTelegramBot(), server,
+                        interaction.getChatId(), messageId, interaction.getOutputStatus());
+            }
+
+        } catch (Exception err) {
+            interaction.execute(new SendMessage(interaction.getChatId(),
+                    interaction.getLanguageValue("system.error.something")));
+            logger.error(String.format("Failed to send message to chat by id(%s): %s",
+                    interaction.getChatId(), err));
+        }
+    }
+
+    public void handlerConsoleOutput(Interaction interaction) {
+        String message = interaction.getMessage();
+        if (interaction.getInline()) {
+            System.out.print(message);
+            logger.debug("Console output (inline): %s" + message);
+        } else {
+            System.out.println(message);
+            logger.debug("Console output (newline): %s" + message);
+        }
+    }
+
+    private void scheduleMessageDeleter(TelegramBot telegramBot, Server server, long chatId,
+                                        int messageId, InteractionTelegram.OutputStatus status) {
+        long durationDeleteMessage = server.getDurationDeleteMessage(status);
+
+        if (durationDeleteMessage == 0) return;
+
+        // Удаление успешное сообщение через время
+        try (ScheduledExecutorService schedulerDeleteMessage = Executors.newSingleThreadScheduledExecutor()) {
+            schedulerDeleteMessage.schedule(() -> {
                 try {
-                    SendResponse sendRequest = interactionTelegram
-                            .execute(sendMessage.parseMode(ParseMode.Markdown)
-                                    .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true)));
-                    int messageId = sendRequest.message().messageId();
-                    Server server = interactionTelegram.findServerById(interactionTelegram.getChatId());
-
-                    // Если не получилось отправить сообщение после парсинга стиля
-                    if (!sendRequest.isOk()) {
-                        interactionTelegram.execute(new SendMessage(interaction.getChatId(),
-                                interaction.getMessage())
-                                .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true)));
-                        logger.debug(String.format("The message was sent to the chat by id(%s) without formatting", interactionTelegram.getChatId()));
-                    } else {
-                        logger.debug(String.format("The message was sent to the chat by id(%s) with formatting", interactionTelegram.getChatId()));
-                    }
-
-                    long durationDeleteSuccessfulMessage = server.getDurationDeleteSuccessfulMessage();
-                    //long durationDeleteErrorMessage = server.getDurationDeleteErrorMessage();
-
-                    // Удаление успешное сообщение через время
-                    if (durationDeleteSuccessfulMessage > 0) {
-                        System.out.println("Delete message");
-                        try (ScheduledExecutorService schedulerDeleteMessage = Executors.newSingleThreadScheduledExecutor()) {
-                            schedulerDeleteMessage.schedule(() -> {
-                                interactionTelegram.execute(new DeleteMessage(interactionTelegram.getChatId(), messageId));
-                            }, durationDeleteSuccessfulMessage, TimeUnit.SECONDS);
-                        }
-                    }
-
-                } catch (Exception err) {
-                    interactionTelegram.execute(new SendMessage(interaction.getChatId(),
-                            interaction.getLanguageValue("system.error.something")));
-                    logger.error(String.format("I couldn't send a message in the chat by id(%s): %s",
-                            interactionTelegram.getChatId(), err));
+                    telegramBot.execute(new DeleteMessage(chatId, messageId));
+                    logger.debug("Deleted message with ID: " + messageId);
+                } catch (Exception e) {
+                    logger.error("Failed to delete message: " + e.getMessage());
                 }
-                break;
-            }
-
-            case CONSOLE: {
-                boolean inline = interaction.getInline();
-                if (inline) {
-                    System.out.print(interaction.getMessage());
-                    logger.debug(String.format("Console output (inline): %s", interaction.getMessage()));
-                } else {
-                    System.out.println(interaction.getMessage());
-                    logger.debug(String.format("Console output (newline): %s", interaction.getMessage()));
-                }
-                break;
-            }
+            }, durationDeleteMessage, TimeUnit.SECONDS);
         }
     }
 }

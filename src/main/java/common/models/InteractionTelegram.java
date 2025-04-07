@@ -10,9 +10,16 @@ import java.util.List;
 
 public class InteractionTelegram extends AbstractInteraction {
 
+    public enum OutputStatus {
+        SUCCESS,
+        ERROR
+    }
+
     private final TelegramBot telegramBot;
 
     private final long timestampBotStart;
+
+    private OutputStatus outputStatus;
 
     // Объект сообщения (Для Telegram)
     SendMessage sendMessage;
@@ -33,6 +40,15 @@ public class InteractionTelegram extends AbstractInteraction {
         this.telegramBot = telegramBot;
         this.timestampBotStart = timestampBotStart;
         this.platform = Platform.TELEGRAM;
+    }
+
+    public Interaction setOutputStatus(OutputStatus status) {
+        this.outputStatus = status;
+        return this;
+    }
+
+    public OutputStatus getOutputStatus() {
+        return outputStatus == null ? OutputStatus.SUCCESS : outputStatus;
     }
 
     public Interaction setChatId(long chatId) {
