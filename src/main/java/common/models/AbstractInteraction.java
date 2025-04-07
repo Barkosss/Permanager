@@ -337,10 +337,10 @@ public abstract class AbstractInteraction implements Interaction {
             Class<?> commandClass = Class.forName(stack.getClassName());
             if (BaseCommand.class.isAssignableFrom(commandClass)) {
                 BaseCommand method = (BaseCommand) commandClass.getConstructor().newInstance();
-                logger.debug("(AbstractInteraction, getCommandNameFromStack) Method is find");
+                logger.debug("(AbstractInteraction, getCommandNameFromStack) Method is find: " + commandClass.getName());
                 return Optional.of(method.getCommandName());
             }
-            logger.debug("(AbstractInteraction, getCommandNameFromStack) Method isn't find");
+            logger.debug("(AbstractInteraction, getCommandNameFromStack) Method isn't find: " + commandClass.getName());
             return Optional.empty();
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException
                  | InvocationTargetException err) {
