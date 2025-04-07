@@ -79,6 +79,7 @@ public class WarnsCommand implements BaseCommand {
     @Override
     public void run(Interaction interaction) {
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
+            logger.warning("Attempted to run warns command in console");
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandConsole"));
             return;
         }
@@ -89,6 +90,8 @@ public class WarnsCommand implements BaseCommand {
 
         // Получаем userId целевого пользователя
         long targetUserId = (long) user.getValue(getCommandName(), "userId");
+        logger.debug(String.format("Running warns for target user id (%d)", targetUserId));
+
         com.pengrad.telegrambot.model.User targetMember = interactionTelegram
                 .execute(new GetChatMember(interaction.getChatId(), targetUserId)).chatMember().user();
         com.pengrad.telegrambot.model.User moderatorMember;
@@ -102,6 +105,7 @@ public class WarnsCommand implements BaseCommand {
 
             // Если список предупреждений пуст
             if (warnings.isEmpty()) {
+                logger.info(String.format("No warnings found for user id (%d)", targetUserId));
                 message.append(interaction.getLanguageValue("warns.empty",
                         List.of(targetMember.username())));
             } else {
@@ -157,7 +161,7 @@ public class WarnsCommand implements BaseCommand {
             logger.info(String.format("User by id(%d) in chat by id(%d) has look warns at target user by id (%d)",
                     user.getUserId(), interaction.getChatId(), targetUserId));
         } catch (Exception err) {
-            output.output(interaction.setLanguageValue("system.error.something"));
+            logger.error(String.format("Failed to run warns command for user id (%d): %s", targetUserId, err));
             logger.error(String.format("Warns not show for user by id(%d): %s", user.getUserId(), err));
         } finally {
             user.clearExpected(getCommandName());
