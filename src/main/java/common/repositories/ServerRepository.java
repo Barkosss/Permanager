@@ -16,27 +16,36 @@ public class ServerRepository {
 
     public ServerRepository() {
         this.servers = new TreeMap<>();
+        logger.info("ServerRepository initialized", true);
     }
 
     public void setCommandRepository(CommandRepository commandRepository) {
         this.commandRepository = commandRepository;
+        logger.info("CommandRepository has been set", true);
     }
 
     // Создать сервер в памяти
     public Server create(Server server) {
         servers.put(server.getId(), server);
+        logger.info("Created server with ID: " + server.getId());
         return server;
     }
 
     // Удалить сервер
     public void remove(Long serverId) {
-        servers.remove(serverId);
+        if (servers.containsKey(serverId)) {
+            servers.remove(serverId);
+            logger.info("Removed server with ID: " + serverId);
+        } else {
+            logger.warning("Attempt to remove server with non-existing ID: " + serverId);
+        }
     }
 
     // Найти сервер по ID
     public Server findById(long serverId) {
         Server server;
         if ((server = servers.get(serverId)) != null) {
+            logger.debug("Found server with ID: " + serverId);
             return server;
         }
 
@@ -46,11 +55,14 @@ public class ServerRepository {
 
     // Получить список всех серверов
     public List<Server> getAll() {
+        logger.debug("Retrieving list of all servers. Total: " + servers.size());
         return new ArrayList<>(servers.values());
     }
 
     // Существует ли сервер
     public boolean existsById(long serverId) {
-        return servers.get(serverId) != null;
+        boolean exists = servers.containsKey(serverId);
+        logger.debug("Server with ID " + serverId + " exists: " + exists);
+        return exists;
     }
 }

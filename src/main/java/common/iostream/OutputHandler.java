@@ -19,6 +19,8 @@ public class OutputHandler {
     LoggerHandler logger = new LoggerHandler();
 
     public void output(Interaction interaction) {
+        logger.debug("Processing output for platform: " + interaction.getPlatform());
+
         switch (interaction.getPlatform()) {
             case TELEGRAM -> handlerTelegramOutput((InteractionTelegram) interaction);
             case CONSOLE -> handlerConsoleOutput(interaction);
@@ -26,6 +28,7 @@ public class OutputHandler {
     }
 
     public void handlerTelegramOutput(InteractionTelegram interaction) {
+        logger.debug("Preparing to send message to Telegram.");
         SendMessage sendMessage = interaction.getSendMessage();
 
         // Если объект не создан, то принудительно выйти, то есть не отправить сообщение
@@ -39,14 +42,17 @@ public class OutputHandler {
             sendMessage.parseMode(ParseMode.Markdown)
                     .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true));
 
+            logger.debug("Sending message with formatting to chat ID: " + interaction.getChatId());
             SendResponse sendRequest = interaction.execute(sendMessage);
             Server server = interaction.findServerById(interaction.getChatId());
 
             // Если не получилось отправить сообщение после парсинга стиля
             if (!sendRequest.isOk()) {
+                logger.warning("Failed to send message with formatting. Retrying without formatting.");
                 SendMessage request = new SendMessage(interaction.getChatId(), interaction.getMessage())
                         .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true));
                 interaction.execute(request);
+
                 logger.debug(String.format("The message was sent to the chat by id(%s) without formatting",
                         interaction.getChatId()));
             } else {
@@ -58,15 +64,18 @@ public class OutputHandler {
 
             // Удалить сообщение через время
             if (messageId != -1) {
+                logger.debug("Scheduling message deletion for ID: " + messageId);
                 scheduleMessageDeleter(interaction.getTelegramBot(), server,
                         interaction.getChatId(), messageId, interaction.getOutputStatus());
+            } else {
+                logger.debug("Message ID is invalid or not returned.");
             }
 
         } catch (Exception err) {
+            logger.error("Exception occurred while sending message to chat ID(" +
+                    interaction.getChatId() + "): " + err.getMessage(), true);
             interaction.execute(new SendMessage(interaction.getChatId(),
                     interaction.getLanguageValue("system.error.something")));
-            logger.error(String.format("Failed to send message to chat by id(%s): %s",
-                    interaction.getChatId(), err));
         }
     }
 
@@ -85,7 +94,12 @@ public class OutputHandler {
                                         int messageId, InteractionTelegram.OutputStatus status) {
         long durationDeleteMessage = server.getDurationDeleteMessage(status);
 
-        if (durationDeleteMessage == 0) return;
+        if (durationDeleteMessage == 0) {
+            logger.debug("Message deletion is disabled (duration = 0).");
+            return;
+        }
+
+        logger.debug(String.format("Scheduling deletion for message by id(%s) after %s seconds ", messageId, durationDeleteMessage));
 
         // Удаление успешное сообщение через время
         try (ScheduledExecutorService schedulerDeleteMessage = Executors.newSingleThreadScheduledExecutor()) {
@@ -97,6 +111,8 @@ public class OutputHandler {
                     logger.error("Failed to delete message: " + e.getMessage());
                 }
             }, durationDeleteMessage, TimeUnit.SECONDS);
+        } catch (Exception err) {
+            logger.error("Failed to schedule message deletion: " + err.getMessage());
         }
     }
 }

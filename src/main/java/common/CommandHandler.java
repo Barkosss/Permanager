@@ -61,7 +61,7 @@ public class CommandHandler {
             Reflections reflections = new Reflections("common.commands");
             // Получаем множеством всех классов, которые реализовывают интерфейс BaseCommand
             Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
-            logger.debug("Found " + subclasses.size() + " command classes");
+            logger.info("Found " + subclasses.size() + " command classes");
 
             String commandName;
             BaseCommand instanceClass;
@@ -69,13 +69,12 @@ public class CommandHandler {
             for (Class<? extends BaseCommand> subclass : subclasses) {
                 // Создаём экземпляр класса
                 instanceClass = subclass.getConstructor().newInstance();
-
                 commandName = instanceClass.getCommandName().toLowerCase();
-                logger.debug("Loading command: " + commandName);
+                logger.trace("Trying to load command: " + commandName);
 
                 // Если название команды пустое, то пропускаем ход
                 if (commandName.isEmpty()) {
-                    logger.debug("Skipped command with empty name: " + subclass.getSimpleName());
+                    logger.warning("Skipped command with empty name: " + subclass.getSimpleName());
                     continue;
                 }
 
@@ -83,17 +82,17 @@ public class CommandHandler {
                 if (!baseCommandClasses.containsKey(commandName)) {
                     // Добавляем класс в хэшмап, ключ - название команды, значение - экземпляр класса
                     baseCommandClasses.put(commandName, instanceClass);
-                    logger.debug("Command registered: " + commandName);
+                    logger.info("Command registered: " + commandName);
                 } else {
                     String errMessage = String.format("There was a duplication of the command - %s", commandName);
-                    logger.error(errMessage, true);
+                    logger.fatal(errMessage, true);
                     System.exit(0);
                 }
             }
 
             commandRepository = new CommandRepository(baseCommandClasses);
             serverRepository.setCommandRepository(commandRepository);
-            logger.debug("CommandRepository initialized successfully");
+            logger.info("CommandRepository initialized successfully");
 
         } catch (Exception err) {
             logger.error(String.format("Command loader: %s", err));
@@ -102,7 +101,7 @@ public class CommandHandler {
 
     // Запуск программы
     public void launch(Interaction interaction, LaunchPlatform platform) {
-        logger.debug("Launching application with platform: " + platform);
+        logger.info("Launching application with platform: " + platform);
 
         interaction.setCommandRepository(commandRepository)
                 .setUserRepository(userRepository)
@@ -123,7 +122,7 @@ public class CommandHandler {
 
         // Проверка, что Platform это Console или ALL
         if (platform == LaunchPlatform.CONSOLE || platform == LaunchPlatform.ALL) {
-            logger.debug("Creating default console user");
+            logger.info("Creating default console user");
             userRepository.create(0, 0L);
             // Поток для Console
             logger.debug("Starting Console thread");
@@ -132,12 +131,13 @@ public class CommandHandler {
             logger.info("SYSTEM: Console is launch", true);
         }
 
+        logger.info("System fully initialized.");
         System.out.println("Program is launch");
     }
 
     @NotNull
     private Thread getThreadTelegram(Interaction interaction) {
-        logger.debug("Creating Telegram thread object");
+        logger.trace("Creating Telegram thread object");
         Thread threadTelegram = new Thread(() ->
                 inputTelegram.read(interaction
                                 .setCommandRepository(commandRepository)
@@ -153,7 +153,7 @@ public class CommandHandler {
 
     @NotNull
     private Thread getThreadConsole() {
-        logger.debug("Creating Console thread object");
+        logger.trace("Creating Console thread object");
         Thread threadConsole = new Thread(() ->
                 inputConsole.listener(new InteractionConsole()
                         .setChatId(0)
@@ -167,8 +167,8 @@ public class CommandHandler {
 
     // Вызов команды
     public void launchCommand(Interaction interaction, List<Content> contents) {
+        logger.info(String.format("Processing %s updates", contents.size()));
 
-        logger.debug(String.format("Processing %s updates", contents.size()));
         for (Content content : contents) {
             interaction.setContent(content);
             logger.debug("Processing content: " + content);
@@ -177,13 +177,13 @@ public class CommandHandler {
             long deltaSeconds = 30;
             if (content.platform() == Interaction.Platform.TELEGRAM
                     && (content.createdAt() <= ((InteractionTelegram) interaction).getTimestampBotStart() - deltaSeconds)) {
-                logger.debug(String.format("Skipping outdated Telegram message (delta < %ss)", deltaSeconds));
+                logger.warning(String.format("Skipping outdated Telegram message (delta < %ss)", deltaSeconds));
                 continue;
             }
 
             // Если пользователь отсутствует в памяти
             if (!interaction.existsUserById(content.chat().id(), content.userId())) {
-                logger.debug("Creating user in memory: chatId=" + content.chat().id() + ", userId=" + content.userId());
+                logger.info("Creating user in memory: chatId=" + content.chat().id() + ", userId=" + content.userId());
                 interaction.createUser(content.chat().id(), content.userId());
             }
 
@@ -226,7 +226,7 @@ public class CommandHandler {
 
                 } else {
                     // Ошибка: Команда не найдена.
-                    logger.debug("Command not found: " + commandName);
+                    logger.warning("Command not found: " + commandName);
                     output.output(interaction.setLanguageValue("system.error.commandNotFound", List.of(commandName)).setInline(false));
                     return;
                 }
@@ -236,7 +236,7 @@ public class CommandHandler {
                 User user = interaction.getUser(interaction.getUserId());
 
                 if (commandName.startsWith("cancel")) {
-                    logger.debug("Cancel command detected");
+                    logger.info("Cancel command detected");
                     String commandException = user.getCommandException();
                     user.clearExpected(commandException);
                     output.output(interaction.setMessage(String.format("Command \"%s\" is cancel", commandException))
@@ -253,59 +253,38 @@ public class CommandHandler {
                         user.setValue(message);
                     } else {
                         InputExpectation.UserInputType inputType = user.getInputType();
-                        logger.debug("Expected input type: " + inputType);
+                        logger.trace("Expected input type: " + inputType);
 
                         switch (inputType) {
 
-                            case DATE: { // Проверка на дату
+                            // Проверка на дату
+                            case DATE -> {
                                 Optional<LocalDateTime> validDate = validate.isValidDate(message);
                                 Optional<LocalDateTime> validTime = validate.isValidDate(message);
 
-                                if (validDate.isPresent()) {
-                                    user.setValue(validDate.get());
-                                } else {
-                                    validTime.ifPresent(user::setValue);
-                                }
-                                break;
+                                validDate.ifPresentOrElse(user::setValue, () -> validTime.ifPresent(user::setValue));
                             }
 
-                            case INTEGER: { // Проверка на число (Integer)
-                                Optional<Integer> validInteger = validate.isValidInteger(message);
+                            // Проверка на число (Integer)
+                            case INTEGER -> validate.isValidInteger(message).ifPresent(user::setValue);
 
-                                validInteger.ifPresent(user::setValue);
-                                break;
-                            }
+                            // Проверка на число (Long)
+                            case LONG -> validate.isValidLong(message).ifPresent(user::setValue);
 
-                            case LONG: { // Проверка на число (Long)
-                                Optional<Long> validInteger = validate.isValidLong(message);
+                            // Сохраняем объект пользователя
+                            case USER -> user.setValue(content.tgUser());
 
-                                validInteger.ifPresent(user::setValue);
-                                break;
-                            }
+                            // Сохраняем объект участника
+                            case CHATMEMBER -> user.setValue(content.tgChatMember());
 
-                            case USER: { // Сохраняем объект пользователя
-                                user.setValue(content.tgUser());
-                                break;
-                            }
+                            // Сохраняем объект сообщения
+                            case MESSAGE -> user.setValue(content.tgMessage());
 
-                            case CHATMEMBER: { // Сохраняем объект участника
-                                user.setValue(content.tgChatMember());
-                                break;
-                            }
+                            // Сохраняем объект ответного сообщения
+                            case REPLY -> user.setValue(content.tgMessage().replyToMessage());
 
-                            case MESSAGE: { // Сохраняем объект сообщения
-                                user.setValue(content.tgMessage());
-                                break;
-                            }
-
-                            case REPLY: { // Сохраняем объект ответного сообщения
-                                user.setValue(content.tgMessage().replyToMessage());
-                            }
-
-                            default: { // Строка или любой другой тип
-                                user.setValue(message);
-                                break;
-                            }
+                            // Строка или любой другой тип
+                            default -> user.setValue(message);
                         }
                     }
 
@@ -330,18 +309,18 @@ public class CommandHandler {
                 output.output(interaction.setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
                 // Получаем платформу от пользователя, с консоли
                 userPlatform = inputConsole.getString().toLowerCase();
-                logger.debug("Platform entered by user: " + userPlatform);
+                logger.trace("Platform entered by user: " + userPlatform);
             }
 
 
             try {
                 // Пытаемся получить платформу
-                logger.debug("Platform parsed successfully: " + userPlatform.toUpperCase());
+                logger.info("Platform parsed successfully: " + userPlatform.toUpperCase());
                 return LaunchPlatform.valueOf(userPlatform.toUpperCase());
 
                 // Ошибка, если указан неправильная платформа
             } catch (IllegalArgumentException err) {
-                logger.debug("Invalid platform input: " + userPlatform);
+                logger.warning("Invalid platform input: " + userPlatform);
                 output.output(interaction.setMessage("No, there is no such platform. Try again.").setInline(false));
             }
 

@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
  */
 public class ValidateService {
 
+    private final LoggerHandler logger = new LoggerHandler();
+
     /**
      * Валидация числа и конвертация строки в число (Integer)
      *
@@ -24,6 +26,7 @@ public class ValidateService {
         try {
             return Optional.of(Integer.parseInt(strInteger));
         } catch (Exception err) {
+            logger.debug(String.format("Failed to parse integer: '%s'", strInteger));
             return Optional.empty();
         }
     }
@@ -38,6 +41,7 @@ public class ValidateService {
         try {
             return Optional.of(Long.parseLong(strLong));
         } catch (Exception err) {
+            logger.debug(String.format("Failed to parse long: '%s'", strLong));
             return Optional.empty();
         }
     }
@@ -71,6 +75,8 @@ public class ValidateService {
                 // The exception is ignored for a specific reason
             }
         }
+
+        logger.debug(String.format("Failed to recognize date format: '%s'", strLocalDate));
         return Optional.empty();
     }
 
@@ -83,6 +89,7 @@ public class ValidateService {
         Pattern timePattern = Pattern.compile("(\\d+)(" + getMatchDesignations() + ")");
 
         if (strDuration.isEmpty()) {
+            logger.debug("Duration string is empty.");
             return Optional.empty();
         }
 
@@ -104,8 +111,15 @@ public class ValidateService {
                 case "w" -> result.plusWeeks(value);
                 case "mo" -> result.plusMonths(value);
                 case "y" -> result.plusYears(value);
-                default -> result;
+                default -> {
+                    logger.debug(String.format("Unknown duration unit: '%s'", unit));
+                    yield result;
+                }
             };
+        }
+
+        if (!found) {
+            logger.debug(String.format("Could not parse duration: '%s'", strDuration));
         }
 
         return found ? Optional.of(result) : Optional.empty();
@@ -136,6 +150,7 @@ public class ValidateService {
         try {
             return Optional.of(new TimeZone(ZoneId.of(formatterTimeZone(strTimeZone))));
         } catch (Exception err) {
+            logger.debug(String.format("Invalid time zone: '%s'", strTimeZone));
             return Optional.empty();
         }
     }

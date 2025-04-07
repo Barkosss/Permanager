@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SystemService {
     OutputHandler output = new OutputHandler();
     LoggerHandler logger = new LoggerHandler();
-    
+
     UserRepository userRepository;
     ServerRepository serverRepository;
     ReminderRepository reminderRepository;
@@ -39,28 +39,28 @@ public class SystemService {
         warningRepository = interaction.getWarningRepository();
 
         // Поток для системы напоминаний
-        Thread threadReminder = new Thread(() ->
-                reminderHandler(interaction)
-        );
+        Thread threadReminder = new Thread(() -> {
+            logger.info("SYSTEM: ReminderHandler is launch", true);
+            reminderHandler(interaction);
+        });
         threadReminder.setName("Thread-Reminder");
         threadReminder.start();
-        logger.info("SYSTEM: ReminderHandler is launch", true);
 
         // Поток для системы банов
-        Thread threadBan = new Thread(() ->
-                banHandler((InteractionTelegram) interaction)
-        );
+        Thread threadBan = new Thread(() -> {
+            logger.info("SYSTEM: BanHandler is launch", true);
+            banHandler((InteractionTelegram) interaction);
+        });
         threadBan.setName("Thread-Ban");
         threadBan.start();
-        logger.info("SYSTEM: BanHandler is launch", true);
 
         // Поток для системы мьютов
-        Thread threadMute = new Thread(() ->
-                muteHandler((InteractionTelegram) interaction)
-        );
+        Thread threadMute = new Thread(() -> {
+            logger.info("SYSTEM: MuteHandler is launch", true);
+            muteHandler((InteractionTelegram) interaction);
+        });
         threadMute.setName("Thread-Mute");
         threadMute.start();
-        logger.info("SYSTEM: MuteHandler is launch", true);
     }
 
     private void reminderHandler(Interaction interaction) {
@@ -68,6 +68,7 @@ public class SystemService {
         long timestamp = System.currentTimeMillis() / 1000;
         AtomicReference<List<Reminder>> reminders = new AtomicReference<>();
         try (ScheduledExecutorService schedulerReminder = Executors.newSingleThreadScheduledExecutor()) {
+            logger.info("Reminder handler started.", true);
 
             try {
 
@@ -109,11 +110,11 @@ public class SystemService {
                         }
 
                     } catch (Exception err) {
-                        logger.fatal("Reminder handler (Send reminder): " + err);
+                        logger.fatal("Reminder handler (Send reminder): " + err, true);
                     }
                 }, 0, 1, TimeUnit.MINUTES);
             } catch (Exception err) {
-                logger.fatal("Reminder handler: " + err);
+                logger.fatal("Reminder handler: " + err, true);
             } finally {
                 schedulerReminder.shutdown();
             }
@@ -124,6 +125,7 @@ public class SystemService {
         AtomicLong timestamp = new AtomicLong();
         List<Server> servers = serverRepository.getAll();
         try (ScheduledExecutorService schedulerBan = Executors.newSingleThreadScheduledExecutor()) {
+            logger.info("Ban handler started.", true);
 
             try {
                 schedulerBan.scheduleAtFixedRate(() -> {
@@ -142,16 +144,17 @@ public class SystemService {
 
                                 for (User user : bans.get(unbanTimestamp)) {
                                     interaction.execute(new UnbanChatMember(server.getId(), user.getUserId()));
+                                    logger.info(String.format("User by id(%s) unbanned from chat by id(%s)", user.getUserId(), server.getId()), true);
                                 }
                             }
                         }
 
                     } catch (Exception err) {
-                        logger.fatal("Ban handler (Unban user): " + err);
+                        logger.fatal("Ban handler (Unban user): " + err, true);
                     }
                 }, 0, 1, TimeUnit.MINUTES);
             } catch (Exception err) {
-                logger.fatal("Ban handler: " + err);
+                logger.fatal("Ban handler: " + err, true);
             } finally {
                 schedulerBan.shutdown();
             }
@@ -162,6 +165,7 @@ public class SystemService {
         AtomicLong timestamp = new AtomicLong();
         List<Server> servers = serverRepository.getAll();
         try (ScheduledExecutorService schedulerMute = Executors.newSingleThreadScheduledExecutor()) {
+            logger.info("Mute handler started.", true);
 
             try {
                 schedulerMute.scheduleAtFixedRate(() -> {
@@ -181,16 +185,17 @@ public class SystemService {
                                 for (User user : bans.get(unbanTimestamp)) {
                                     interaction.execute(new RestrictChatMember(server.getId(), user.getUserId(),
                                             new ChatPermissions().canSendMessages(true)));
+                                    logger.info(String.format("User by id(%s) unmuted in chat by id(%s)", user.getUserId(), server.getId()), true);
                                 }
                             }
                         }
 
                     } catch (Exception err) {
-                        logger.fatal("Ban handler (Unban user): " + err);
+                        logger.fatal("Ban handler (Unban user): " + err, true);
                     }
                 }, 0, 1, TimeUnit.MINUTES);
             } catch (Exception err) {
-                logger.fatal("Ban handler: " + err);
+                logger.fatal("Ban handler: " + err, true);
             } finally {
                 schedulerMute.shutdown();
             }
