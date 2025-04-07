@@ -92,6 +92,7 @@ public class CommandHandler {
             }
 
             commandRepository = new CommandRepository(baseCommandClasses);
+            serverRepository.setCommandRepository(commandRepository);
             logger.debug("CommandRepository initialized successfully");
 
         } catch (Exception err) {

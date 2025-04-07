@@ -1,6 +1,7 @@
 package common.models;
 
 import common.commands.custom.HelpCommand;
+import common.repositories.CommandRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,20 +43,18 @@ public class Server {
     // Список замьюченных пользователей
     private Map<Long, User> mutes;
 
-    public Server(long id, Map<Long, Member> members, Permissions defaultPermissions) {
+    public Server(long id, Map<Long, Member> members, Permissions defaultPermissions, CommandRepository commandRepository) {
         this.id = id;
         this.members = members;
         this.defaultPermissions = defaultPermissions;
-        this.moderationCommands = initModerationCommands();
+        this.moderationCommands = initModerationCommands(commandRepository);
         this.durationDeleteSuccessfulMessage = 0;
         this.durationDeleteErrorMessage = 0;
     }
 
     // Инициализация moderationCommands
-    private Map<String, Boolean> initModerationCommands() {
-        HelpCommand helpCommand = new HelpCommand();
-
-        return helpCommand.methods.keySet().stream()
+    private Map<String, Boolean> initModerationCommands(CommandRepository commandRepository) {
+        return commandRepository.getCommands().keySet().stream()
                 .collect(Collectors.toMap(commandName -> commandName, _ -> true));
     }
 
@@ -67,6 +66,13 @@ public class Server {
     // Установить ID сервера
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getDurationDeleteMessage(InteractionTelegram.OutputStatus status) {
+        return switch (status) {
+            case SUCCESS -> durationDeleteSuccessfulMessage;
+            case ERROR -> durationDeleteErrorMessage;
+        };
     }
 
     // Получить время (в секундах), через сколько удалить успешное сообщение

@@ -11,10 +11,15 @@ import java.util.TreeMap;
 
 public class ServerRepository {
     LoggerHandler logger = new LoggerHandler();
+    CommandRepository commandRepository;
     Map<Long, Server> servers;
 
     public ServerRepository() {
         this.servers = new TreeMap<>();
+    }
+
+    public void setCommandRepository(CommandRepository commandRepository) {
+        this.commandRepository = commandRepository;
     }
 
     // Создать сервер в памяти
@@ -34,8 +39,9 @@ public class ServerRepository {
         if ((server = servers.get(serverId)) != null) {
             return server;
         }
+
         logger.error(String.format("Server by id(%s) is not found. Try create server by id(%s)", serverId, serverId));
-        return create(new Server(serverId, null, new Permissions()));
+        return create(new Server(serverId, null, new Permissions(), commandRepository));
     }
 
     // Получить список всех серверов
