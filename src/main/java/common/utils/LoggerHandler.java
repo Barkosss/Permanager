@@ -82,7 +82,7 @@ public class LoggerHandler {
         if (inConsole) {
             System.out.printf(status.getName() + ": %s\n", message);
         }
-        writeLog(message, LoggerStatus.INFO);
+        writeLog(message, status);
     }
 
     public void newLine() {
