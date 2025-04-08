@@ -46,21 +46,23 @@ public class SystemService {
         threadReminder.setName("Thread-Reminder");
         threadReminder.start();
 
-        // Поток для системы банов
-        Thread threadBan = new Thread(() -> {
-            logger.info("SYSTEM: BanHandler is launch", true);
-            banHandler((InteractionTelegram) interaction);
-        });
-        threadBan.setName("Thread-Ban");
-        threadBan.start();
+        if (interaction.getPlatform() != Interaction.Platform.CONSOLE) {
+            // Поток для системы банов
+            Thread threadBan = new Thread(() -> {
+                logger.info("SYSTEM: BanHandler is launch", true);
+                banHandler((InteractionTelegram) interaction);
+            });
+            threadBan.setName("Thread-Ban");
+            threadBan.start();
 
-        // Поток для системы мьютов
-        Thread threadMute = new Thread(() -> {
-            logger.info("SYSTEM: MuteHandler is launch", true);
-            muteHandler((InteractionTelegram) interaction);
-        });
-        threadMute.setName("Thread-Mute");
-        threadMute.start();
+            // Поток для системы мьютов
+            Thread threadMute = new Thread(() -> {
+                logger.info("SYSTEM: MuteHandler is launch", true);
+                muteHandler((InteractionTelegram) interaction);
+            });
+            threadMute.setName("Thread-Mute");
+            threadMute.start();
+        }
     }
 
     private void reminderHandler(Interaction interaction) {
