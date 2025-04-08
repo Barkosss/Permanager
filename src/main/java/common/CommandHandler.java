@@ -188,8 +188,8 @@ public class CommandHandler {
                 continue;
             }
 
-            // Если пользователь отсутствует в памяти
-            if (!interaction.existsUserById(content.chat().id(), content.userId())) {
+            // Если пользователь отсутствует в памяти (Telegram)
+            if (content.platform() == Interaction.Platform.TELEGRAM && !interaction.existsUserById(content.chat().id(), content.userId())) {
                 logger.info("Creating user in memory: chatId=" + content.chat().id() + ", userId=" + content.userId());
                 interaction.createUser(content.chat().id(), content.userId());
             }
