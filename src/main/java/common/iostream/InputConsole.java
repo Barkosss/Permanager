@@ -8,6 +8,9 @@ import common.utils.LoggerHandler;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class InputConsole {
@@ -17,7 +20,7 @@ public class InputConsole {
 
     public String read() {
         String input = scanner.nextLine();
-        logger.debug(String.format("User input received: '%s'", input));
+        logger.debug(String.format("User input received: \"%s\"", input));
         return input;
     }
 
@@ -28,6 +31,13 @@ public class InputConsole {
     public void listener(Interaction interaction, CommandHandler commandHandler) {
         logger.info("Console listener has started.");
 
+        try (ScheduledExecutorService schedulerDeleteMessage = Executors.newSingleThreadScheduledExecutor()) {
+            schedulerDeleteMessage.schedule(() -> {
+            }, 5, TimeUnit.SECONDS);
+        } catch (Exception err) {
+            logger.error("Failed to schedule message console is listener: " + err.getMessage());
+        }
+
         while (true) {
             try {
                 // Проверка, ожидаем ли что-то от пользователя
@@ -35,7 +45,11 @@ public class InputConsole {
                     output.output(interaction.setMessage("Enter command: ").setInline(true));
                 }
 
-                String userInputMessage = read().trim();
+                String userInputMessage = read();
+                if (userInputMessage.isEmpty()) {
+                    continue;
+                }
+                userInputMessage = userInputMessage.trim().toLowerCase();
 
                 // Если команда - выключить бота
                 if (userInputMessage.equals("exit")) {
