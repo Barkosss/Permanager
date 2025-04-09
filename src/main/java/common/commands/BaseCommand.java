@@ -22,6 +22,7 @@ public interface BaseCommand {
     /**
      * Получить описание команды
      *
+     * @param interaction Object Interaction
      * @return String
      */
     String getCommandDescription(Interaction interaction);
@@ -29,13 +30,15 @@ public interface BaseCommand {
     /**
      * Обработка аргументов, которые пользователь указал в сообщении
      *
-     * @param interaction Object interaction
-     * @param user        Object user
+     * @param interaction Object Interaction
+     * @param user        Object User
      */
     void parseArgs(Interaction interaction, User user);
 
     /**
      * Запустить команду
+     *
+     * @param interaction Object Interaction
      */
     void run(Interaction interaction);
 }
