@@ -198,6 +198,8 @@ public class CommandHandler {
             List<String> args = List.of(message.split(" "));
             String commandName = args.getFirst().toLowerCase().substring(1);
 
+            User user = interaction.getUser(content.userId());
+
             // Берём название команды до "@"
             if (message.startsWith("/") && message.charAt(1) != ' ' && commandName.contains("@")) {
                 commandName = commandName.substring(0, commandName.lastIndexOf("@"));
@@ -205,7 +207,7 @@ public class CommandHandler {
 
             // Проверка, что это команда
             if (message.startsWith("/") && message.charAt(1) != ' '
-                    && interaction.getUser(content.userId()).getInputStatus() == User.InputStatus.COMPLETED) {
+                    && user.getInputStatus() == User.InputStatus.COMPLETED) {
 
                 logger.debug("Command input detected: " + commandName);
 
@@ -239,91 +241,102 @@ public class CommandHandler {
                 }
 
                 // Если что-то ожидаем от пользователя
-            } else {
-                User user = interaction.getUser(interaction.getUserId());
-
-                if (commandName.startsWith("cancel")) {
-                    logger.info("Cancel command detected");
-                    String commandException = user.getCommandException();
-                    user.clearExpected(commandException);
-                    output.output(interaction.setMessage(String.format("Command \"%s\" is cancel", commandException))
-                            .setInline(false));
-                    return;
-                }
-
-                // Проверка, ожидаем ли мы что-то от пользователя
-                if (user.getInputStatus() == User.InputStatus.WAITING) {
-                    logger.debug(String.format("Handling expected input: chatId=%d, userId=%d, message=%s",
-                            interaction.getChatId(), interaction.getUserId(), message));
-
-                    if (message.equals("/skip")) {
-                        user.setValue(message);
-                    } else {
-                        InputExpectation.UserInputType inputType = user.getInputType();
-                        logger.trace("Expected input type: " + inputType);
-
-                        switch (inputType) {
-
-                            // Проверка на дату
-                            case DATE -> {
-                                Optional<LocalDateTime> validDate = validate.isValidDate(message);
-                                Optional<LocalDateTime> validTime = validate.isValidDate(message);
-
-                                validDate.ifPresentOrElse(user::setValue, () -> validTime.ifPresent(user::setValue));
-                            }
-
-                            // Проверка на число (Integer)
-                            case INTEGER -> validate.isValidInteger(message).ifPresent(user::setValue);
-
-                            // Проверка на число (Long)
-                            case LONG -> validate.isValidLong(message).ifPresent(user::setValue);
-
-                            // Сохраняем объект пользователя
-                            case USER -> user.setValue(content.tgUser());
-
-                            // Сохраняем объект участника
-                            case CHATMEMBER -> user.setValue(content.tgChatMember());
-
-                            // Сохраняем объект сообщения
-                            case MESSAGE -> user.setValue(content.tgMessage());
-
-                            // Сохраняем объект ответного сообщения
-                            case REPLY -> user.setValue(content.tgMessage().replyToMessage());
-
-                            // Строка или любой другой тип
-                            default -> user.setValue(message);
-                        }
-                    }
-
-                    logger.debug("Re-invoking command: " + user.getCommandException());
-                    baseCommandClasses.get(interaction.getUser(interaction.getUserId())
-                            .getCommandException()).run(interaction);
-                }
+            } else if (user.getInputStatus() == User.InputStatus.WAITING) {
+                handleExpectedInput(interaction, content, user, message);
             }
         }
+    }
+
+    private void handleExpectedInput(Interaction interaction, Content content, User user, String message) {
+        logger.debug("Handling expected input for user: " + user.getUserId());
+
+        if (message.startsWith("cancel")) {
+            String commandException = user.getCommandException();
+            logger.info("Cancelling command: " + commandException);
+            user.clearExpected(commandException);
+            output.output(interaction.setMessage(String.format("Command \"%s\" is cancel", commandException))
+                    .setInline(false));
+            return;
+        }
+
+        logger.debug(String.format("Handling expected input: chatId=%d, userId=%d, message=%s",
+                interaction.getChatId(), interaction.getUserId(), message));
+
+        if (message.equals("/skip")) {
+            user.setValue(message);
+        } else {
+            InputExpectation.UserInputType inputType = user.getInputType();
+            logger.trace("Expected input type: " + inputType);
+
+            switch (inputType) {
+
+                // Проверка на дату
+                case DATE -> {
+                    Optional<LocalDateTime> validDate = validate.isValidDate(message);
+                    Optional<LocalDateTime> validTime = validate.isValidDate(message);
+
+                    validDate.ifPresentOrElse(user::setValue, () -> validTime.ifPresent(user::setValue));
+                }
+
+                // Проверка на число (Integer)
+                case INTEGER -> validate.isValidInteger(message).ifPresent(user::setValue);
+
+                // Проверка на неотрицательное число (Integer)
+                case UNSIGNED_INTEGER -> validate.isValidInteger(message)
+                        .filter(validInteger -> validInteger >= 0)
+                        .ifPresent(user::setValue);
+
+                // Проверка на число (Long)
+                case LONG -> validate.isValidLong(message).ifPresent(user::setValue);
+
+                // Проверка на неотрицательное число (Integer)
+                case UNSIGNED_LONG -> validate.isValidLong(message)
+                        .filter(validLong -> validLong >= 0)
+                        .ifPresent(user::setValue);
+
+                // Сохраняем объект пользователя
+                case USER -> user.setValue(content.tgUser());
+
+                // Сохраняем объект участника
+                case CHATMEMBER -> user.setValue(content.tgChatMember());
+
+                // Сохраняем объект сообщения
+                case MESSAGE -> user.setValue(content.tgMessage());
+
+                // Сохраняем объект ответного сообщения
+                case REPLY -> user.setValue(content.tgMessage().replyToMessage());
+
+                // Строка или любой другой тип
+                default -> user.setValue(message);
+            }
+        }
+
+        logger.debug("Re-invoking command: " + user.getCommandException());
+        baseCommandClasses.get(user.getCommandException()).run(interaction);
     }
 
     // Настройка взаимодействий и запуск программы
     public LaunchPlatform choosePlatform(String[] args) {
         Interaction interaction = new InteractionConsole();
-
         String userPlatform;
+
         do {
             if (args.length > 0 && List.of("console", "telegram", "all").contains(args[0].toLowerCase())) {
                 userPlatform = args[0];
-                logger.debug("Platform provided from args: " + userPlatform);
+                logger.debug("Platform from args: " + userPlatform);
             } else {
                 output.output(interaction.setMessage("Choose platform (Console, Telegram or All): ").setInline(true));
                 // Получаем платформу от пользователя, с консоли
                 userPlatform = inputConsole.getString().toLowerCase();
-                logger.trace("Platform entered by user: " + userPlatform);
+                logger.trace("User input platform: " + userPlatform);
             }
 
 
             try {
                 // Пытаемся получить платформу
-                logger.info("Platform parsed successfully: " + userPlatform.toUpperCase());
-                return LaunchPlatform.valueOf(userPlatform.toUpperCase());
+                LaunchPlatform platform = LaunchPlatform.valueOf(userPlatform.toUpperCase());
+                logger.info("Platform selected: " + platform);
+                return platform;
 
                 // Ошибка, если указан неправильная платформа
             } catch (IllegalArgumentException err) {
