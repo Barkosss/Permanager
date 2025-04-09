@@ -644,33 +644,44 @@ public class ConfigCommand implements BaseCommand {
 
     private void configGroupEditPriority(InteractionTelegram interaction, User user) {
         Server server = interaction.findServerById(interaction.getChatId());
+        String command = getCommandName();
+        long userId = interaction.getUserId();
+        long chatId = interaction.getChatId();
 
-        if (!user.isExceptedKey(getCommandName(), "groupName")) {
-            user.setExcepted(getCommandName(), "groupName");
+        // Ожидаем имя группы
+        if (!user.isExceptedKey(command, "groupName")) {
+            user.setExcepted(command, "groupName");
             output.output(interaction.setLanguageValue(".group.editPriority.requestUser"));
-            logger.info("...");
+            logger.info(String.format("User %s initiated group priority editing. Awaiting group name.", userId));
             return;
         }
 
-        String groupName = (String) user.getValue(getCommandName(), "groupName");
+        String groupName = (String) user.getValue(command, "groupName");
 
+        // Проверяем наличие группы
         if (!server.hasGroup(groupName)) {
-            user.setExcepted(getCommandName(), "groupName");
+            user.setExcepted(command, "groupName");
             output.output(interaction.setLanguageValue(".group.editPriority.requestUser"));
-            logger.info("Config command requested a group name");
+            logger.warning(String.format("User %s entered non-existing group name '%s' in chat %s.",
+                    userId, groupName, chatId));
             return;
         }
 
-        if (!user.isExceptedKey(getCommandName(), "groupNewPriority")) {
-            user.setExcepted(getCommandName(), "groupNewPriority", InputExpectation.UserInputType.INTEGER);
+        // Ожидаем новый приоритет
+        if (!user.isExceptedKey(command, "groupNewPriority")) {
+            user.setExcepted(command, "groupNewPriority", InputExpectation.UserInputType.UNSIGNED_INTEGER);
             output.output(interaction.setLanguageValue(".group.editPriority.requestPriority"));
-            logger.info("...");
+            logger.info(String.format("User %s selected group '%s'. Awaiting new priority input.", userId, groupName));
             return;
         }
 
+        // Применяем изменения
         Group group = server.getGroup(groupName);
-        group.setPriority((int) user.getValue(getCommandName(), "groupNewPriority"));
+        int newPriority = (int) user.getValue(command, "groupNewPriority");
+        group.setPriority(newPriority);
+
         output.output(interaction.setLanguageValue(".group.editPriority.accepted"));
-        logger.error("...");
+        logger.info(String.format("User %s updated priority of group '%s' to %d in chat %s.",
+                userId, groupName, newPriority, chatId));
     }
 }
