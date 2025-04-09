@@ -28,7 +28,11 @@ public class JSONHandler {
                         return null;
                     }
                 } catch (Exception err) {
-                    logger.debug("Key '" + key + "' resolved to non-JSONObject. Returning its value.");
+                    if (jsonObject == null) {
+                        logger.warning(String.format("Key \"%s\" is null during object traversal.", key));
+                        return null;
+                    }
+                    logger.debug(String.format("Key \"%s\" resolved to non-JSONObject. Returning its value", key));
                     return jsonObject.get(key);
                 }
             }
@@ -58,6 +62,10 @@ public class JSONHandler {
                         return false;
                     }
                 } catch (Exception err) {
+                    if (jsonObject == null) {
+                        logger.warning(String.format("Key \"%s\" is null during object traversal.", key));
+                        return false;
+                    }
                     boolean exists = jsonObject.get(key) != null;
                     logger.debug("Reached non-JSONObject value. Existence check result: " + exists);
                     return exists;
