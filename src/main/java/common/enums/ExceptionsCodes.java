@@ -28,7 +28,7 @@ public enum ExceptionsCodes {
     /**
      * Неизвестная ошибка
      */
-    UNKNOWN_ERROR (500),
+    UNKNOWN_ERROR(500),
     /**
      * Разрешение не найдено
      */
