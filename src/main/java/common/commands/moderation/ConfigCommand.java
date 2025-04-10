@@ -432,192 +432,232 @@ public class ConfigCommand implements BaseCommand {
         output.output(interaction.setLanguageValue(".user.removeUser.accepted"));
         logger.error("...");
     }
+    // TODO: ^ Продолжить дорабатывать код ^
 
     private void group(InteractionTelegram interaction, User user) {
+        final String commandName = getCommandName();
 
-        if (!user.isExceptedKey(getCommandName(), "groupAction")) {
-            user.setExcepted(getCommandName(), "groupAction");
+        if (!user.isExceptedKey(commandName, "groupAction")) {
+            user.setExcepted(commandName, "groupAction");
             output.output(interaction.setLanguageValue("config.group.start"));
-            logger.info("Config command requested a user action");
+            logger.info(String.format("[%s] Awaiting group action input from user by id(%s) in chat by id(%s)",
+                    commandName, user.getUserId(), interaction.getChatId()));
             return;
         }
 
-        String action = ((String) user.getValue(getCommandName(), "userAction")).toLowerCase().trim();
+        Object actionObj = user.getValue(commandName, "userAction");
+        if (!(actionObj instanceof String)) {
+            user.setExcepted(commandName, "groupAction");
+            output.output(interaction.setLanguageValue("config.group.start"));
+            logger.warning(String.format("[%s] Invalid or missing group action from user by id(%s) in chat by id(%s)",
+                    commandName, user.getUserId(), interaction.getChatId()));
+            return;
+        }
+
+        String action = ((String) actionObj).toLowerCase().trim();
+        logger.info(String.format("[%s] Received group action \"%s\" from user by id(%s) in chat by id(%s)",
+                commandName, action, user.getUserId(), interaction.getChatId()));
+
         switch (action) {
 
             case "edit name": {
                 // Изменить название группы
+                logger.debug(String.format("[%s] Executing group name edit", commandName));
                 configGroupEditName(interaction, user);
                 break;
             }
 
             case "remove": {
                 // Удалить группу
+                logger.debug(String.format("[%s] Executing group removal", commandName));
                 configGroupRemove(interaction, user);
                 break;
             }
 
             case "edit limits": {
                 // Настройка стандартных прав доступа
+                logger.debug(String.format("[%s] Executing group limits editing", commandName));
                 configGroupEditLimits(interaction, user);
                 break;
             }
 
             case "edit priority": {
                 // Настройка стандартных ограничений
+                logger.debug(String.format("[%s] Executing group priority editing", commandName));
                 configGroupEditPriority(interaction, user);
                 break;
             }
 
             default: { // Если пользователь указал неправильный аргумент
-                user.setExcepted(getCommandName(), "groupAction");
+                user.setExcepted(commandName, "groupAction");
                 output.output(interaction.setLanguageValue("config.group.start"));
-                logger.info("Config command requested a group action");
+                logger.warning(String.format("[%s] Unknown group action \"%s\" from user by id(%s) in chat by id(%s)",
+                        commandName, action, user.getUserId(), interaction.getChatId()));
                 return;
             }
         }
-        user.clearExpected(getCommandName());
+        user.clearExpected(commandName);
+        logger.info(String.format("[%s] Group command completed for user by id(%s) in chat by id(%s)",
+                commandName, user.getUserId(), interaction.getChatId()));
     }
 
     private void configGroupEditName(InteractionTelegram interaction, User user) {
+        final String commandName = getCommandName();
         Server server = interaction.findServerById(interaction.getChatId());
 
         // Запрашиваем название группы
-        if (!user.isExceptedKey(getCommandName(), "oldGroupName")) {
-            user.setExcepted(getCommandName(), "oldGroupName");
+        if (!user.isExceptedKey(commandName, "oldGroupName")) {
+            user.setExcepted(commandName, "oldGroupName");
             output.output(interaction.setLanguageValue(".group.editName.oldGroupName"));
-            logger.info("...");
+            logger.info(String.format("[%s] Awaiting old group name from user by id(%s) in chat by id(%s)",
+                    commandName, user.getUserId(), server.getId()));
             return;
         }
 
-        String groupName = (String) user.getValue(getCommandName(), "oldGroupName");
+        String oldGroupName = (String) user.getValue(commandName, "oldGroupName");
 
         // Проверка на наличие группы на сервере
-        if (server.hasGroup(groupName)) {
-            user.setExcepted(getCommandName(), "groupName");
+        if (server.hasGroup(oldGroupName)) {
+            user.setExcepted(commandName, "groupName");
             output.output(interaction.setLanguageValue(".group.editName.groupNameForRemove"));
-            logger.info("Config command requested a group name");
+            logger.warning(String.format("[%s] Group \"%s\" not found on server by id(%s) (user by id(%s))",
+                    commandName, oldGroupName, server.getId(), user.getUserId()));
             return;
         }
 
         // Запрашиваем новое название группы
-        if (!user.isExceptedKey(getCommandName(), "newGroupName")) {
-            user.setExcepted(getCommandName(), "newGroupName");
+        if (!user.isExceptedKey(commandName, "newGroupName")) {
+            user.setExcepted(commandName, "newGroupName");
             output.output(interaction.setLanguageValue("config.group.editName.newGroupName"));
-            logger.info("...");
+            logger.info(String.format("[%s] Awaiting new group name for \"%s\" from user by id(%s) in chat by id(%s)",
+                    commandName, oldGroupName, user.getUserId(), server.getId()));
             return;
         }
 
-        String newGroupName = (String) user.getValue(getCommandName(), "newGroupName");
-        server.getGroup(groupName).setName(newGroupName);
+        String newGroupName = (String) user.getValue(commandName, "newGroupName");
+        server.getGroup(oldGroupName).setName(newGroupName);
         output.output(interaction.setLanguageValue(".group.editName.accepted"));
+
+        logger.info(String.format("[%s] Group \"%s\" renamed to \"%s\" on server by id(%s) by user by id(%s)",
+                commandName, oldGroupName, newGroupName, server.getId(), user.getUserId()));
     }
 
     private void configGroupRemove(InteractionTelegram interaction, User user) {
+        final String commandName = getCommandName();
         Server server = interaction.findServerById(interaction.getChatId());
 
-        if (!user.isExceptedKey(getCommandName(), "groupName")) {
-            user.setExcepted(getCommandName(), "groupName");
+        if (!user.isExceptedKey(commandName, "groupName")) {
+            user.setExcepted(commandName, "groupName");
             output.output(interaction.setLanguageValue(".group.removeGroup.groupName"));
-            logger.info("Config command requested a group name");
+            logger.info(String.format("[%s] Awaiting group name input from user by id(%s) in chat by id(%s)",
+                    commandName, user.getUserId(), server.getId()));
             return;
         }
 
-        String groupName = (String) user.getValue(getCommandName(), "groupName");
+        String groupName = (String) user.getValue(commandName, "groupName");
 
         // Проверка на наличие группы на сервере
         if (!server.hasGroup(groupName)) {
-            user.setExcepted(getCommandName(), "groupName");
+            user.setExcepted(commandName, "groupName");
             output.output(interaction.setLanguageValue(".group.removeGroup.groupName"));
-            logger.info("Config command requested a group name");
+            logger.info(String.format("[%s] Group \"%s\" not found on server by id(%s) for user by id(%s)",
+                    commandName, groupName, server.getId(), user.getUserId()));
             return;
         }
 
         // Удаляем и проверяем, получилось ли успешно удалить группу
         if (server.removeGroup(groupName)) {
             output.output(interaction.setLanguageValue(".group.removeGroup.accepted"));
-            logger.info("...");
+            logger.info(String.format("[%s] Group \"%s\" successfully removed from server by id(%s) by user by id(%s)",
+                    commandName, groupName, server.getId(), user.getUserId()));
             return;
         }
 
         output.output(interaction.setLanguageValue("system.error.something"));
-        logger.error("...");
+        logger.error(String.format("[%s] Failed to remove group \"%s\" from server by id(%s) (user by id(%s))",
+                commandName, groupName, server.getId(), user.getUserId()));
     }
 
     private void configGroupEditLimits(InteractionTelegram interaction, User user) {
+        final String commandName = getCommandName();
         Server server = interaction.findServerById(interaction.getChatId());
 
-        if (!user.isExceptedKey(getCommandName(), "groupName")) {
-            user.setExcepted(getCommandName(), "groupName");
+        if (!user.isExceptedKey(commandName, "groupName")) {
+            user.setExcepted(commandName, "groupName");
             output.output(interaction.setLanguageValue("group.editLimits.groupName"));
-            logger.info("...");
+            logger.info(String.format("[%s] Awaiting group name input from user %s", commandName, user.getUserId()));
             return;
         }
 
-        String groupName = (String) user.getValue(getCommandName(), "groupName");
+        String groupName = (String) user.getValue(commandName, "groupName");
+
         if (server.hasGroup(groupName)) {
-            user.setExcepted(getCommandName(), "groupName");
+            user.setExcepted(commandName, "groupName");
             output.output(interaction.setLanguageValue("group.editLimits.groupName"));
-            logger.info("...");
+            logger.info(String.format("[%s] Group \"%s\" not found on the server by id(%s)",
+                    commandName, groupName, server.getId()));
             return;
         }
 
         Group group = server.getGroup(groupName);
         Restrictions restrictions = group.getRestrictions();
-        String groupLimits = ".group.editLimits";
 
         if (!user.isExceptedKey(getCommandName(), "groupEditLimits")) {
+            String groupLimits = ".group.editLimits";
             try {
                 String undefined = interaction.getLanguageValue("system.undefined");
+
+                List<String> limits = Stream.of(
+                        restrictions.getLimitKick(),
+                        restrictions.getLimitBan(),
+                        restrictions.getLimitUnban(),
+                        restrictions.getLimitMute(),
+                        restrictions.getLimitUnMute(),
+                        restrictions.getLimitWarn(),
+                        restrictions.getLimitRemWarn(),
+                        restrictions.getLimitResetWarn(),
+                        restrictions.getLimitClear(),
+                        restrictions.getLimitGiveTempRole()
+                ).flatMap(limit -> {
+                    long amountUses = limit.amountUses;
+                    long timestampPeriod = limit.timestampPeriod;
+                    return Stream.of(
+                            amountUses != 0 ? String.valueOf(amountUses) : undefined,
+                            timestampPeriod != 0 ? String.valueOf(timestampPeriod) : undefined
+                    );
+                }).toList();
+
                 String message = String.format("%s\n\n%s\n%s\n\n%s",
                         interaction.getLanguageValue(groupLimits + ".title"),
                         interaction.getLanguageValue(groupLimits + ".description"),
-                        interaction.getLanguageValue(groupLimits + ".restrictions",
-                                Stream.of(
-                                        restrictions.getLimitKick(),
-                                        restrictions.getLimitBan(),
-                                        restrictions.getLimitUnban(),
-                                        restrictions.getLimitMute(),
-                                        restrictions.getLimitUnMute(),
-                                        restrictions.getLimitWarn(),
-                                        restrictions.getLimitRemWarn(),
-                                        restrictions.getLimitResetWarn(),
-                                        restrictions.getLimitClear(),
-                                        restrictions.getLimitGiveTempRole()
-                                ).flatMap(limit -> {
-                                    long amountUses = limit.amountUses;
-                                    long timestampPeriod = limit.timestampPeriod;
-                                    return Stream.of(
-                                            (amountUses != 0 ? (String.valueOf(amountUses)) : (undefined)),
-                                            (timestampPeriod != 0 ? (String.valueOf(timestampPeriod)) : (undefined))
-                                    );
-                                }).toList()),
+                        interaction.getLanguageValue(groupLimits + ".restrictions", limits),
                         interaction.getLanguageValue(groupLimits + ".request"));
 
                 user.setExcepted(getCommandName(), "groupEditLimits");
                 output.output(interaction.setMessage(message));
+                logger.info(String.format("[%s] Send current restrictions info for group %s", commandName, groupName));
 
             } catch (Exception err) {
-                logger.error("Config Default Limits: " + err);
+                logger.error(String.format("[%s] Error displaying group restrictions for \"%s\": %s",
+                        commandName, groupName, err.getMessage()));
                 output.output(interaction.setLanguageValue("system.error.something"));
             }
-
             return;
         }
 
         List<String> arguments = interaction.getArguments();
         if (arguments.size() % 3 != 0) {
             output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectSize"));
-            logger.info("...");
+            logger.info(String.format("[%s] Invalid arguments count: %s", commandName, arguments.size()));
             return;
         }
 
         for (int index = 0; index < arguments.size(); index += 3) {
 
-            Optional<ModerationCommand> enumCommand = interaction.getCommand(arguments.get(index));
-            if (enumCommand.isEmpty()) {
+            Optional<ModerationCommand> moderationCommand = interaction.getCommand(arguments.get(index));
+            if (moderationCommand.isEmpty()) {
                 output.output(interaction.setLanguageValue(".group.editLimits.error.moderationCommandNotFound"));
-                logger.info("...");
+                logger.info(String.format("[%s] Moderation command not found: \"%s\"", commandName, arguments.get(index)));
                 return;
             }
 
@@ -625,7 +665,7 @@ public class ConfigCommand implements BaseCommand {
             Optional<Integer> countUses = validate.isValidInteger(arguments.get(index + 1));
             if (countUses.isEmpty() || countUses.get() < 0) {
                 output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectCountUses"));
-                logger.info("...");
+                logger.info(String.format("[%s] Invalid countUses: %s", commandName, countUses));
                 return;
             }
 
@@ -633,13 +673,18 @@ public class ConfigCommand implements BaseCommand {
             Optional<LocalDateTime> validDuration = validate.isValidDuration(arguments.get(index + 2));
             if (validDuration.isEmpty() || validDuration.get().isBefore(LocalDateTime.now())) {
                 output.output(interaction.setLanguageValue(".group.editLimits.error.incorrectDuration"));
-                logger.info("...");
+                logger.info(String.format("[%s] Invalid duration: %s", commandName, arguments.get(index + 2)));
                 return;
             }
+
             long timestampPeriod = validDuration.get().atZone(ZoneId.systemDefault()).toEpochSecond();
             Limit limit = new Limit(countUses.get(), timestampPeriod);
-            group.setRestrictions(new Restrictions().setLimit(enumCommand.get(), limit));
+            group.setRestrictions(new Restrictions().setLimit(moderationCommand.get(), limit));
+            logger.info(String.format("[%s] Set limit for \"%s\": %s uses, %s timestamp",
+                    commandName, moderationCommand.get(), countUses.get(), timestampPeriod));
         }
+
+        logger.info(String.format("[%s] Finished setting limits for group \"%s\"", commandName, groupName));
     }
 
     private void configGroupEditPriority(InteractionTelegram interaction, User user) {
@@ -671,7 +716,7 @@ public class ConfigCommand implements BaseCommand {
         if (!user.isExceptedKey(command, "groupNewPriority")) {
             user.setExcepted(command, "groupNewPriority", InputExpectation.UserInputType.UNSIGNED_INTEGER);
             output.output(interaction.setLanguageValue(".group.editPriority.requestPriority"));
-            logger.info(String.format("User %s selected group '%s'. Awaiting new priority input.", userId, groupName));
+            logger.info(String.format("User %s selected group \"%s\". Awaiting new priority input.", userId, groupName));
             return;
         }
 
