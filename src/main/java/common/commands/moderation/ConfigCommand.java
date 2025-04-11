@@ -372,6 +372,8 @@ public class ConfigCommand implements BaseCommand {
     }
 
     private void configUserRemove(InteractionTelegram interaction, User user) {
+        String commandName = getCommandName();
+        long chatId = interaction.getChatId();
         Server server = interaction.findServerById(interaction.getChatId());
 
         if (!user.isExceptedKey(getCommandName(), "userId")) {
@@ -402,37 +404,40 @@ public class ConfigCommand implements BaseCommand {
     }
 
     private void configUserEditPriority(InteractionTelegram interaction, User user) {
-        Server server = interaction.findServerById(interaction.getChatId());
+        String commandName = getCommandName();
+        long chatId = interaction.getChatId();
+        Server server = interaction.findServerById(chatId);
 
-        if (!user.isExceptedKey(getCommandName(), "userId")) {
-            user.setExcepted(getCommandName(), "userId", InputExpectation.UserInputType.LONG);
+        if (!user.isExceptedKey(commandName, "userId")) {
+            user.setExcepted(commandName, "userId", InputExpectation.UserInputType.UNSIGNED_LONG);
             output.output(interaction.setLanguageValue(".user.editPriority.requestUser"));
-            logger.info("Config command requested a group name");
+            logger.info(String.format("Expecting userId(%s) for command %s in chat by id(%s)",
+                    interaction.getUserId(), commandName, chatId));
             return;
         }
 
-        Long userId = (Long) user.getValue(getCommandName(), "userId");
+        Long userId = (Long) user.getValue(commandName, "userId");
         Member member = server.getMember(userId);
 
         if (!server.hasMember(userId) && member.getPriority() == 0) {
-            user.setExcepted(getCommandName(), "userId", InputExpectation.UserInputType.LONG);
+            user.setExcepted(commandName, "userId", InputExpectation.UserInputType.UNSIGNED_LONG);
             output.output(interaction.setLanguageValue(".user.editPriority.requestUser"));
-            logger.info("Config command requested a group name");
+            logger.warning(String.format("Invalid or missing member (UserID: %s, ChatID: %s)", userId, chatId));
             return;
         }
 
-        if (!user.isExceptedKey(getCommandName(), "userNewPriority")) {
-            user.setExcepted(getCommandName(), "userNewPriority", InputExpectation.UserInputType.INTEGER);
+        if (!user.isExceptedKey(commandName, "userNewPriority")) {
+            user.setExcepted(commandName, "userNewPriority", InputExpectation.UserInputType.UNSIGNED_INTEGER);
             output.output(interaction.setLanguageValue(".user.editPriority.requestPriority"));
-            logger.info("...");
+            logger.info(String.format("Expecting new priority for user by id(%s) in chat by id(%s)", userId, chatId));
             return;
         }
 
-        member.setPriority((int) user.getValue(getCommandName(), "userNewPriority"));
+        int newPriority = (int) user.getValue(commandName, "userNewPriority");
+        member.setPriority(newPriority);
         output.output(interaction.setLanguageValue(".user.removeUser.accepted"));
-        logger.error("...");
+        logger.info(String.format("Priority of user by id(%s) set to %s in chat by id(%s)", userId, newPriority, chatId));
     }
-    // TODO: ^ Продолжить дорабатывать код ^
 
     private void group(InteractionTelegram interaction, User user) {
         final String commandName = getCommandName();
