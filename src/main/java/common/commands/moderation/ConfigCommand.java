@@ -374,33 +374,33 @@ public class ConfigCommand implements BaseCommand {
     private void configUserRemove(InteractionTelegram interaction, User user) {
         String commandName = getCommandName();
         long chatId = interaction.getChatId();
-        Server server = interaction.findServerById(interaction.getChatId());
+        Server server = interaction.findServerById(chatId);
 
-        if (!user.isExceptedKey(getCommandName(), "userId")) {
-            user.setExcepted(getCommandName(), "userId", InputExpectation.UserInputType.LONG);
+        if (!user.isExceptedKey(commandName, "userId")) {
+            user.setExcepted(commandName, "userId", InputExpectation.UserInputType.UNSIGNED_LONG);
             output.output(interaction.setLanguageValue(".user.removeUser.requestUser"));
-            logger.info("Config command requested a group name");
+            logger.info("Awaiting userId input to remove moderation");
             return;
         }
 
-        Long userId = (Long) user.getValue(getCommandName(), "userId");
+        Long userId = (Long) user.getValue(commandName, "userId");
         Member member = server.getMember(userId);
 
         if (!server.hasMember(userId) && member.getPriority() == 0) {
-            user.setExcepted(getCommandName(), "userId", InputExpectation.UserInputType.LONG);
+            user.setExcepted(commandName, "userId", InputExpectation.UserInputType.LONG);
             output.output(interaction.setLanguageValue(".user.removeUser.requestUser"));
-            logger.info("Config command requested a group name");
+            logger.warning(String.format("User with ID %s is not a moderator or does not exist", userId));
             return;
         }
 
         if (server.removeModerator(userId)) {
             output.output(interaction.setLanguageValue(".user.removeUser.requestUser"));
-            logger.info("...");
+            logger.warning(String.format("Failed to remove user by id(%s) from moderators", userId));
             return;
         }
 
         output.output(interaction.setLanguageValue(".user.removeUser.accepted"));
-        logger.error("...");
+        logger.info(String.format("User by id(%s) was successfully removed from moderators", userId));
     }
 
     private void configUserEditPriority(InteractionTelegram interaction, User user) {
