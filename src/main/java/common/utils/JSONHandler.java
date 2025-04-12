@@ -8,8 +8,15 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class JSONHandler {
-    LoggerHandler logger = new LoggerHandler();
+    private final LoggerHandler logger = new LoggerHandler();
 
+    /**
+     * Reads a JSON file and returns the object or nested value specified by the dot-separated keys.
+     *
+     * @param pathJSON Path to JSON file relative to /resources
+     * @param keys     Dot-separated path to the desired key (e.g., "a.b.c")
+     * @return The resolved object or null if not found or error occurred
+     */
     public Object read(String pathJSON, String keys) {
         String fullPath = String.format("./src/main/resources/%s", pathJSON);
         logger.debug("Attempting to read JSON file from path: " + fullPath);
@@ -46,6 +53,13 @@ public class JSONHandler {
         }
     }
 
+    /**
+     * Checks if a key path exists in the specified JSON file.
+     *
+     * @param pathJSON Path to JSON file relative to /resources
+     * @param keys     Dot-separated key path
+     * @return true if key exists and is not null, false otherwise
+     */
     public boolean check(String pathJSON, String keys) {
         try {
             String fullPath = String.format("./src/main/resources/%s", pathJSON);
