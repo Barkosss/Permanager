@@ -48,7 +48,9 @@ public class ConfigCommand implements BaseCommand {
         }
 
         String argument = arguments.getFirst().toLowerCase();
-        if (List.of("dashboard", "user", "group").contains(argument)) {
+        List<String> validSections = List.of("dashboard", "user", "group");
+
+        if (validSections.contains(argument)) {
             user.setExcepted(getCommandName(), "section").setValue(argument);
             logger.debug(String.format("Parse arguments from chatId(%s, userId=%s), with argument=%s",
                     interaction.getChatId(), interaction.getUserId(), argument));
@@ -59,24 +61,11 @@ public class ConfigCommand implements BaseCommand {
             return;
         }
 
-        switch ((String) user.getValue(getCommandName(), "section")) {
-            case "dashboard": {
-                // Dashboard
-                user.setExcepted(getCommandName(), "dashboardAction").setValue(String.join(" ", arguments));
-                break;
-            }
-
-            case "group": {
-                // Group
-                user.setExcepted(getCommandName(), "dashboardAction").setValue(String.join(" ", arguments));
-                break;
-            }
-
-            case "user": {
-                // User
-                user.setExcepted(getCommandName(), "dashboardAction").setValue(String.join(" ", arguments));
-                break;
-            }
+        Object section = user.getValue(getCommandName(), "section");
+        if (section instanceof String && validSections.contains((String) section)) {
+            user.setExcepted(getCommandName(), "dashboardAction").setValue(String.join(" ", arguments));
+            logger.debug(String.format("Parsed dashboardAction for section=%s from chatId=%s, userId=%s, args=%s",
+                    section, interaction.getChatId(), interaction.getUserId(), arguments));
         }
     }
 
@@ -88,104 +77,99 @@ public class ConfigCommand implements BaseCommand {
         }
 
         InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
+        long chatId = interaction.getChatId();
+        long userId = interaction.getUserId();
 
         // Проверяем на приватность чата
-        if (interactionTelegram.execute(new GetChat(interaction.getChatId())).chat().type() == ChatFullInfo.Type.Private) {
+        if (interactionTelegram.execute(new GetChat(chatId)).chat().type() == ChatFullInfo.Type.Private) {
             logger.info(String.format("User by id(%d) use command \"%s\" in Chat by id(%d)",
-                    interaction.getUserId(), getCommandName(), interaction.getChatId()));
+                    interaction.getUserId(), getCommandName(), chatId));
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
 
-        User user = interaction.getUser(interaction.getUserId());
+        User user = interaction.getUser(userId);
         parseArgs(interaction, user);
 
+        String commandName = getCommandName();
+        String permissionName = ModerationCommand.CONFIG.getCommandName();
 
         logger.debug(String.format("Checking the user's access rights (%s) by id(%s) in the chat by id(%s)",
-                ModerationCommand.CONFIG.getCommandName(), user.getUserId(), interaction.getChatId()));
-        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.CONFIG)) {
+                permissionName, user.getUserId(), chatId));
+        if (!user.hasPermission(chatId, ModerationCommand.CONFIG)) {
             try {
-                logger.info(String.format("The user by id(%s) doesn't have access rights (%s) in chat by id(%s)",
-                        user.getUserId(), ModerationCommand.CONFIG.getCommandName(), interaction.getChatId()));
+                logger.info(String.format("Access denied: userId=%d lacks permission \"%s\" in chatId=%d",
+                        user.getUserId(), permissionName, chatId));
                 output.output(interaction.setLanguageValue("system.error.accessDenied",
                         List.of(((InteractionTelegram) interaction).getUsername())));
             } catch (Exception err) {
-                logger.error(String.format("Get User from reply message (Config): %s", err));
+                logger.error(String.format("Error while retrieving user from reply message (Config): %s", err));
             }
             return;
         }
 
-        if (!user.isExceptedKey(getCommandName(), "section")) {
-            user.setExcepted(getCommandName(), "section");
+        if (!user.isExceptedKey(commandName, "section")) {
+            user.setExcepted(commandName, "section");
             output.output(interaction.setLanguageValue("config.start.section").setInline(true));
             logger.debug("Config command requested a section argument");
             return;
         }
 
-        switch (((String) user.getValue(getCommandName(), "section")).toLowerCase()) {
-            case "dashboard": {
-                logger.debug("Run method \"dashboard\" in config command");
-                dashboard(interactionTelegram, user);
-                break;
-            }
-            case "user": {
-                logger.debug("Run method \"user\" in config command");
-                user(interactionTelegram, user);
-                break;
-            }
-            case "group": {
-                logger.debug("Run method \"group\" in config command");
-                group(interactionTelegram, user);
-                break;
-            }
+        String section = ((String) user.getValue(getCommandName(), "section")).toLowerCase();
+        logger.debug(String.format("Running section \"%s\" in config command", section));
 
-            default: {
+        switch (section) {
+            case "dashboard" -> dashboard(interactionTelegram, user);
+            case "user" -> user(interactionTelegram, user);
+            case "group" -> group(interactionTelegram, user);
+            default -> {
                 user.setExcepted(getCommandName(), "section");
-                output.output(interaction.setLanguageValue("config.start.againSection")
-                        .setInline(true));
-                logger.debug("Config command requested a section argument");
-                break;
+                output.output(interaction.setLanguageValue("config.start.againSection").setInline(true));
+                logger.debug("Config command requested a valid section argument again");
             }
         }
     }
 
     private void dashboard(InteractionTelegram interaction, User user) {
+        String commandName = getCommandName();
 
-        if (!user.isExceptedKey(getCommandName(), "dashboardAction")) {
-            user.setExcepted(getCommandName(), "dashboardAction");
+        if (!user.isExceptedKey(commandName, "dashboardAction")) {
+            user.setExcepted(commandName, "dashboardAction");
             output.output(interaction.setLanguageValue("config.dashboard.start"));
-            logger.info("Config command requested a dashboard action");
+            logger.info("Dashboard command requested an action input");
             return;
         }
 
-        String action = ((String) user.getValue(getCommandName(), "dashboardAction")).toLowerCase().trim();
+        String action = ((String) user.getValue(commandName, "dashboardAction")).toLowerCase().trim();
+
         switch (action) {
-            case "default right access": {
-                // Настройка стандартных прав доступа
+            // Настройка стандартных прав доступа
+            case "default right access" -> {
                 configDashboardDefaultRightAccess(interaction);
-                break;
+                logger.info("Dashboard command: configured default right access");
             }
 
-            case "default limits": {
-                // Настройка стандартных ограничений
+            // Настройка стандартных ограничений
+            case "default limits" -> {
                 configDashboardDefaultLimits(interaction);
-                break;
+                logger.info("Dashboard command: configured default limits");
             }
 
-            case "moderation commands": {
-                // Настройка команд
+            // Настройка команд
+            case "moderation commands" -> {
                 configDashboardModerationCommands(interaction);
-                break;
+                logger.info("Dashboard command: configured moderation commands");
             }
 
-            default: { // Если пользователь указал неправильный аргумент
-                user.setExcepted(getCommandName(), "dashboardAction");
+            // Если пользователь указал неправильный аргумент
+            default -> {
+                user.setExcepted(commandName, "dashboardAction");
                 output.output(interaction.setLanguageValue("config.dashboard.start"));
-                logger.info("Config command requested a dashboard action");
+                logger.warning(String.format("Dashboard command received an unknown action: %s", action));
                 return;
             }
         }
-        user.clearExpected(getCommandName());
+        user.clearExpected(commandName);
     }
 
     // Настройка стандартных прав доступа
@@ -193,30 +177,36 @@ public class ConfigCommand implements BaseCommand {
         Server server = interaction.findServerById(interaction.getChatId());
         String defaultRightAccess = ".dashboard.defaultRightAccess";
         Permissions serverDefaultPermissions = server.getDefaultPermissions();
+
         try {
-            String message = interaction.getLanguageValue(defaultRightAccess + ".title")
-                    + "\n\n"
-                    + interaction.getLanguageValue(defaultRightAccess + ".description")
-                    + "\n"
-                    + interaction.getLanguageValue(defaultRightAccess + ".permissions",
-                    Stream.of(
-                                    serverDefaultPermissions.getCanBan(),
-                                    serverDefaultPermissions.getCanUnban(),
-                                    serverDefaultPermissions.getCanKick(),
-                                    serverDefaultPermissions.getCanMute(),
-                                    serverDefaultPermissions.getCanUnMute(),
-                                    serverDefaultPermissions.getCanWarn(),
-                                    serverDefaultPermissions.getCanRemWarn(),
-                                    serverDefaultPermissions.getCanResetWarn(),
-                                    serverDefaultPermissions.getCanClear()
-                            ).map(permission -> interaction.getLanguageValue("system." + permission))
-                            .toList()
+            List<String> localizedPermissions = Stream.of(
+                            serverDefaultPermissions.getCanBan(),
+                            serverDefaultPermissions.getCanUnban(),
+                            serverDefaultPermissions.getCanKick(),
+                            serverDefaultPermissions.getCanMute(),
+                            serverDefaultPermissions.getCanUnMute(),
+                            serverDefaultPermissions.getCanWarn(),
+                            serverDefaultPermissions.getCanRemWarn(),
+                            serverDefaultPermissions.getCanResetWarn(),
+                            serverDefaultPermissions.getCanClear()
+                    ).map(permission -> interaction.getLanguageValue("system." + permission))
+                    .toList();
+
+            String message = String.format(
+                    "%s\n\n%sn%s",
+                    interaction.getLanguageValue(defaultRightAccess + ".title"),
+                    interaction.getLanguageValue(defaultRightAccess + ".description"),
+                    interaction.getLanguageValue(defaultRightAccess + ".permissions", localizedPermissions)
             );
 
             output.output(interaction.setMessage(message));
+            logger.info(String.format("Displayed default permissions dashboard for chat by id(%s)",
+                    interaction.getChatId()));
+
 
         } catch (Exception err) {
-            logger.error("Default right access (Config) an error occurred: " + err);
+            logger.error(String.format("Failed to display default permissions dashboard for chat by id(%s): %s",
+                    interaction.getChatId(), err.getMessage()));
             output.output(interaction.setLanguageValue("system.error.something"));
         }
     }
@@ -228,35 +218,40 @@ public class ConfigCommand implements BaseCommand {
 
         try {
             String undefined = interaction.getLanguageValue("system.undefined");
-            String message = interaction.getLanguageValue(defaultLimits + ".title")
-                    + "\n\n"
-                    + interaction.getLanguageValue(defaultLimits + ".description")
-                    + "\n"
-                    + interaction.getLanguageValue(defaultLimits + ".restrictions",
-                    Stream.of(
-                            serverDefaultLimits.getLimitKick(),
-                            serverDefaultLimits.getLimitBan(),
-                            serverDefaultLimits.getLimitUnban(),
-                            serverDefaultLimits.getLimitMute(),
-                            serverDefaultLimits.getLimitUnMute(),
-                            serverDefaultLimits.getLimitWarn(),
-                            serverDefaultLimits.getLimitRemWarn(),
-                            serverDefaultLimits.getLimitResetWarn(),
-                            serverDefaultLimits.getLimitClear(),
-                            serverDefaultLimits.getLimitGiveTempRole()
-                    ).flatMap(limit -> {
-                        long amountUses = limit.amountUses;
-                        long timestampPeriod = limit.timestampPeriod;
-                        return Stream.of(
-                                (amountUses != 0 ? (String.valueOf(amountUses)) : (undefined)),
-                                (timestampPeriod != 0 ? (String.valueOf(timestampPeriod)) : (undefined))
-                        );
-                    }).toList());
+
+            List<String> commandRestrictions = Stream.of(
+                    serverDefaultLimits.getLimitKick(),
+                    serverDefaultLimits.getLimitBan(),
+                    serverDefaultLimits.getLimitUnban(),
+                    serverDefaultLimits.getLimitMute(),
+                    serverDefaultLimits.getLimitUnMute(),
+                    serverDefaultLimits.getLimitWarn(),
+                    serverDefaultLimits.getLimitRemWarn(),
+                    serverDefaultLimits.getLimitResetWarn(),
+                    serverDefaultLimits.getLimitClear(),
+                    serverDefaultLimits.getLimitGiveTempRole()
+            ).flatMap(limit -> {
+                long amountUses = limit.amountUses;
+                long timestampPeriod = limit.timestampPeriod;
+                return Stream.of(
+                        (amountUses != 0 ? (String.valueOf(amountUses)) : (undefined)),
+                        (timestampPeriod != 0 ? (String.valueOf(timestampPeriod)) : (undefined))
+                );
+            }).toList();
+
+            String message = String.format(
+                    "%s\n\n%s\n%s",
+                    interaction.getLanguageValue(defaultLimits + ".title"),
+                    interaction.getLanguageValue(defaultLimits + ".description"),
+                    interaction.getLanguageValue(defaultLimits + ".restrictions", commandRestrictions)
+            );
 
             output.output(interaction.setMessage(message));
+            logger.info(String.format("Displayed default limits dashboard for chat by id(%s)", interaction.getChatId()));
 
         } catch (Exception err) {
-            logger.error("Config Default Limits: " + err);
+            logger.error(String.format("Failed to display default limits dashboard for chat by id(%s): %s",
+                    interaction.getChatId(), err.getMessage()));
             output.output(interaction.setLanguageValue("system.error.something"));
         }
     }
@@ -264,109 +259,118 @@ public class ConfigCommand implements BaseCommand {
     private void configDashboardModerationCommands(InteractionTelegram interaction) {
         Server server = interaction.findServerById(interaction.getChatId());
         String moderationCommand = ".dashboard.moderationCommands";
+
+
         Map<String, Boolean> serverModerationCommand = server.getModerationCommands();
         String enable = interaction.getLanguageValue("system.enable");
         String disable = interaction.getLanguageValue("system.disable");
 
         try {
-            String message = interaction.getLanguageValue(moderationCommand + ".title")
-                    + "\n\n"
-                    + interaction.getLanguageValue(moderationCommand + ".description")
-                    + "\n"
-                    + interaction.getLanguageValue(moderationCommand + ".commands",
-                    serverModerationCommand.keySet().stream()
-                            .map(commandName -> (serverModerationCommand.get(commandName)) ? (enable) : (disable))
-                            .toList());
+            List<String> commandStatus = serverModerationCommand.keySet().stream()
+                    .map(commandName -> (serverModerationCommand.get(commandName)) ? (enable) : (disable))
+                    .toList();
+
+            String message = String.format(
+                    "%s\n\n%s\n%s",
+                    interaction.getLanguageValue(moderationCommand + ".title"),
+                    interaction.getLanguageValue(moderationCommand + ".description"),
+                    interaction.getLanguageValue(moderationCommand + ".commands", commandStatus)
+            );
 
             output.output(interaction.setMessage(message));
+            logger.info(String.format("Displayed dashboard moderation commands for chat by id(%s)",
+                    interaction.getChatId()));
 
         } catch (Exception err) {
-            logger.error("...");
+            logger.error(String.format("Failed to generate moderation commands dashboard message for chat by id(%s): %s",
+                    interaction.getChatId(), err.getMessage()));
             output.output(interaction.setLanguageValue("system.error.something"));
         }
-
     }
 
     private void user(InteractionTelegram interaction, User user) {
+        String commandName = getCommandName();
 
-        if (!user.isExceptedKey(getCommandName(), "userAction")) {
-            user.setExcepted(getCommandName(), "userAction");
+        if (!user.isExceptedKey(commandName, "userAction")) {
+            user.setExcepted(commandName, "userAction");
             output.output(interaction.setLanguageValue("config.user.start"));
-            logger.info("Config command requested a user action");
+            logger.info("User action expected but not provided");
             return;
         }
 
-        String action = ((String) user.getValue(getCommandName(), "userAction")).toLowerCase().trim();
+        String action = ((String) user.getValue(commandName, "userAction")).toLowerCase().trim();
+
         switch (action) {
+            // Настройка стандартных прав доступа
+            case "edit limits" -> configUserEditLimits(interaction, user);
 
-            case "edit limits": {
-                // Настройка стандартных прав доступа
-                configUserEditLimits(interaction, user);
-                break;
-            }
+            // Настройка стандартных ограничений
+            case "edit priority" -> configUserEditPriority(interaction, user);
 
-            case "edit priority": {
-                // Настройка стандартных ограничений
-                configUserEditPriority(interaction, user);
-                break;
-            }
+            // Убрать пользователя из модераторов
+            case "remove" -> configUserRemove(interaction, user);
 
-            case "remove": {
-                // Убрать пользователя из модераторов
-                configUserRemove(interaction, user);
-                break;
-            }
-
-            default: { // Если пользователь указал неправильный аргумент
-                user.setExcepted(getCommandName(), "userAction");
+            // Если пользователь указал неправильный аргумент
+            default -> {
+                user.setExcepted(commandName, "userAction");
                 output.output(interaction.setLanguageValue("config.user.start"));
-                logger.info("Config command requested a user action");
+                logger.info(String.format("Invalid user action provided %s", action));
                 return;
             }
         }
-        user.clearExpected(getCommandName());
+        user.clearExpected(commandName);
     }
 
     private void configUserEditLimits(InteractionTelegram interaction, User user) {
-        Optional<Long> userId = validate.isValidLong(interaction.getArguments().getLast());
-
-        if (userId.isEmpty()) {
-            userId = Optional.of(interaction.getUserId());
-        }
-
-        Server server = interaction.findServerById(interaction.getChatId());
-        Member targetMember = server.getMembers().get(userId.get());
-        Restrictions restrictionsTargetMember = targetMember.getRestrictions();
+        String undefined = interaction.getLanguageValue("system.undefined");
+        String commandName = getCommandName();
         String userEditLimits = ".user.editLimits";
 
+        Optional<Long> validUserId = validate.isValidLong(interaction.getArguments().getLast());
+        long userId = validUserId.orElse(interaction.getUserId());
+
+        Server server = interaction.findServerById(interaction.getChatId());
+        Member targetMember = server.getMembers().get(userId);
+
+        if (targetMember == null) {
+            logger.warning(String.format("Target member by id(%s) not found in chat by id(%s)", userId, interaction.getChatId()));
+            output.output(interaction.setLanguageValue("system.error.memberNotFound"));
+            return;
+        }
+
+        Restrictions restrictionsTargetMember = targetMember.getRestrictions();
+
         try {
-            String undefined = interaction.getLanguageValue("system.undefined");
-            String message = String.format("%s\n\n%s\n%s\n\n%s",
+            List<String> limits = Stream.of(
+                    restrictionsTargetMember.getLimitKick(),
+                    restrictionsTargetMember.getLimitBan(),
+                    restrictionsTargetMember.getLimitUnban(),
+                    restrictionsTargetMember.getLimitMute(),
+                    restrictionsTargetMember.getLimitUnMute(),
+                    restrictionsTargetMember.getLimitWarn(),
+                    restrictionsTargetMember.getLimitRemWarn(),
+                    restrictionsTargetMember.getLimitResetWarn(),
+                    restrictionsTargetMember.getLimitClear(),
+                    restrictionsTargetMember.getLimitGiveTempRole()
+            ).flatMap(limit -> Stream.of(
+                    ((limit.amountUses != 0) ? (String.valueOf(limit.amountUses)) : (undefined)),
+                    (limit.timestampPeriod != 0 ? (String.valueOf(limit.timestampPeriod)) : (undefined))
+            )).toList();
+
+            String message = String.format(
+                    "%s\n\n%s\n%s\n\n%s",
                     interaction.getLanguageValue(userEditLimits + ".title"),
                     interaction.getLanguageValue(userEditLimits + ".description"),
-                    interaction.getLanguageValue(userEditLimits + ".commands",
-                            Stream.of(
-                                    restrictionsTargetMember.getLimitKick(),
-                                    restrictionsTargetMember.getLimitBan(),
-                                    restrictionsTargetMember.getLimitUnban(),
-                                    restrictionsTargetMember.getLimitMute(),
-                                    restrictionsTargetMember.getLimitUnMute(),
-                                    restrictionsTargetMember.getLimitWarn(),
-                                    restrictionsTargetMember.getLimitRemWarn(),
-                                    restrictionsTargetMember.getLimitResetWarn(),
-                                    restrictionsTargetMember.getLimitClear(),
-                                    restrictionsTargetMember.getLimitGiveTempRole()
-                            ).flatMap(limit -> Stream.of(
-                                    ((limit.amountUses != 0) ? (String.valueOf(limit.amountUses)) : (undefined)),
-                                    (limit.timestampPeriod != 0 ? (String.valueOf(limit.timestampPeriod)) : (undefined))
-                            )).toList()),
-                    interaction.getLanguageValue(userEditLimits + ".request"));
+                    interaction.getLanguageValue(userEditLimits + ".commands", limits),
+                    interaction.getLanguageValue(userEditLimits + ".request")
+            );
 
-            user.setExcepted(getCommandName(), "userEditLimits");
+            user.setExcepted(commandName, "userEditLimits");
             output.output(interaction.setMessage(message));
+            logger.info(String.format("User by id(%s) is editing limits for member by id(%s)", interaction.getUserId(), userId));
 
         } catch (Exception err) {
-            logger.error("...:" + err);
+            logger.error(String.format("Failed to build edit limits message for userId by id(%s): %s", userId, err.getMessage()));
             output.output(interaction.setLanguageValue("system.error.something"));
         }
     }
