@@ -41,6 +41,24 @@ public class LoggerHandler {
 
     // Конструктор логгера
     public LoggerHandler() {
+        createLogger();
+    }
+
+    public LoggerHandler(String[] args) {
+        if (args.length >= 2) {
+            debug("Checking args for debug mode: " + args[1]);
+            setDebugMode(args[1].toLowerCase().contains("debug"));
+        }
+
+        createLogger();
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        writeLog("Debug mode is enable", LoggerStatus.DEBUG);
+        LoggerHandler.debugMode = debugMode;
+    }
+
+    private void createLogger() {
         LocalDateTime dateNow = LocalDateTime.now();
         this.logFileName = String.format("%s.log", dateNow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         this.logFilePath = String.format("./src/main/resources/logs/%s-%s/%s", dateNow.getMonthValue(),
@@ -59,11 +77,6 @@ public class LoggerHandler {
         } catch (IOException e) {
             System.out.printf("File with name \"%s\" isn't open\n", logFileName);
         }
-    }
-
-    public void setDebugMode(boolean debugMode) {
-        writeLog("Debug mode is enable", LoggerStatus.DEBUG);
-        LoggerHandler.debugMode = debugMode;
     }
 
     public void writeLog(String message, LoggerStatus status) {

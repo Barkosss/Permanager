@@ -12,17 +12,12 @@ import java.sql.Timestamp;
 public class Main {
 
     public static void main(String[] args) {
-        LoggerHandler logger = new LoggerHandler();
+        LoggerHandler logger = new LoggerHandler(args);
 
         try {
             logger.newLine();
             JSONHandler jsonHandler = new JSONHandler();
             logger.info("--------".repeat(3) + " BOT IS STARTED " + "--------".repeat(3));
-
-            if (args.length >= 2) {
-                logger.debug("Checking args for debug mode: " + args[1]);
-                logger.setDebugMode(args[1].toLowerCase().contains("debug"));
-            }
 
             // Загрузка команд
             logger.debug("Initializing CommandHandler");
