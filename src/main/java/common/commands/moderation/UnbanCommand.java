@@ -33,6 +33,7 @@ public class UnbanCommand implements BaseCommand {
 
     @Override
     public void parseArgs(Interaction interaction, User user) {
+        // Not user arguments
     }
 
     @Override
@@ -40,6 +41,7 @@ public class UnbanCommand implements BaseCommand {
 
         // Проверка на платформу
         if (interaction.getPlatform() == Interaction.Platform.CONSOLE) {
+            logger.warning("Attempted to execute \"unban\" from console");
             output.output(interaction.setLanguageValue("system.error."));
             return;
         }
@@ -50,6 +52,7 @@ public class UnbanCommand implements BaseCommand {
         // Проверка на тип беседы
         if (interactionTelegram.execute(new GetChat(interaction.getChatId())).chat().type()
                 == ChatFullInfo.Type.Private) {
+            logger.warning("Unban attempted in a private chat");
             output.output(interaction.setLanguageValue("system.error."));
             return;
         }
@@ -58,21 +61,21 @@ public class UnbanCommand implements BaseCommand {
         if (!user.hasPermission(interaction.getChatId(), ModerationCommand.UNBAN)) {
             output.output(interaction.setLanguageValue("system.error.accessDenied",
                     List.of(interactionTelegram.getUsername())));
+            logger.warning("User @" + interactionTelegram.getUsername() + " tried to unban without permission");
             return;
         }
 
         // Получаем пользователя
         if (!user.isExceptedKey(getCommandName(), "userId")) {
-            logger.info("");
+            logger.warning("Expected userId is missing for unban command");
             output.output(interaction.setLanguageValue("..."));
             return;
         }
 
         try {
-            Object userObject = user.getValue(getCommandName(), "userId");
-
             Optional<Long> userIdValid = validate.isValidLong((String) user.getValue(getCommandName(), "userId"));
             if (userIdValid.isEmpty()) {
+                logger.warning("Invalid userId provided for unban");
                 output.output(interaction.setLanguageValue("..."));
                 return;
             }
