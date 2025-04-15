@@ -50,46 +50,53 @@ public class UnbanCommand implements BaseCommand {
         InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
 
         // Проверка на тип беседы
-        if (interactionTelegram.execute(new GetChat(interaction.getChatId())).chat().type()
-                == ChatFullInfo.Type.Private) {
-            logger.warning("Unban attempted in a private chat");
-            output.output(interaction.setLanguageValue("system.error."));
-            return;
-        }
-
-        // Проверка, доступно ли разрешение
-        if (!user.hasPermission(interaction.getChatId(), ModerationCommand.UNBAN)) {
-            output.output(interaction.setLanguageValue("system.error.accessDenied",
-                    List.of(interactionTelegram.getUsername())));
-            logger.warning("User @" + interactionTelegram.getUsername() + " tried to unban without permission");
-            return;
-        }
-
-        // Получаем пользователя
-        if (!user.isExceptedKey(getCommandName(), "userId")) {
-            logger.warning("Expected userId is missing for unban command");
-            output.output(interaction.setLanguageValue("..."));
-            return;
-        }
-
         try {
-            Optional<Long> userIdValid = validate.isValidLong((String) user.getValue(getCommandName(), "userId"));
-            if (userIdValid.isEmpty()) {
-                logger.warning("Invalid userId provided for unban");
+            ChatFullInfo.Type chatType = interactionTelegram.execute(new GetChat(interaction.getChatId())).chat().type();
+            if (chatType == ChatFullInfo.Type.Private) {
+                logger.warning("Unban attempted in a private chat");
+                output.output(interaction.setLanguageValue("system.error."));
+                return;
+            }
+
+            // Проверка, доступно ли разрешение
+            if (!user.hasPermission(interaction.getChatId(), ModerationCommand.UNBAN)) {
+                logger.warning("User @" + interactionTelegram.getUsername() + " tried to unban without permission");
+                output.output(interaction.setLanguageValue("system.error.accessDenied",
+                        List.of(interactionTelegram.getUsername())));
+                return;
+            }
+
+            // Получаем пользователя
+            if (!user.isExceptedKey(getCommandName(), "userId")) {
+                logger.warning("Expected userId is missing for unban command");
                 output.output(interaction.setLanguageValue("..."));
                 return;
             }
-            long userId = userIdValid.get();
 
-            interactionTelegram.execute(new UnbanChatMember(interaction.getChatId(), userId));
-            interactionTelegram.findServerById(interaction.getChatId()).removeUserBan(user);
-            logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been unbaned");
-            String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
-            output.output(interactionTelegram.setMessage("The user @" + username + " has been unbaned"));
+            try {
+                Optional<Long> userIdValid = validate.isValidLong((String) user.getValue(getCommandName(), "userId"));
+                if (userIdValid.isEmpty()) {
+                    logger.warning("Invalid userId provided for unban");
+                    output.output(interaction.setLanguageValue("..."));
+                    return;
+                }
+                long userId = userIdValid.get();
+
+                interactionTelegram.execute(new UnbanChatMember(interaction.getChatId(), userId));
+                interactionTelegram.findServerById(interaction.getChatId()).removeUserBan(user);
+                logger.info("User by id(" + userId + ") in chat by id(" + interaction.getChatId() + ") has been unbaned");
+                String username = ((Message) user.getValue(getCommandName(), "user")).from().username();
+                output.output(interactionTelegram.setMessage("The user @" + username + " has been unbaned"));
 
 
+            } catch (Exception err) {
+                logger.error("Error: " + err);
+                output.output(interaction.setLanguageValue("system.error.something"));
+            } finally {
+                user.clearExpected(getCommandName());
+            }
         } catch (Exception err) {
-            logger.error("Error: " + err);
+            logger.error("Unexpected error while unbanning user: " + err.getMessage(), true);
             output.output(interaction.setLanguageValue("system.error.something"));
         } finally {
             user.clearExpected(getCommandName());
