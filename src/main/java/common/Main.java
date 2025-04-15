@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 public class Main {
 
     public static void main(String[] args) {
-        LoggerHandler logger = new LoggerHandler(args);
+        LoggerHandler logger = new LoggerHandler();
 
         try {
             logger.newLine();

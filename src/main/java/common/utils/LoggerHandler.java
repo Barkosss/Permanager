@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Как выбирать уровень?
-
+ * <p>
  * Обычная успешная работа? — INFO
  * Неправильный вход пользователя? — WARN
  * Сломалась важная операция (но не всё приложение)? — ERROR
@@ -22,8 +22,6 @@ import java.time.format.DateTimeFormatter;
  */
 
 public class LoggerHandler {
-
-    private static boolean debugMode;
 
     // Объект файла
     FileWriter logFile;
@@ -39,26 +37,7 @@ public class LoggerHandler {
         return "dd-MM-yyyy HH:mm:ss";
     }
 
-    // Конструктор логгера
     public LoggerHandler() {
-        createLogger();
-    }
-
-    public LoggerHandler(String[] args) {
-        if (args.length >= 2) {
-            debug("Checking args for debug mode: " + args[1]);
-            setDebugMode(args[1].toLowerCase().contains("debug"));
-        }
-
-        createLogger();
-    }
-
-    public void setDebugMode(boolean debugMode) {
-        writeLog("Debug mode is enable", LoggerStatus.DEBUG);
-        LoggerHandler.debugMode = debugMode;
-    }
-
-    private void createLogger() {
         LocalDateTime dateNow = LocalDateTime.now();
         this.logFileName = String.format("%s.log", dateNow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         this.logFilePath = String.format("./src/main/resources/logs/%s-%s/%s", dateNow.getMonthValue(),
@@ -115,12 +94,10 @@ public class LoggerHandler {
     }
 
     public void debug(String message) {
-        if (!debugMode) return;
         writeLog(message, LoggerStatus.DEBUG);
     }
 
     public void debug(String message, Boolean inConsole) {
-        if (!debugMode) return;
         writeLog(message, LoggerStatus.DEBUG, inConsole);
     }
 
