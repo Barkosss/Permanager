@@ -24,12 +24,18 @@ public enum ModerationCommand {
     Caused by: java.lang.NullPointerException:
     Cannot invoke "[Lcommon.enums.ModerationCommand;.clone()" because "common.enums.ModerationCommand.$VALUES" is null
      */
-    private final Map<String, ModerationCommand> lookup = new HashMap<>();
+    private Map<String, ModerationCommand> lookup = new HashMap<>();
 
     ModerationCommand(String commandName) {
         this.commandName = commandName;
-        for (ModerationCommand command : ModerationCommand.values()) {
-            lookup.put(command.commandName, command);
+    }
+
+    private void init() {
+        if (lookup == null) {
+            lookup = new HashMap<>();
+            for (ModerationCommand command : ModerationCommand.values()) {
+                lookup.put(command.commandName, command);
+            }
         }
     }
 
@@ -38,6 +44,7 @@ public enum ModerationCommand {
     }
 
     public Optional<ModerationCommand> getCommand(String value) {
+        init();
         ModerationCommand cmd = lookup.get(value.toUpperCase());
         if (cmd == null || cmd == ALL) {
             return Optional.empty();
