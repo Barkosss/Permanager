@@ -1,6 +1,6 @@
 package common.models;
 
-import common.commands.custom.HelpCommand;
+import common.repositories.CommandRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +14,12 @@ public class Server {
 
     // ID владельца
     private long ownerId;
+
+    // Через сколько (секундах) удалить сообщение об успешной операции (0 - не удалять)
+    private long durationDeleteSuccessfulMessage;
+
+    // Через сколько (секундах) удалить сообщение об ошибке (0 - не удалять)
+    private long durationDeleteErrorMessage;
 
     // Список модераторов/администраторов сервера (Общее название - администраторы)
     private Map<Long, Member> members;
@@ -36,20 +42,19 @@ public class Server {
     // Список замьюченных пользователей
     private Map<Long, User> mutes;
 
-    public Server(long id, Map<Long, Member> members, Permissions defaultPermissions) {
+    public Server(long id, Map<Long, Member> members, Permissions defaultPermissions, CommandRepository commandRepository) {
         this.id = id;
         this.members = members;
         this.defaultPermissions = defaultPermissions;
-        this.moderationCommands = initModerationCommands();
+        this.moderationCommands = initModerationCommands(commandRepository);
+        this.durationDeleteSuccessfulMessage = 0;
+        this.durationDeleteErrorMessage = 0;
     }
 
     // Инициализация moderationCommands
-    private Map<String, Boolean> initModerationCommands() {
-        HelpCommand helpCommand = new HelpCommand();
-
-        return helpCommand.methods.keySet()
-                .stream()
-                .collect(Collectors.toMap(commandName -> commandName, commandName -> true));
+    private Map<String, Boolean> initModerationCommands(CommandRepository commandRepository) {
+        return commandRepository.getCommands().keySet().stream()
+                .collect(Collectors.toMap(commandName -> commandName, _ -> true));
     }
 
     // Получение ID сервера
@@ -60,6 +65,35 @@ public class Server {
     // Установить ID сервера
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getDurationDeleteMessage(InteractionTelegram.OutputStatus status) {
+        return switch (status) {
+            case SUCCESS -> durationDeleteSuccessfulMessage;
+            case ERROR -> durationDeleteErrorMessage;
+        };
+    }
+
+    // Получить время (в секундах), через сколько удалить успешное сообщение
+    public long getDurationDeleteSuccessfulMessage() {
+        return durationDeleteSuccessfulMessage;
+    }
+
+    // Назначить время (в секундах), через сколько удалить успешное сообщение
+    public Server setDurationDeleteSuccessfulMessage(long durationDeleteSuccessfulMessage) {
+        this.durationDeleteSuccessfulMessage = durationDeleteSuccessfulMessage;
+        return this;
+    }
+
+    // Получить время (в секундах), через сколько удалить сообщение об ошибке
+    public long getDurationDeleteErrorMessage() {
+        return durationDeleteErrorMessage;
+    }
+
+    // Назначить время (в секундах), через сколько удалить успешное сообщение
+    public Server setDurationDeleteErrorMessage(long durationDeleteErrorMessage) {
+        this.durationDeleteErrorMessage = durationDeleteErrorMessage;
+        return this;
     }
 
     // Получение список администраторов
@@ -177,23 +211,21 @@ public class Server {
     }
 
     // Добавить пользователя в список забаненных
-    public Server addUserBan(User user) {
+    public void addUserBan(User user) {
         if (this.bans == null) {
             this.bans = new HashMap<>();
         }
 
         bans.put(user.userId, List.of(user));
-        return this;
     }
 
     // Удалить пользователя из списка забаненных
-    public Server removeUserBan(User user) {
+    public void removeUserBan(User user) {
         if (this.bans == null) {
             this.bans = new HashMap<>();
         }
 
         bans.remove(user.userId);
-        return this;
     }
 
     // Получить список замьюченных пользователей
@@ -202,18 +234,16 @@ public class Server {
     }
 
     // Добавить пользователя в список замьюченных
-    public Server addUserMute(User user) {
+    public void addUserMute(User user) {
         if (this.mutes == null) {
             this.mutes = new HashMap<>();
         }
 
         mutes.put(user.userId, user);
-        return this;
     }
 
     // Удалить пользователя из списка замьюченных
-    public Server removeUserMute(User user) {
+    public void removeUserMute(User user) {
         mutes.remove(user.userId);
-        return this;
     }
 }

@@ -14,6 +14,7 @@ public class WarningRepository {
 
     public WarningRepository() {
         this.warnings = new HashMap<>();
+        logger.info("WarningRepository initialized", true);
     }
 
     // Создать пользователя в памяти
@@ -24,11 +25,13 @@ public class WarningRepository {
 
         if (!this.warnings.containsKey(warning.getChatId())) {
             this.warnings.put(warning.getChatId(), new HashMap<>());
+            logger.debug(String.format("Chat by id(%s) is added to warnings repository.", warning.getChatId()));
         }
 
         long warningId = warning.getId();
         if (!this.warnings.get(warning.getChatId()).containsKey(warning.getUserId())) {
             this.warnings.get(warning.getChatId()).put(warning.getUserId(), new HashMap<>());
+            logger.debug(String.format("User by id(%s) is added to warnings repository in chat by id(%s).", warning.getUserId(), warning.getChatId()));
         }
         logger.debug(String.format("Warning by id(%s) is create", warningId));
         this.warnings.get(warning.getChatId()).get(warning.getUserId()).put(warningId, warning);
@@ -46,13 +49,17 @@ public class WarningRepository {
 
         if (!this.warnings.containsKey(chatId)) {
             this.warnings.put(chatId, new HashMap<>());
+            logger.debug(String.format("Chat by id(%s) is added to warnings repository.", chatId));
         }
 
         if (!this.warnings.get(chatId).containsKey(userId)) {
             this.warnings.get(chatId).put(userId, new HashMap<>());
+            logger.debug(String.format("User by id(%s) is added to warnings repository in chat by id(%s).", userId, chatId));
         }
 
         this.warnings.get(warning.getChatId()).get(warning.getUserId()).remove(warning.getId());
+        logger.debug(String.format("Warning by id(%s) is removed for user by id(%s) in chat by id(%s).",
+                warning.getId(), warning.getUserId(), warning.getChatId()));
     }
 
     public void reset(InteractionTelegram interactionTelegram, long chatId) {
@@ -62,13 +69,16 @@ public class WarningRepository {
 
         if (!this.warnings.containsKey(chatId)) {
             this.warnings.put(chatId, new HashMap<>());
+            logger.debug(String.format("Chat by id(%s) is added to warnings repository.", chatId));
         }
 
         for (Long userId : this.warnings.get(chatId).keySet()) {
             interactionTelegram.findUserById(userId).resetWarnings(chatId);
+            logger.debug(String.format("All warnings reset for user by id(%s) in chat by id(%s).", userId, chatId));
         }
 
         this.warnings.remove(chatId);
+        logger.debug(String.format("All warnings for chat by id(%s) are reset.", chatId));
     }
 
     public void reset(long chatId, long userId) {
@@ -78,13 +88,16 @@ public class WarningRepository {
 
         if (!this.warnings.containsKey(chatId)) {
             this.warnings.put(chatId, new HashMap<>());
+            logger.debug(String.format("Chat by id(%s) is added to warnings repository.", chatId));
         }
 
         if (!this.warnings.get(chatId).containsKey(userId)) {
             this.warnings.get(chatId).put(userId, new HashMap<>());
+            logger.debug(String.format("User by id(%s) is added to warnings repository in chat by id(%s).", userId, chatId));
         }
 
         this.warnings.get(chatId).remove(userId);
+        logger.debug(String.format("All warnings for user by id(%s) in chat by id(%s) are reset.", userId, chatId));
     }
 
     // Найти пользователя по ID
@@ -95,10 +108,12 @@ public class WarningRepository {
 
         if (!this.warnings.containsKey(chatId)) {
             this.warnings.put(chatId, new HashMap<>());
+            logger.debug(String.format("Chat by id(%s) is added to warnings repository.", chatId));
         }
 
         if (!this.warnings.get(chatId).containsKey(userId)) {
             this.warnings.get(chatId).put(userId, new HashMap<>());
+            logger.debug(String.format("User by id(%s) is added to warnings repository in chat by id(%s).", userId, chatId));
         }
 
         Warning warning = this.warnings.get(chatId).get(userId).get(warningId);
@@ -115,12 +130,16 @@ public class WarningRepository {
 
         if (!this.warnings.containsKey(chatId)) {
             this.warnings.put(chatId, new HashMap<>());
+            logger.debug(String.format("Chat by id(%s) is added to warnings repository.", chatId));
         }
 
         if (!this.warnings.get(chatId).containsKey(userId)) {
             this.warnings.get(chatId).put(userId, new HashMap<>());
+            logger.debug(String.format("User by id(%s) is added to warnings repository in chat by id(%s).", userId, chatId));
         }
 
-        return this.warnings.get(chatId).get(userId).containsKey(warningId);
+        boolean exists = this.warnings.get(chatId).get(userId).containsKey(warningId);
+        logger.debug(String.format("Warning by id(%s) exists for user by id(%s) in chat by id(%s): %s", warningId, userId, chatId, exists));
+        return exists;
     }
 }

@@ -10,44 +10,48 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Валидация: Проверка строки на необходимое значение
+ * Utility class for validating and parsing string values such as numbers, dates,
+ * durations, and time zones.
  */
 public class ValidateService {
 
+    private final LoggerHandler logger = new LoggerHandler();
+
     /**
-     * Валидация числа и конвертация строки в число (Integer)
+     * Validates and parses a string as an Integer
      *
-     * @param strInteger Строка с числом
-     * @return Integer
+     * @param strInteger the string representing an integer value
+     * @return an {@code Optional<Integer>} if parsing is successful, otherwise {@code Optional.empty()}
      */
     public Optional<Integer> isValidInteger(String strInteger) {
         try {
             return Optional.of(Integer.parseInt(strInteger));
         } catch (Exception err) {
+            logger.debug(String.format("Failed to parse integer: '%s'", strInteger));
             return Optional.empty();
         }
     }
 
     /**
-     * Валидация числа и конвертация строки в число (Long)
+     * Validates and parses a string as a Long.
      *
-     * @param strLong Строка с числом (Long)
-     * @return Long
+     * @param strLong the string representing a long value
+     * @return an {@code Optional<Long>} if parsing is successful, otherwise {@code Optional.empty()}
      */
     public Optional<Long> isValidLong(String strLong) {
         try {
             return Optional.of(Long.parseLong(strLong));
         } catch (Exception err) {
+            logger.debug(String.format("Failed to parse long: '%s'", strLong));
             return Optional.empty();
         }
     }
 
-
     /**
-     * Валидация даты и конвертация строки в дату
+     * Validates and parses a string into a {@code LocalDateTime} using multiple date patterns.
      *
-     * @param strLocalDate Строка с датой
-     * @return LocalDateTime
+     * @param strLocalDate the string representing a date and time
+     * @return an {@code Optional<LocalDateTime>} if parsing is successful, otherwise {@code Optional.empty()}
      */
     public Optional<LocalDateTime> isValidDate(String strLocalDate) {
 
@@ -62,27 +66,32 @@ public class ValidateService {
                 "dd.MM.yy HH:mm:ss"
         };
 
-        // Проходимся по каждому форматы дат
         for (String pattern : patterns) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
                 return Optional.of(LocalDateTime.parse(strLocalDate, formatter));
-            } catch (Exception err) {
-                // The exception is ignored for a specific reason
+            } catch (Exception ignore) {
+                // try next pattern
             }
         }
+
+        logger.debug(String.format("Failed to recognize date format: '%s'", strLocalDate));
         return Optional.empty();
     }
 
-
     /**
-     * @param strDuration Строка длительности
-     * @return Возвращает Optional<LocalDateTime>
+     * Validates and parses a string into a future {@code LocalDateTime} based on a duration format.
+     * Supported units: s (seconds), m (minutes), h (hours), d (days), w (weeks), mo (months), y (years)
+     *
+     * @param strDuration the string representing a time duration (e.g., "1h30m")
+     * @return an {@code Optional<LocalDateTime>} representing the current time plus duration,
+     * or {@code Optional.empty()} if parsing fails
      */
     public Optional<LocalDateTime> isValidDuration(String strDuration) {
         Pattern timePattern = Pattern.compile("(\\d+)(" + getMatchDesignations() + ")");
 
         if (strDuration.isEmpty()) {
+            logger.debug("Duration string is empty.");
             return Optional.empty();
         }
 
@@ -104,8 +113,15 @@ public class ValidateService {
                 case "w" -> result.plusWeeks(value);
                 case "mo" -> result.plusMonths(value);
                 case "y" -> result.plusYears(value);
-                default -> result;
+                default -> {
+                    logger.debug(String.format("Unknown duration unit: '%s'", unit));
+                    yield result;
+                }
             };
+        }
+
+        if (!found) {
+            logger.debug(String.format("Could not parse duration: '%s'", strDuration));
         }
 
         return found ? Optional.of(result) : Optional.empty();
@@ -121,26 +137,37 @@ public class ValidateService {
             "y"
     };
 
+    /**
+     * Builds the regex alternation pattern from supported time unit suffixes.
+     *
+     * @return a string like "s|m|h|d|w|mo|y"
+     */
     private String getMatchDesignations() {
         return String.join("|", designations);
     }
 
-
     /**
-     * Валидация часового пояса и конвертация строки в объект
+     * Validates and parses a string into a {@code TimeZone} object.
      *
-     * @param strTimeZone Строка с часовым поясом
-     * @return TimeZone
+     * @param strTimeZone the string representing a time zone (e.g., "Europe/Moscow")
+     * @return an {@code Optional<TimeZone>} if valid, otherwise {@code Optional.empty()}
      */
     public Optional<TimeZone> isValidTimeZone(String strTimeZone) {
         try {
             return Optional.of(new TimeZone(ZoneId.of(formatterTimeZone(strTimeZone))));
         } catch (Exception err) {
+            logger.debug(String.format("Invalid time zone: '%s'", strTimeZone));
             return Optional.empty();
         }
     }
 
-
+    /**
+     * Normalizes a time zone string into proper case for parsing.
+     * For example, "europe/moscow" becomes "Europe/Moscow".
+     *
+     * @param timeZone the time zone string to format
+     * @return a formatted time zone string
+     */
     private String formatterTimeZone(String timeZone) {
         if (!timeZone.contains("/")) {
             return timeZone;

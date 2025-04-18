@@ -28,6 +28,7 @@ public class InputTelegram {
 
         // Проверка на пустые объекты
         if (chatMember.oldChatMember() == null || chatMember.newChatMember() == null) {
+            logger.debug("JoinChat check failed: old or new chat member is null.");
             return false;
         }
 
@@ -36,19 +37,26 @@ public class InputTelegram {
         ChatMember botInChat = interactionTelegram.execute(new GetChatMember(chatMember.chat().id(),
                 chatMember.oldChatMember().user().id())).chatMember();
         if (botInChat == null) {
+            logger.debug("JoinChat check failed: bot is not currently in chat.");
             return false;
         }
 
         // Старый статус у пользователя это Left?
         if (!chatMember.oldChatMember().status().equals(ChatMember.Status.left)) {
+            logger.debug("JoinChat check failed: old status is not LEFT.");
             return false;
 
             // Новый статус у пользователя это Member?
         } else if (!chatMember.newChatMember().status().equals(ChatMember.Status.member)) {
+            logger.debug("JoinChat check failed: new status is not MEMBER.");
             return false;
-        } else { // Пользователь бот или нет?
-            return chatMember.newChatMember().user().isBot()
+
+            // Пользователь бот или нет?
+        } else {
+            boolean isBotJoin = chatMember.newChatMember().user().isBot()
                     && chatMember.newChatMember().user().username().equals("PermanagerBot");
+            logger.debug("JoinChat check passed: bot join status = " + isBotJoin);
+            return isBotJoin;
         }
     }
 
@@ -57,19 +65,26 @@ public class InputTelegram {
 
         // Проверка на пустые объекты
         if (chatMember.oldChatMember() == null || chatMember.newChatMember() == null) {
+            logger.debug("LeaveChat check failed: old or new chat member is null.");
             return false;
         }
 
         // Старый статус у пользователя это не Left?
         if (chatMember.oldChatMember().status().equals(ChatMember.Status.left)) {
+            logger.debug("LeaveChat check failed: old status already LEFT.");
             return false;
 
             // Новый статус у пользователя это Left?
         } else if (!chatMember.newChatMember().status().equals(ChatMember.Status.left)) {
+            logger.debug("LeaveChat check failed: new status is not LEFT.");
             return false;
-        } else { // Пользователь бот или нет?
-            return chatMember.oldChatMember().user().isBot()
+
+            // Пользователь бот или нет?
+        } else {
+            boolean isBotLeave =  chatMember.oldChatMember().user().isBot()
                     && chatMember.oldChatMember().user().username().equals("PermanagerBot");
+            logger.debug("LeaveChat check passed: bot leave status = " + isBotLeave);
+            return isBotLeave;
         }
     }
 
@@ -77,18 +92,22 @@ public class InputTelegram {
     private ChatMember findChatCreator(InteractionTelegram interactionTelegram, long chatId) {
         // Найти владельца чата
         GetChatAdministratorsResponse administrators = interactionTelegram.execute(new GetChatAdministrators(chatId));
+        logger.debug("Looking for chat creator in chat ID: " + chatId);
 
         for (ChatMember administrator : administrators.administrators()) {
             if (administrator.status().equals(ChatMember.Status.creator)) {
+                logger.debug("Chat creator found: @" + administrator.user().username());
                 return administrator;
             }
         }
 
+        logger.debug("Chat creator not found for chat ID: " + chatId);
         return null;
     }
 
     public void read(Interaction interaction, CommandHandler commandHandler) {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
+        logger.info("Telegram listener has started.");
 
         // Обработка всех изменений
         interactionTelegram.getTelegramBot().setUpdatesListener(updates -> {
@@ -97,18 +116,26 @@ public class InputTelegram {
             Interaction.Language language;
             User user;
             for (Update update : updates) {
-                ChatMemberUpdated chatMember = update.myChatMember();
+                if (update.message() == null) {
+                    logger.debug("Received update without message: " + update);
+                    continue;
+                }
 
+                ChatMemberUpdated chatMember = update.myChatMember();
                 long chatId = update.message().chat().id();
+
                 if (update.message().chat().type() != Chat.Type.Private) {
                     // Проверка на администратора канала
                     ChatMember creator = findChatCreator(interactionTelegram, chatId);
                     if (creator != null && !interaction.existsUserById(chatId, creator.user().id())) {
                         interaction.createUser(chatId, creator.user().id())
                                 .setPermission(chatId, ModerationCommand.CONFIG, true);
+                        logger.info(String.format("New creator registered: @%s in chat %d",
+                                creator.user().username(), chatId));
                     } else {
                         interaction.getUser(interaction.getUserId())
                                 .setPermission(chatId, ModerationCommand.CONFIG, true);
+                        logger.debug("Existing user granted CONFIG permission in chat ID: " + chatId);
                     }
                 }
 
@@ -124,16 +151,17 @@ public class InputTelegram {
                                     "Вы добавили меня в чат: %d. Воспользуйтесь командой /start для ознакомления.\n"
                                             + "Создатель: @%s", chatId, creatorUsername
                             )));
-
-
+                    logger.info("Bot has been added to chat ID: " + chatId);
                     continue;
+
                     // Проверка на кик бота из чата
                 } else if (chatMember != null && isLeaveChat(chatMember)) {
-                    logger.debug(String.format("Bot is leave from chat by id(%s)", chatMember.chat().id()));
+                    logger.info("Bot is leave from chat by id(" + chatMember.chat().id() + ")");
                 }
 
                 // Проверка на содержимое сообщения
                 if (update.message() == null || update.message().text() == null || update.message().chat() == null) {
+                    logger.debug("Skipping update: incomplete message.");
                     continue;
                 }
 
@@ -147,7 +175,7 @@ public class InputTelegram {
 
                 user = interaction.getUser(interaction.getUserId()).setLanguage(language);
 
-                contents.add(new Content(
+                Content content = new Content(
                         update.message().from().username(), // Username пользователя
                         update.message().from().id(), // Идентификатор пользователя
                         update.message().chat(), // Информация о чате
@@ -160,10 +188,13 @@ public class InputTelegram {
                         update.message(), // Объект сообщения
                         update.message().from(), // Объект пользователя
                         update.chatMember() // Объект участника
-                ));
-                logger.debug(String.format("Add new content: %s", contents.getLast()));
+                );
+
+                logger.debug("Add new content: " + content);
+                contents.add(content);
             }
 
+            logger.info("Dispatching " + contents.size() + " command(s) to CommandHandler.");
             commandHandler.launchCommand(interaction, contents);
 
             // Вернут идентификатор последнего обработанного обновления или подтверждение их

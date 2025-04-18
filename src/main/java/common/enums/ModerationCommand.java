@@ -18,11 +18,16 @@ public enum ModerationCommand {
     ALL("ALL");
 
     private final String commandName;
-    private final Map<String, ModerationCommand> lookup;
+    // Вопрос про static?
+    // enum не успевает все константы инициализировать и происходит ошибка NullPointerException
+    /*
+    Caused by: java.lang.NullPointerException:
+    Cannot invoke "[Lcommon.enums.ModerationCommand;.clone()" because "common.enums.ModerationCommand.$VALUES" is null
+     */
+    private final Map<String, ModerationCommand> lookup = new HashMap<>();
 
     ModerationCommand(String commandName) {
         this.commandName = commandName;
-        this.lookup = new HashMap<>();
         for (ModerationCommand command : ModerationCommand.values()) {
             lookup.put(command.commandName, command);
         }

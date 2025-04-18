@@ -36,8 +36,10 @@ public class ReminderCommand implements BaseCommand {
     @Override
     public void parseArgs(Interaction interaction, User user) {
         List<String> arguments = interaction.getArguments();
+        logger.debug("Parsing arguments: " + arguments);
 
         if (arguments.isEmpty()) {
+            logger.debug("No arguments passed.");
             return;
         }
 
@@ -48,35 +50,41 @@ public class ReminderCommand implements BaseCommand {
             case "create": {
                 user.setExcepted(getCommandName(), "action").setValue("create");
                 arguments = arguments.subList(1, arguments.size());
+                logger.debug("Action set to \"create\"");
                 break;
             }
 
             case "edit": {
                 user.setExcepted(getCommandName(), "action").setValue("edit");
                 arguments = arguments.subList(1, arguments.size());
+                logger.debug("Action set to \"edit\"");
                 break;
             }
 
             case "remove": {
                 user.setExcepted(getCommandName(), "action").setValue("remove");
                 arguments = arguments.subList(1, arguments.size());
+                logger.debug("Action set to \"remove\"");
                 break;
             }
 
             case "list": {
                 user.setExcepted(getCommandName(), "action").setValue("list");
                 arguments = arguments.subList(1, arguments.size());
+                logger.debug("Action set to \"list\"");
                 break;
             }
 
             case "help": {
                 user.setExcepted(getCommandName(), "action").setValue("help");
                 arguments = arguments.subList(1, arguments.size());
+                logger.debug("Action set to \"help\"");
                 break;
             }
         }
 
         if (arguments.isEmpty()) {
+            logger.debug("No additional arguments passed.");
             return;
         }
 
@@ -88,7 +96,8 @@ public class ReminderCommand implements BaseCommand {
             localDate = validate.isValidDate(String.format("%s %s", arguments.getFirst(),
                     arguments.get(1)));
         } else {
-            localTime = validate.isValidDate(arguments.getFirst());
+            localTime = validate.isValidDate(arguments.getFirst());logger.debug("Attempting to parse date with full date and time: " + arguments.getFirst() + " " + arguments.get(1));
+            logger.debug("Attempting to parse date with only time: " + arguments.getFirst());
         }
 
         // Если указано время (дата и время)
@@ -96,15 +105,18 @@ public class ReminderCommand implements BaseCommand {
             user.setExcepted(getCommandName(), "date", InputExpectation.UserInputType.DATE)
                     .setValue(localDate.get());
             arguments = arguments.subList(2, arguments.size());
+            logger.debug("Parsed valid date: " + localDate.get());
         } else if (!user.isExceptedKey(getCommandName(), "date") && localTime.isPresent()) {
             user.setExcepted(getCommandName(), "date", InputExpectation.UserInputType.DATE)
                     .setValue(localTime.get());
             arguments = arguments.subList(1, arguments.size());
+            logger.debug("Parsed valid time: " + localTime.get());
         }
 
         // ---- Ищем содержимое напоминания ----
 
         if (arguments.isEmpty()) {
+            logger.debug("Reminder context set: " + String.join(" ", arguments));
             return;
         }
 
@@ -116,6 +128,7 @@ public class ReminderCommand implements BaseCommand {
     public void run(Interaction interaction) {
         User user = interaction.getUser(interaction.getUserId());
         parseArgs(interaction, user);
+        logger.info("Running reminder command for user: " + user.getUserId());
 
         if (!user.isExceptedKey(getCommandName(), "action")) {
             user.setExcepted(getCommandName(), "action");
@@ -127,26 +140,31 @@ public class ReminderCommand implements BaseCommand {
         String action = (String) user.getValue(getCommandName(), "action");
         switch (action) {
             case "create": {
+                logger.info("Creating reminder for user: " + user.getUserId());
                 create(interaction, user);
                 break;
             }
 
             case "edit": {
+                logger.info("Editing reminder for user: " + user.getUserId());
                 edit(interaction, user);
                 break;
             }
 
             case "remove": {
+                logger.info("Removing reminder for user: " + user.getUserId());
                 remove(interaction, user);
                 break;
             }
 
             case "list": {
+                logger.info("Listing reminders for user: " + user.getUserId());
                 list(interaction, user);
                 break;
             }
 
             case "help": {
+                logger.info("Showing help for user: " + user.getUserId());
                 help(interaction, user);
                 break;
             }
@@ -177,11 +195,13 @@ public class ReminderCommand implements BaseCommand {
         helpOutput.append("\n--------- HELP \"Reminder Help\" ---------\n");
 
         output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
+        logger.info("Help output sent to user: " + user.getUserId());
         user.clearExpected(getCommandName());
     }
 
     // Метод для создания напоминания
     public void create(Interaction interaction, User user) {
+        logger.debug("Starting reminder creation process");
 
         if (!user.isExceptedKey(getCommandName(), "date")) {
             user.setExcepted(getCommandName(), "date", InputExpectation.UserInputType.DATE);
@@ -235,6 +255,7 @@ public class ReminderCommand implements BaseCommand {
 
     // Метод для редактирования напоминания
     public void edit(Interaction interaction, User user) {
+        logger.debug("Starting reminder edition process");
 
         if (!user.isExceptedKey(getCommandName(), "index")) {
             user.setExcepted(getCommandName(), "index");
@@ -312,6 +333,7 @@ public class ReminderCommand implements BaseCommand {
 
     // Метод для удаления напоминания
     public void remove(Interaction interaction, User user) {
+        logger.debug("Starting reminder remove process");
 
         if (!user.isExceptedKey(getCommandName(), "index")) {
             user.setExcepted(getCommandName(), "index", InputExpectation.UserInputType.INTEGER);
@@ -344,6 +366,8 @@ public class ReminderCommand implements BaseCommand {
 
     // Метод для просмотра напоминаний
     public void list(Interaction interaction, User user) {
+        logger.debug("Starting reminder list process");
+      
         Map<Long, Reminder> reminders = user.getReminders(interaction.getChatId());
         StringBuilder message = new StringBuilder();
 

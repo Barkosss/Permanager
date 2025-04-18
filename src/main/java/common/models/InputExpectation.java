@@ -9,12 +9,15 @@ public class InputExpectation {
         STRING,
         DATE,
         INTEGER,
+        UNSIGNED_INTEGER,
         LONG,
+        UNSIGNED_LONG,
         USER,
         CHATMEMBER,
         REPLY,
         MESSAGE
     }
+
 
     // Название команды, ожидающая ввод
     String expectedCommandName;

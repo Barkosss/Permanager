@@ -12,15 +12,18 @@ public class UserRepository {
 
     public UserRepository() {
         this.users = new HashMap<>();
+        logger.info("UserRepository initialized", true);
     }
 
     // Создать пользователя в памяти
     public User create(long chatId, long userId) {
         if (!users.containsKey(chatId)) {
+            logger.debug(String.format("[Create] Chat by id (%s) is add in users (Map<>)", chatId));
             users.put(chatId, new HashMap<>());
         }
 
         if (users.get(chatId).containsKey(userId)) {
+            logger.debug(String.format("User by id(%s) is found in chat by id(%s)", userId, chatId));
             return users.get(chatId).get(userId);
         }
 
@@ -38,6 +41,7 @@ public class UserRepository {
     // Найти пользователя по ID
     public User findById(long chatId, long userId) {
         if (!users.containsKey(chatId)) {
+            logger.debug(String.format("[findById] Chat by id (%s) is add in users (Map<>)", chatId));
             users.put(chatId, new HashMap<>());
         }
 
@@ -47,16 +51,19 @@ public class UserRepository {
         }
 
 
-        logger.debug("User by id(" + userId + ") is find in chat by id(" + chatId + ")");
+        logger.debug(String.format("User by id(%s) is find in chat by id(%s)", userId, chatId));
         return users.get(chatId).get(userId);
     }
 
     // Существует ли пользователь
     public boolean existsById(long chatId, long userId) {
         if (!users.containsKey(chatId)) {
+            logger.debug(String.format("[existsById] Chat by id (%s) is added to users (Map<>)", chatId));
             users.put(chatId, new HashMap<>());
         }
 
-        return users.get(userId) != null;
+        boolean exists = users.get(chatId).containsKey(userId);
+        logger.debug(String.format("User by id(%s) exists in chat by id(%s): %s", userId, chatId, exists));
+        return exists;
     }
 }

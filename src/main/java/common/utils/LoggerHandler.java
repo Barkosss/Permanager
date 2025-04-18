@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Как выбирать уровень?
-
  * Обычная успешная работа? — INFO
  * Неправильный вход пользователя? — WARN
  * Сломалась важная операция (но не всё приложение)? — ERROR
@@ -22,8 +21,6 @@ import java.time.format.DateTimeFormatter;
  */
 
 public class LoggerHandler {
-
-    private static boolean debugMode;
 
     // Объект файла
     FileWriter logFile;
@@ -39,7 +36,6 @@ public class LoggerHandler {
         return "dd-MM-yyyy HH:mm:ss";
     }
 
-    // Конструктор логгера
     public LoggerHandler() {
         LocalDateTime dateNow = LocalDateTime.now();
         this.logFileName = String.format("%s.log", dateNow.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
@@ -61,10 +57,6 @@ public class LoggerHandler {
         }
     }
 
-    public void setDebugMode(boolean debugMode) {
-        LoggerHandler.debugMode = debugMode;
-    }
-
     public void writeLog(String message, LoggerStatus status) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
             String log = String.format("[%s]\t[%s]\t%s", status.getName(),
@@ -81,7 +73,15 @@ public class LoggerHandler {
         if (inConsole) {
             System.out.printf(status.getName() + ": %s\n", message);
         }
-        writeLog(message, LoggerStatus.INFO);
+        writeLog(message, status);
+    }
+
+    public void newLine() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.logFilePath, true))) {
+            writer.newLine();  // Переход на новую строку
+        } catch (IOException err) {
+            System.out.printf("New line in log isn't write in \"%s\" file\n", logFileName);
+        }
     }
 
     public void info(String message) {
@@ -93,12 +93,10 @@ public class LoggerHandler {
     }
 
     public void debug(String message) {
-        if (!debugMode) return;
         writeLog(message, LoggerStatus.DEBUG);
     }
 
     public void debug(String message, Boolean inConsole) {
-        if (!debugMode) return;
         writeLog(message, LoggerStatus.DEBUG, inConsole);
     }
 
@@ -120,10 +118,6 @@ public class LoggerHandler {
 
     public void trace(String message) {
         writeLog(message, LoggerStatus.TRACE);
-    }
-
-    public void trace(String message, Boolean inConsole) {
-        writeLog(message, LoggerStatus.TRACE, inConsole);
     }
 
     public void fatal(String message) {
