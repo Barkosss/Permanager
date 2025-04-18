@@ -18,6 +18,7 @@ public class InputExpectation {
         MESSAGE
     }
 
+
     // Название команды, ожидающая ввод
     String expectedCommandName;
 

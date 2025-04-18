@@ -95,7 +95,6 @@ public class ReminderCommand implements BaseCommand {
         if (arguments.size() >= 2) {
             localDate = validate.isValidDate(String.format("%s %s", arguments.getFirst(),
                     arguments.get(1)));
-            logger.debug("Attempting to parse date with full date and time: " + arguments.getFirst() + " " + arguments.get(1));
         } else {
             localTime = validate.isValidDate(arguments.getFirst());logger.debug("Attempting to parse date with full date and time: " + arguments.getFirst() + " " + arguments.get(1));
             logger.debug("Attempting to parse date with only time: " + arguments.getFirst());
@@ -368,6 +367,7 @@ public class ReminderCommand implements BaseCommand {
     // Метод для просмотра напоминаний
     public void list(Interaction interaction, User user) {
         logger.debug("Starting reminder list process");
+      
         Map<Long, Reminder> reminders = user.getReminders(interaction.getChatId());
         StringBuilder message = new StringBuilder();
 
