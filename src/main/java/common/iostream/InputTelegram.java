@@ -23,88 +23,6 @@ public class InputTelegram {
     private final LoggerHandler logger = new LoggerHandler();
     private final OutputHandler output = new OutputHandler();
 
-    // Проверка на добавление бота в чат
-    private boolean isJoinChat(InteractionTelegram interactionTelegram, ChatMemberUpdated chatMember) {
-
-        // Проверка на пустые объекты
-        if (chatMember.oldChatMember() == null || chatMember.newChatMember() == null) {
-            logger.debug("JoinChat check failed: old or new chat member is null.");
-            return false;
-        }
-
-        // Проверка, что бот на самом деле есть в чате
-        // Так как может прилететь старый ивент
-        ChatMember botInChat = interactionTelegram.execute(new GetChatMember(chatMember.chat().id(),
-                chatMember.oldChatMember().user().id())).chatMember();
-        if (botInChat == null) {
-            logger.debug("JoinChat check failed: bot is not currently in chat.");
-            return false;
-        }
-
-        // Старый статус у пользователя это Left?
-        if (!chatMember.oldChatMember().status().equals(ChatMember.Status.left)) {
-            logger.debug("JoinChat check failed: old status is not LEFT.");
-            return false;
-
-            // Новый статус у пользователя это Member?
-        } else if (!chatMember.newChatMember().status().equals(ChatMember.Status.member)) {
-            logger.debug("JoinChat check failed: new status is not MEMBER.");
-            return false;
-
-            // Пользователь бот или нет?
-        } else {
-            boolean isBotJoin = chatMember.newChatMember().user().isBot()
-                    && chatMember.newChatMember().user().username().equals("PermanagerBot");
-            logger.debug("JoinChat check passed: bot join status = " + isBotJoin);
-            return isBotJoin;
-        }
-    }
-
-    // Проверка на кик бота из чата
-    private boolean isLeaveChat(ChatMemberUpdated chatMember) {
-
-        // Проверка на пустые объекты
-        if (chatMember.oldChatMember() == null || chatMember.newChatMember() == null) {
-            logger.debug("LeaveChat check failed: old or new chat member is null.");
-            return false;
-        }
-
-        // Старый статус у пользователя это не Left?
-        if (chatMember.oldChatMember().status().equals(ChatMember.Status.left)) {
-            logger.debug("LeaveChat check failed: old status already LEFT.");
-            return false;
-
-            // Новый статус у пользователя это Left?
-        } else if (!chatMember.newChatMember().status().equals(ChatMember.Status.left)) {
-            logger.debug("LeaveChat check failed: new status is not LEFT.");
-            return false;
-
-            // Пользователь бот или нет?
-        } else {
-            boolean isBotLeave =  chatMember.oldChatMember().user().isBot()
-                    && chatMember.oldChatMember().user().username().equals("PermanagerBot");
-            logger.debug("LeaveChat check passed: bot leave status = " + isBotLeave);
-            return isBotLeave;
-        }
-    }
-
-    // Поиск владельца чата
-    private ChatMember findChatCreator(InteractionTelegram interactionTelegram, long chatId) {
-        // Найти владельца чата
-        GetChatAdministratorsResponse administrators = interactionTelegram.execute(new GetChatAdministrators(chatId));
-        logger.debug("Looking for chat creator in chat ID: " + chatId);
-
-        for (ChatMember administrator : administrators.administrators()) {
-            if (administrator.status().equals(ChatMember.Status.creator)) {
-                logger.debug("Chat creator found: @" + administrator.user().username());
-                return administrator;
-            }
-        }
-
-        logger.debug("Chat creator not found for chat ID: " + chatId);
-        return null;
-    }
-
     public void read(Interaction interaction, CommandHandler commandHandler) {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);
         logger.info("Telegram listener has started.");
@@ -213,5 +131,87 @@ public class InputTelegram {
                 }
             }
         });
+    }
+
+    // Проверка на добавление бота в чат
+    private boolean isJoinChat(InteractionTelegram interactionTelegram, ChatMemberUpdated chatMember) {
+
+        // Проверка на пустые объекты
+        if (chatMember.oldChatMember() == null || chatMember.newChatMember() == null) {
+            logger.debug("JoinChat check failed: old or new chat member is null.");
+            return false;
+        }
+
+        // Проверка, что бот на самом деле есть в чате
+        // Так как может прилететь старый ивент
+        ChatMember botInChat = interactionTelegram.execute(new GetChatMember(chatMember.chat().id(),
+                chatMember.oldChatMember().user().id())).chatMember();
+        if (botInChat == null) {
+            logger.debug("JoinChat check failed: bot is not currently in chat.");
+            return false;
+        }
+
+        // Старый статус у пользователя это Left?
+        if (!chatMember.oldChatMember().status().equals(ChatMember.Status.left)) {
+            logger.debug("JoinChat check failed: old status is not LEFT.");
+            return false;
+
+            // Новый статус у пользователя это Member?
+        } else if (!chatMember.newChatMember().status().equals(ChatMember.Status.member)) {
+            logger.debug("JoinChat check failed: new status is not MEMBER.");
+            return false;
+
+            // Пользователь бот или нет?
+        } else {
+            boolean isBotJoin = chatMember.newChatMember().user().isBot()
+                    && chatMember.newChatMember().user().username().equals("PermanagerBot");
+            logger.debug("JoinChat check passed: bot join status = " + isBotJoin);
+            return isBotJoin;
+        }
+    }
+
+    // Проверка на кик бота из чата
+    private boolean isLeaveChat(ChatMemberUpdated chatMember) {
+
+        // Проверка на пустые объекты
+        if (chatMember.oldChatMember() == null || chatMember.newChatMember() == null) {
+            logger.debug("LeaveChat check failed: old or new chat member is null.");
+            return false;
+        }
+
+        // Старый статус у пользователя это не Left?
+        if (chatMember.oldChatMember().status().equals(ChatMember.Status.left)) {
+            logger.debug("LeaveChat check failed: old status already LEFT.");
+            return false;
+
+            // Новый статус у пользователя это Left?
+        } else if (!chatMember.newChatMember().status().equals(ChatMember.Status.left)) {
+            logger.debug("LeaveChat check failed: new status is not LEFT.");
+            return false;
+
+            // Пользователь бот или нет?
+        } else {
+            boolean isBotLeave =  chatMember.oldChatMember().user().isBot()
+                    && chatMember.oldChatMember().user().username().equals("PermanagerBot");
+            logger.debug("LeaveChat check passed: bot leave status = " + isBotLeave);
+            return isBotLeave;
+        }
+    }
+
+    // Поиск владельца чата
+    private ChatMember findChatCreator(InteractionTelegram interactionTelegram, long chatId) {
+        // Найти владельца чата
+        GetChatAdministratorsResponse administrators = interactionTelegram.execute(new GetChatAdministrators(chatId));
+        logger.debug("Looking for chat creator in chat ID: " + chatId);
+
+        for (ChatMember administrator : administrators.administrators()) {
+            if (administrator.status().equals(ChatMember.Status.creator)) {
+                logger.debug("Chat creator found: @" + administrator.user().username());
+                return administrator;
+            }
+        }
+
+        logger.debug("Chat creator not found for chat ID: " + chatId);
+        return null;
     }
 }
