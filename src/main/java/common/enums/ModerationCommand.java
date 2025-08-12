@@ -1,7 +1,5 @@
 package common.enums;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 public enum ModerationCommand {
@@ -18,19 +16,9 @@ public enum ModerationCommand {
     ALL("ALL");
 
     private final String commandName;
-    // Вопрос про static?
-    // enum не успевает все константы инициализировать и происходит ошибка NullPointerException
-    /*
-    Caused by: java.lang.NullPointerException:
-    Cannot invoke "[Lcommon.enums.ModerationCommand;.clone()" because "common.enums.ModerationCommand.$VALUES" is null
-     */
-    private final Map<String, ModerationCommand> lookup = new HashMap<>();
 
     ModerationCommand(String commandName) {
         this.commandName = commandName;
-        for (ModerationCommand command : ModerationCommand.values()) {
-            lookup.put(command.commandName, command);
-        }
     }
 
     public String getCommandName() {
@@ -38,10 +26,12 @@ public enum ModerationCommand {
     }
 
     public Optional<ModerationCommand> getCommand(String value) {
-        ModerationCommand cmd = lookup.get(value.toUpperCase());
-        if (cmd == null || cmd == ALL) {
-            return Optional.empty();
+        for (ModerationCommand command : ModerationCommand.values()) {
+            if (command.getCommandName().equalsIgnoreCase(value) && command != ALL) {
+                return Optional.of(command);
+            }
         }
-        return Optional.of(cmd);
+
+        return Optional.empty();
     }
 }
