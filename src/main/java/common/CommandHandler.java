@@ -225,6 +225,7 @@ public class CommandHandler {
                         && (interaction.getPlatform() == Interaction.Platform.CONSOLE
                         || List.of(746875461L, 0L).contains(interaction.getUserId()))) {
                     logger.info("Program is stop", true);
+                    ((InteractionTelegram) interaction).getTelegramBot().shutdown();
                     System.exit(0);
                 }
 
