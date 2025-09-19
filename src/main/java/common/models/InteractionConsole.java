@@ -1,58 +1,16 @@
 package common.models;
 
-import common.exceptions.MemberNotFoundException;
-import common.repositories.UserRepository;
+public class InteractionConsole extends AbstractInteraction {
 
-import java.util.List;
-
-public class InteractionConsole implements Interaction {
-
-    long userId;
-
-    // Платформа: Terminal, Telegram, Discord
-    Platform platform;
-
-    // Полное сообщение
-    String message;
-
-    // Выводить в одну строку или нет
-    boolean inline;
-
-    // Массив аргументов в сообщении (разделитель - пробел)
-    List<String> arguments;
-
-    // ...
-    UserRepository userRepository;
-
-    public InteractionConsole() {
-        this.userId = 0L;
-        this.platform = Platform.CONSOLE;
-    }
-
-    public Interaction setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public Interaction setChatId(long chatId) {
+        this.chatId = chatId;
         return this;
     }
 
-    public User getUser(long userId) {
-        try {
-            return userRepository.findById(userId);
-        } catch (MemberNotFoundException err) {
-            return null;
-        }
-
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public Platform getPlatform() {
-        return platform;
-    }
-
-    public String getMessage() {
-        return message;
+    public InteractionConsole() {
+        this.userId = 0L;
+        this.languageCode = Language.ENGLISH;
+        this.platform = Platform.CONSOLE;
     }
 
     public InteractionConsole setMessage(String message) {
@@ -60,32 +18,10 @@ public class InteractionConsole implements Interaction {
         return this;
     }
 
-    public boolean getInline() {
-        return inline;
-    }
-
-    public Interaction setInline(boolean inline) {
-        this.inline = inline;
-        return this;
-    }
-
-    public List<String> getArguments() {
-        return arguments;
-    }
-
-    public Interaction setArguments(List<String> arguments) {
-        this.arguments = arguments;
-        return this;
-    }
-
+    // For Debug
     @Override
     public String toString() {
-
-        return "InteractionConsole({"
-                + "Platform=" + platform
-                + "\nMessage=" + message
-                + "\nInline=" + inline
-                + "\nArguments=" + arguments
-                + "})";
+        return String.format("InteractionConsole={Platform=%s; Message=%s; Inline=%s; Arguments=%s}",
+                platform, message, inline, message);
     }
 }
