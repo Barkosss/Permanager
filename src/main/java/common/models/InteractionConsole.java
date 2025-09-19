@@ -22,6 +22,6 @@ public class InteractionConsole extends AbstractInteraction {
     @Override
     public String toString() {
         return String.format("InteractionConsole={Platform=%s; Message=%s; Inline=%s; Arguments=%s}",
-                platform, message, inline, message);
+                platform, message, inline, arguments);
     }
 }

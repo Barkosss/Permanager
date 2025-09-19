@@ -34,6 +34,7 @@ public class InputTelegram {
             Interaction.Language language;
             User user;
             for (Update update : updates) {
+
                 if (update.message() == null) {
                     logger.debug("Received update without message: " + update);
                     continue;
