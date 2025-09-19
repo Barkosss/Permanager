@@ -10,6 +10,9 @@ import common.models.User;
  * parseArgs() - Парсинг аргументов. Аргументы, которые пользователь указал после названия команды
  * getCommandDescription() - Информационный метод. Выводит описание команды. Используется для команды "help"
  */
+
+// TODO: Сделать абстрактный класс для команд
+// TODO: Сделать метод handlerCommand в котором будет вызываться parseArgs и затем уже run (Убрать вызов parseArgs каждый раз в run)
 public interface BaseCommand {
 
     /**
