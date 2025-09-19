@@ -8,38 +8,88 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class JSONHandler {
+    private final LoggerHandler logger = new LoggerHandler();
 
+    /**
+     * Reads a JSON file and returns the object or nested value specified by the dot-separated keys.
+     *
+     * @param pathJSON Path to JSON file relative to /resources
+     * @param keys     Dot-separated path to the desired key (e.g., "a.b.c")
+     * @return The resolved object or null if not found or error occurred
+     */
     public Object read(String pathJSON, String keys) {
+        String fullPath = String.format("./src/main/resources/%s", pathJSON);
+        logger.debug("Attempting to read JSON file from path: " + fullPath);
+        logger.debug("Key path to resolve: " + keys);
+
         try {
-            Object object = new JSONParser().parse(new FileReader("./src/main/resources/" + pathJSON));
+            Object object = new JSONParser().parse(new FileReader(fullPath));
             JSONObject jsonObject = (JSONObject) object;
+
             for (Object key : keys.split("\\.")) {
+                logger.debug("Resolving key: " + key);
                 try {
                     jsonObject = (JSONObject) jsonObject.get(key);
+                    if (jsonObject == null) {
+                        logger.warning("Key '" + key + "' is null during object traversal.");
+                        return null;
+                    }
                 } catch (Exception err) {
+                    if (jsonObject == null) {
+                        logger.warning(String.format("Key \"%s\" is null during object traversal.", key));
+                        return null;
+                    }
+                    logger.debug(String.format("Key \"%s\" resolved to non-JSONObject. Returning its value", key));
                     return jsonObject.get(key);
                 }
             }
+
+            logger.debug("Successfully resolved value for keys: " + keys);
             return jsonObject;
+
         } catch (IOException | ParseException err) {
-            System.out.println("[ERROR] JSONHandler: " + err);
-            return new Object();
+            logger.error("Failed to read or parse JSON file: " + fullPath + ". Error: " + err.getMessage(), true);
+            return null;
         }
     }
 
+    /**
+     * Checks if a key path exists in the specified JSON file.
+     *
+     * @param pathJSON Path to JSON file relative to /resources
+     * @param keys     Dot-separated key path
+     * @return true if key exists and is not null, false otherwise
+     */
     public boolean check(String pathJSON, String keys) {
         try {
-            Object object = new JSONParser().parse(new FileReader("./src/main/resources/" + pathJSON));
+            String fullPath = String.format("./src/main/resources/%s", pathJSON);
+            logger.debug("Checking existence of key path '" + keys + "' in JSON file: " + fullPath);
+
+            Object object = new JSONParser().parse(new FileReader(fullPath));
             JSONObject jsonObject = (JSONObject) object;
             for (Object key : keys.split("\\.")) {
+                logger.debug("Checking key: " + key);
                 try {
                     jsonObject = (JSONObject) jsonObject.get(key);
+                    if (jsonObject == null) {
+                        logger.warning("Key '" + key + "' not found or is null.");
+                        return false;
+                    }
                 } catch (Exception err) {
-                    return jsonObject != null;
+                    if (jsonObject == null) {
+                        logger.warning(String.format("Key \"%s\" is null during object traversal.", key));
+                        return false;
+                    }
+                    boolean exists = jsonObject.get(key) != null;
+                    logger.debug("Reached non-JSONObject value. Existence check result: " + exists);
+                    return exists;
                 }
             }
-            return jsonObject != null;
+
+            logger.debug("All keys successfully found.");
+            return true;
         } catch (Exception err) {
+            logger.error("Failed to check key existence in JSON file: " + err.getMessage(), true);
             return false;
         }
     }

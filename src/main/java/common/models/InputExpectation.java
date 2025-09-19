@@ -3,13 +3,19 @@ package common.models;
 import java.util.HashMap;
 import java.util.Map;
 
-public class
-InputExpectation {
+public class InputExpectation {
 
-    enum UserInputType {
-        INT,
+    public enum UserInputType {
         STRING,
         DATE,
+        INTEGER,
+        UNSIGNED_INTEGER,
+        LONG,
+        UNSIGNED_LONG,
+        USER,
+        CHATMEMBER,
+        REPLY,
+        MESSAGE
     }
 
 
@@ -19,22 +25,30 @@ InputExpectation {
     // Какое значение требуется (ключ Map)
     String expectedInputKey;
 
+    // Ожидаемый тип
+    UserInputType userInputType;
+
     // Map значений, которые указываются пользователем
     Map<String, Map<String, Object>> expectedInputs;
 
-    public void setExpected(String expectedCommandName, String expectedInputKey) {
+    public void setExpected(String expectedCommandName, String expectedInputKey, UserInputType userInputType) {
         if (this.expectedInputs == null) {
             this.expectedInputs = new HashMap<>();
         }
 
-        if (!this.expectedInputs.containsKey(expectedCommandName)) {
-            expectedInputs.put(expectedCommandName, new HashMap<>());
+        Map<String, Object> excepted = this.expectedInputs.get(expectedCommandName);
+        if (excepted == null) {
+            this.expectedInputs.put(expectedCommandName, new HashMap<>());
+            excepted = this.expectedInputs.get(expectedCommandName);
         }
-        if (!this.expectedInputs.get(expectedCommandName).containsKey(expectedInputKey)) {
-            expectedInputs.get(expectedCommandName).put(expectedCommandName, null);
+
+        if (excepted.containsKey(expectedInputKey)) {
+            excepted.put(expectedCommandName, null);
         }
+
         this.expectedCommandName = expectedCommandName;
         this.expectedInputKey = expectedInputKey;
+        this.userInputType = userInputType;
     }
 
     public Map<String, Map<String, Object>> getExpectedInputs() {

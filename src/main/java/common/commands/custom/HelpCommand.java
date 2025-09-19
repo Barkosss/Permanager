@@ -5,11 +5,14 @@ import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.User;
 import common.utils.JSONHandler;
-import org.reflections.Reflections;
+import common.utils.LoggerHandler;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
 public class HelpCommand implements BaseCommand {
+    public Map<String, BaseCommand> methods;
+    LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
     JSONHandler jsonHandler = new JSONHandler();
 
@@ -19,47 +22,104 @@ public class HelpCommand implements BaseCommand {
     }
 
     // Получить описание команды
-    public String getCommandDescription() {
-        return "Справка по всем командам";
+    @Override
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override
-    public void parseArgs(Interaction interaction, User user) {}
+    public void parseArgs(Interaction interaction, User user) {
+        List<String> arguments = interaction.getArguments();
+
+        if (arguments.isEmpty()) {
+            logger.debug("No arguments passed for the help command");
+            return;
+        }
+
+        String commandName = arguments.getFirst().toLowerCase();
+        logger.debug("Parsing arguments: " + commandName);
+
+        if (jsonHandler.check("manual_ru.json", String.format("manual.%s", commandName))) {
+            user.setExcepted(getCommandName(), "commandName").setValue(commandName);
+            logger.debug("Manual found for command: " + commandName);
+            return;
+        }
+        user.setExcepted(getCommandName(), "commandName")
+                .setValue(interaction.getLanguageValue(".manualNotFound"));
+        logger.error("Manual not found for command: " + commandName);
+    }
 
     // Вызвать основной методы команды
     public void run(Interaction interaction) {
+        this.methods = interaction.getCommandRepository().getCommands();
+        logger.debug("List of methods (classes, commandRepository) was received");
+
+        User user = interaction.getUser(interaction.getUserId());
+        parseArgs(interaction, user);
+
+        boolean isCommand = false;
+        if (!interaction.getArguments().isEmpty()) {
+            isCommand = !((String) user.getValue(getCommandName(), "commandName")).isEmpty();
+            logger.debug("Is command requested: " + isCommand);
+        }
+
+        if (isCommand) {
+            manual(interaction, user);
+            return;
+        }
+
+        help(interaction, user);
+    }
+
+    public void help(Interaction interaction, User user) {
         try {
-            // Получаем в Set все классы, которые имеют интерфейс BaseCommand и находятся в common.commands
-            Reflections reflections = new Reflections("common.commands");
-            Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
-            String commandName = "";
-            if (!interaction.getArguments().isEmpty()) {
-                commandName = interaction.getArguments().getFirst().toLowerCase();
+            StringBuilder helpOutput = new StringBuilder("--------- HELP ---------\n");
+
+            // Вывести короткое название и описание команды
+            for (String commandName : methods.keySet()) {
+                helpOutput.append(String.format("/%s - %s\n",
+                        commandName,
+                        methods.get(commandName).getCommandDescription(interaction)));
             }
 
-            StringBuilder helpOutput;
-            if (!commandName.isEmpty() && jsonHandler.check("manual.json", "help.manual." + commandName)) {
-                helpOutput = new StringBuilder("--------- HELP \"" + commandName + "\" ---------\n");
-                helpOutput.append(jsonHandler.read("manual.json", "help.manual." + commandName));
-                helpOutput.append("\n--------- HELP \"").append(commandName).append("\" ---------\n");
-
-            } else {
-                helpOutput = new StringBuilder("--------- HELP ---------\n");
-
-                // Вывести короткое название и описание команды
-                for (Class<? extends BaseCommand> subclass : subclasses) {
-                    BaseCommand command = subclass.getConstructor().newInstance();
-                    helpOutput.append(command.getCommandName()).append(":\n|---\t")
-                            .append(command.getCommandDescription()).append("\n");
-                }
-
-                helpOutput.append("--------- HELP ---------\n");
-            }
+            helpOutput.append("--------- HELP ---------\n\n");
+            helpOutput.append(interaction.getLanguageValue(".commandHelp"));
+            logger.debug("The reference material has been generated");
 
             output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
-
+            logger.debug("Help output sent to user");
         } catch (Exception err) {
-            System.out.println("[ERROR] Error (helpCommand): " + err);
+            logger.error("Error generating help output: " + err.getMessage());
+        } finally {
+            user.clearExpected(getCommandName());
+            logger.debug("Cleared expected value for user");
+        }
+    }
+
+    public void manual(Interaction interaction, User user) {
+        try {
+            String commandName = (String) user.getValue(getCommandName(), "commandName");
+            StringBuilder helpOutput;
+
+            String manual = (String) jsonHandler.read("manual_ru.json",
+                    String.format("manual.%s.%s", commandName, interaction.getLanguageCode().getLang()));
+
+            if (manual.isEmpty()) {
+                manual = interaction.getLanguageValue(".notFoundManual");
+                logger.warning("Manual for command '" + commandName + "' is empty, showing default message.");
+            }
+
+            helpOutput = new StringBuilder("--------- HELP \"").append(commandName).append("\" ---------\n");
+            helpOutput.append(manual);
+            helpOutput.append("\n--------- HELP \"").append(commandName).append("\" ---------\n");
+
+            output.output(interaction.setMessage(String.valueOf(helpOutput)).setInline(false));
+            logger.debug("Manual output sent to user for command: " + commandName);
+        } catch (Exception err) {
+            logger.error("Error generating manual for command: " + err.getMessage());
+        } finally {
+            user.clearExpected(getCommandName());
+            logger.debug("Cleared expected value for user after manual");
         }
     }
 }

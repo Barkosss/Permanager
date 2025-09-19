@@ -4,9 +4,11 @@ import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.User;
+import common.utils.LoggerHandler;
 
 public class StartCommand implements BaseCommand {
     OutputHandler output = new OutputHandler();
+    LoggerHandler logger = new LoggerHandler();
 
     @Override
     public String getCommandName() {
@@ -14,21 +16,24 @@ public class StartCommand implements BaseCommand {
     }
 
     @Override
-    public String getCommandDescription() {
-        return "The command to receive a welcome message";
+    public String getCommandDescription(Interaction interaction) {
+        return interaction.getLanguageValue("commands." + getCommandName() + ".description");
     }
 
     @Override
     public void parseArgs(Interaction interaction, User user) {
-
+        // ignore
     }
 
     @Override
     public void run(Interaction interaction) {
-        String message;
-
-        message = interaction.getLanguageValue("start.message");
-
-        output.output(interaction.setMessage(message));
+        try {
+            User user = interaction.getUser(interaction.getUserId());
+            logger.info(String.format("User (id: %s) triggered /start command", user.getUserId()));
+            output.output(interaction.setLanguageValue("start.message"));
+        } catch (Exception e) {
+            logger.warning("Error occurred while processing /start command: " + e.getMessage());
+            output.output(interaction.setLanguageValue("system.error.something"));
+        }
     }
 }

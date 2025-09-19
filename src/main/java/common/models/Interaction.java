@@ -1,12 +1,14 @@
 package common.models;
 
-import com.pengrad.telegrambot.model.Message;
-
+import common.enums.ModerationCommand;
+import common.repositories.CommandRepository;
 import common.repositories.ReminderRepository;
 import common.repositories.ServerRepository;
 import common.repositories.UserRepository;
+import common.repositories.WarningRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Interaction {
 
@@ -19,7 +21,7 @@ public interface Interaction {
         RUSSIAN("ru"),
         ENGLISH("en");
 
-        private String lang;
+        private final String lang;
 
         Language(String lang) {
             this.lang = lang;
@@ -28,15 +30,52 @@ public interface Interaction {
         public String getLang() {
             return lang;
         }
+
+        public static Language getLanguage(String userLang) {
+            for (Language lang : Language.values()) {
+                if (lang.lang.equalsIgnoreCase(userLang)) {
+                    return lang;
+                }
+            }
+            return null;
+        }
     }
+
+    Interaction setCommandRepository(CommandRepository commandRepository);
+
+    CommandRepository getCommandRepository();
+
+    boolean hasCommand(String command);
+
+    Optional<ModerationCommand> getCommand(String command);
 
     Interaction setUserRepository(UserRepository userRepository);
 
+    UserRepository getUserRepository();
+
+    User createUser(long chatId, long userId);
+
+    User findUserById(long userId);
+
+    boolean existsUserById(long chatId, long userId);
+
     Interaction setServerRepository(ServerRepository serverRepository);
+
+    ServerRepository getServerRepository();
+
+    Server createServer(Server server);
+
+    Server findServerById(long chatId);
 
     Interaction setReminderRepository(ReminderRepository reminderRepository);
 
     ReminderRepository getReminderRepository();
+
+    Reminder createReminder(Reminder reminder);
+
+    Interaction setWarningRepository(WarningRepository warningRepository);
+
+    WarningRepository getWarningRepository();
 
     User getUser(long userId);
 
@@ -60,9 +99,17 @@ public interface Interaction {
 
     List<String> getArguments();
 
+    Language getLanguageCode();
+
     Interaction setLanguageCode(Language languageCode);
 
     Interaction setContent(Content content);
 
+    Interaction setLanguageValue(String languageKey);
+
+    Interaction setLanguageValue(String languageKey, List<String> replaces);
+
     String getLanguageValue(String languageKey);
+
+    String getLanguageValue(String languageKey, List<String> replaces);
 }

@@ -1,6 +1,6 @@
 package common.models;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Reminder {
 
@@ -17,16 +17,20 @@ public class Reminder {
     String content;
 
     // Дата создание напоминания
-    LocalDate createdAt;
+    LocalDateTime createdAt;
+
+    // Дата изменения напоминания
+    LocalDateTime editAt;
 
     // Дата, когда надо отправить напоминание
-    LocalDate sendAt;
+    LocalDateTime sendAt;
 
     // Платформа, откуда было создано напоминание
     Interaction.Platform platform;
 
     // Конструктор напоминания
-    public Reminder(long id, long chatId, long userId, String content, LocalDate createdAt, LocalDate sendAt, Interaction.Platform platform) {
+    public Reminder(long id, long chatId, long userId, String content, LocalDateTime createdAt,
+                    LocalDateTime sendAt, Interaction.Platform platform) {
         this.id = id;
         this.chatId = chatId;
         this.userId = userId;
@@ -57,14 +61,31 @@ public class Reminder {
         return content;
     }
 
+    // Назначить новое содержимое
+    public Reminder setContent(String content) {
+        this.content = content;
+        return this;
+    }
+
     // Получить время создания
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    // Получить дату изменения
+    public LocalDateTime getEditAt() {
+        return editAt;
+    }
+
     // Получить дату отправки
-    public LocalDate getSendAt() {
+    public LocalDateTime getSendAt() {
         return sendAt;
+    }
+
+    // Назначить новое дату отправки
+    public Reminder setSendAt(LocalDateTime sendAt) {
+        this.sendAt = sendAt;
+        return this;
     }
 
     // Получить платформу
