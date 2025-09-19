@@ -1,13 +1,5 @@
 package common.iostream;
 
-import com.pengrad.telegrambot.UpdatesListener;
-import com.pengrad.telegrambot.model.Chat;
-import com.pengrad.telegrambot.model.ChatMember;
-import com.pengrad.telegrambot.model.ChatMemberUpdated;
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.GetChatAdministrators;
-import com.pengrad.telegrambot.request.GetChatMember;
-import com.pengrad.telegrambot.response.GetChatAdministratorsResponse;
 import common.CommandHandler;
 import common.enums.ModerationCommand;
 import common.models.Content;
@@ -15,13 +7,29 @@ import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.User;
 import common.utils.LoggerHandler;
+import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputTelegram {
+public class InputTelegram implements LongPollingSingleThreadUpdateConsumer {
     private final LoggerHandler logger = new LoggerHandler();
     private final OutputHandler output = new OutputHandler();
+
+    @Override
+    public void consume(List<Update> updates) {
+        Interaction.Language language;
+        User user;
+        for (Update update: updates) {
+
+        }
+    }
+
+    @Override
+    public void consume(Update update) {
+
+    }
 
     public void read(Interaction interaction, CommandHandler commandHandler) {
         InteractionTelegram interactionTelegram = ((InteractionTelegram) interaction);

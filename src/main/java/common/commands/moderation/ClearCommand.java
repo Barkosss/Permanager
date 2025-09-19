@@ -1,6 +1,8 @@
 package common.commands.moderation;
 
+import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.request.DeleteMessages;
+import com.pengrad.telegrambot.request.GetChatMember;
 import common.commands.BaseCommand;
 import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
@@ -8,6 +10,7 @@ import common.models.InputExpectation;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
 import common.models.User;
+import common.utils.JSONHandler;
 import common.utils.LoggerHandler;
 import common.utils.ValidateService;
 
@@ -18,6 +21,7 @@ public class ClearCommand implements BaseCommand {
     ValidateService validate = new ValidateService();
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
+    JSONHandler jsonHandler = new JSONHandler();
 
     @Override
     public String getCommandName() {
@@ -52,10 +56,23 @@ public class ClearCommand implements BaseCommand {
             return;
         }
 
+        long chatId = interaction.getChatId();
+        long botId = Long.valueOf((String) jsonHandler.read("config.json", "clientIdTelegram"));
         User user = interaction.getUser(interaction.getUserId());
         InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
+        ChatMember bot = interactionTelegram.execute(new GetChatMember(chatId, botId)).chatMember();
+
+        if (!bot.canDeleteMessages()) {
+            logger.debug(String.format("Bot lacks permission to delete messages in chat by id(%s)", chatId));
+            output.output(interaction.setLanguageValue("system.error.bot.accessDenied"));
+            return;
+        }
 
         if (!user.hasPermission(interaction.getChatId(), ModerationCommand.CLEAR)) {
+            logger.debug(
+                    String.format("User by id(%s) attempted to use /clear without proper permissions in chat by ud(%s)",
+                            user.getUserId(), chatId)
+            );
             output.output(interaction.setLanguageValue("system.error.accessDenied"));
             return;
         }
@@ -71,10 +88,11 @@ public class ClearCommand implements BaseCommand {
             return;
         }
 
-        long chatId = interaction.getChatId();
-        int lastMessageId = (int) interactionTelegram.getChatId();
         int countDeleteMessages = (int) user.getValue(getCommandName(), "countMessages");
 
+
+        // Удаляем сообщения
+        int lastMessageId = interactionTelegram.getContent().tgMessage().messageId();
         int[] arrayMessagesId = new int[countDeleteMessages];
         for (int index = 0; index < countDeleteMessages; index++) {
             arrayMessagesId[index] = lastMessageId - index;

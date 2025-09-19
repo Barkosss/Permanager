@@ -94,6 +94,10 @@ public class InteractionTelegram extends AbstractInteraction {
         }
     }
 
+    public Content getContent() {
+        return content;
+    }
+
     public void resetWarnings(InteractionTelegram interactionTelegram, long chatId) {
         super.warningRepository.reset(interactionTelegram, chatId);
     }

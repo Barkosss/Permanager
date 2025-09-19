@@ -18,7 +18,8 @@ dependencies {
     implementation("org.reflections:reflections:0.10.2") // Reflections (Для получения классов с пакетов)
     implementation("org.slf4j:slf4j-nop:2.0.7") // Логирование (Зависимость Reflection)
     implementation("com.googlecode.json-simple:json-simple:1.1.1") // Взаимодействие с JSON файлами
-    implementation("com.github.pengrad:java-telegram-bot-api:7.9.1") // Интеграция с Telegram
+    //implementation("com.github.pengrad:java-telegram-bot-api:7.9.1") // Интеграция с Telegram
+    implementation("org.telegram:telegrambots-longpolling:9.0.0") // Integration with Telegram
 }
 
 tasks.test {
