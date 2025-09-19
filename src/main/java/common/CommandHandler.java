@@ -1,5 +1,7 @@
 package common;
 
+import com.pengrad.telegrambot.request.GetMe;
+import com.pengrad.telegrambot.response.GetMeResponse;
 import common.commands.BaseCommand;
 import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
@@ -197,12 +199,20 @@ public class CommandHandler {
             String message = content.message();
             List<String> args = List.of(message.split(" "));
             String commandName = args.getFirst().toLowerCase().substring(1);
+            String commandBotName = null;
 
             User user = interaction.getUser(content.userId());
 
             // Берём название команды до "@"
             if (message.startsWith("/") && message.charAt(1) != ' ' && commandName.contains("@")) {
-                commandName = commandName.substring(0, commandName.lastIndexOf("@"));
+                List<String> commandParse = List.of(commandName.split("@"));
+                commandName = commandParse.getFirst();
+                commandBotName = commandParse.getLast();
+            }
+
+            GetMeResponse bot = ((InteractionTelegram) interaction).execute(new GetMe());
+            if (commandBotName != null && !bot.user().username().equalsIgnoreCase(commandBotName)) {
+                return;
             }
 
             // Проверка, что это команда

@@ -191,7 +191,7 @@ public class InputTelegram {
 
             // Пользователь бот или нет?
         } else {
-            boolean isBotLeave =  chatMember.oldChatMember().user().isBot()
+            boolean isBotLeave = chatMember.oldChatMember().user().isBot()
                     && chatMember.oldChatMember().user().username().equals("PermanagerBot");
             logger.debug("LeaveChat check passed: bot leave status = " + isBotLeave);
             return isBotLeave;
