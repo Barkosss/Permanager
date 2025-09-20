@@ -2,7 +2,7 @@ package common.commands.custom;
 
 import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.response.GetChatMemberResponse;
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.InteractionTelegram;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class WarnsCommand implements BaseCommand {
+public class WarnsCommand extends AbstractCommand {
     OutputHandler output = new OutputHandler();
     LoggerHandler logger = new LoggerHandler();
     ValidateService validate = new ValidateService();

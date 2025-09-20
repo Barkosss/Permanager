@@ -30,6 +30,8 @@ public interface BaseCommand {
      */
     String getCommandDescription(Interaction interaction);
 
+    void commandHandler(Interaction interaction);
+
     /**
      * Обработка аргументов, которые пользователь указал в сообщении
      *

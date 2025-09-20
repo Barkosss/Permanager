@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.request.BanChatMember;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class BanCommand implements BaseCommand {
+public class BanCommand extends AbstractCommand {
     ValidateService validate = new ValidateService();
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();

@@ -238,10 +238,10 @@ public class CommandHandler {
                     // Запустить класс, в котором будет работать команда
                     try {
                         logger.debug(String.format("Executing command: %s, userId=%d", commandName, interaction.getUserId()));
-                        baseCommandClasses.get(commandName).run(interaction);
+                        baseCommandClasses.get(commandName).commandHandler(interaction);
 
                     } catch (Exception err) {
-                        logger.error(String.format("Invoke method (run) in command \"%s\": %s", commandName, err));
+                        logger.error(String.format("Invoke method (commandHandler) in command \"%s\": %s", commandName, err));
                     }
 
                 } else {
@@ -323,7 +323,7 @@ public class CommandHandler {
         }
 
         logger.debug("Re-invoking command: " + user.getCommandException());
-        baseCommandClasses.get(user.getCommandException()).run(interaction);
+        baseCommandClasses.get(user.getCommandException()).commandHandler(interaction);
     }
 
     // Настройка взаимодействий и запуск программы

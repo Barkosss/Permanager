@@ -2,7 +2,7 @@ package common.commands.moderation;
 
 import com.pengrad.telegrambot.model.ChatFullInfo;
 import com.pengrad.telegrambot.request.GetChat;
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Group;
@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class ConfigCommand implements BaseCommand {
+public class ConfigCommand extends AbstractCommand {
     private final OutputHandler output = new OutputHandler();
     private final LoggerHandler logger = new LoggerHandler();
     private final ValidateService validate = new ValidateService();

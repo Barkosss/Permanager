@@ -1,7 +1,7 @@
 package common.commands.moderation;
 
 import com.pengrad.telegrambot.request.DeleteMessages;
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
@@ -14,7 +14,7 @@ import common.utils.ValidateService;
 import java.util.List;
 import java.util.Optional;
 
-public class ClearCommand implements BaseCommand {
+public class ClearCommand extends AbstractCommand {
     ValidateService validate = new ValidateService();
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();

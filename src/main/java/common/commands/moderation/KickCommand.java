@@ -6,7 +6,7 @@ import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.UnbanChatMember;
 import com.pengrad.telegrambot.response.GetChatMemberResponse;
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -17,7 +17,7 @@ import common.utils.ValidateService;
 import java.util.List;
 import java.util.Optional;
 
-public class KickCommand implements BaseCommand {
+public class KickCommand extends AbstractCommand {
     private final LoggerHandler logger = new LoggerHandler();
     private final OutputHandler output = new OutputHandler();
     private final ValidateService validate = new ValidateService();

@@ -1,5 +1,6 @@
 package common.commands.custom;
 
+import common.commands.AbstractCommand;
 import common.commands.BaseCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -10,7 +11,7 @@ import common.utils.LoggerHandler;
 import java.util.List;
 import java.util.Map;
 
-public class HelpCommand implements BaseCommand {
+public class HelpCommand extends AbstractCommand {
     public Map<String, BaseCommand> methods;
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();

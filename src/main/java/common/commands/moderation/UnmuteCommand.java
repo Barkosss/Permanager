@@ -6,7 +6,7 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.RestrictChatMember;
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -18,7 +18,7 @@ import common.utils.ValidateService;
 import java.util.List;
 import java.util.Optional;
 
-public class UnmuteCommand implements BaseCommand {
+public class UnmuteCommand extends AbstractCommand {
     LoggerHandler logger = new LoggerHandler();
     OutputHandler output = new OutputHandler();
     ValidateService validate = new ValidateService();

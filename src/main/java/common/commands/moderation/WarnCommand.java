@@ -5,7 +5,7 @@ import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.GetChat;
 import com.pengrad.telegrambot.request.GetChatMember;
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class WarnCommand implements BaseCommand {
+public class WarnCommand extends AbstractCommand {
     ValidateService validate = new ValidateService();
     OutputHandler output = new OutputHandler();
     LoggerHandler logger = new LoggerHandler();

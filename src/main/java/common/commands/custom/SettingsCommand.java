@@ -1,6 +1,6 @@
 package common.commands.custom;
 
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.TimeZone;
@@ -11,7 +11,7 @@ import common.utils.ValidateService;
 import java.util.List;
 import java.util.Optional;
 
-public class SettingsCommand implements BaseCommand {
+public class SettingsCommand extends AbstractCommand {
     OutputHandler output = new OutputHandler();
     ValidateService validate = new ValidateService();
     LoggerHandler logger = new LoggerHandler();

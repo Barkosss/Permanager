@@ -2,7 +2,7 @@ package common.commands.moderation;
 
 import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.request.GetChatMember;
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.enums.ModerationCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
@@ -14,7 +14,7 @@ import common.utils.ValidateService;
 import java.util.List;
 import java.util.Optional;
 
-public class ResetWarnsCommand implements BaseCommand {
+public class ResetWarnsCommand extends AbstractCommand {
     LoggerHandler logger = new LoggerHandler();
     ValidateService validate = new ValidateService();
     OutputHandler output = new OutputHandler();

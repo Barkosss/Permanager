@@ -1,12 +1,12 @@
 package common.commands.custom;
 
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.iostream.OutputHandler;
 import common.models.Interaction;
 import common.models.User;
 import common.utils.LoggerHandler;
 
-public class StartCommand implements BaseCommand {
+public class StartCommand extends AbstractCommand {
     OutputHandler output = new OutputHandler();
     LoggerHandler logger = new LoggerHandler();
 

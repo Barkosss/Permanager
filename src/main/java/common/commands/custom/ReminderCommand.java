@@ -1,6 +1,6 @@
 package common.commands.custom;
 
-import common.commands.BaseCommand;
+import common.commands.AbstractCommand;
 import common.iostream.OutputHandler;
 import common.models.InputExpectation;
 import common.models.Interaction;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class ReminderCommand implements BaseCommand {
+public class ReminderCommand extends AbstractCommand {
     JSONHandler jsonHandler = new JSONHandler();
     LoggerHandler logger = new LoggerHandler();
     ValidateService validate = new ValidateService();

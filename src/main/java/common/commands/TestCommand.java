@@ -5,7 +5,7 @@ import common.models.Interaction;
 import common.models.User;
 import common.utils.LoggerHandler;
 
-public class TestCommand implements BaseCommand {
+public class TestCommand extends AbstractCommand {
     private final LoggerHandler logger = new LoggerHandler();
     private final OutputHandler output = new OutputHandler();
 
