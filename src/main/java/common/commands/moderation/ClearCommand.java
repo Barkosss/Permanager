@@ -60,9 +60,6 @@ public class ClearCommand extends AbstractCommand {
             return;
         }
 
-        // Парсинг аргументов
-        parseArgs(interactionTelegram, user);
-
         // Получаем количество удаляемых сообщений
         if (!user.isExceptedKey(getCommandName(), "countMessages")) {
             user.setExcepted(getCommandName(), "countMessages", InputExpectation.UserInputType.INTEGER);

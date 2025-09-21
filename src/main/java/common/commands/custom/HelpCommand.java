@@ -56,7 +56,6 @@ public class HelpCommand extends AbstractCommand {
         logger.debug("List of methods (classes, commandRepository) was received");
 
         User user = interaction.getUser(interaction.getUserId());
-        parseArgs(interaction, user);
 
         boolean isCommand = false;
         if (!interaction.getArguments().isEmpty()) {

@@ -118,7 +118,7 @@ public class WarnCommand extends AbstractCommand {
             return;
         }
 
-        parseArgs(interactionTelegram, user);
+        
 
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {

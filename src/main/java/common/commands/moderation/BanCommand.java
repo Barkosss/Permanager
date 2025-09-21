@@ -101,9 +101,6 @@ public class BanCommand extends AbstractCommand {
             return;
         }
 
-        // Парсинг аргументов
-        parseArgs(interactionTelegram, user);
-
         if (!user.isExceptedKey(getCommandName(), "user")) {
             Optional<Long> validUserId = validate.isValidLong(interaction.getArguments().getFirst());
 

@@ -86,7 +86,6 @@ public class WarnsCommand extends AbstractCommand {
 
         InteractionTelegram interactionTelegram = (InteractionTelegram) interaction;
         User user = interaction.getUser(interaction.getUserId());
-        parseArgs(interaction, user);
 
         // Получаем userId целевого пользователя
         long targetUserId = (long) user.getValue(getCommandName(), "userId");

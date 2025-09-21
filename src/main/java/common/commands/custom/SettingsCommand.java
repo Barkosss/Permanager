@@ -97,7 +97,6 @@ public class SettingsCommand extends AbstractCommand {
     public void run(Interaction interaction) {
         logger.info("Executing settings command");
         User user = interaction.getUser(interaction.getUserId());
-        parseArgs(interaction, user);
 
         if (!user.isExceptedKey(getCommandName(), "section")) {
             logger.info("Settings command requested a section argument");

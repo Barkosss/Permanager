@@ -83,9 +83,6 @@ public class MuteCommand extends AbstractCommand {
             return;
         }
 
-        // Парсинг аргументов
-        parseArgs(interactionTelegram, user);
-
         // Получаем пользователя
         if (interactionTelegram.getContentReply() == null && !user.isExceptedKey(getCommandName(), "user")) {
             logger.info("Mute command requested a user argument");

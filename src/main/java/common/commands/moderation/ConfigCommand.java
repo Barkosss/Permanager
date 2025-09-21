@@ -89,7 +89,6 @@ public class ConfigCommand extends AbstractCommand {
         }
 
         User user = interaction.getUser(userId);
-        parseArgs(interaction, user);
 
         String commandName = getCommandName();
         String permissionName = ModerationCommand.CONFIG.getCommandName();

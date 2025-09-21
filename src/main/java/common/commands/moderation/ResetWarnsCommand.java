@@ -64,9 +64,6 @@ public class ResetWarnsCommand extends AbstractCommand {
             return;
         }
 
-        // Парсинг аргументов
-        parseArgs(interactionTelegram, user);
-
         if (!user.isExceptedKey(getCommandName(), "accepted")
                 && user.isExceptedKey(getCommandName(), "userId")) {
             logger.info(String.format("Remove all warnings from user by id(%s) in chat by id(%s)",

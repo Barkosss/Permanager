@@ -127,7 +127,7 @@ public class ReminderCommand extends AbstractCommand {
     // Вызвать основной метод команды
     public void run(Interaction interaction) {
         User user = interaction.getUser(interaction.getUserId());
-        parseArgs(interaction, user);
+
         logger.info("Running reminder command for user: " + user.getUserId());
 
         if (!user.isExceptedKey(getCommandName(), "action")) {
