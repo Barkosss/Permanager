@@ -37,7 +37,7 @@ public class LocalizationTest {
             BaseCommand instanceClass;
             for (Class<? extends BaseCommand> subclass : subclasses) {
                 if (Modifier.isAbstract(subclass.getModifiers()) || subclass.isInterface()) {
-                    continue; // пропускаем абстрактные
+                    continue;
                 }
 
                 instanceClass = subclass.getConstructor().newInstance();
