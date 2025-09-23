@@ -174,7 +174,7 @@
         "reason": "Reason",
         "duration": "Duration",
         "moderator": "Moderator",
-        "warnsNotFound": "@%USERNAME% has no warnings"
+        "warnsNotFound": "@%USERNAME% has no warnings",
     },
     "warn": {
         "replyMessage": "Call the command with a response to the message of the user to whom you want to issue a warning",

@@ -19,6 +19,7 @@ dependencies {
     implementation("org.slf4j:slf4j-nop:2.0.7") // Логирование (Зависимость Reflection)
     implementation("com.googlecode.json-simple:json-simple:1.1.1") // Взаимодействие с JSON файлами
     implementation("com.github.pengrad:java-telegram-bot-api:7.9.1") // Интеграция с Telegram
+    implementation("com.github.javaparser:javaparser-symbol-solver-core:3.27.0")
 }
 
 tasks.test {

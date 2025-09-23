@@ -105,7 +105,7 @@ public class HelpCommand extends AbstractCommand {
                     String.format("manual.%s.%s", commandName, interaction.getLanguageCode().getLang()));
 
             if (manual.isEmpty()) {
-                manual = interaction.getLanguageValue(".notFoundManual");
+                manual = interaction.getLanguageValue(".manualNotFound");
                 logger.warning("Manual for command '" + commandName + "' is empty, showing default message.");
             }
 

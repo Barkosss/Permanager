@@ -187,7 +187,7 @@ public class ReminderCommand extends AbstractCommand {
                 "manual.reminder.help");
 
         if (manual.isEmpty()) {
-            manual = interaction.getLanguageValue("help.notFoundManual");
+            manual = interaction.getLanguageValue("help.manualNotFound");
         }
 
         helpOutput = new StringBuilder("--------- HELP \"Reminder Help\" ---------\n");
