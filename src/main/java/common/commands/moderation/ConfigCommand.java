@@ -47,6 +47,13 @@ public class ConfigCommand extends AbstractCommand {
             return;
         }
 
+        String strChatId = arguments.getFirst().toLowerCase();
+        try {
+            Long chatId = Long.parseLong(strChatId);
+            user.setExcepted(getCommandName(), "chatId").setValue(chatId);
+        } catch (NumberFormatException ignore) {
+        }
+
         String argument = arguments.getFirst().toLowerCase();
         List<String> validSections = List.of("dashboard", "user", "group");
 
@@ -80,15 +87,27 @@ public class ConfigCommand extends AbstractCommand {
         long chatId = interaction.getChatId();
         long userId = interaction.getUserId();
 
+        User user = interaction.getUser(userId);
+
         // Проверяем на приватность чата
-        if (interactionTelegram.execute(new GetChat(chatId)).chat().type() == ChatFullInfo.Type.Private) {
+        Long targetChatId = (Long) user.getValue(getCommandName(), "chatId");
+        if (targetChatId == null && interactionTelegram.execute(new GetChat(chatId)).chat().type() == ChatFullInfo.Type.Private) {
             logger.info(String.format("User by id(%d) use command \"%s\" in Chat by id(%d)",
-                    interaction.getUserId(), getCommandName(), chatId));
+                    userId, getCommandName(), chatId));
             output.output(interaction.setLanguageValue("system.error.notAvailableCommandPrivateChat"));
             return;
         }
 
-        User user = interaction.getUser(userId);
+        // TODO: Check, user is admin or owner in target chat (targetChatId)
+        Server server = interactionTelegram.findServerById(targetChatId);
+        Long ownerId = server.getOwnerId();
+
+        if (userId != ownerId) {
+            logger.info(String.format("User by id(%s) user command \"%s\" for chat by id(%s), but not owner by id(%s)",
+                    userId, getCommandName(), targetChatId, ownerId));
+            output.output(interaction.setLanguageValue("system.error.notAvailableChatOwner"));
+            return;
+        }
 
         String commandName = getCommandName();
         String permissionName = ModerationCommand.CONFIG.getCommandName();

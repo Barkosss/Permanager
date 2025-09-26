@@ -49,6 +49,7 @@ public class LocalizationTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testLocalization() {
         boolean hasAllLocal = true;
         JavaParser javaParser = new JavaParser();

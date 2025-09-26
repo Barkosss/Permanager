@@ -2,6 +2,7 @@ package common;
 
 import com.pengrad.telegrambot.request.GetMe;
 import com.pengrad.telegrambot.response.GetMeResponse;
+import common.commands.AbstractCommand;
 import common.commands.BaseCommand;
 import common.iostream.InputConsole;
 import common.iostream.InputTelegram;
@@ -65,7 +66,7 @@ public class CommandHandler {
         try {
             Reflections reflections = new Reflections("common.commands");
             // Получаем множеством всех классов, которые реализовывают интерфейс BaseCommand
-            Set<Class<? extends BaseCommand>> subclasses = reflections.getSubTypesOf(BaseCommand.class);
+            Set<Class<? extends AbstractCommand>> subclasses = reflections.getSubTypesOf(AbstractCommand.class);
             logger.info("Found " + subclasses.size() + " command classes");
 
             String commandName;
@@ -97,10 +98,10 @@ public class CommandHandler {
 
             commandRepository = new CommandRepository(baseCommandClasses);
             serverRepository.setCommandRepository(commandRepository);
-            logger.info("CommandRepository initialized successfully");
+            logger.info("CommandRepository initialized successfully (size=" + baseCommandClasses.size() + ")");
 
         } catch (Exception err) {
-            logger.error(String.format("Command loader: %s", err));
+            logger.fatal(String.format("Command loader: %s", err));
         }
     }
 

@@ -67,6 +67,14 @@ public class Server {
         this.id = id;
     }
 
+    public long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(long id) {
+        this.ownerId = id;
+    }
+
     public long getDurationDeleteMessage(InteractionTelegram.OutputStatus status) {
         return switch (status) {
             case SUCCESS -> durationDeleteSuccessfulMessage;
