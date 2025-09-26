@@ -51,7 +51,7 @@ public class OutputHandler {
                 logger.warning("Failed to send message with formatting. Retrying without formatting.");
                 SendMessage request = new SendMessage(interaction.getChatId(), interaction.getMessage())
                         .linkPreviewOptions(new LinkPreviewOptions().isDisabled(true));
-                interaction.execute(request);
+                sendRequest = interaction.execute(request);
 
                 logger.debug(String.format("The message was sent to the chat by id(%s) without formatting",
                         interaction.getChatId()));
